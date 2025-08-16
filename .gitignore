@@ -57,3 +57,5 @@ ios/Runner.xcodeproj/xcshareddata/
 GeneratedPluginRegistrant.java
 
 *.g.dart
+*.config.dart
+*.gr.dart
