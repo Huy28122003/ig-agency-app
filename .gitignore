@@ -59,3 +59,4 @@ GeneratedPluginRegistrant.java
 *.g.dart
 *.config.dart
 *.gr.dart
+pubspec.lock
