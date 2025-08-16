@@ -1,0 +1,76 @@
+import 'package:ig_agency_app/data/remote/services/api_services.dart';
+import 'package:ig_agency_app/shared/commons/exception_converter.dart';
+import 'package:injectable/injectable.dart';
+
+import '../app/auth_remote_data_source.dart';
+import '../models/requests/login_request_model.dart';
+
+@Injectable(as: AuthRemoteDataSource)
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  AuthRemoteDataSourceImpl(this._apiService);
+
+  final ApiService _apiService;
+
+  @override
+  Future<String?> getAccessToken() {
+    try {
+      // Simulate fetching access token
+      return Future.value("mock_access_token");
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<String?> getRefreshToken() {
+    try {
+      // Simulate fetching refresh token
+      return Future.value("mock_refresh_token");
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> login(String email, String password) {
+    try {
+      final loginRequestModel = LoginRequestModel(
+        email: email,
+        password: password,
+      );
+      return _apiService.login(loginRequestModel);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> logout() {
+    try {
+      // Simulate logout process
+      return Future.value();
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> refreshToken() {
+    try {
+      // Simulate token refresh process
+      return Future.value();
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> revokeTokens() {
+    try {
+      // Simulate revoking tokens
+      return Future.value();
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+}
