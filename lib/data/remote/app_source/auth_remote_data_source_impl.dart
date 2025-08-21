@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import '../app/auth_remote_data_source.dart';
 import '../models/requests/login_request_model.dart';
+import '../models/requests/registration_request_model.dart';
 
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -39,6 +40,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         password: password,
       );
       return _apiService.login(loginRequestModel);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> register(String name, String email, String password) {
+    try {
+      final registerRequestModel = RegistrationRequestModel(
+        name: name,
+        email: email,
+        password: password,
+      );
+      return _apiService.register(registerRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

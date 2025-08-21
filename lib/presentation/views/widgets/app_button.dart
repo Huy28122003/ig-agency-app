@@ -278,7 +278,7 @@ class _AppTextButton extends AppButton {
   const _AppTextButton({
     required super.onPressed,
     required super.child,
-    super.minimumSize,
+    Size? minimumSize,
     super.maximumSize,
     super.fixedSize,
     super.backgroundColor,
@@ -287,7 +287,10 @@ class _AppTextButton extends AppButton {
     super.shape,
     super.showUnderline,
     super.underLineColor,
-  }) : super(type: AppButtonType.text);
+  }) : super(
+         type: AppButtonType.text,
+         minimumSize: minimumSize ?? const Size(double.infinity, 48),
+       );
 }
 
 class _AppMediumButton extends AppButton {
