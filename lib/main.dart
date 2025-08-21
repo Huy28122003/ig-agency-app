@@ -1,20 +1,28 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
+import 'package:ig_agency_app/shared/utils/bloc_observer.dart';
 
 import 'app/app.dart';
+import 'di/di.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  EasyLocalization.ensureInitialized();
-  _startApp;
+void main() async {
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      Bloc.observer = AppBlocObserver();
+      await configureDependencies();
+      getIt.registerSingleton(AppRouter());
+      _startApp();
+    },
+    (error, stackTrace) {
+      print("${error.toString()} $stackTrace");
+    },
+  );
 }
 
-void _startApp() {
-  runApp(
-    EasyLocalization(
-      supportedLocales: [Locale('en', 'US'), Locale('vn', 'VN')],
-      path: 'assets/translations',
-      child: const MyApp(),
-    ),
-  );
+void _startApp() async {
+  runApp(MyApp());
 }

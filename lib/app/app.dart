@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:ig_agency_app/di/di.dart';
 
-class MyApp extends StatelessWidget {
+import '../presentation/routers/app_router.dart';
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late AppRouter _appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    _appRouter = getIt<AppRouter>();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+    return MaterialApp.router(
+      routerDelegate: _appRouter.delegate(),
+      routeInformationParser: _appRouter.defaultRouteParser(),
+      routeInformationProvider: _appRouter.routeInfoProvider(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

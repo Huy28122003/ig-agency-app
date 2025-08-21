@@ -1,0 +1,157 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/di/di.dart';
+import 'package:ig_agency_app/presentation/base/base_bloc.dart';
+import 'package:ig_agency_app/shared/utils/alert.dart';
+
+import 'package:responsive_builder/responsive_builder.dart';
+import '../../shared/commons/enums/status.dart';
+import '../../shared/utils/keyboard_utils.dart';
+import '../../shared/utils/logger.dart';
+import 'base_state.dart';
+
+abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
+    extends StatefulWidget
+    implements AutoRouteWrapper {
+  const BasePage({super.key});
+
+  Widget buildLoadingView(BuildContext context) {
+    return Container(color: Colors.grey);
+  }
+
+  Widget buildErrorView(BuildContext context, String? errorMessage) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(child: Text(errorMessage ?? 'An error occurred')),
+    );
+  }
+
+  @mustCallSuper
+  void onInitState(BuildContext context) {
+    loggerNoStack.i('$runtimeType screen created');
+  }
+
+  @mustCallSuper
+  void onDispose(BuildContext context) {
+    loggerNoStack.i('$runtimeType screen disposed');
+  }
+
+  Widget? desktopBuilder(BuildContext context) {
+    return null;
+  }
+
+  Widget? tabletBuilder(BuildContext context) {
+    return null;
+  }
+
+  Widget mobileBuilder(BuildContext context);
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return BlocProvider<B>(create: (_) => getIt<B>(), child: this);
+  }
+
+  @override
+  State<BasePage> createState() => _BasePageState<B, E, S>();
+}
+
+class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
+    extends State<BasePage>
+    with WidgetsBindingObserver {
+  late AppAlertDialog _appDialog;
+
+  @override
+  void initState() {
+    super.initState();
+    _appDialog = getIt<AppAlertDialog>();
+    WidgetsBinding.instance.addObserver(this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onInitState(context);
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Todo: anh.trandang
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    widget.onDispose(context);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+      builder: (context, sizingInfo) {
+        return BlocConsumer<B, S>(
+          listener: (context, state) {
+            if (state.processing) {
+              _appDialog.show(context, type: AppAlertType.loading);
+            } else {
+              _appDialog.hide(context);
+            }
+          },
+          listenWhen: (pre, cur) => pre.processing != cur.processing,
+          buildWhen: (pre, cur) => pre.pageStatus != cur.pageStatus,
+          builder: (context, state) {
+            return Scaffold(
+              body: _buildBody(
+                context,
+                sizingInfo,
+                state.pageStatus,
+                state.pageErrorMessage,
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    SizingInformation sizingInfo,
+    PageStatus pageStatus,
+    String? errorMessage,
+  ) {
+    switch (pageStatus) {
+      case PageStatus.initial:
+      case PageStatus.refreshing:
+      case PageStatus.loading:
+        return widget.buildLoadingView(context);
+      case PageStatus.loaded:
+        final builder = _getBuilder(context, sizingInfo);
+
+        return builder;
+      case PageStatus.failure:
+        return widget.buildErrorView(context, errorMessage);
+    }
+  }
+
+  Widget _getBuilder(
+    BuildContext context,
+    SizingInformation sizingInformation,
+  ) {
+    Widget? builder;
+    switch (sizingInformation.deviceScreenType) {
+      case DeviceScreenType.mobile:
+        builder = widget.mobileBuilder(context);
+      case DeviceScreenType.tablet:
+        builder = widget.tabletBuilder(context);
+      default:
+        builder = widget.desktopBuilder(context);
+    }
+    if (sizingInformation.isMobile || sizingInformation.isTablet) {
+      return GestureDetector(
+        onTap: () => KeyboardUtils.hideKeyboard(),
+        child: builder,
+      );
+    }
+    return builder ?? SizedBox();
+  }
+}

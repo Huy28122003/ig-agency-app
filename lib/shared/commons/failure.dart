@@ -1,7 +1,8 @@
 class Failure {
-  final String message;
+  final String? message;
+  final String? title;
 
-  Failure({required this.message});
+  Failure({this.title, this.message});
 
   @override
   String toString() => 'Failure: $message';
