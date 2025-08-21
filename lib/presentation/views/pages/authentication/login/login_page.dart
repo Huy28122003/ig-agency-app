@@ -14,8 +14,8 @@ class LoginPage extends BasePage<LoginBloc, LoginEvent, LoginState> {
 
   @override
   void onInitState(BuildContext context) {
-    context.read<LoginBloc>().add(LoadDataEvent());
     super.onInitState(context);
+    context.read<LoginBloc>().add(LoadDataEvent());
   }
 
   @override

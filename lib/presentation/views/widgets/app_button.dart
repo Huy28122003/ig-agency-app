@@ -124,14 +124,19 @@ class AppButton extends StatelessWidget {
       case AppButtonType.primary:
         return FilledButton(
           onPressed: onPressed,
-          style: FilledButton.styleFrom(
-            minimumSize: minimumSize,
-            maximumSize: maximumSize,
-            backgroundColor: backgroundColor,
-            foregroundColor: foregroundColor,
-            textStyle: textStyle,
-            shape: shape,
-            fixedSize: fixedSize,
+          style: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(backgroundColor),
+            foregroundColor: WidgetStatePropertyAll(foregroundColor),
+            textStyle: WidgetStatePropertyAll(textStyle),
+            minimumSize: WidgetStatePropertyAll(minimumSize),
+            maximumSize: WidgetStatePropertyAll(maximumSize),
+            fixedSize: WidgetStatePropertyAll(fixedSize),
+            shape: WidgetStatePropertyAll(
+              shape ??
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+            ),
           ),
           child: child,
         );
@@ -203,7 +208,7 @@ class _AppPrimaryButton extends AppButton {
     super.shape,
   }) : super(
          type: AppButtonType.primary,
-         minimumSize: minimumSize ?? const Size(double.infinity, 36),
+         minimumSize: minimumSize ?? const Size(double.infinity, 48),
        );
 }
 
