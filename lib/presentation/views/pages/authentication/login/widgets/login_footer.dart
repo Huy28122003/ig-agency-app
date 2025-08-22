@@ -25,15 +25,20 @@ class LoginFooter extends StatelessWidget {
               height: 1.50,
             ),
           ),
-          Text(
-            'Register',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.textPrimaryTextDefault,
-              fontSize: 16,
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w700,
-              height: 1.50,
+          GestureDetector(
+            onTap: () {
+              // TODO hoannk: Route to RegisterPage
+            },
+            child: Text(
+              'Register',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.textPrimaryTextDefault,
+                fontSize: 16,
+                fontFamily: FontFamily.segoeUI,
+                fontWeight: FontWeight.w700,
+                height: 1.50,
+              ),
             ),
           ),
         ],
