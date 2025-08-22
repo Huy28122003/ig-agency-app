@@ -1,9 +1,9 @@
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
-import 'package:ig_agency_app/shared/commons/result.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../shared/commons/failure.dart';
 import '../../shared/commons/failure_converter.dart';
+import '../../shared/commons/result.dart';
 import '../repositories/auth_repository.dart';
 
 @injectable

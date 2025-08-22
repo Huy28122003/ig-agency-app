@@ -31,7 +31,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future login(String email, String password) {
+  Future<void> login(String email, String password) {
     try {
       // Simulate login process
       return _authRemoteDataSource.login(email, password);
