@@ -2,6 +2,8 @@ import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:ig_agency_app/shared/commons/result.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../shared/commons/failure.dart';
+import '../../shared/commons/failure_converter.dart';
 import '../repositories/auth_repository.dart';
 
 @injectable
@@ -12,8 +14,13 @@ class LoginUseCase extends UseCase<void, LoginParam> {
 
   @override
   Future<Result<void>> call(LoginParam param) async {
-    final result = await _authRepository.login(param.email, param.password);
-    return result;
+    try {
+      await _authRepository.login(param.email, param.password);
+      return Result.completed(null);
+    } catch (e) {
+      final failure = e is Failure ? e : FailureConverter.convert(e);
+      return Result.failure(failure);
+    }
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/usecases/login_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -14,30 +15,49 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   LoginBloc({required LoginUseCase loginUseCase})
     : _loginUseCase = loginUseCase,
       super(LoginState()) {
-    handleLoadData<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loaded));
-    });
-
-    handleSubEvent<EmailChangedEvent>((event, emit) async {
-      emit(state.copyWith(email: event.email));
-    });
-
-    handleSubEvent<PasswordChangedEvent>((event, emit) async {
-      emit(state.copyWith(password: event.password));
-    });
-
-    handleSubEvent<TogglePasswordVisibilityEvent>((event, emit) async {
-      emit(state.copyWith(isObscurePassword: !state.isObscurePassword));
-    });
-
-    handleSubEvent<SubmitLoginEvent>((event, emit) async {
-      emit(state.copyWith(processing: true));
-      await _loginUseCase.call(
-        LoginParam(email: state.email, password: state.password),
-      );
-      emit(state.copyWith(processing: false, isSuccess: true));
-    });
+    _registerHandlers();
   }
 
   final LoginUseCase _loginUseCase;
+
+  void _registerHandlers() {
+    handleLoadData<LoadDataEvent>(
+      (_, emit) async => emit(state.copyWith(pageStatus: PageStatus.loaded)),
+    );
+
+    handleSubEvent<EmailChangedEvent>(
+      (event, emit) async => emit(state.copyWith(email: event.email)),
+    );
+
+    handleSubEvent<PasswordChangedEvent>(
+      (event, emit) async => emit(state.copyWith(password: event.password)),
+    );
+
+    handleSubEvent<TogglePasswordVisibilityEvent>(
+      (_, emit) async =>
+          emit(state.copyWith(isObscurePassword: !state.isObscurePassword)),
+    );
+
+    handleSubEvent<SubmitLoginEvent>(_onSubmitLogin);
+  }
+
+  Future<void> _onSubmitLogin(
+    SubmitLoginEvent event,
+    Emitter<LoginState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        processing: true,
+        errorEmailMessage: null,
+        errorPasswordMessage: null,
+        forceResetErrorMessages: true,
+      ),
+    );
+
+    await _loginUseCase(
+      LoginParam(email: state.email, password: state.password),
+    );
+
+    emit(state.copyWith(processing: false, isSuccess: true));
+  }
 }
