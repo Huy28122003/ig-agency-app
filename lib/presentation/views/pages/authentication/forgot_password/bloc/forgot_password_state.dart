@@ -12,7 +12,7 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
   final String email;
   final String? errorMessage;
 
-  bool get isEnableSendCode => email.isNotEmpty;
+  bool get isEnableSendCode => email.isNotEmpty && errorMessage == null;
 
   @override
   ForgotPasswordState copyWith({

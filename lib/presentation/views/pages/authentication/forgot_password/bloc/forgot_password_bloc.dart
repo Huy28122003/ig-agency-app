@@ -1,3 +1,4 @@
+import 'package:ig_agency_app/domain/usecases/send_otp_code_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/constants/string.dart';
@@ -11,7 +12,10 @@ part 'forgot_password_state.dart';
 @injectable
 class ForgotPasswordBloc
     extends BaseBloc<ForgotPasswordEvent, ForgotPasswordState> {
-  ForgotPasswordBloc() : super(ForgotPasswordState()) {
+  final SendOtpCodeUseCase sendOtpCodeUseCase;
+
+  ForgotPasswordBloc({required this.sendOtpCodeUseCase})
+    : super(ForgotPasswordState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loaded));
     });
@@ -25,6 +29,11 @@ class ForgotPasswordBloc
           errorMessage: isEmail ? null : emailIncorrectFormatMessage,
         ),
       );
+    });
+
+    handleSubEvent<SendOtpEvent>((event, emit) async {
+      // Chua co ui khi gui code va co che chong spam
+      await sendOtpCodeUseCase.call(event.email);
     });
   }
 
