@@ -1,7 +1,7 @@
 part of 'workspace_detail_bloc.dart';
 
-class WorkspaceDetailState extends BaseState<WorkspaceDetailState> {
-  const WorkspaceDetailState({
+class WSDetailState extends BaseState<WSDetailState> {
+  const WSDetailState({
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing,
@@ -13,14 +13,14 @@ class WorkspaceDetailState extends BaseState<WorkspaceDetailState> {
   final String password;
 
   @override
-  WorkspaceDetailState copyWith({
+  WSDetailState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
     String? email,
     String? password,
   }) {
-    return WorkspaceDetailState(
+    return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,

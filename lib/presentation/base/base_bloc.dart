@@ -31,6 +31,7 @@ abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
       try {
         await handler(event, emit);
       } catch (e) {
+        emit(state.copyWith(processing: false));
         AppErrorHandler.handle(e);
       }
     });

@@ -12,14 +12,10 @@ part 'nav_state.dart';
 class NavBloc extends BaseBloc<NavEvent, NavState> {
   NavBloc() : super(NavState()) {
     handleSubEvent<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loading));
-      await Future.delayed(const Duration(seconds: 1));
       emit(state.copyWith(pageStatus: PageStatus.loaded));
     });
-    handleSubEvent((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loading));
-      await Future.delayed(const Duration(seconds: 1));
-      emit(state.copyWith(pageStatus: PageStatus.loaded));
+    handleSubEvent<OnChangeTabEvent>((event, emit) async {
+      emit(state.copyWith(currentIndex: event.index));
     });
   }
 }

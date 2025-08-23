@@ -5,30 +5,26 @@ class NavState extends BaseState<NavState> {
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing,
-    this.email = '',
-    this.password = '',
+    this.currentIndex = 0,
   });
 
-  final String email;
-  final String password;
+  final int currentIndex;
 
   @override
   NavState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    String? email,
-    String? password,
+    int? currentIndex,
   }) {
     return NavState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
-      email: email ?? this.email,
-      password: password ?? this.password,
+      currentIndex: currentIndex ?? this.currentIndex,
     );
   }
 
   @override
-  List<Object?> get props => [...super.props, email, password];
+  List<Object?> get props => [...super.props, currentIndex];
 }
