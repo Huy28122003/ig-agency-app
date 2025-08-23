@@ -12,7 +12,7 @@ class AppTextField extends StatelessWidget {
     this.errorText,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
-    this.textInputAction = TextInputAction.next,
+    this.textInputAction,
     this.onChanged,
     this.onEditingComplete,
     this.onFieldSubmitted,
@@ -33,7 +33,7 @@ class AppTextField extends StatelessWidget {
   final String? errorText;
   final bool obscureText;
   final TextInputType keyboardType;
-  final TextInputAction textInputAction;
+  final TextInputAction? textInputAction;
   final void Function(String)? onChanged;
   final VoidCallback? onEditingComplete;
   final void Function(String)? onFieldSubmitted;
