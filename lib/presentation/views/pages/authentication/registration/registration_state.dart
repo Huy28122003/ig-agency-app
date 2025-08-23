@@ -12,6 +12,9 @@ class RegistrationState extends BaseState<RegistrationState> {
     this.isSuccess = false,
     this.isObscurePassword = true,
     this.isObscureConfirmPassword = true,
+    this.errorNameMessage,
+    this.errorEmailMessage,
+    this.errorPasswordMessage,
     this.errorConfirmPasswordMessage,
   });
 
@@ -22,9 +25,16 @@ class RegistrationState extends BaseState<RegistrationState> {
   final bool isSuccess;
   final bool isObscurePassword;
   final bool isObscureConfirmPassword;
+  final String? errorNameMessage;
+  final String? errorEmailMessage;
+  final String? errorPasswordMessage;
   final String? errorConfirmPasswordMessage;
 
-  bool get isFormValid => email.isNotEmpty && password.isNotEmpty;
+  bool get isFormValid =>
+      name.isNotEmpty &&
+      email.isNotEmpty &&
+      password.isNotEmpty &&
+      confirmPassword.isNotEmpty;
 
   @override
   RegistrationState copyWith({
@@ -38,6 +48,9 @@ class RegistrationState extends BaseState<RegistrationState> {
     bool? isSuccess,
     bool? isObscurePassword,
     bool? isObscureConfirmPassword,
+    String? errorNameMessage,
+    String? errorEmailMessage,
+    String? errorPasswordMessage,
     String? errorConfirmPasswordMessage,
     bool forceResetErrorMessages = false,
   }) {
@@ -53,10 +66,18 @@ class RegistrationState extends BaseState<RegistrationState> {
       isObscurePassword: isObscurePassword ?? this.isObscurePassword,
       isObscureConfirmPassword:
           isObscureConfirmPassword ?? this.isObscureConfirmPassword,
-      errorConfirmPasswordMessage:
-          forceResetErrorMessages
-              ? null
-              : errorConfirmPasswordMessage ?? this.errorConfirmPasswordMessage,
+      errorNameMessage: forceResetErrorMessages
+          ? null
+          : errorNameMessage ?? this.errorNameMessage,
+      errorEmailMessage: forceResetErrorMessages
+          ? null
+          : errorEmailMessage ?? this.errorEmailMessage,
+      errorPasswordMessage: forceResetErrorMessages
+          ? null
+          : errorPasswordMessage ?? this.errorPasswordMessage,
+      errorConfirmPasswordMessage: forceResetErrorMessages
+          ? null
+          : errorConfirmPasswordMessage ?? this.errorConfirmPasswordMessage,
     );
   }
 
@@ -70,6 +91,9 @@ class RegistrationState extends BaseState<RegistrationState> {
     isSuccess,
     isObscurePassword,
     isObscureConfirmPassword,
+    errorNameMessage,
+    errorEmailMessage,
+    errorPasswordMessage,
     errorConfirmPasswordMessage,
   ];
 }

@@ -47,22 +47,37 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
           emit(state.copyWith(isObscurePassword: !state.isObscurePassword)),
     );
 
+    handleSubEvent<ToggleConfirmPasswordVisibilityEvent>(
+      (_, emit) async => emit(
+        state.copyWith(
+          isObscureConfirmPassword: !state.isObscureConfirmPassword,
+        ),
+      ),
+    );
+
     handleSubEvent<SubmitRegistrationEvent>(_onSubmitRegistration);
+  }
+
+  void _resetErrorMessages(Emitter<RegistrationState> emit) {
+    emit(
+      state.copyWith(
+        errorNameMessage: null,
+        errorEmailMessage: null,
+        errorPasswordMessage: null,
+        errorConfirmPasswordMessage: null,
+        forceResetErrorMessages: true,
+      ),
+    );
   }
 
   Future<void> _onSubmitRegistration(
     SubmitRegistrationEvent event,
     Emitter<RegistrationState> emit,
   ) async {
-    emit(
-      state.copyWith(
-        processing: true,
-        errorConfirmPasswordMessage: null,
-        forceResetErrorMessages: true,
-      ),
-    );
+    emit(state.copyWith(processing: true));
+    _resetErrorMessages(emit);
 
-    await _registerUseCase(
+    final result = await _registerUseCase(
       RegisterParam(
         name: state.name,
         email: state.email,
@@ -71,6 +86,6 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
       ),
     );
 
-    emit(state.copyWith(processing: false, isSuccess: true));
+    emit(state.copyWith(processing: false, isSuccess: result.success));
   }
 }
