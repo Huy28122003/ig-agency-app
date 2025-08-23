@@ -7,16 +7,16 @@ import '../../shared/commons/failure_converter.dart';
 import '../repositories/auth_repository.dart';
 
 @injectable
-class SendOtpCodeUseCase extends UseCase<void, String> {
+class SendOtpCodeUseCase extends UseCase<String, String> {
   SendOtpCodeUseCase(this._authRepository);
 
   final AuthRepository _authRepository;
 
   @override
-  Future<Result<void>> call(String email) async {
+  Future<Result<String>> call(String email) async {
     try {
-      await _authRepository.sendOtpCode(email);
-      return Result.completed(null);
+      final otp =  await _authRepository.sendOtpCode(email);
+      return Result.completed(otp);
     } catch (e) {
       final failure = e is Failure ? e : FailureConverter.convert(e);
       return Result.failure(failure);

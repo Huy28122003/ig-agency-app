@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/forgot_password/bloc/forgot_password_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
@@ -103,7 +104,12 @@ class _ForgotPasswordMobileLayoutState
         child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, top: 80),
           child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
-            listener: (context, state) {},
+            listener: (context, state) {
+              if (state.otp.isNotEmpty) {
+                context.router.push(OtpRoute(otp: state.otp));
+                _forgotPasswordBloc.add(ResetOtpEvent());
+              }
+            },
             builder: (context, state) {
               return SingleChildScrollView(
                 child: Column(
@@ -122,7 +128,10 @@ class _ForgotPasswordMobileLayoutState
                       backgroundColor: state.isEnableSendCode
                           ? AppColors.surfaceContainerPrimaryPrimaryDefault
                           : AppColors.surfaceContainerPrimaryPrimaryDisabled,
-                      onPressed: () {},
+                      onPressed: () {
+                        if (state.errorMessage != null || state.email.isEmpty) return;
+                        _forgotPasswordBloc.add(SendOtpEvent());
+                      },
                       child: Text(
                         'Send code',
                         style: TextStyle(

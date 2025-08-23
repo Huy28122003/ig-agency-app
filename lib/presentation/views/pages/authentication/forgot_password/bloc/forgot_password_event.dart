@@ -10,8 +10,6 @@ class EmailChangeEvent extends ForgotPasswordEvent {
   EmailChangeEvent({required this.email});
 }
 
-class SendOtpEvent extends ForgotPasswordEvent {
-  final String email;
+class SendOtpEvent extends ForgotPasswordEvent {}
 
-  SendOtpEvent({required this.email});
-}
+class ResetOtpEvent extends ForgotPasswordEvent {}

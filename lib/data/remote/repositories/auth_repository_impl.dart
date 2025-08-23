@@ -76,7 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> sendOtpCode(String email) async {
+  Future<String> sendOtpCode(String email) async {
     try {
       // Simulate register process
       return _authRemoteDataSource.sendOtpCode(email);

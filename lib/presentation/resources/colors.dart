@@ -17,9 +17,12 @@ abstract class AppColors {
   /// Outline
   static const Color outlineGrayStrong200 = Color(0xFFE5E7EB);
   static const Color outlineAlertError = Color(0xFFFA2B36);
+  static const Color outlinePrimaryDefault = Color(0xFFFCB732);
 
   /// Surface
   static const Color surfaceContainerPrimaryPrimaryDefault = primary;
   static const Color surfaceBackgroundBackground = Color(0xFFFFFFFF);
   static const Color surfaceContainerPrimaryPrimaryDisabled = Color(0xFFFEE2AD);
+  static const Color surfaceContainerPrimaryPrimaryLight = Color(0xFFFEFCE8);
+  static const Color surfaceContainerGrayStrong2 = Color(0xFFE5E7EB);
 }

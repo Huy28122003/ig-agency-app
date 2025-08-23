@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../../routers/app_router.dart';
 import '../../../../widgets/app_button.dart';
 import '../../../../widgets/app_text_field.dart';
 import '../bloc/forgot_password_bloc.dart';
@@ -49,7 +51,15 @@ class _ForgotPasswordTabletLayoutState
             ),
             constraints: const BoxConstraints(maxHeight: 800, maxWidth: 480),
             child: SizedBox.expand(
-              child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
+              child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
+                listenWhen: (prev,curr) => prev.otp != curr.otp,
+                listener: (context, state) {
+                  if (state.otp.isNotEmpty) {
+                    context.router.push(OtpRoute(otp: state.otp));
+                    _forgotPasswordBloc.add(ResetOtpEvent());
+
+                  }
+                },
                 builder: (context, state) {
                   return SingleChildScrollView(
                     padding: const EdgeInsets.only(
@@ -89,8 +99,12 @@ class _ForgotPasswordTabletLayoutState
                         AppButton.primary(
                           backgroundColor: state.isEnableSendCode
                               ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                              : AppColors.surfaceContainerPrimaryPrimaryDisabled,
-                          onPressed: () {},
+                              : AppColors
+                                    .surfaceContainerPrimaryPrimaryDisabled,
+                          onPressed: () {
+                            if (state.errorMessage != null || state.email.isEmpty) return;
+                            _forgotPasswordBloc.add(SendOtpEvent());
+                          },
                           child: Text(
                             'Send code',
                             style: TextStyle(
