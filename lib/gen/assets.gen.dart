@@ -27,6 +27,9 @@ class $AssetsFontsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/ic_back.svg
+  SvgGenImage get icBack => const SvgGenImage('assets/icons/ic_back.svg');
+
   /// File path: assets/icons/ic_eye.svg
   SvgGenImage get icEye => const SvgGenImage('assets/icons/ic_eye.svg');
 
@@ -34,7 +37,7 @@ class $AssetsIconsGen {
   SvgGenImage get icEyeOff => const SvgGenImage('assets/icons/ic_eye_off.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [icEye, icEyeOff];
+  List<SvgGenImage> get values => [icBack, icEye, icEyeOff];
 }
 
 class $AssetsImagesGen {
@@ -44,8 +47,20 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/bg_authentication.png
+  AssetGenImage get bgAuthentication =>
+      const AssetGenImage('assets/images/bg_authentication.png');
+
+  /// File path: assets/images/splash_background.png
+  AssetGenImage get splashBackground =>
+      const AssetGenImage('assets/images/splash_background.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [appLogo];
+  List<AssetGenImage> get values => [
+    appLogo,
+    bgAuthentication,
+    splashBackground,
+  ];
 }
 
 class $AssetsTranslationsGen {
