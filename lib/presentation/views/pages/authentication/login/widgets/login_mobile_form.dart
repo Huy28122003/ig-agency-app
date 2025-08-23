@@ -83,9 +83,6 @@ class LoginMobileForm extends StatelessWidget {
               onPressed: isFormValid
                   ? () => loginBloc.add(SubmitLoginEvent())
                   : null,
-              backgroundColor: isFormValid
-                  ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                  : AppColors.surfaceContainerPrimaryPrimaryDisabled,
               child: Text(
                 'Login',
                 style: TextStyle(
@@ -99,9 +96,8 @@ class LoginMobileForm extends StatelessWidget {
             );
           },
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         AppButton.text(
-          minimumSize: Size(double.infinity, 48),
           onPressed: () {
             // TODO hoannk: Route to ForgotPasswordPage
           },
