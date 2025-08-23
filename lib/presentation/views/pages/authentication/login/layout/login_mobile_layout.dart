@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/login/login_bloc.dart';
 
-import '../../../../../../gen/assets.gen.dart';
-import '../../../../../../gen/fonts.gen.dart';
-import '../../../../../resources/colors.dart';
 import '../../../../../routers/app_router.dart';
+import '../../../../../views/widgets/authentication_mobile_layout.dart';
 import '../widgets/login_footer.dart';
-import '../widgets/login_form.dart';
+import '../widgets/login_mobile_form.dart';
+import '../widgets/login_mobile_header.dart';
 
 class LoginMobileLayout extends StatefulWidget {
   const LoginMobileLayout({super.key});
@@ -18,23 +17,6 @@ class LoginMobileLayout extends StatefulWidget {
 }
 
 class _LoginMobileLayoutState extends State<LoginMobileLayout> {
-  late final FocusNode emailFocusNode;
-  late final FocusNode passwordFocusNode;
-
-  @override
-  void initState() {
-    super.initState();
-    emailFocusNode = FocusNode();
-    passwordFocusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    emailFocusNode.dispose();
-    passwordFocusNode.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
@@ -44,95 +26,10 @@ class _LoginMobileLayoutState extends State<LoginMobileLayout> {
           context.router.replaceAll([NavRoute()]);
         }
       },
-      child: Scaffold(
-        body: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                const Color(0xFFFF7E4C),
-                const Color(0xFFFFBA32),
-                const Color(0xFFFFDB3F),
-              ],
-            ),
-            image: DecorationImage(
-              image: Assets.images.bgAuthentication.provider(),
-              fit: BoxFit.fitWidth,
-              alignment: Alignment.topLeft,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              Expanded(child: _buildPanel()),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 40, left: 40, bottom: 40),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Welcome to',
-              style: TextStyle(
-                color: AppColors.textDefaultTextInvertedDisabled,
-                fontSize: 20,
-                fontFamily: FontFamily.segoeUI,
-                fontWeight: FontWeight.w600,
-                height: 1.30,
-              ),
-            ),
-            Text(
-              'IG Agency',
-              style: TextStyle(
-                color: AppColors.textDefaultTextInvertedDisabled,
-                fontSize: 32,
-                fontFamily: FontFamily.segoeUI,
-                fontWeight: FontWeight.w700,
-                height: 1.25,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPanel() {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        color: AppColors.surfaceBackgroundBackground,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(80)),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(top: 80, left: 40, right: 40),
-                child: LoginForm(
-                  emailFocusNode: emailFocusNode,
-                  passwordFocusNode: passwordFocusNode,
-                ),
-              ),
-            ),
-            LoginFooter(),
-          ],
-        ),
+      child: AuthenticationMobileLayout(
+        header: LoginMobileHeader(),
+        form: LoginMobileForm(),
+        footer: LoginFooter(),
       ),
     );
   }

@@ -1,5 +1,7 @@
+import '../../shared/commons/result.dart';
+
 abstract class AuthRepository {
-  Future login(String email, String password);
+  Future<Result> login(String email, String password);
 
   Future register(
     String name,
