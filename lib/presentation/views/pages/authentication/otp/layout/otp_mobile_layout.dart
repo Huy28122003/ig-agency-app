@@ -143,6 +143,11 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                   otpPinFieldDecoration:
                       OtpPinFieldDecoration.defaultPinBoxDecoration,
                   otpPinFieldStyle: OtpPinFieldStyle(
+                    textStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.outlinePrimaryDefault,
+                      fontSize: 24,
+                    ),
                     fieldBorderRadius: 8.8,
                     fieldBorderWidth: 1.1,
                     defaultFieldBackgroundColor:
