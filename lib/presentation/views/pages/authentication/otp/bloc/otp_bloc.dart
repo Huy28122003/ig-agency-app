@@ -23,8 +23,8 @@ class OtpBloc extends BaseBloc<OtpEvent, OtpState> {
         emit(
           state.copyWith(
             otpStatus: result.data ?? false
-                ? OtpStatus.valid
-                : OtpStatus.invalid,
+                ? VerifyStatus.valid
+                : VerifyStatus.invalid,
           ),
         );
       }else{
@@ -32,7 +32,7 @@ class OtpBloc extends BaseBloc<OtpEvent, OtpState> {
       }
     });
     handleSubEvent<ResetOtpStatusEvent>((event, emit) async {
-      emit(state.copyWith(otpStatus: OtpStatus.initial));
+      emit(state.copyWith(otpStatus: VerifyStatus.initial));
     });
   }
 }

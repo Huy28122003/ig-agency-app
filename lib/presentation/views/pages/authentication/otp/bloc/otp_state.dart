@@ -1,14 +1,14 @@
 part of 'otp_bloc.dart';
 
 class OtpState extends BaseState<OtpState> {
-  final OtpStatus otpStatus;
+  final VerifyStatus otpStatus;
 
   @override
   OtpState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    OtpStatus? otpStatus,
+    VerifyStatus? otpStatus,
   }) {
     return OtpState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -18,11 +18,11 @@ class OtpState extends BaseState<OtpState> {
     );
   }
 
-  OtpState({
+  const OtpState({
     super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing = false,
-    this.otpStatus = OtpStatus.initial,
+    this.otpStatus = VerifyStatus.initial,
   });
 
   @override

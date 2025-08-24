@@ -108,4 +108,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw ExceptionConverter.convert(e);
     }
   }
+
+  @override
+  Future<bool> sendNewPassword(String email, String newPassword) {
+    try {
+      // Simulate revoking tokens
+      return Future.value(true);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
 }
