@@ -10,7 +10,7 @@ import 'package:ig_agency_app/presentation/views/pages/authentication/otp/layout
 class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
   final String otp;
 
-  OtpPage({super.key, required this.otp});
+  const OtpPage({super.key, required this.otp});
 
   @override
   void onInitState(BuildContext context) {
@@ -25,6 +25,6 @@ class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return OtpTabletLayout(otp: otp,);
+    return OtpTabletLayout(otp: otp);
   }
 }
