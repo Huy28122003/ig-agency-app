@@ -10,6 +10,7 @@ import '../../../../widgets/app_text_field.dart';
 
 class ResetPasswordTabletLayout extends StatefulWidget {
   final String email;
+
   const ResetPasswordTabletLayout({super.key, required this.email});
 
   @override
@@ -50,7 +51,7 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
             ),
             constraints: const BoxConstraints(maxHeight: 800, maxWidth: 480),
             child: SizedBox.expand(
-              child: BlocConsumer<ResetPasswordBloc, ResetPasswordState>(
+              child: BlocListener<ResetPasswordBloc, ResetPasswordState>(
                 listenWhen: (prev, curr) =>
                     prev.verifyStatus != curr.verifyStatus,
                 listener: (context, state) {
@@ -60,107 +61,123 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                     );
                   }
                 },
-                builder: (context, state) {
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.only(
-                      top: 40,
-                      left: 40,
-                      right: 40,
-                      bottom: 20,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Assets.images.appLogo.image(height: 120, width: 120),
-                        const SizedBox(height: 40),
-                        Text(
-                          'Forget Password?',
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                    top: 40,
+                    left: 40,
+                    right: 40,
+                    bottom: 20,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Assets.images.appLogo.image(height: 120, width: 120),
+                      const SizedBox(height: 40),
+                      Text(
+                        'Forget Password?',
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextDefault,
+                          fontSize: 32,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.25,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
+                        selector: (state) => state.isObscureNewPassword,
+                        builder: (context, isObscure) {
+                          return AppTextField(
+                            errorText: context.select(
+                              (ResetPasswordBloc bloc) =>
+                                  bloc.state.errorMessage,
+                            ),
+                            obscureText: isObscure,
+                            keyboardType: TextInputType.none,
+                            textInputAction: TextInputAction.done,
+                            hintText: "New password",
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                context.read<ResetPasswordBloc>().add(
+                                  ToggleObscureNewPasswordEvent(),
+                                );
+                              },
+                              child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: isObscure
+                                    ? Assets.icons.icEye.svg()
+                                    : Assets.icons.icEyeOff.svg(),
+                              ),
+                            ),
+                            onChanged: (value) {
+                              context.read<ResetPasswordBloc>().add(
+                                NewPasswordChangedEvent(newPassword: value),
+                              );
+                            },
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: 20),
+                      BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
+                        selector: (state) => state.isObscureConfirmPassword,
+                        builder: (context, isObscure) {
+                          return AppTextField(
+                            errorText: context.select(
+                              (ResetPasswordBloc bloc) =>
+                                  bloc.state.errorMessage,
+                            ),
+                            obscureText: isObscure,
+                            keyboardType: TextInputType.none,
+                            textInputAction: TextInputAction.done,
+                            hintText: "Confirm New Password",
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                context.read<ResetPasswordBloc>().add(
+                                  ToggleObscureConfirmPasswordEvent(),
+                                );
+                              },
+                              child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: isObscure
+                                    ? Assets.icons.icEye.svg()
+                                    : Assets.icons.icEyeOff.svg(),
+                              ),
+                            ),
+                            onChanged: (value) {
+                              context.read<ResetPasswordBloc>().add(
+                                ConfirmPasswordChangedEvent(
+                                  confirmPassword: value,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: 40),
+                      AppButton.primary(
+                        backgroundColor:
+                            AppColors.surfaceContainerPrimaryPrimaryDefault,
+                        onPressed: () {
+                          _resetPasswordBloc.add(VerifyPasswordsEvent());
+                        },
+                        child: Text(
+                          'Send code',
                           style: TextStyle(
-                            color: AppColors.textDefaultTextDefault,
-                            fontSize: 32,
+                            color: AppColors.textDefaultTextInvertedDisabled,
+                            fontSize: 16,
                             fontFamily: FontFamily.segoeUI,
                             fontWeight: FontWeight.w700,
-                            height: 1.25,
+                            height: 1.50,
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        AppTextField(
-                          errorText: state.errorMessage,
-                          obscureText: state.isObscureNewPassword,
-                          keyboardType: TextInputType.none,
-                          textInputAction: TextInputAction.done,
-                          hintText: "New password",
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              _resetPasswordBloc.add(
-                                ToggleObscureNewPasswordEvent(),
-                              );
-                            },
-                            child: SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: state.isObscureNewPassword
-                                  ? Assets.icons.icEye.svg()
-                                  : Assets.icons.icEyeOff.svg(),
-                            ),
-                          ),
-                          onChanged: (value) {
-                            _resetPasswordBloc.add(
-                              NewPasswordChangedEvent(newPassword: value),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        AppTextField(
-                          errorText: state.errorMessage,
-                          obscureText: state.isObscureConfirmPassword,
-                          keyboardType: TextInputType.none,
-                          textInputAction: TextInputAction.done,
-                          hintText: "Confirm New Password",
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              _resetPasswordBloc.add(
-                                ToggleObscureConfirmPasswordEvent(),
-                              );
-                            },
-                            child: SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: state.isObscureConfirmPassword
-                                  ? Assets.icons.icEye.svg()
-                                  : Assets.icons.icEyeOff.svg(),
-                            ),
-                          ),
-                          onChanged: (value) {
-                            _resetPasswordBloc.add(
-                              ConfirmPasswordChangedEvent(
-                                confirmPassword: value,
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 40),
-                        AppButton.primary(
-                          backgroundColor:
-                              AppColors.surfaceContainerPrimaryPrimaryDefault,
-                          onPressed: () {
-                            _resetPasswordBloc.add(VerifyPasswordsEvent());
-                          },
-                          child: Text(
-                            'Send code',
-                            style: TextStyle(
-                              color: AppColors.textDefaultTextInvertedDisabled,
-                              fontSize: 16,
-                              fontFamily: FontFamily.segoeUI,
-                              fontWeight: FontWeight.w700,
-                              height: 1.50,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
