@@ -88,4 +88,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw ExceptionConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> sendOtpCode(String email) {
+    try {
+      // Simulate revoking tokens
+      return Future.value();
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
 }

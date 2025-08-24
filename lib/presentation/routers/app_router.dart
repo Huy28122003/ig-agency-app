@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 
 import '../../di/di.dart';
+import '../views/pages/authentication/forgot_password/forgot_password_page.dart';
 import '../views/pages/authentication/login/login_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/nav/nav_page.dart';
@@ -20,6 +21,7 @@ class AppRouter extends RootStackRouter {
   List<AutoRoute> get routes => [
     AutoRoute(page: LoginRoute.page),
     AutoRoute(page: RegistrationRoute.page),
+    AutoRoute(page: ForgotPasswordRoute.page),
     AutoRoute(
       guards: [getIt<AuthGuard>()],
       page: NavRoute.page,
