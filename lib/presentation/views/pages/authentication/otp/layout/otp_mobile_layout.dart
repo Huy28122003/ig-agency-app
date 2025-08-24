@@ -143,7 +143,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                   onChange: (value) {},
                   cursorColor: AppColors.outlinePrimaryDefault,
                   fieldWidth: (width - 80) / 6 - 4 * 5,
-                  fieldHeight:  (width - 80) / 6 - 4 * 5,
+                  fieldHeight: (width - 80) / 6 - 4 * 5,
                   otpPinFieldDecoration:
                       OtpPinFieldDecoration.defaultPinBoxDecoration,
                   otpPinFieldStyle: OtpPinFieldStyle(
@@ -154,6 +154,9 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                     defaultFieldBorderColor: Colors.transparent,
                     activeFieldBorderColor: AppColors.outlinePrimaryDefault,
                     activeFieldBackgroundColor:
+                        AppColors.surfaceContainerPrimaryPrimaryLight,
+                    filledFieldBorderColor: AppColors.outlinePrimaryDefault,
+                    filledFieldBackgroundColor:
                         AppColors.surfaceContainerPrimaryPrimaryLight,
                   ),
                   maxLength: 6,
