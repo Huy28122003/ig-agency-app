@@ -121,7 +121,7 @@ class _ForgotPasswordTabletLayoutState
                               }
 
                               _forgotPasswordBloc.add(SendOtpEvent());
-                              context.router.push(OtpRoute());
+                              context.router.push(OtpRoute(email:  state.email));
                             },
                             child: Text(
                               'Send code',

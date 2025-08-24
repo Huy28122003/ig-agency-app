@@ -11,7 +11,8 @@ import '../../../../../routers/app_router.dart';
 import '../../../../widgets/app_button.dart';
 
 class OtpTabletLayout extends StatefulWidget {
-  const OtpTabletLayout({super.key});
+  final String email;
+  const OtpTabletLayout({super.key, required this.email});
 
   @override
   State<OtpTabletLayout> createState() => _OtpTabletLayoutState();

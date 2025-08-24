@@ -11,7 +11,8 @@ import '../../../../../resources/colors.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 
 class OtpMobileLayout extends StatefulWidget {
-  const OtpMobileLayout({super.key});
+  final String email;
+  const OtpMobileLayout({super.key, required this.email});
 
   @override
   State<OtpMobileLayout> createState() => _OtpMobileLayoutState();
