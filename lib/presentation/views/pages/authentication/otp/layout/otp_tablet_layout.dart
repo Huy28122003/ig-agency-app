@@ -19,11 +19,13 @@ class OtpTabletLayout extends StatefulWidget {
 
 class _OtpTabletLayoutState extends State<OtpTabletLayout> {
   late final OtpBloc _otpBloc;
+  late final GlobalKey<OtpPinFieldState> _otpKey;
 
   @override
   void initState() {
     super.initState();
     _otpBloc = context.read<OtpBloc>();
+    _otpKey = GlobalKey<OtpPinFieldState>();
   }
 
   @override
@@ -56,6 +58,7 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                   // Navigate to next page
                 } else if (state.otpStatus == OtpStatus.invalid) {
                   // Show error message
+                  _otpKey.currentState?.clearOtp();
                 }
                 _otpBloc.add(ResetOtpStatusEvent());
               },
@@ -106,6 +109,10 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                             activeFieldBorderColor:
                                 AppColors.outlinePrimaryDefault,
                             activeFieldBackgroundColor:
+                                AppColors.surfaceContainerPrimaryPrimaryLight,
+                            filledFieldBorderColor:
+                                AppColors.outlinePrimaryDefault,
+                            filledFieldBackgroundColor:
                                 AppColors.surfaceContainerPrimaryPrimaryLight,
                           ),
                           maxLength: 6,
