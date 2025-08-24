@@ -79,7 +79,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // Simulate register process
       return _authRemoteDataSource.sendOtpCode(email);
     } catch (e) {
-      throw FailureConverter.convert(e);
+      return Result.failure(FailureConverter.convert(e));
     }
   }
 
@@ -89,7 +89,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // Simulate register process
       return _authRemoteDataSource.sendNewPassword(email, newPassword);
     } catch (e) {
-      throw FailureConverter.convert(e);
+      return Result.failure(FailureConverter.convert(e));
     }
   }
 }
