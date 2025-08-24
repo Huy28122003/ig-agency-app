@@ -94,4 +94,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Result.failure(FailureConverter.convert(e));
     }
   }
+
+  @override
+  Future<bool> sendNewPassword(String email, String newPassword) {
+    try {
+      // Simulate register process
+      return _authRemoteDataSource.sendNewPassword(email, newPassword);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }

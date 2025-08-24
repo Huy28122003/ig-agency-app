@@ -8,8 +8,9 @@ import 'package:ig_agency_app/presentation/views/pages/authentication/otp/layout
 
 @RoutePage()
 class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
+  final String email;
 
-  OtpPage({super.key,});
+  OtpPage({super.key, required this.email});
 
   @override
   void onInitState(BuildContext context) {
@@ -19,11 +20,11 @@ class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
 
   @override
   Widget mobileBuilder(BuildContext context) {
-    return OtpMobileLayout();
+    return OtpMobileLayout(email: email);
   }
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return OtpTabletLayout();
+    return OtpTabletLayout(email: email);
   }
 }

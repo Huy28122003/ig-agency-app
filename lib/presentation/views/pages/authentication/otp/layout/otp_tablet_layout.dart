@@ -7,10 +7,12 @@ import 'package:otp_pin_field/otp_pin_field.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../../routers/app_router.dart';
 import '../../../../widgets/app_button.dart';
 
 class OtpTabletLayout extends StatefulWidget {
-  const OtpTabletLayout({super.key});
+  final String email;
+  const OtpTabletLayout({super.key, required this.email});
 
   @override
   State<OtpTabletLayout> createState() => _OtpTabletLayoutState();
@@ -53,9 +55,9 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
             child: BlocListener<OtpBloc, OtpState>(
               listenWhen: (prev, curr) => prev.otpStatus != curr.otpStatus,
               listener: (context, state) {
-                if (state.otpStatus == OtpStatus.valid) {
-                  // Navigate to next page
-                } else if (state.otpStatus == OtpStatus.invalid) {
+                if (state.otpStatus == VerifyStatus.valid) {
+                  context.router.push(ResetPasswordRoute(email: widget.email));
+                } else if (state.otpStatus == VerifyStatus.invalid) {
                   // Show error message
                   _otpKey.currentState?.clearOtp();
                 }

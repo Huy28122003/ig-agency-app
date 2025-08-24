@@ -32,7 +32,21 @@ class ForgotPasswordBloc
     });
 
     handleSubEvent<SendOtpEvent>((event, emit) async {
-      await sendOtpCodeUseCase.call(state.email);
+      final result = await sendOtpCodeUseCase.call(state.email);
+      if (result.success) {
+        emit(state.copyWith(isSendMailSuccess: true));
+      } else {
+        emit(
+          state.copyWith(
+            isSendMailSuccess: false,
+            pageErrorMessage: "Something went wrong, please try again.",
+          ),
+        );
+      }
+    });
+
+    handleSubEvent<ResetSendMailEvent>((event, emit) async {
+      emit(state.copyWith(isSendMailSuccess: false));
     });
   }
 
