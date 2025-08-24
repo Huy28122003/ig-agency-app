@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../resources/colors.dart';
+
 enum AppButtonType { primary, outline, sub, small, icon, text, medium }
 
 class AppButton extends StatelessWidget {
@@ -124,14 +126,26 @@ class AppButton extends StatelessWidget {
       case AppButtonType.primary:
         return FilledButton(
           onPressed: onPressed,
-          style: FilledButton.styleFrom(
-            minimumSize: minimumSize,
-            maximumSize: maximumSize,
-            backgroundColor: backgroundColor,
-            foregroundColor: foregroundColor,
-            textStyle: textStyle,
-            shape: shape,
-            fixedSize: fixedSize,
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+              if (states.contains(WidgetState.disabled)) {
+                return AppColors.surfaceContainerPrimaryPrimaryDisabled;
+              }
+              return backgroundColor ??
+                  AppColors.surfaceContainerPrimaryPrimaryDefault;
+            }),
+
+            foregroundColor: WidgetStatePropertyAll(foregroundColor),
+            textStyle: WidgetStatePropertyAll(textStyle),
+            minimumSize: WidgetStatePropertyAll(minimumSize),
+            maximumSize: WidgetStatePropertyAll(maximumSize),
+            fixedSize: WidgetStatePropertyAll(fixedSize),
+            shape: WidgetStatePropertyAll(
+              shape ??
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+            ),
           ),
           child: child,
         );
@@ -203,7 +217,7 @@ class _AppPrimaryButton extends AppButton {
     super.shape,
   }) : super(
          type: AppButtonType.primary,
-         minimumSize: minimumSize ?? const Size(double.infinity, 36),
+         minimumSize: minimumSize ?? const Size(double.infinity, 48),
        );
 }
 
@@ -236,7 +250,7 @@ class _AppSmallButton extends AppButton {
     Size? minimumSize,
     super.shape,
   }) : super(
-         type: AppButtonType.primary,
+         type: AppButtonType.small,
          minimumSize: minimumSize ?? const Size(48, 32),
        );
 }
@@ -273,7 +287,7 @@ class _AppTextButton extends AppButton {
   const _AppTextButton({
     required super.onPressed,
     required super.child,
-    super.minimumSize,
+    Size? minimumSize,
     super.maximumSize,
     super.fixedSize,
     super.backgroundColor,
@@ -282,7 +296,10 @@ class _AppTextButton extends AppButton {
     super.shape,
     super.showUnderline,
     super.underLineColor,
-  }) : super(type: AppButtonType.text);
+  }) : super(
+         type: AppButtonType.text,
+         minimumSize: minimumSize ?? const Size(double.infinity, 48),
+       );
 }
 
 class _AppMediumButton extends AppButton {

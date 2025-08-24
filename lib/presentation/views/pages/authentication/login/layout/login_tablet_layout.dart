@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../routers/app_router.dart';
+import '../../../../../views/widgets/authentication_tablet_layout.dart';
 import '../login_bloc.dart';
+import '../widgets/login_footer.dart';
+import '../widgets/login_tablet_form.dart';
 
 class LoginTabletLayout extends StatefulWidget {
   const LoginTabletLayout({super.key});
@@ -22,16 +25,10 @@ class _LoginTabletLayoutState extends State<LoginTabletLayout> {
           context.router.replaceAll([NavRoute()]);
         }
       },
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Login')),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              context.read<LoginBloc>().add(SubmitLoginEvent());
-            },
-            child: const Text('Login'),
-          ),
-        ),
+      child: AuthenticationTabletLayout(
+        title: 'Login',
+        form: LoginTabletForm(),
+        footer: LoginFooter(),
       ),
     );
   }
