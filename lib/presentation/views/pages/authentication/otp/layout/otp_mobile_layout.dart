@@ -104,6 +104,8 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
   }
 
   Widget _buildPanel() {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: ShapeDecoration(
@@ -140,8 +142,8 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                   },
                   onChange: (value) {},
                   cursorColor: AppColors.outlinePrimaryDefault,
-                  fieldWidth: 40,
-                  fieldHeight: 40,
+                  fieldWidth: (width - 80) / 6 - 4 * 5,
+                  fieldHeight:  (width - 80) / 6 - 4 * 5,
                   otpPinFieldDecoration:
                       OtpPinFieldDecoration.defaultPinBoxDecoration,
                   otpPinFieldStyle: OtpPinFieldStyle(
