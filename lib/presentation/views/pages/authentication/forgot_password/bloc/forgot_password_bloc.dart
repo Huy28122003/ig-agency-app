@@ -32,19 +32,7 @@ class ForgotPasswordBloc
     });
 
     handleSubEvent<SendOtpEvent>((event, emit) async {
-      // Otp gui cho nguoi dung qua email
-      // Otp tu server tra ve de so sanh voi otp nguoi dung nhap
-      final result = await sendOtpCodeUseCase.call(state.email);
-
-      if (result.success) {
-        emit(state.copyWith(otp: result.data ?? ""));
-      } else {
-        // Show loi call api otp
-      }
-    });
-
-    handleSubEvent<ResetOtpEvent>((event, emit) async {
-      emit(state.copyWith(otp: ""));
+      await sendOtpCodeUseCase.call(state.email);
     });
   }
 

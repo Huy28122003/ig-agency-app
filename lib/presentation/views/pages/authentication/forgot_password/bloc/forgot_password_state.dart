@@ -7,12 +7,10 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
     super.processing = false,
     this.email = "",
     this.errorMessage,
-    this.otp = "",
   });
 
   final String email;
   final String? errorMessage;
-  final String otp;
 
   bool get isEnableSendCode => email.isNotEmpty && errorMessage == null;
 
@@ -23,7 +21,6 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
     bool? processing,
     String? email,
     String? errorMessage,
-    String? otp,
   }) {
     return ForgotPasswordState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -31,10 +28,9 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
       processing: processing ?? this.processing,
       email: email ?? this.email,
       errorMessage: errorMessage,
-      otp: otp ?? this.otp,
     );
   }
 
   @override
-  List<Object?> get props => [...super.props, email, errorMessage, otp];
+  List<Object?> get props => [...super.props, email, errorMessage, ];
 }

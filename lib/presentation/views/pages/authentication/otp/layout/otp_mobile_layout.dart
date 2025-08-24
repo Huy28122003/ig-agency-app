@@ -11,10 +11,7 @@ import '../../../../../resources/colors.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 
 class OtpMobileLayout extends StatefulWidget {
-  final String otp;
-  final String email;
-
-  const OtpMobileLayout({super.key, required this.otp, required this.email});
+  const OtpMobileLayout({super.key});
 
   @override
   State<OtpMobileLayout> createState() => _OtpMobileLayoutState();
@@ -46,7 +43,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
             ],
           ),
         ),
-        child: BlocConsumer<OtpBloc, OtpState>(
+        child: BlocListener<OtpBloc, OtpState>(
           listenWhen: (prev, curr) => prev.otpStatus != curr.otpStatus,
           listener: (context, state) {
             if (state.otpStatus == VerifyStatus.valid) {
@@ -58,15 +55,13 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
             }
             _otpBloc.add(ResetOtpStatusEvent());
           },
-          builder: (context, state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                Expanded(child: _buildPanel()),
-              ],
-            );
-          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildPanel()),
+            ],
+          ),
         ),
       ),
     );
@@ -140,12 +135,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                 OtpPinField(
                   key: _otpKey,
                   onSubmit: (value) {
-                    _otpBloc.add(
-                      VerifyOtpEvent(
-                        otpFromServer: widget.otp,
-                        otpFromUser: value,
-                      ),
-                    );
+                    _otpBloc.add(VerifyOtpEvent(otpFromUser: value));
                   },
                   onChange: (value) {},
                   cursorColor: AppColors.outlinePrimaryDefault,
@@ -154,6 +144,11 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                   otpPinFieldDecoration:
                       OtpPinFieldDecoration.defaultPinBoxDecoration,
                   otpPinFieldStyle: OtpPinFieldStyle(
+                    textStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.outlinePrimaryDefault,
+                      fontSize: 24,
+                    ),
                     fieldBorderRadius: 8.8,
                     fieldBorderWidth: 1.1,
                     defaultFieldBackgroundColor:

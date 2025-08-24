@@ -33,27 +33,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> login(String email, String password) {
+  Future<void> login(String email, String password) async{
     try {
       final loginRequestModel = LoginRequestModel(
         email: email,
         password: password,
       );
-      return _apiService.login(loginRequestModel);
+      // return _apiService.login(loginRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
   }
 
   @override
-  Future<void> register(String name, String email, String password) {
+  Future<void> register(String name, String email, String password) async {
     try {
       final registerRequestModel = RegistrationRequestModel(
         name: name,
         email: email,
         password: password,
       );
-      return _apiService.register(registerRequestModel);
+      // return _apiService.register(registerRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -90,10 +90,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<String> sendOtpCode(String email) {
+  Future<void> sendOtpCode(String email) {
     try {
       // Simulate revoking tokens
-      return Future.value("123456");
+      return Future.value('123456');
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<bool> verifyOtpCode(String code) {
+    try {
+      // Simulate revoking tokens
+      return Future.value(true);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
