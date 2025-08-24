@@ -1,6 +1,8 @@
 abstract class AuthRemoteDataSource {
   Future<void> login(String email, String password);
 
+  Future<void> register(String name, String email, String password);
+
   Future<void> logout();
 
   Future<void> refreshToken();
@@ -10,4 +12,8 @@ abstract class AuthRemoteDataSource {
   Future<String?> getAccessToken();
 
   Future<String?> getRefreshToken();
+
+  Future<void> sendOtpCode(String email);
+
+  Future<bool> verifyOtpCode(String code);
 }

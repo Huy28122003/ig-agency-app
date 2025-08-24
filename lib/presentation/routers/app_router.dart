@@ -1,9 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../di/di.dart';
+import '../views/pages/authentication/forgot_password/forgot_password_page.dart';
 import '../views/pages/authentication/login/login_page.dart';
+import '../views/pages/authentication/otp/otp_page.dart';
 import '../views/pages/chat_info/chat_info_page.dart';
 import '../views/pages/empty_page.dart';
+import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
 import '../views/pages/search/search_page.dart';
@@ -23,10 +27,10 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    CustomRoute(
-      page: LoginRoute.page,
-      transitionsBuilder: TransitionsBuilders.noTransition,
-    ),
+    AutoRoute(page: LoginRoute.page),
+    AutoRoute(page: RegistrationRoute.page),
+    AutoRoute(page: ForgotPasswordRoute.page),
+    AutoRoute(page: OtpRoute.page),
     AutoRoute(
       guards: [getIt<AuthGuard>()],
       page: NavRoute.page,

@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/login/login_bloc.dart';
 
 import '../../../../../routers/app_router.dart';
+import '../../../../../views/widgets/authentication_mobile_layout.dart';
+import '../widgets/login_footer.dart';
+import '../widgets/login_mobile_form.dart';
+import '../widgets/login_mobile_header.dart';
 
 class LoginMobileLayout extends StatefulWidget {
   const LoginMobileLayout({super.key});
@@ -13,7 +17,6 @@ class LoginMobileLayout extends StatefulWidget {
 }
 
 class _LoginMobileLayoutState extends State<LoginMobileLayout> {
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
@@ -23,16 +26,10 @@ class _LoginMobileLayoutState extends State<LoginMobileLayout> {
           context.router.replaceAll([NavRoute()]);
         }
       },
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Login')),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              context.read<LoginBloc>().add(SubmitLoginEvent());
-            },
-            child: const Text('Login'),
-          ),
-        ),
+      child: AuthenticationMobileLayout(
+        header: LoginMobileHeader(),
+        form: LoginMobileForm(),
+        footer: LoginFooter(),
       ),
     );
   }
