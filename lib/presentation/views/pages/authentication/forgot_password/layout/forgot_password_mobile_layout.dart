@@ -104,7 +104,15 @@ class _ForgotPasswordMobileLayoutState
         child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, top: 80),
           child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
-            listener: (context, state) {},
+            listener: (context, state) {
+              if (state.isSendMailSuccess) {
+                final email = state.email;
+                context.router.push(OtpRoute(email: email));
+                _forgotPasswordBloc.add(ResetSendMailEvent());
+              }
+            },
+            listenWhen: (previous, current) =>
+                previous.isSendMailSuccess != current.isSendMailSuccess,
             child: SingleChildScrollView(
               child: Column(
                 children: [
