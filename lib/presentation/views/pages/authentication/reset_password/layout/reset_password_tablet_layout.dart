@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/reset_password/bloc/reset_password_bloc.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
@@ -53,12 +55,15 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
             child: SizedBox.expand(
               child: BlocListener<ResetPasswordBloc, ResetPasswordState>(
                 listenWhen: (prev, curr) =>
-                    prev.verifyStatus != curr.verifyStatus,
+                    prev.verifyStatus != curr.verifyStatus ||
+                    prev.isResetSuccess != curr.isResetSuccess,
                 listener: (context, state) {
                   if (state.verifyStatus == VerifyStatus.valid) {
                     _resetPasswordBloc.add(
                       SendNewPasswordEvent(email: widget.email),
                     );
+                  } else if (state.isResetSuccess) {
+                    context.router.replaceAll([LoginRoute()]);
                   }
                 },
                 child: SingleChildScrollView(
@@ -165,7 +170,7 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                           _resetPasswordBloc.add(VerifyPasswordsEvent());
                         },
                         child: Text(
-                          'Send code',
+                          'Reset Password',
                           style: TextStyle(
                             color: AppColors.textDefaultTextInvertedDisabled,
                             fontSize: 16,

@@ -50,9 +50,11 @@ class ResetPasswordBloc
     handleSubEvent<NewPasswordChangedEvent>((event, emit) async {
       emit(state.copyWith(newPassword: event.newPassword));
     });
+
     handleSubEvent<ConfirmPasswordChangedEvent>((event, emit) async {
       emit(state.copyWith(confirmPassword: event.confirmPassword));
     });
+
     handleSubEvent<SendNewPasswordEvent>((event, emit) async {
       emit(state.copyWith(processing: true));
       final result = await sendNewPasswordUseCase.call(
@@ -63,13 +65,13 @@ class ResetPasswordBloc
       );
       await Future.delayed(const Duration(seconds: 1));
 
-      // Doi pass thanh cong
       final isSuccess = result.success && (result.data ?? false);
 
       emit(
         state.copyWith(
           processing: false,
           verifyStatus: VerifyStatus.initial,
+          isResetSuccess: isSuccess,
         ),
       );
     });

@@ -8,6 +8,7 @@ import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../../routers/app_router.dart';
 
 class ResetPasswordMobileLayout extends StatefulWidget {
   const ResetPasswordMobileLayout({super.key, required this.email});
@@ -105,13 +106,16 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
         child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, top: 80),
           child: BlocListener<ResetPasswordBloc, ResetPasswordState>(
-            listenWhen: (previous, current) =>
-                previous.verifyStatus != current.verifyStatus,
+            listenWhen: (prev, curr) =>
+            prev.verifyStatus != curr.verifyStatus ||
+                prev.isResetSuccess != curr.isResetSuccess,
             listener: (context, state) {
               if (state.verifyStatus == VerifyStatus.valid) {
                 _resetPasswordBloc.add(
                   SendNewPasswordEvent(email: widget.email),
                 );
+              } else if (state.isResetSuccess) {
+                context.router.replaceAll([LoginRoute()]);
               }
             },
             child: SingleChildScrollView(
@@ -187,7 +191,7 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                       _resetPasswordBloc.add(VerifyPasswordsEvent());
                     },
                     child: Text(
-                      'Send code',
+                      'Reset Password',
                       style: TextStyle(
                         color: AppColors.textDefaultTextInvertedDisabled,
                         fontSize: 16,
