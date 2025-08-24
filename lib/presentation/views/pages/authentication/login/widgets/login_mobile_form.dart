@@ -8,18 +8,8 @@ import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../login_bloc.dart';
 
-class LoginForm extends StatelessWidget {
-  const LoginForm({
-    super.key,
-    required this.emailFocusNode,
-    required this.passwordFocusNode,
-    this.padding,
-  });
-
-  final FocusNode emailFocusNode;
-  final FocusNode passwordFocusNode;
-
-  final EdgeInsetsGeometry? padding;
+class LoginMobileForm extends StatelessWidget {
+  const LoginMobileForm({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,68 +31,40 @@ class LoginForm extends StatelessWidget {
 
                   return AppTextField(
                     initialValue: email,
-                    focusNode: emailFocusNode,
                     errorText: errorEmailMessage,
                     hintText: 'Email',
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    onChanged: (value) =>
-                        loginBloc.add(EmailChangedEvent(value)),
-                    onFieldSubmitted: (_) {
-                      emailFocusNode.unfocus();
-                      passwordFocusNode.requestFocus();
+                    onChanged: (value) {
+                      loginBloc.add(EmailChangedEvent(value));
                     },
                   );
                 },
               ),
               const SizedBox(height: 20),
-              BlocSelector<
-                LoginBloc,
-                LoginState,
-                (String, String?, bool, bool)
-              >(
-                selector: (state) {
-                  return (
-                    state.password,
-                    state.errorPasswordMessage,
-                    state.isObscurePassword,
-                    state.isFormValid,
-                  );
-                },
+              BlocBuilder<LoginBloc, LoginState>(
                 builder: (context, state) {
-                  final (
-                    password,
-                    errorPasswordMessage,
-                    isObscurePassword,
-                    isFormValid,
-                  ) = state;
-
                   return AppTextField(
-                    initialValue: password,
-                    focusNode: passwordFocusNode,
-                    obscureText: isObscurePassword,
+                    initialValue: state.password,
+                    obscureText: state.isObscurePassword,
                     hintText: 'Password',
-                    errorText: errorPasswordMessage,
+                    errorText: state.errorPasswordMessage,
                     textInputAction: TextInputAction.done,
                     onChanged: (value) {
                       loginBloc.add(PasswordChangedEvent(value));
-                      if (value.isEmpty) {
-                        emailFocusNode.requestFocus();
-                      }
                     },
                     onEditingComplete: () {
-                      if (isFormValid) {
+                      if (state.isFormValid) {
                         loginBloc.add(SubmitLoginEvent());
                       }
                     },
-
                     suffixIcon: GestureDetector(
                       onTap: () =>
                           loginBloc.add(TogglePasswordVisibilityEvent()),
                       child: SizedBox(
                         height: 20,
                         width: 20,
-                        child: isObscurePassword
+                        child: state.isObscurePassword
                             ? Assets.icons.icEye.svg()
                             : Assets.icons.icEyeOff.svg(),
                       ),
@@ -120,10 +82,7 @@ class LoginForm extends StatelessWidget {
             return AppButton.primary(
               onPressed: isFormValid
                   ? () => loginBloc.add(SubmitLoginEvent())
-                  : () {},
-              backgroundColor: isFormValid
-                  ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                  : AppColors.surfaceContainerPrimaryPrimaryDisabled,
+                  : null,
               child: Text(
                 'Login',
                 style: TextStyle(
@@ -137,9 +96,8 @@ class LoginForm extends StatelessWidget {
             );
           },
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         AppButton.text(
-          minimumSize: Size(double.infinity, 48),
           onPressed: () {
             // TODO hoannk: Route to ForgotPasswordPage
           },
