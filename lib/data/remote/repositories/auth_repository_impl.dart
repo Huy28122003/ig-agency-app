@@ -2,6 +2,7 @@ import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../shared/commons/result.dart';
 import '../app/auth_remote_data_source.dart';
 
 @Injectable(as: AuthRepository)
@@ -31,12 +32,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future login(String email, String password) {
+  Future<Result> login(String email, String password) async {
     try {
       // Simulate login process
-      return _authRemoteDataSource.login(email, password);
+      await _authRemoteDataSource.login(email, password);
+      return Result.completed(null);
     } catch (e) {
-      throw FailureConverter.convert(e);
+      return Result.failure(FailureConverter.convert(e));
     }
   }
 
@@ -61,17 +63,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future register(
-    String name,
-    String email,
-    String password,
-    String confirmPassword,
-  ) {
+  Future<Result> register(String name, String email, String password) async {
     try {
       // Simulate register process
-      return _authRemoteDataSource.register(name, email, password);
+      await _authRemoteDataSource.register(name, email, password);
+      return Result.completed(null);
     } catch (e) {
-      throw FailureConverter.convert(e);
+      return Result.failure(FailureConverter.convert(e));
     }
   }
 

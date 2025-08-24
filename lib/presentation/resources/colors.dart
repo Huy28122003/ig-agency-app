@@ -13,6 +13,7 @@ abstract class AppColors {
     alpha: 0.88,
   );
   static const Color textDefaultTextDefault = Color(0xFF1D2838);
+  static const Color textDefaultTextInverted = Colors.white;
 
   /// Outline
   static const Color outlineGrayStrong200 = Color(0xFFE5E7EB);

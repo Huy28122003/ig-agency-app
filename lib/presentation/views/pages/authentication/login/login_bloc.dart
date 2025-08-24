@@ -41,23 +41,27 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     handleSubEvent<SubmitLoginEvent>(_onSubmitLogin);
   }
 
-  Future<void> _onSubmitLogin(
-    SubmitLoginEvent event,
-    Emitter<LoginState> emit,
-  ) async {
+  void _resetErrorMessages(Emitter<LoginState> emit) {
     emit(
       state.copyWith(
-        processing: true,
         errorEmailMessage: null,
         errorPasswordMessage: null,
         forceResetErrorMessages: true,
       ),
     );
+  }
 
-    await _loginUseCase(
+  Future<void> _onSubmitLogin(
+    SubmitLoginEvent event,
+    Emitter<LoginState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+    _resetErrorMessages(emit);
+
+    final result = await _loginUseCase(
       LoginParam(email: state.email, password: state.password),
     );
 
-    emit(state.copyWith(processing: false, isSuccess: true));
+    emit(state.copyWith(processing: false, isSuccess: result.success));
   }
 }
