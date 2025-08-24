@@ -52,14 +52,7 @@ class _ForgotPasswordTabletLayoutState
             constraints: const BoxConstraints(maxHeight: 800, maxWidth: 480),
             child: SizedBox.expand(
               child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
-                listenWhen: (prev,curr) => prev.otp != curr.otp,
-                listener: (context, state) {
-                  if (state.otp.isNotEmpty) {
-                    context.router.push(OtpRoute(otp: state.otp));
-                    _forgotPasswordBloc.add(ResetOtpEvent());
-
-                  }
-                },
+                listener: (context, state) {},
                 builder: (context, state) {
                   return SingleChildScrollView(
                     padding: const EdgeInsets.only(
@@ -102,8 +95,11 @@ class _ForgotPasswordTabletLayoutState
                               : AppColors
                                     .surfaceContainerPrimaryPrimaryDisabled,
                           onPressed: () {
-                            if (state.errorMessage != null || state.email.isEmpty) return;
+                            if (state.errorMessage != null ||
+                                state.email.isEmpty)
+                              return;
                             _forgotPasswordBloc.add(SendOtpEvent());
+                            context.router.push(OtpRoute());
                           },
                           child: Text(
                             'Send code',

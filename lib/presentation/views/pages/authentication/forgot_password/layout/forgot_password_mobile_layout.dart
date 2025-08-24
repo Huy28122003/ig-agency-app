@@ -105,10 +105,6 @@ class _ForgotPasswordMobileLayoutState
           padding: EdgeInsets.only(left: 40, right: 40, top: 80),
           child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
             listener: (context, state) {
-              if (state.otp.isNotEmpty) {
-                context.router.push(OtpRoute(otp: state.otp));
-                _forgotPasswordBloc.add(ResetOtpEvent());
-              }
             },
             builder: (context, state) {
               return SingleChildScrollView(
@@ -131,6 +127,8 @@ class _ForgotPasswordMobileLayoutState
                       onPressed: () {
                         if (state.errorMessage != null || state.email.isEmpty) return;
                         _forgotPasswordBloc.add(SendOtpEvent());
+                        context.router.push(OtpRoute());
+
                       },
                       child: Text(
                         'Send code',

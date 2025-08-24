@@ -10,9 +10,8 @@ import '../../../../../resources/colors.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 
 class OtpMobileLayout extends StatefulWidget {
-  final String otp;
 
-  const OtpMobileLayout({super.key, required this.otp});
+  const OtpMobileLayout({super.key,});
 
   @override
   State<OtpMobileLayout> createState() => _OtpMobileLayoutState();
@@ -140,7 +139,6 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                   onSubmit: (value) {
                     _otpBloc.add(
                       VerifyOtpEvent(
-                        otpFromServer: widget.otp,
                         otpFromUser: value,
                       ),
                     );

@@ -1,3 +1,4 @@
+import 'package:ig_agency_app/domain/usecases/verify_otp_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
@@ -9,16 +10,25 @@ part 'otp_state.dart';
 
 @injectable
 class OtpBloc extends BaseBloc<OtpEvent, OtpState> {
-  OtpBloc() : super(OtpState()) {
+  final VerifyOtpUseCase verifyOtpUseCase;
+
+  OtpBloc({required this.verifyOtpUseCase}) : super(OtpState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loaded));
     });
 
     handleSubEvent<VerifyOtpEvent>((event, emit) async {
-      if (event.otpFromServer == event.otpFromUser) {
-        emit(state.copyWith(otpStatus: OtpStatus.valid));
-      } else {
-        emit(state.copyWith(otpStatus: OtpStatus.invalid));
+      final result = await verifyOtpUseCase.call(event.otpFromUser);
+      if (result.success) {
+        emit(
+          state.copyWith(
+            otpStatus: result.data ?? false
+                ? OtpStatus.valid
+                : OtpStatus.invalid,
+          ),
+        );
+      }else{
+        // Loi call api
       }
     });
     handleSubEvent<ResetOtpStatusEvent>((event, emit) async {

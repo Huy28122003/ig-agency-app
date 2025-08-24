@@ -6,9 +6,8 @@ class LoadDataEvent extends OtpEvent {}
 
 class VerifyOtpEvent extends OtpEvent {
   final String otpFromUser;
-  final String otpFromServer;
 
-  VerifyOtpEvent({required this.otpFromUser, required this.otpFromServer});
+  VerifyOtpEvent({required this.otpFromUser});
 }
 
 class ResetOtpStatusEvent extends OtpEvent {}

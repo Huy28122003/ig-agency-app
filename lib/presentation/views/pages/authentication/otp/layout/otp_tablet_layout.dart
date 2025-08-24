@@ -9,9 +9,7 @@ import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_button.dart';
 
 class OtpTabletLayout extends StatefulWidget {
-  final String otp;
-
-  const OtpTabletLayout({super.key, required this.otp});
+  const OtpTabletLayout({super.key});
 
   @override
   State<OtpTabletLayout> createState() => _OtpTabletLayoutState();
@@ -89,12 +87,7 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                         const SizedBox(height: 20),
                         OtpPinField(
                           onSubmit: (value) {
-                            _otpBloc.add(
-                              VerifyOtpEvent(
-                                otpFromServer: widget.otp,
-                                otpFromUser: value,
-                              ),
-                            );
+                            _otpBloc.add(VerifyOtpEvent(otpFromUser: value));
                           },
                           onChange: (value) {},
                           cursorColor: AppColors.outlinePrimaryDefault,

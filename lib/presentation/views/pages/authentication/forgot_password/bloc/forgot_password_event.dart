@@ -12,4 +12,3 @@ class EmailChangeEvent extends ForgotPasswordEvent {
 
 class SendOtpEvent extends ForgotPasswordEvent {}
 
-class ResetOtpEvent extends ForgotPasswordEvent {}
