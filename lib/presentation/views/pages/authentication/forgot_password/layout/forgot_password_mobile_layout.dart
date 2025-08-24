@@ -106,7 +106,9 @@ class _ForgotPasswordMobileLayoutState
           child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
             listener: (context, state) {
               if (state.otp.isNotEmpty) {
-                context.router.push(OtpRoute(otp: state.otp));
+                context.router.push(
+                  OtpRoute(otp: state.otp, email: state.email),
+                );
                 _forgotPasswordBloc.add(ResetOtpEvent());
               }
             },
@@ -129,7 +131,8 @@ class _ForgotPasswordMobileLayoutState
                           ? AppColors.surfaceContainerPrimaryPrimaryDefault
                           : AppColors.surfaceContainerPrimaryPrimaryDisabled,
                       onPressed: () {
-                        if (state.errorMessage != null || state.email.isEmpty) return;
+                        if (state.errorMessage != null || state.email.isEmpty)
+                          return;
                         _forgotPasswordBloc.add(SendOtpEvent());
                       },
                       child: Text(

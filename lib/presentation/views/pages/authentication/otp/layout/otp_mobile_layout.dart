@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/otp/bloc/otp_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import '../../../../../../gen/assets.gen.dart';
@@ -11,8 +12,9 @@ import 'package:otp_pin_field/otp_pin_field.dart';
 
 class OtpMobileLayout extends StatefulWidget {
   final String otp;
+  final String email;
 
-  const OtpMobileLayout({super.key, required this.otp});
+  const OtpMobileLayout({super.key, required this.otp, required this.email});
 
   @override
   State<OtpMobileLayout> createState() => _OtpMobileLayoutState();
@@ -47,9 +49,9 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
         child: BlocConsumer<OtpBloc, OtpState>(
           listenWhen: (prev, curr) => prev.otpStatus != curr.otpStatus,
           listener: (context, state) {
-            if (state.otpStatus == OtpStatus.valid) {
-              // Navigate to next page
-            } else if (state.otpStatus == OtpStatus.invalid) {
+            if (state.otpStatus == VerifyStatus.valid) {
+              context.router.push(ResetPasswordRoute(email: widget.email));
+            } else if (state.otpStatus == VerifyStatus.invalid) {
               _otpKey.currentState?.clearOtp();
 
               // Show error message
@@ -171,7 +173,11 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                   backgroundColor:
                       AppColors.surfaceContainerPrimaryPrimaryDefault,
 
-                  onPressed: () {},
+                  onPressed: () {
+                    context.router.push(
+                      ResetPasswordRoute(email: widget.email),
+                    );
+                  },
                   child: Text(
                     'Continue',
                     style: TextStyle(

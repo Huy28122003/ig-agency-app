@@ -55,7 +55,7 @@ class _ForgotPasswordTabletLayoutState
                 listenWhen: (prev,curr) => prev.otp != curr.otp,
                 listener: (context, state) {
                   if (state.otp.isNotEmpty) {
-                    context.router.push(OtpRoute(otp: state.otp));
+                    context.router.push(OtpRoute(otp: state.otp,email: state.email));
                     _forgotPasswordBloc.add(ResetOtpEvent());
 
                   }

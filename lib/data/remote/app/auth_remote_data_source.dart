@@ -14,4 +14,6 @@ abstract class AuthRemoteDataSource {
   Future<String?> getRefreshToken();
 
   Future<String> sendOtpCode(String email);
+
+  Future<bool> sendNewPassword(String email, String newPassword);
 }

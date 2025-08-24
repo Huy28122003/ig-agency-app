@@ -55,4 +55,4 @@ extension PagingStatusExtension on PagingStatus {
   bool get isNoMoreData => this == PagingStatus.noMoreData;
 }
 
-enum OtpStatus { initial,valid,invalid }
+enum VerifyStatus { initial,valid,invalid }

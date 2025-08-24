@@ -84,4 +84,14 @@ class AuthRepositoryImpl implements AuthRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<bool> sendNewPassword(String email, String newPassword) {
+    try {
+      // Simulate register process
+      return _authRemoteDataSource.sendNewPassword(email, newPassword);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }

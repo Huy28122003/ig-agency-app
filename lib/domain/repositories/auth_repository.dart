@@ -17,4 +17,6 @@ abstract class AuthRepository {
   Future<void> clearToken();
 
   Future<String> sendOtpCode(String email);
+
+  Future<bool> sendNewPassword(String email, String newPassword);
 }

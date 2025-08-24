@@ -16,13 +16,13 @@ class OtpBloc extends BaseBloc<OtpEvent, OtpState> {
 
     handleSubEvent<VerifyOtpEvent>((event, emit) async {
       if (event.otpFromServer == event.otpFromUser) {
-        emit(state.copyWith(otpStatus: OtpStatus.valid));
+        emit(state.copyWith(otpStatus: VerifyStatus.valid));
       } else {
-        emit(state.copyWith(otpStatus: OtpStatus.invalid));
+        emit(state.copyWith(otpStatus: VerifyStatus.invalid));
       }
     });
     handleSubEvent<ResetOtpStatusEvent>((event, emit) async {
-      emit(state.copyWith(otpStatus: OtpStatus.initial));
+      emit(state.copyWith(otpStatus: VerifyStatus.initial));
     });
   }
 }
