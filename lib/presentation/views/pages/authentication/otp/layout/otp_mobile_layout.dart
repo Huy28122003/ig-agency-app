@@ -20,11 +20,13 @@ class OtpMobileLayout extends StatefulWidget {
 
 class _OtpMobileLayoutState extends State<OtpMobileLayout> {
   late final OtpBloc _otpBloc;
+  late final GlobalKey<OtpPinFieldState> _otpKey;
 
   @override
   void initState() {
     super.initState();
     _otpBloc = context.read<OtpBloc>();
+    _otpKey = GlobalKey<OtpPinFieldState>();
   }
 
   @override
@@ -48,6 +50,8 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
             if (state.otpStatus == OtpStatus.valid) {
               // Navigate to next page
             } else if (state.otpStatus == OtpStatus.invalid) {
+              _otpKey.currentState?.clearOtp();
+
               // Show error message
             }
             _otpBloc.add(ResetOtpStatusEvent());
@@ -132,6 +136,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                 ),
                 SizedBox(height: 20),
                 OtpPinField(
+                  key: _otpKey,
                   onSubmit: (value) {
                     _otpBloc.add(
                       VerifyOtpEvent(
