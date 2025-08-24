@@ -14,6 +14,5 @@ class ChatInfoBloc extends BaseBloc<ChatInfoEvent, ChatInfoState> {
     handleSubEvent<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loaded));
     });
-
   }
 }

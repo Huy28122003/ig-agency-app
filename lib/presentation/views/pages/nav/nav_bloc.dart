@@ -11,9 +11,9 @@ part 'nav_state.dart';
 @injectable
 class NavBloc extends BaseBloc<NavEvent, NavState> {
   NavBloc() : super(NavState()) {
-    handleSubEvent<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loaded));
-    });
+    // handleSubEvent<LoadDataEvent>((event, emit) async {
+    //   emit(state.copyWith(pageStatus: PageStatus.loaded));
+    // });
     handleSubEvent<OnChangeTabEvent>((event, emit) async {
       emit(state.copyWith(currentIndex: event.index));
     });

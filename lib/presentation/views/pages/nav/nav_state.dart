@@ -2,7 +2,7 @@ part of 'nav_bloc.dart';
 
 class NavState extends BaseState<NavState> {
   const NavState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing,
     this.currentIndex = 0,

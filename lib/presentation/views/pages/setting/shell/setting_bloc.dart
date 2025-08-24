@@ -10,9 +10,5 @@ part 'setting_state.dart';
 
 @injectable
 class SettingBloc extends BaseBloc<SettingEvent, SettingState> {
-  SettingBloc() : super(SettingState()) {
-    handleSubEvent<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loaded));
-    });
-  }
+  SettingBloc() : super(SettingState());
 }
