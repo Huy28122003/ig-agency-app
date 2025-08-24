@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
 
@@ -99,7 +101,7 @@ class LoginTabletForm extends StatelessWidget {
         SizedBox(height: 16),
         AppButton.text(
           onPressed: () {
-            // TODO hoannk: Route to ForgotPasswordPage
+            context.router.push(ForgotPasswordRoute());
           },
           child: Text(
             'Forgot Password',
