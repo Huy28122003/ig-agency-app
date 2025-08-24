@@ -61,4 +61,15 @@ class AuthRepositoryImpl implements AuthRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<Result> register(String name, String email, String password) async {
+    try {
+      // Simulate register process
+      await _authRemoteDataSource.register(name, email, password);
+      return Result.completed(null);
+    } catch (e) {
+      return Result.failure(FailureConverter.convert(e));
+    }
+  }
 }
