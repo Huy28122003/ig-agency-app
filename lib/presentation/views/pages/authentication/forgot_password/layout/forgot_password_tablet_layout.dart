@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../../routers/app_router.dart';
 import '../../../../widgets/app_button.dart';
 import '../../../../widgets/app_text_field.dart';
 import '../bloc/forgot_password_bloc.dart';
@@ -49,63 +51,95 @@ class _ForgotPasswordTabletLayoutState
             ),
             constraints: const BoxConstraints(maxHeight: 800, maxWidth: 480),
             child: SizedBox.expand(
-              child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
-                builder: (context, state) {
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.only(
-                      top: 40,
-                      left: 40,
-                      right: 40,
-                      bottom: 20,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Assets.images.appLogo.image(height: 120, width: 120),
-                        const SizedBox(height: 40),
-                        Text(
-                          'Forget Password?',
-                          style: TextStyle(
-                            color: AppColors.textDefaultTextDefault,
-                            fontSize: 32,
-                            fontFamily: FontFamily.segoeUI,
-                            fontWeight: FontWeight.w700,
-                            height: 1.25,
-                          ),
+              child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
+                listener: (context, state) {},
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                    top: 40,
+                    left: 40,
+                    right: 40,
+                    bottom: 20,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Assets.images.appLogo.image(height: 120, width: 120),
+                      const SizedBox(height: 40),
+                      Text(
+                        'Forget Password?',
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextDefault,
+                          fontSize: 32,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.25,
                         ),
-                        const SizedBox(height: 20),
-                        AppTextField(
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          hintText: "Enter your email",
-                          onChanged: (value) {
-                            _forgotPasswordBloc.add(
-                              EmailChangeEvent(email: value),
-                            );
-                          },
-                          errorText: state.errorMessage,
-                        ),
-                        SizedBox(height: 40),
-                        AppButton.primary(
-                          backgroundColor: state.isEnableSendCode
-                              ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                              : AppColors.surfaceContainerPrimaryPrimaryDisabled,
-                          onPressed: () {},
-                          child: Text(
-                            'Send code',
-                            style: TextStyle(
-                              color: AppColors.textDefaultTextInvertedDisabled,
-                              fontSize: 16,
-                              fontFamily: FontFamily.segoeUI,
-                              fontWeight: FontWeight.w700,
-                              height: 1.50,
+                      ),
+                      const SizedBox(height: 20),
+                      BlocSelector<
+                        ForgotPasswordBloc,
+                        ForgotPasswordState,
+                        String?
+                      >(
+                        selector: (state) => state.errorMessage,
+                        builder: (context, errorMessage) {
+                          return AppTextField(
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            hintText: "Enter your email",
+                            onChanged: (value) {
+                              _forgotPasswordBloc.add(
+                                EmailChangeEvent(email: value),
+                              );
+                            },
+                            errorText: errorMessage,
+                          );
+                        },
+                      ),
+                      SizedBox(height: 40),
+                      BlocSelector<
+                        ForgotPasswordBloc,
+                        ForgotPasswordState,
+                        bool
+                      >(
+                        selector: (state) => state.isEnableSendCode,
+                        builder: (context, isEnableSendCode) {
+                          return AppButton.primary(
+                            backgroundColor: isEnableSendCode
+                                ? AppColors
+                                      .surfaceContainerPrimaryPrimaryDefault
+                                : AppColors
+                                      .surfaceContainerPrimaryPrimaryDisabled,
+                            onPressed: () {
+                              final state = context
+                                  .read<ForgotPasswordBloc>()
+                                  .state;
+
+                              if (state.errorMessage != null ||
+                                  state.email.isEmpty) {
+                                return;
+                              }
+
+                              _forgotPasswordBloc.add(SendOtpEvent());
+                              context.router.push(OtpRoute());
+                            },
+                            child: Text(
+                              'Send code',
+                              style: TextStyle(
+                                color:
+                                    AppColors.textDefaultTextInvertedDisabled,
+                                fontSize: 16,
+                                fontFamily: FontFamily.segoeUI,
+                                fontWeight: FontWeight.w700,
+                                height: 1.50,
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

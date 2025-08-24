@@ -55,6 +55,7 @@ dependencies:
   one_context: ^4.1.0
   flutter_svg: ^2.0.13
   flutter_native_splash: ^2.4.6
+  otp_pin_field: ^1.4.1
 
 dev_dependencies:
   flutter_test:

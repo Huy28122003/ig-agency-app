@@ -74,12 +74,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> sendOtpCode(String email) async {
+  Future<Result> sendOtpCode(String email) async {
     try {
       // Simulate register process
-      return _authRemoteDataSource.sendOtpCode(email);
+      await _authRemoteDataSource.sendOtpCode(email);
+      return Result.completed(null);
     } catch (e) {
-      throw FailureConverter.convert(e);
+      return Result.failure(FailureConverter.convert(e));
+    }
+  }
+
+  @override
+  Future<Result<bool>> verifyOtpCode(String code) async {
+    try {
+      // Simulate register process
+      final result = await _authRemoteDataSource.verifyOtpCode(code);
+      return Result.completed(result);
+    } catch (e) {
+      return Result.failure(FailureConverter.convert(e));
     }
   }
 }

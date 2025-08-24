@@ -32,5 +32,5 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
   }
 
   @override
-  List<Object?> get props => [...super.props, email, errorMessage];
+  List<Object?> get props => [...super.props, email, errorMessage, ];
 }

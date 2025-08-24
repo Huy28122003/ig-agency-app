@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/forgot_password/bloc/forgot_password_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
@@ -102,42 +103,66 @@ class _ForgotPasswordMobileLayoutState
         top: false,
         child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, top: 80),
-          child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
+          child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
             listener: (context, state) {},
-            builder: (context, state) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    AppTextField(
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      hintText: "Enter your email",
-                      onChanged: (value) {
-                        _forgotPasswordBloc.add(EmailChangeEvent(email: value));
-                      },
-                      errorText: state.errorMessage,
-                    ),
-                    SizedBox(height: 40),
-                    AppButton.primary(
-                      backgroundColor: state.isEnableSendCode
-                          ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                          : AppColors.surfaceContainerPrimaryPrimaryDisabled,
-                      onPressed: () {},
-                      child: Text(
-                        'Send code',
-                        style: TextStyle(
-                          color: AppColors.textDefaultTextInvertedDisabled,
-                          fontSize: 16,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w700,
-                          height: 1.50,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  BlocSelector<
+                    ForgotPasswordBloc,
+                    ForgotPasswordState,
+                    String?
+                  >(
+                    selector: (state) => state.errorMessage,
+                    builder: (context, errorMessage) {
+                      return AppTextField(
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        hintText: "Enter your email",
+                        onChanged: (value) {
+                          _forgotPasswordBloc.add(
+                            EmailChangeEvent(email: value),
+                          );
+                        },
+                        errorText: errorMessage,
+                      );
+                    },
+                  ),
+
+                  SizedBox(height: 40),
+                  BlocSelector<ForgotPasswordBloc, ForgotPasswordState, bool>(
+                    selector: (state) => state.isEnableSendCode,
+                    builder: (context, isEnableSendCode) {
+                      return AppButton.primary(
+                        backgroundColor: isEnableSendCode
+                            ? AppColors.surfaceContainerPrimaryPrimaryDefault
+                            : AppColors.surfaceContainerPrimaryPrimaryDisabled,
+                        onPressed: () {
+                          final state = context
+                              .read<ForgotPasswordBloc>()
+                              .state;
+                          if (state.errorMessage != null || state.email.isEmpty)
+                            return;
+
+                          _forgotPasswordBloc.add(SendOtpEvent());
+                          context.router.push(OtpRoute());
+                        },
+                        child: Text(
+                          'Send code',
+                          style: TextStyle(
+                            color: AppColors.textDefaultTextInvertedDisabled,
+                            fontSize: 16,
+                            fontFamily: FontFamily.segoeUI,
+                            fontWeight: FontWeight.w700,
+                            height: 1.50,
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
