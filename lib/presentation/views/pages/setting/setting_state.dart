@@ -4,31 +4,40 @@ class SettingState extends BaseState<SettingState> {
   const SettingState({
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
-    super.processing,
-    this.email = '',
-    this.password = '',
+    super.processing = false,
+    this.isDarkMode = false,
+    this.isInAppAlerts = true,
+    this.isLogoutSuccess = false,
   });
 
-  final String email;
-  final String password;
+  final bool isDarkMode;
+  final bool isInAppAlerts;
+  final bool isLogoutSuccess;
 
   @override
   SettingState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    String? email,
-    String? password,
+    bool? isDarkMode,
+    bool? isInAppAlerts,
+    bool? isLogoutSuccess,
   }) {
     return SettingState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
-      email: email ?? this.email,
-      password: password ?? this.password,
+      isDarkMode: isDarkMode ?? this.isDarkMode,
+      isInAppAlerts: isInAppAlerts ?? this.isInAppAlerts,
+      isLogoutSuccess: isLogoutSuccess ?? this.isLogoutSuccess,
     );
   }
 
   @override
-  List<Object?> get props => [...super.props, email, password];
+  List<Object?> get props => [
+    ...super.props,
+    isDarkMode,
+    isInAppAlerts,
+    isLogoutSuccess,
+  ];
 }

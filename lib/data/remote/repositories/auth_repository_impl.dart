@@ -43,12 +43,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> logout() {
+  Future<Result> logout() async {
     try {
-      // Simulate logout process
-      return _authRemoteDataSource.logout();
+      // Simulate login process
+      await _authRemoteDataSource.logout();
+      clearToken();
+      return Result.completed(null);
     } catch (e) {
-      throw FailureConverter.convert(e);
+      return Result.failure(FailureConverter.convert(e));
     }
   }
 

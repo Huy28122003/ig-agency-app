@@ -8,15 +8,13 @@ import 'layout/setting_mobile_layout.dart';
 import 'setting_bloc.dart';
 
 @RoutePage()
-class SettingPage
-    extends
-        BasePage<SettingBloc, SettingEvent, SettingState> {
+class SettingPage extends BasePage<SettingBloc, SettingEvent, SettingState> {
   const SettingPage({super.key});
 
   @override
   void onInitState(BuildContext context) {
-    context.read<SettingBloc>().add(LoadDataEvent());
     super.onInitState(context);
+    context.read<SettingBloc>().add(LoadDataEvent());
   }
 
   @override
