@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
-import '../../../../../gen/fonts.gen.dart';
+import '../../../../../../gen/fonts.gen.dart';
 
-class SettingMobileHeader extends StatelessWidget {
-  const SettingMobileHeader({super.key});
+class SettingHomeMobileHeader extends StatelessWidget {
+  const SettingHomeMobileHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

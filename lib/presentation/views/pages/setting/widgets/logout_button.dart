@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../../../gen/assets.gen.dart';
+import '../../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
 
 class LogoutButton extends StatelessWidget {

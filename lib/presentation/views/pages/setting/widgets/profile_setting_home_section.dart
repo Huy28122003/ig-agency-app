@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
-import '../../../../../gen/assets.gen.dart';
+import '../../../../../../gen/assets.gen.dart';
 import '../../../widgets/circle_network_avatar.dart';
 
-class ProfileSection extends StatelessWidget {
-  const ProfileSection({super.key, this.onEdit});
+class ProfileSettingHomeSection extends StatelessWidget {
+  const ProfileSettingHomeSection({super.key, this.onEdit});
 
   final VoidCallback? onEdit;
 
@@ -65,7 +65,7 @@ class ProfileSection extends StatelessWidget {
                 AppColors.iconDefaultDefault,
                 BlendMode.srcIn,
               ),
-            )
+            ),
           ],
         ),
       ),

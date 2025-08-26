@@ -1,15 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../gen/assets.gen.dart';
-import '../setting_bloc.dart';
+import '../../../../../../gen/assets.gen.dart';
+import '../../../../routers/app_router.dart';
+import '../home/setting_home_bloc.dart';
 import 'setting_card.dart';
 import 'setting_item.dart';
 
-class GeneralSettingSection extends StatelessWidget {
-  const GeneralSettingSection({super.key, required this.settingBloc});
+class GeneralSettingHomeSection extends StatelessWidget {
+  const GeneralSettingHomeSection({super.key, required this.settingHomeBloc});
 
-  final SettingBloc settingBloc;
+  final SettingHomeBloc settingHomeBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class GeneralSettingSection extends StatelessWidget {
             SettingItem(
               icon: Assets.icons.icDarkMode.svg(width: 32, height: 32),
               title: 'Dark mode',
-              trailing: BlocSelector<SettingBloc, SettingState, bool>(
+              trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
                 selector: (state) => state.isDarkMode,
                 builder: (context, isDarkMode) {
                   return SizedBox(
@@ -30,14 +32,14 @@ class GeneralSettingSection extends StatelessWidget {
                     child: CupertinoSwitch(
                       value: isDarkMode,
                       onChanged: (_) {
-                        settingBloc.add(ToggleDarkModeEvent());
+                        settingHomeBloc.add(ToggleDarkModeEvent());
                       },
                     ),
                   );
                 },
               ),
               onTap: () {
-                settingBloc.add(ToggleDarkModeEvent());
+                settingHomeBloc.add(ToggleDarkModeEvent());
               },
             ),
             SettingItem(
@@ -45,7 +47,7 @@ class GeneralSettingSection extends StatelessWidget {
               title: 'Pin Messages',
               isShowArrow: true,
               onTap: () {
-                // TODO route
+                context.router.push(const PinnedMessageRoute());
               },
             ),
           ],
@@ -63,7 +65,7 @@ class GeneralSettingSection extends StatelessWidget {
             SettingItem(
               icon: Assets.icons.icInAppAlerts.svg(width: 32, height: 32),
               title: 'In App alerts',
-              trailing: BlocSelector<SettingBloc, SettingState, bool>(
+              trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
                 selector: (state) => state.isInAppAlerts,
                 builder: (context, isInAppAlerts) {
                   return SizedBox(
@@ -72,14 +74,14 @@ class GeneralSettingSection extends StatelessWidget {
                     child: CupertinoSwitch(
                       value: isInAppAlerts,
                       onChanged: (_) {
-                        settingBloc.add(ToggleInAppAlertsEvent());
+                        settingHomeBloc.add(ToggleInAppAlertsEvent());
                       },
                     ),
                   );
                 },
               ),
               onTap: () {
-                settingBloc.add(ToggleInAppAlertsEvent());
+                settingHomeBloc.add(ToggleInAppAlertsEvent());
               },
             ),
           ],

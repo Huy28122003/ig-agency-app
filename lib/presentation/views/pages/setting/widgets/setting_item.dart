@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
-import '../../../../../gen/assets.gen.dart';
+import '../../../../../../gen/assets.gen.dart';
 
 class SettingItem extends StatelessWidget {
   const SettingItem({
