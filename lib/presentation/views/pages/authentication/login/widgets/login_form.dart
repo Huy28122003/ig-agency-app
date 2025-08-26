@@ -46,8 +46,8 @@ class LoginForm extends StatelessWidget {
                     hintText: 'Email',
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    onChanged:
-                        (value) => loginBloc.add(EmailChangedEvent(value)),
+                    onChanged: (value) =>
+                        loginBloc.add(EmailChangedEvent(value)),
                     onFieldSubmitted: (_) {
                       emailFocusNode.unfocus();
                       passwordFocusNode.requestFocus();
@@ -56,14 +56,33 @@ class LoginForm extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
-              BlocBuilder<LoginBloc, LoginState>(
+              BlocSelector<
+                LoginBloc,
+                LoginState,
+                (String, String?, bool, bool)
+              >(
+                selector: (state) {
+                  return (
+                    state.password,
+                    state.errorPasswordMessage,
+                    state.isObscurePassword,
+                    state.isFormValid,
+                  );
+                },
                 builder: (context, state) {
+                  final (
+                    password,
+                    errorPasswordMessage,
+                    isObscurePassword,
+                    isFormValid,
+                  ) = state;
+
                   return AppTextField(
-                    initialValue: state.password,
+                    initialValue: password,
                     focusNode: passwordFocusNode,
-                    obscureText: state.isObscurePassword,
+                    obscureText: isObscurePassword,
                     hintText: 'Password',
-                    errorText: state.errorPasswordMessage,
+                    errorText: errorPasswordMessage,
                     textInputAction: TextInputAction.done,
                     onChanged: (value) {
                       loginBloc.add(PasswordChangedEvent(value));
@@ -72,21 +91,20 @@ class LoginForm extends StatelessWidget {
                       }
                     },
                     onEditingComplete: () {
-                      if (state.isFormValid) {
+                      if (isFormValid) {
                         loginBloc.add(SubmitLoginEvent());
                       }
                     },
 
                     suffixIcon: GestureDetector(
-                      onTap:
-                          () => loginBloc.add(TogglePasswordVisibilityEvent()),
+                      onTap: () =>
+                          loginBloc.add(TogglePasswordVisibilityEvent()),
                       child: SizedBox(
                         height: 20,
                         width: 20,
-                        child:
-                            state.isObscurePassword
-                                ? Assets.icons.icEye.svg()
-                                : Assets.icons.icEyeOff.svg(),
+                        child: isObscurePassword
+                            ? Assets.icons.icEye.svg()
+                            : Assets.icons.icEyeOff.svg(),
                       ),
                     ),
                   );
@@ -100,12 +118,12 @@ class LoginForm extends StatelessWidget {
           selector: (state) => state.isFormValid,
           builder: (context, isFormValid) {
             return AppButton.primary(
-              onPressed:
-                  isFormValid ? () => loginBloc.add(SubmitLoginEvent()) : () {},
-              backgroundColor:
-                  isFormValid
-                      ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                      : AppColors.surfaceContainerPrimaryPrimaryDisabled,
+              onPressed: isFormValid
+                  ? () => loginBloc.add(SubmitLoginEvent())
+                  : () {},
+              backgroundColor: isFormValid
+                  ? AppColors.surfaceContainerPrimaryPrimaryDefault
+                  : AppColors.surfaceContainerPrimaryPrimaryDisabled,
               child: Text(
                 'Login',
                 style: TextStyle(

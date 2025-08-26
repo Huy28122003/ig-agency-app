@@ -43,14 +43,12 @@ class LoginState extends BaseState<LoginState> {
       processing: processing ?? this.processing,
       isSuccess: isSuccess ?? this.isSuccess,
       isObscurePassword: isObscurePassword ?? this.isObscurePassword,
-      errorPasswordMessage:
-          forceResetErrorMessages
-              ? null
-              : errorPasswordMessage ?? this.errorPasswordMessage,
-      errorEmailMessage:
-          forceResetErrorMessages
-              ? null
-              : errorEmailMessage ?? this.errorEmailMessage,
+      errorPasswordMessage: forceResetErrorMessages
+          ? null
+          : errorPasswordMessage ?? this.errorPasswordMessage,
+      errorEmailMessage: forceResetErrorMessages
+          ? null
+          : errorEmailMessage ?? this.errorEmailMessage,
     );
   }
 
