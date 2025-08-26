@@ -25,6 +25,8 @@ class AppTextField extends StatelessWidget {
       vertical: 12,
       horizontal: 20,
     ),
+    this.noBorder = false,
+    this.hintStyle,
   });
 
   final TextEditingController? controller;
@@ -43,10 +45,21 @@ class AppTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final EdgeInsets? contentPadding;
+  final bool noBorder;
+  final TextStyle? hintStyle;
 
   @override
   Widget build(BuildContext context) {
     final isError = errorText != null;
+
+    final underlineBorder = UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: isError
+            ? AppColors.outlineAlertError
+            : AppColors.outlineGrayStrong200,
+        width: 1,
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,13 +87,15 @@ class AppTextField extends StatelessWidget {
           ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: TextStyle(
-              color: AppColors.textDefaultTextSub,
-              fontSize: 16,
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w600,
-              height: 1.50,
-            ),
+            hintStyle:
+                hintStyle ??
+                TextStyle(
+                  color: AppColors.textDefaultTextSub,
+                  fontSize: 16,
+                  fontFamily: FontFamily.segoeUI,
+                  fontWeight: FontWeight.w600,
+                  height: 1.50,
+                ),
             isDense: true,
             prefixIcon: prefixIcon != null
                 ? Padding(
@@ -94,30 +109,12 @@ class AppTextField extends StatelessWidget {
                     child: suffixIcon,
                   )
                 : null,
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isError
-                    ? AppColors.outlineAlertError
-                    : AppColors.outlineGrayStrong200,
-                width: 1,
-              ),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isError
-                    ? AppColors.outlineAlertError
-                    : AppColors.outlineGrayStrong200,
-                width: 1,
-              ),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isError
-                    ? AppColors.outlineAlertError
-                    : AppColors.outlineGrayStrong200,
-                width: 1,
-              ),
-            ),
+
+            border: noBorder ? InputBorder.none : underlineBorder,
+            enabledBorder: noBorder ? InputBorder.none : underlineBorder,
+            focusedBorder: noBorder ? InputBorder.none : underlineBorder,
+            disabledBorder: noBorder ? InputBorder.none : underlineBorder,
+
             contentPadding: contentPadding,
           ),
         ),

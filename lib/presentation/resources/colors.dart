@@ -26,4 +26,8 @@ abstract class AppColors {
   static const Color surfaceContainerPrimaryPrimaryDisabled = Color(0xFFFEE2AD);
   static const Color surfaceContainerPrimaryPrimaryLight = Color(0xFFFEFCE8);
   static const Color surfaceContainerGrayStrong2 = Color(0xFFE5E7EB);
+
+  /// Icon
+  static const Color iconDefaultDefaultSub = Color(0xFF6A7282);
+  static const Color iconPrimaryDefault = Color(0xFFFCB732);
 }
