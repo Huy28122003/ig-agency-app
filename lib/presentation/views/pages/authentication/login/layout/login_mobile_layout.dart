@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/login/login_bloc.dart';
 
+import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../../routers/app_router.dart';
@@ -55,10 +56,18 @@ class _LoginMobileLayoutState extends State<LoginMobileLayout> {
                 const Color(0xFFFFDB3F),
               ],
             ),
+            image: DecorationImage(
+              image: Assets.images.bgAuthentication.provider(),
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.topLeft,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildHeader(), Expanded(child: _buildPanel())],
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildPanel()),
+            ],
           ),
         ),
       ),
