@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/usecases/register_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -14,43 +15,62 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
   RegistrationBloc({required RegisterUseCase registerUseCase})
     : _registerUseCase = registerUseCase,
       super(RegistrationState()) {
-    handleLoadData<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loaded));
-    });
-
-    handleSubEvent<NameChangedEvent>((event, emit) async {
-      emit(state.copyWith(name: event.name));
-    });
-
-    handleSubEvent<EmailChangedEvent>((event, emit) async {
-      emit(state.copyWith(email: event.email));
-    });
-
-    handleSubEvent<PasswordChangedEvent>((event, emit) async {
-      emit(state.copyWith(password: event.password));
-    });
-
-    handleSubEvent<ConfirmPasswordChangedEvent>((event, emit) async {
-      emit(state.copyWith(confirmPassword: event.confirmPassword));
-    });
-
-    handleSubEvent<TogglePasswordVisibilityEvent>((event, emit) async {
-      emit(state.copyWith(isObscurePassword: !state.isObscurePassword));
-    });
-
-    handleSubEvent<SubmitRegistrationEvent>((event, emit) async {
-      emit(state.copyWith(processing: true));
-      await _registerUseCase.call(
-        RegisterParam(
-          name: state.name,
-          email: state.email,
-          password: state.password,
-          confirmPassword: state.confirmPassword,
-        ),
-      );
-      emit(state.copyWith(processing: false, isSuccess: true));
-    });
+    _registerHandlers();
   }
 
   final RegisterUseCase _registerUseCase;
+
+  void _registerHandlers() {
+    handleLoadData<LoadDataEvent>(
+      (_, emit) async => emit(state.copyWith(pageStatus: PageStatus.loaded)),
+    );
+
+    handleSubEvent<NameChangedEvent>(
+      (event, emit) async => emit(state.copyWith(name: event.name)),
+    );
+
+    handleSubEvent<EmailChangedEvent>(
+      (event, emit) async => emit(state.copyWith(email: event.email)),
+    );
+
+    handleSubEvent<PasswordChangedEvent>(
+      (event, emit) async => emit(state.copyWith(password: event.password)),
+    );
+
+    handleSubEvent<ConfirmPasswordChangedEvent>(
+      (event, emit) async =>
+          emit(state.copyWith(confirmPassword: event.confirmPassword)),
+    );
+
+    handleSubEvent<TogglePasswordVisibilityEvent>(
+      (_, emit) async =>
+          emit(state.copyWith(isObscurePassword: !state.isObscurePassword)),
+    );
+
+    handleSubEvent<SubmitRegistrationEvent>(_onSubmitRegistration);
+  }
+
+  Future<void> _onSubmitRegistration(
+    SubmitRegistrationEvent event,
+    Emitter<RegistrationState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        processing: true,
+        errorConfirmPasswordMessage: null,
+        forceResetErrorMessages: true,
+      ),
+    );
+
+    await _registerUseCase(
+      RegisterParam(
+        name: state.name,
+        email: state.email,
+        password: state.password,
+        confirmPassword: state.confirmPassword,
+      ),
+    );
+
+    emit(state.copyWith(processing: false, isSuccess: true));
+  }
 }
