@@ -10,7 +10,7 @@ abstract class AppColors {
   static const Color textDefaultTextSub2 = Color(0xFF697282);
   static const Color textAlertTextError = Color(0xFFFA2B36);
   static final Color textDefaultTextInvertedDisabled = Colors.white.withValues(
-    alpha: 0.88,
+    alpha: 0.17,
   );
   static const Color textDefaultTextDefault = Color(0xFF1D2838);
   static const Color textDefaultTextInverted = Colors.white;

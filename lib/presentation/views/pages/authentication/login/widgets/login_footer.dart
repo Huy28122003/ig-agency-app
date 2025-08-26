@@ -29,7 +29,7 @@ class LoginFooter extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              context.router.push(const SettingRoute());
+              context.router.push(const RegistrationRoute());
             },
             child: Text(
               'Register',
