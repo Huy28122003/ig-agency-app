@@ -5,30 +5,26 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing,
-    this.email = '',
-    this.password = '',
+    this.pagingStatus = PagingStatus.idle,
   });
 
-  final String email;
-  final String password;
+  final PagingStatus pagingStatus;
 
   @override
   WorkspaceListState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    String? email,
-    String? password,
+    PagingStatus? pagingStatus,
   }) {
     return WorkspaceListState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
-      email: email ?? this.email,
-      password: password ?? this.password,
+      pagingStatus: pagingStatus ?? this.pagingStatus,
     );
   }
 
   @override
-  List<Object?> get props => [...super.props, email, password];
+  List<Object?> get props => [...super.props, pagingStatus];
 }

@@ -7,3 +7,8 @@ sealed class NavEvent {
 class LoadDataEvent extends NavEvent {
   const LoadDataEvent();
 }
+
+class OnChangeTabEvent extends NavEvent {
+  final int index;
+  const OnChangeTabEvent(this.index);
+}

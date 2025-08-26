@@ -5,10 +5,16 @@ import '../../di/di.dart';
 import '../views/pages/authentication/forgot_password/forgot_password_page.dart';
 import '../views/pages/authentication/login/login_page.dart';
 import '../views/pages/authentication/otp/otp_page.dart';
+import '../views/pages/chat_info/chat_info_page.dart';
+import '../views/pages/empty_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/authentication/reset_password/reset_password_page.dart';
 import '../views/pages/nav/nav_page.dart';
-import '../views/pages/setting/setting_page.dart';
+import '../views/pages/pinned_message/pinned_message_page.dart';
+import '../views/pages/search/search_page.dart';
+import '../views/pages/setting/home/setting_home_page.dart';
+import '../views/pages/setting/shell/setting_page.dart';
+import '../views/pages/shared_content/shared_content_page.dart';
 import '../views/pages/work_place/detail/workspace_detail_page.dart';
 import '../views/pages/work_place/list/workspace_list_page.dart';
 import 'auth_guard.dart';
@@ -32,10 +38,43 @@ class AppRouter extends RootStackRouter {
       page: NavRoute.page,
       initial: true,
       children: [
-        AutoRoute(page: WorkspaceDetailRoute.page),
-        AutoRoute(page: WorkspaceListRoute.page, initial: true),
-        AutoRoute(page: SettingRoute.page),
+        CustomRoute(
+          page: WorkspaceListRoute.page,
+          // transitionsBuilder: TransitionsBuilders.noTransition,
+        ),
+        CustomRoute(
+          page: SearchRoute.page,
+          // transitionsBuilder: TransitionsBuilders.noTransition,
+        ),
+        CustomRoute(
+          page: SettingRoute.page,
+          // transitionsBuilder: TransitionsBuilders.noTransition,
+          children: [
+            CustomRoute(
+              page: SettingHomeRoute.page,
+              transitionsBuilder: TransitionsBuilders.noTransition,
+              initial: true,
+            ),
+            AutoRoute(page: PinnedMessageRoute.page),
+          ],
+        ),
+        AutoRoute(page: WSDetailRoute.page),
+        AutoRoute(page: ChatInfoRoute.page),
+        AutoRoute(page: SharedContentRoute.page),
+        AutoRoute(page: EmptyRoute.page),
+
+        /// Mobile
+        CustomRoute(
+          page: SettingHomeRoute.page,
+          transitionsBuilder: TransitionsBuilders.noTransition,
+        ),
       ],
     ),
+
+    /// Mobile
+    AutoRoute(page: WSDetailRoute.page),
+    AutoRoute(page: PinnedMessageRoute.page),
+    AutoRoute(page: ChatInfoRoute.page),
+    AutoRoute(page: SharedContentRoute.page),
   ];
 }

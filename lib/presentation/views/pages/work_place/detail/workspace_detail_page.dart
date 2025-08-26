@@ -8,13 +8,13 @@ import 'layout/workspace_detail_mobile_layout.dart';
 import 'workspace_detail_bloc.dart';
 
 @RoutePage()
-class WorkspaceDetailPage
-    extends BasePage<WorkspaceDetailBloc, WorkspaceDetailEvent, WorkspaceDetailState> {
-  const WorkspaceDetailPage({super.key});
+class WSDetailPage
+    extends BasePage<WSDetailBloc, WSDetailEvent, WSDetailState> {
+  const WSDetailPage({super.key});
 
   @override
   void onInitState(BuildContext context) {
-    context.read<WorkspaceDetailBloc>().add(LoadDataEvent());
+    context.read<WSDetailBloc>().add(LoadDataEvent());
     super.onInitState(context);
   }
 

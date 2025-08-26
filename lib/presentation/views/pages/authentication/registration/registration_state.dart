@@ -2,7 +2,7 @@ part of 'registration_bloc.dart';
 
 class RegistrationState extends BaseState<RegistrationState> {
   const RegistrationState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing = false,
     this.name = '',

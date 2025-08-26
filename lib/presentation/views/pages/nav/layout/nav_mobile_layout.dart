@@ -13,30 +13,39 @@ class NavMobileLayout extends StatefulWidget {
 class _NavMobileLayoutState extends State<NavMobileLayout> {
   List<AppBottomNavigationItem> items = [
     AppBottomNavigationItem(
-      selectedIcon: const Icon(Icons.home),
+      selectedIcon: const Icon(Icons.home_rounded),
       icon: const Icon(Icons.home),
-      label: 'Home',
+      label: 'Work place',
       page: WorkspaceListRoute(),
     ),
     AppBottomNavigationItem(
-      selectedIcon: const Icon(Icons.home),
-      icon: const Icon(Icons.home),
-      label: 'Home Detail',
-      page: WorkspaceDetailRoute(),
+      selectedIcon: const Icon(Icons.search),
+      icon: const Icon(Icons.search),
+      label: 'Search',
+      page: SearchRoute(),
+    ),
+    AppBottomNavigationItem(
+      selectedIcon: const Icon(Icons.settings),
+      icon: const Icon(Icons.settings),
+      label: 'Setting',
+      page: SettingHomeRoute(),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
+      lazyLoad: true,
       routes: items.map((e) => e.page).toList(),
       bottomNavigationBuilder: (context, tabsRouter) {
-        return _getNavigationBar();
+        return AppBottomNavigationBar(
+          items: items,
+          currentIndex: tabsRouter.activeIndex,
+          onTap: (index) {
+            tabsRouter.setActiveIndex(index);
+          },
+        );
       },
     );
-  }
-
-  AppBottomNavigationBar _getNavigationBar() {
-    return AppBottomNavigationBar(items: items, currentIndex: 0);
   }
 }

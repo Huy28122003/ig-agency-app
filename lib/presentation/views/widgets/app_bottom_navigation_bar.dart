@@ -35,6 +35,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(items.length, (index) {
           return GestureDetector(
+            onTap: () => onTap?.call(index),
             child: Column(
               children: [Text(items[index].label), Icon(Icons.add)],
             ),
