@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../../routers/app_router.dart';
@@ -62,10 +63,18 @@ class _RegistrationMobileLayoutState extends State<RegistrationMobileLayout> {
                 const Color(0xFFFFDB3F),
               ],
             ),
+            image: DecorationImage(
+              image: Assets.images.bgAuthentication.provider(),
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.topLeft,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildHeader(), Expanded(child: _buildPanel())],
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildPanel()),
+            ],
           ),
         ),
       ),
