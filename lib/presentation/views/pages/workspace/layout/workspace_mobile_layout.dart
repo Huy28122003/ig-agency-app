@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/menu_popup_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/workspace_tile_widget.dart';
@@ -22,18 +23,20 @@ class WorkspaceMobileLayout extends StatefulWidget {
 
 class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
   late RefreshController _refreshController;
+  late WorkspaceBloc _workspaceBloc;
 
   @override
   void initState() {
     super.initState();
     _refreshController = RefreshController();
+    _workspaceBloc = context.read<WorkspaceBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<WorkspaceBloc, WorkspaceState>(
       listener: (context, state) {
-        _refreshController.refresh(PagingStatus.loadCompleted);
+        _refreshController.refresh(state.pagingStatus);
       },
       listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
       child: Column(
@@ -46,34 +49,41 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
   }
 
   Widget _buildBody() {
-    return AppPullToRefresh(
-      onLoadMore: () {
-        print("fdsf");
+    return BlocSelector<WorkspaceBloc, WorkspaceState, List<WorkspaceEntity>>(
+      selector: (state) {
+        return state.workspaces;
       },
-      onRefresh: () {
-        print("fdsf");
+      builder: (context, state) {
+        return AppPullToRefresh(
+          onLoadMore: () {
+            _workspaceBloc.add(LoadMoreDataEvent());
+          },
+          onRefresh: () {
+            _workspaceBloc.add(RefreshDataEvent());
+          },
+          refreshController: _refreshController,
+          child: ListView.builder(
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (context, index) {
+              final workspace = state[index];
+              return SuperMenuPopupWidget(
+                onTapDelete: () {},
+                onTapMask: () {},
+                onTapMute: () {},
+                onTapPin: () {},
+                child: WorkspaceTileWidget(
+                  workspaceAvatar: workspace.workspaceAvatar,
+                  workspaceName: workspace.workspaceName,
+                  lastMessage: workspace.lastMessage,
+                  lastMessageTime: workspace.lastMessageTime,
+                  isSeen: workspace.isSeen,
+                ),
+              );
+            },
+            itemCount: state.length,
+          ),
+        );
       },
-      refreshController: _refreshController,
-      child: ListView.builder(
-        physics: ClampingScrollPhysics(),
-        itemBuilder: (context, index) {
-          final workspace = MockData.getWorkspaces()[index];
-          return SuperMenuPopupWidget(
-            onTapDelete: () {},
-            onTapMask: () {},
-            onTapMute: () {},
-            onTapPin: () {},
-            child: WorkspaceTileWidget(
-              workspaceAvatar: workspace.workspaceAvatar,
-              workspaceName: workspace.workspaceName,
-              lastMessage: workspace.lastMessage,
-              lastMessageTime: workspace.lastMessageTime,
-              isSeen: workspace.isSeen,
-            ),
-          );
-        },
-        itemCount: MockData.getWorkspaces().length,
-      ),
     );
   }
 

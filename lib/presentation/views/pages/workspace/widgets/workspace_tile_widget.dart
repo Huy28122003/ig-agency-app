@@ -42,7 +42,13 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
               width: 48,
               height: 48,
               errorBuilder: (context, error, stackTrace) {
-                return ClipOval(child: Assets.images.defaultAvatar.image());
+                return ClipOval(
+                  child: Assets.images.defaultAvatar.image(
+                    fit: BoxFit.cover,
+                    width: 48,
+                    height: 48,
+                  ),
+                );
               },
             ),
           ),

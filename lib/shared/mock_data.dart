@@ -1,9 +1,9 @@
-import 'package:ig_agency_app/presentation/models/workspace_ui_model.dart';
+import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 
 class MockData {
-  static List<WorkspaceUIModel> getWorkspaces() {
+  static List<WorkspaceEntity> getWorkspaces() {
     return [
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '1',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=1',
         workspaceName: 'Design Team',
@@ -11,7 +11,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 15)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '2',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=2',
         workspaceName: 'Marketing',
@@ -19,7 +19,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(days: 200)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '3',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=3',
         workspaceName: 'Development',
@@ -27,7 +27,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(days: 1)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '4',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=4',
         workspaceName: 'HR Team',
@@ -35,7 +35,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 30)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '5',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=5',
         workspaceName: 'Sales',
@@ -43,7 +43,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 2)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '6',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=6',
         workspaceName: 'Finance',
@@ -51,7 +51,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 12)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '7',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=7',
         workspaceName: 'Support',
@@ -59,7 +59,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 5)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '8',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=8',
         workspaceName: 'QA Team',
@@ -67,7 +67,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 55)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '9',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=9',
         workspaceName: 'Product',
@@ -75,7 +75,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 8)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '10',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=10',
         workspaceName: 'Legal',
@@ -83,7 +83,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(days: 2)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '11',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=11',
         workspaceName: 'Engineering',
@@ -91,7 +91,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 15)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '12',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=12',
         workspaceName: 'Research',
@@ -99,7 +99,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 3)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '13',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=13',
         workspaceName: 'Security',
@@ -107,7 +107,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 42)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '14',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=14',
         workspaceName: 'Admin',
@@ -115,7 +115,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 6)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '15',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=15',
         workspaceName: 'Operations',
@@ -123,7 +123,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(days: 3)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '16',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=16',
         workspaceName: 'Board',
@@ -131,7 +131,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 7)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '17',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=17',
         workspaceName: 'Partners',
@@ -139,7 +139,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 9)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '18',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=18',
         workspaceName: 'Vendors',
@@ -147,7 +147,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 10)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '19',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=19',
         workspaceName: 'Clients',
@@ -155,7 +155,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(days: 1)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '20',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=20',
         workspaceName: 'Community',
@@ -163,7 +163,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 25)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '21',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=21',
         workspaceName: 'Training',
@@ -171,7 +171,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 12)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '22',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=22',
         workspaceName: 'Projects',
@@ -179,7 +179,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 2)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '23',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=23',
         workspaceName: 'Analytics',
@@ -187,7 +187,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 15)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '24',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=24',
         workspaceName: 'Design System',
@@ -195,7 +195,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 59)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '25',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=25',
         workspaceName: 'UI/UX',
@@ -203,7 +203,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 20)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '26',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=26',
         workspaceName: 'Content',
@@ -211,7 +211,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(days: 4)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '27',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=27',
         workspaceName: 'PR Team',
@@ -219,7 +219,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 18)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '28',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=28',
         workspaceName: 'Event Team',
@@ -227,7 +227,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 18)),
         isSeen: false,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '29',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=29',
         workspaceName: 'Innovation',
@@ -235,7 +235,7 @@ class MockData {
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 7)),
         isSeen: true,
       ),
-      WorkspaceUIModel(
+      WorkspaceEntity(
         id: '30',
         workspaceAvatar: 'https://i.pravatar.cc/150?img=30',
         workspaceName: 'Management',

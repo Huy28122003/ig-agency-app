@@ -1,4 +1,4 @@
-class WorkspaceUIModel {
+class WorkspaceEntity{
   final String id;
   final String workspaceAvatar;
   final String workspaceName;
@@ -6,7 +6,7 @@ class WorkspaceUIModel {
   final DateTime lastMessageTime;
   final bool isSeen;
 
-  WorkspaceUIModel({
+  WorkspaceEntity({
     required this.id,
     required this.workspaceAvatar,
     required this.workspaceName,

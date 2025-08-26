@@ -101,7 +101,8 @@ class LoginMobileForm extends StatelessWidget {
         const SizedBox(height: 16),
         AppButton.text(
           onPressed: () {
-            context.router.push(ForgotPasswordRoute());
+            // context.router.push(ForgotPasswordRoute());
+            context.router.push(WorkspaceRoute());
           },
           child: Text(
             'Forgot Password',
