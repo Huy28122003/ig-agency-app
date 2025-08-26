@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_workspaces_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
@@ -12,6 +14,7 @@ part 'workspace_state.dart';
 @injectable
 class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
   final GetWorkspacesUseCase getWorkspacesUseCase;
+  Timer? timer;
 
   WorkspaceBloc({required this.getWorkspacesUseCase})
     : super(WorkspaceState()) {
@@ -74,6 +77,59 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
         );
       } else {
         emit(state.copyWith(pagingStatus: PagingStatus.loadFailed));
+      }
+    });
+
+    handleSubEvent<SearchEvent>((event, emit) async {
+      timer?.cancel();
+      timer = Timer(const Duration(milliseconds: 1000), () async {
+        add(SearchDebouncedEvent(event.value));
+      });
+    });
+
+    handleSubEvent<SearchDebouncedEvent>((event, emit) async {
+      emit(state.copyWith(searchStatus: PageStatus.loading));
+
+      final result = await getWorkspacesUseCase.call(
+        GetWorkspacesParams(keyWord: event.value, limit: 10, offset: 0),
+      );
+
+      if (result.success) {
+        emit(
+          state.copyWith(
+            searchStatus: PageStatus.loaded,
+            workspacesSearch: result.data,
+          ),
+        );
+      } else {
+        emit(state.copyWith(searchStatus: PageStatus.failure));
+      }
+    });
+
+    handleSubEvent<SearchKeyWorkChangeEvent>((event, emit) async {
+      emit(state.copyWith(searchKeyWord: event.value));
+    });
+
+    handleSubEvent<SearchLoadMoreEvent>((event, emit) async {
+      emit(state.copyWith(pagingStatusSearch: PagingStatus.loading));
+
+      await Future.delayed(Duration(seconds: 1));
+      final result = await getWorkspacesUseCase.call(
+        GetWorkspacesParams(limit: 10, offset: state.indexPageSearch * 10),
+      );
+
+      if (result.success && result.data != null && result.data!.isNotEmpty) {
+        List<WorkspaceEntity> workspaces = state.workspaces;
+        workspaces.addAll(result.data!);
+        emit(
+          state.copyWith(
+            pagingStatusSearch: PagingStatus.loadCompleted,
+            workspaces: workspaces,
+            indexPageSearch: state.indexPageSearch + 1,
+          ),
+        );
+      } else {
+        emit(state.copyWith(pagingStatusSearch: PagingStatus.loadFailed));
       }
     });
   }

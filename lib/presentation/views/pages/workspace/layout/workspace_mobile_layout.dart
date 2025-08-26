@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
@@ -8,7 +9,6 @@ import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dar
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
-import 'package:ig_agency_app/shared/mock_data.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
@@ -23,12 +23,16 @@ class WorkspaceMobileLayout extends StatefulWidget {
 
 class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
   late RefreshController _refreshController;
+  late RefreshController _searchRefreshController;
+
   late WorkspaceBloc _workspaceBloc;
 
   @override
   void initState() {
     super.initState();
     _refreshController = RefreshController();
+    _searchRefreshController = RefreshController();
+
     _workspaceBloc = context.read<WorkspaceBloc>();
   }
 
@@ -49,39 +53,101 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceBloc, WorkspaceState, List<WorkspaceEntity>>(
+    return BlocSelector<WorkspaceBloc, WorkspaceState, String>(
       selector: (state) {
-        return state.workspaces;
+        return state.searchKeyWord;
       },
       builder: (context, state) {
-        return AppPullToRefresh(
-          onLoadMore: () {
-            _workspaceBloc.add(LoadMoreDataEvent());
-          },
-          onRefresh: () {
-            _workspaceBloc.add(RefreshDataEvent());
-          },
-          refreshController: _refreshController,
-          child: ListView.builder(
-            physics: ClampingScrollPhysics(),
-            itemBuilder: (context, index) {
-              final workspace = state[index];
-              return SuperMenuPopupWidget(
-                onTapDelete: () {},
-                onTapMask: () {},
-                onTapMute: () {},
-                onTapPin: () {},
-                child: WorkspaceTileWidget(
-                  workspaceAvatar: workspace.workspaceAvatar,
-                  workspaceName: workspace.workspaceName,
-                  lastMessage: workspace.lastMessage,
-                  lastMessageTime: workspace.lastMessageTime,
-                  isSeen: workspace.isSeen,
-                ),
-              );
-            },
-            itemCount: state.length,
-          ),
+        return Stack(
+          children: [
+            BlocSelector<WorkspaceBloc, WorkspaceState, List<WorkspaceEntity>>(
+              selector: (state) {
+                return state.workspaces;
+              },
+              builder: (context, state) {
+                return AppPullToRefresh(
+                  onLoadMore: () {
+                    _workspaceBloc.add(LoadMoreDataEvent());
+                  },
+                  onRefresh: () {
+                    _workspaceBloc.add(RefreshDataEvent());
+                  },
+                  refreshController: _refreshController,
+                  child: ListView.builder(
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final workspace = state[index];
+                      return SuperMenuPopupWidget(
+                        onTapDelete: () {},
+                        onTapMask: () {},
+                        onTapMute: () {},
+                        onTapPin: () {},
+                        child: WorkspaceTileWidget(
+                          workspaceAvatar: workspace.workspaceAvatar,
+                          workspaceName: workspace.workspaceName,
+                          lastMessage: workspace.lastMessage,
+                          lastMessageTime: workspace.lastMessageTime,
+                          isSeen: workspace.isSeen,
+                        ),
+                      );
+                    },
+                    itemCount: state.length,
+                  ),
+                );
+              },
+            ),
+            if (state.isNotEmpty)
+              BlocSelector<
+                WorkspaceBloc,
+                WorkspaceState,
+                (List<WorkspaceEntity>, PageStatus)
+              >(
+                selector: (state) {
+                  return (state.workspacesSearch, state.searchStatus);
+                },
+                builder: (context, selected) {
+                  final workspaces = selected.$1;
+                  final status = selected.$2;
+                  if (status == PageStatus.loading) {
+                    return CupertinoActivityIndicator();
+                  } else if (status == PageStatus.loaded) {
+                    return Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.white,
+                      child: AppPullToRefresh(
+                        enablePullDown: true,
+                        onLoadMore: () {
+                          _workspaceBloc.add(SearchLoadMoreEvent());
+                        },
+                        refreshController: _searchRefreshController,
+                        child: ListView.builder(
+                          physics: ClampingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final workspace = workspaces[index];
+                            return SuperMenuPopupWidget(
+                              onTapDelete: () {},
+                              onTapMask: () {},
+                              onTapMute: () {},
+                              onTapPin: () {},
+                              child: WorkspaceTileWidget(
+                                workspaceAvatar: workspace.workspaceAvatar,
+                                workspaceName: workspace.workspaceName,
+                                lastMessage: workspace.lastMessage,
+                                lastMessageTime: workspace.lastMessageTime,
+                                isSeen: workspace.isSeen,
+                              ),
+                            );
+                          },
+                          itemCount: workspaces.length,
+                        ),
+                      ),
+                    );
+                  }
+                  return SizedBox();
+                },
+              ),
+          ],
         );
       },
     );
@@ -130,7 +196,10 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                 borderRadius: BorderRadius.circular(100),
               ),
               child: AppTextField(
-                onChanged: (value) {},
+                onChanged: (value) {
+                  _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
+                  _workspaceBloc.add(SearchEvent(value: value));
+                },
                 hintStyle: TextStyle(
                   color: AppColors.textDefaultTextSub,
                   fontSize: 16,

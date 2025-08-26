@@ -10,7 +10,23 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Future<Result<List<WorkspaceEntity>>> getWorkspaces({
     required int limit,
     required int offset,
+    String? keyWord,
   }) async {
-    return Result.completed(MockData.getWorkspaces().sublist(offset,limit));
+    final allData = MockData.getWorkspaces();
+
+    final filtered = keyWord != null && keyWord.isNotEmpty
+        ? allData
+              .where(
+                (e) => e.workspaceName.toLowerCase().contains(
+                  keyWord.toLowerCase(),
+                ),
+              )
+              .toList()
+        : allData;
+
+    final start = offset;
+    final end = (offset + limit).clamp(0, filtered.length);
+
+    return Result.completed(filtered.sublist(start, end));
   }
 }

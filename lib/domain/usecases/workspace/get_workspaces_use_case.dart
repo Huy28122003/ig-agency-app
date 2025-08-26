@@ -16,13 +16,19 @@ class GetWorkspacesUseCase
     return await _workspaceRepository.getWorkspaces(
       limit: param.limit,
       offset: param.offset,
+      keyWord: param.keyWord,
     );
   }
 }
 
 class GetWorkspacesParams {
-  GetWorkspacesParams({required this.limit, required this.offset});
+  GetWorkspacesParams({
+    required this.limit,
+    required this.offset,
+    this.keyWord,
+  });
 
   final int limit;
   final int offset;
+  final String? keyWord;
 }
