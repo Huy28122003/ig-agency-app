@@ -4,13 +4,13 @@ import 'package:injectable/injectable.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../base/base_state.dart';
 
-part 'setting_event.dart';
+part 'search_event.dart';
 
-part 'setting_state.dart';
+part 'search_state.dart';
 
 @injectable
-class SettingBloc extends BaseBloc<SettingEvent, SettingState> {
-  SettingBloc() : super(SettingState()) {
+class SearchBloc extends BaseBloc<SearchEvent, SearchState> {
+  SearchBloc() : super(SearchState()) {
     handleSubEvent<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loaded));
     });

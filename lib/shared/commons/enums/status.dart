@@ -30,29 +30,35 @@ extension PageStatusExtension on PageStatus {
 }
 
 enum PagingStatus {
-  initial,
+  idle,
   loading,
-  loaded,
+  loadCompleted,
+  refreshCompleted,
   empty,
-  failure,
+  loadFailed,
+  refreshFailed,
   refreshing,
   noMoreData,
 }
 
 extension PagingStatusExtension on PagingStatus {
-  bool get isInitial => this == PagingStatus.initial;
+  bool get isInitial => this == PagingStatus.idle;
 
   bool get isLoading => this == PagingStatus.loading;
 
-  bool get isLoaded => this == PagingStatus.loaded;
+  bool get isLoadCompleted => this == PagingStatus.loadCompleted;
+
+  bool get isRefreshCompleted => this == PagingStatus.refreshCompleted;
 
   bool get isEmpty => this == PagingStatus.empty;
 
-  bool get isFailure => this == PagingStatus.failure;
+  bool get isLoadFailure => this == PagingStatus.loadFailed;
+
+  bool get isRefreshFailed => this == PagingStatus.refreshFailed;
 
   bool get isRefreshing => this == PagingStatus.refreshing;
 
   bool get isNoMoreData => this == PagingStatus.noMoreData;
 }
 
-enum VerifyStatus { initial,valid,invalid }
+enum VerifyStatus { initial, valid, invalid }

@@ -9,9 +9,8 @@ part 'workspace_detail_event.dart';
 part 'workspace_detail_state.dart';
 
 @injectable
-class WorkspaceDetailBloc
-    extends BaseBloc<WorkspaceDetailEvent, WorkspaceDetailState> {
-  WorkspaceDetailBloc() : super(WorkspaceDetailState()) {
+class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
+  WSDetailBloc() : super(WSDetailState()) {
     handleSubEvent<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loaded));
     });

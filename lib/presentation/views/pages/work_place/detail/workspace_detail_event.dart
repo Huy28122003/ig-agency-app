@@ -1,9 +1,9 @@
 part of 'workspace_detail_bloc.dart';
 
-sealed class WorkspaceDetailEvent {
-  const WorkspaceDetailEvent();
+sealed class WSDetailEvent {
+  const WSDetailEvent();
 }
 
-class LoadDataEvent extends WorkspaceDetailEvent {
+class LoadDataEvent extends WSDetailEvent {
   const LoadDataEvent();
 }

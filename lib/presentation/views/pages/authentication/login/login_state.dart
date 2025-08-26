@@ -2,7 +2,7 @@ part of 'login_bloc.dart';
 
 class LoginState extends BaseState<LoginState> {
   const LoginState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing = false,
     this.email = '',
