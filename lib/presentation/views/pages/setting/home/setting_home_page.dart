@@ -8,7 +8,8 @@ import 'layout/setting_home_tablet_layout.dart';
 import 'setting_home_bloc.dart';
 
 @RoutePage()
-class SettingHomePage extends BasePage<SettingHomeBloc, SettingHomeEvent, SettingHomeState> {
+class SettingHomePage
+    extends BasePage<SettingHomeBloc, SettingHomeEvent, SettingHomeState> {
   const SettingHomePage({super.key});
 
   @override

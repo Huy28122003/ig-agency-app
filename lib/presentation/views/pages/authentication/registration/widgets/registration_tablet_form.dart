@@ -160,7 +160,9 @@ class RegistrationTabletForm extends StatelessWidget {
               child: Text(
                 'Register',
                 style: TextStyle(
-                  color: AppColors.textDefaultTextInvertedDisabled,
+                  color: isFormValid
+                      ? AppColors.textDefaultTextInverted
+                      : AppColors.textDefaultTextInvertedDisabled,
                   fontSize: 16,
                   fontFamily: FontFamily.segoeUI,
                   fontWeight: FontWeight.w700,

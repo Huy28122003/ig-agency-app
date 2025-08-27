@@ -18,7 +18,7 @@ class LoginMobileHeader extends StatelessWidget {
             Text(
               'Welcome to',
               style: TextStyle(
-                color: AppColors.textDefaultTextInvertedDisabled,
+                color: AppColors.textDefaultTextInverted,
                 fontSize: 20,
                 fontFamily: FontFamily.segoeUI,
                 fontWeight: FontWeight.w600,
@@ -28,7 +28,7 @@ class LoginMobileHeader extends StatelessWidget {
             Text(
               'IG Agency',
               style: TextStyle(
-                color: AppColors.textDefaultTextInvertedDisabled,
+                color: AppColors.textDefaultTextInverted,
                 fontSize: 32,
                 fontFamily: FontFamily.segoeUI,
                 fontWeight: FontWeight.w700,

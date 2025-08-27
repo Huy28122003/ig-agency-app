@@ -2,14 +2,17 @@ import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../domain/entities/user_entity.dart';
 import '../../../shared/commons/result.dart';
+import '../../cache/ram_cache.dart';
 import '../app/auth_remote_data_source.dart';
 
 @Injectable(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
+  final RamCache _ramCache;
 
-  AuthRepositoryImpl(this._authRemoteDataSource);
+  AuthRepositoryImpl(this._authRemoteDataSource, this._ramCache);
 
   @override
   Future<void> clearToken() {
@@ -36,6 +39,16 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       // Simulate login process
       await _authRemoteDataSource.login(email, password);
+      _ramCache.saveProfileInfo(
+        UserEntity(
+          id: '1',
+          name: 'Đinh Thị Quỳnh',
+          email: email,
+          avatar: 'https://placehold.co/44x44',
+          createdAt: DateTime.now(),
+          updatedAt: null,
+        ),
+      );
       return Result.completed(null);
     } catch (e) {
       return Result.failure(FailureConverter.convert(e));
@@ -43,12 +56,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> logout() {
+  Future<Result> logout() async {
     try {
-      // Simulate logout process
-      return _authRemoteDataSource.logout();
+      // Simulate login process
+      await _authRemoteDataSource.logout();
+      clearToken();
+      _ramCache.clearUserData();
+      return Result.completed(null);
     } catch (e) {
-      throw FailureConverter.convert(e);
+      return Result.failure(FailureConverter.convert(e));
     }
   }
 
@@ -67,6 +83,16 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       // Simulate register process
       await _authRemoteDataSource.register(name, email, password);
+      _ramCache.saveProfileInfo(
+        UserEntity(
+          id: '1',
+          name: name,
+          email: email,
+          avatar: 'https://placehold.co/44x44',
+          createdAt: DateTime.now(),
+          updatedAt: null,
+        ),
+      );
       return Result.completed(null);
     } catch (e) {
       return Result.failure(FailureConverter.convert(e));
