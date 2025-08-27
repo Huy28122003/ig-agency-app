@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:ig_agency_app/presentation/views/widgets/app_card_loading.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -23,5 +25,48 @@ extension RefreshControllerExtension on RefreshController {
       default:
         break;
     }
+  }
+}
+
+extension ScopeFunctionForObject<T extends Object> on T? {
+  Widget safeWithPageState(
+    Widget Function(T it) operationFor,
+    PageStatus pageState, {
+    EdgeInsets padding = EdgeInsets.zero,
+    int numberCardLoading = 3,
+    String? emptyMessage,
+    Function? errorPress,
+    String? errorMessage,
+  }) {
+    if (pageState == PageStatus.failure) {
+      return SizedBox();
+    }
+    if (pageState == PageStatus.loading || this == null) {
+      return ListView.builder(
+        itemBuilder: (context, index) => AppCardLoading(padding: padding),
+        itemCount: numberCardLoading,
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        physics: const NeverScrollableScrollPhysics(),
+      );
+    }
+    return operationFor(this!);
+  }
+}
+
+extension ListSpaceBetweenExtension on List<Widget> {
+  List<Widget> withSpaceBetween({double? width, double? height}) {
+    return [
+      for (int i = 0; i < length; i++) ...[
+        if (i > 0) SizedBox(width: width, height: height),
+        this[i],
+      ],
+    ];
+  }
+
+  List<Widget> withWidgetBetween(Widget widget) {
+    return [
+      for (int i = 0; i < length; i++) ...[if (i > 0) widget, this[i]],
+    ];
   }
 }
