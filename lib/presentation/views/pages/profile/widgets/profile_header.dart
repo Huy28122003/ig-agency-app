@@ -83,14 +83,16 @@ class ProfileHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 8,
             children: [
-              Text(
-                name,
-                style: TextStyle(
-                  color: AppColors.textDefaultTextDefault,
-                  fontSize: 20,
-                  fontFamily: FontFamily.segoeUI,
-                  fontWeight: FontWeight.w700,
-                  height: 1.30,
+              Expanded(
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    color: AppColors.textDefaultTextDefault,
+                    fontSize: 20,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w700,
+                    height: 1.30,
+                  ),
                 ),
               ),
               Assets.icons.icEdit.svg(

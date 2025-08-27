@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
@@ -55,8 +54,10 @@ class _ProfileMobileLayoutState extends State<ProfileMobileLayout> {
             ),
           ),
           centerTitle: true,
-          leading: Padding(
+          leadingWidth: 52,
+          leading: Container(
             padding: const EdgeInsets.only(left: 12),
+            alignment: Alignment.centerLeft,
             child: IconButton(
               padding: EdgeInsets.all(8),
               onPressed: () {
