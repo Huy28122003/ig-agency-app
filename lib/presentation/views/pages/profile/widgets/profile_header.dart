@@ -93,7 +93,7 @@ class ProfileHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 8,
             children: [
-              Expanded(
+              Flexible(
                 child: Text(
                   name,
                   style: TextStyle(
@@ -103,6 +103,8 @@ class ProfileHeader extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     height: 1.30,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               GestureDetector(
@@ -127,6 +129,8 @@ class ProfileHeader extends StatelessWidget {
               fontWeight: FontWeight.w400,
               height: 1.43,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
