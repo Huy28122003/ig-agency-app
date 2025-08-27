@@ -1,4 +1,4 @@
-class WorkspaceEntity{
+class WorkspaceEntity {
   final String id;
   final String workspaceAvatar;
   final String workspaceName;
@@ -14,4 +14,20 @@ class WorkspaceEntity{
     required this.lastMessageTime,
     required this.isSeen,
   });
+
+  WorkspaceEntity copyWith({
+    String? workspaceAvatar,
+    String? workspaceName,
+    String? lastMessage,
+    DateTime? lastMessageTime,
+  }) {
+    return WorkspaceEntity(
+      id: id,
+      workspaceAvatar: workspaceAvatar ?? this.workspaceAvatar,
+      workspaceName: workspaceName ?? this.workspaceName,
+      lastMessage: lastMessage ?? this.lastMessage,
+      lastMessageTime: lastMessageTime ?? this.lastMessageTime,
+      isSeen: isSeen,
+    );
+  }
 }

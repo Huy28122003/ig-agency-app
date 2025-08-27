@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_workspaces_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/listen_workspace_last_message_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
@@ -14,10 +14,14 @@ part 'workspace_state.dart';
 @injectable
 class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
   final GetWorkspacesUseCase getWorkspacesUseCase;
-  Timer? timer;
+  final ListenWorkspaceLastMessageUseCase listenWorkspaceLastMessageUseCase;
+  Timer? _timer;
+  StreamSubscription<WorkspaceEntity>? _streamSubscription;
 
-  WorkspaceBloc({required this.getWorkspacesUseCase})
-    : super(WorkspaceState()) {
+  WorkspaceBloc({
+    required this.getWorkspacesUseCase,
+    required this.listenWorkspaceLastMessageUseCase,
+  }) : super(WorkspaceState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loading));
       await Future.delayed(Duration(seconds: 1));
@@ -81,8 +85,8 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
     });
 
     handleSubEvent<SearchEvent>((event, emit) async {
-      timer?.cancel();
-      timer = Timer(const Duration(milliseconds: 1000), () async {
+      _timer?.cancel();
+      _timer = Timer(const Duration(milliseconds: 1000), () async {
         add(SearchDebouncedEvent(event.value));
       });
     });
@@ -131,6 +135,36 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
       } else {
         emit(state.copyWith(pagingStatusSearch: PagingStatus.loadFailed));
       }
+    });
+    handleSubEvent<UpdateWorkspaceLastMessageEvent>((event, emit) async {
+      List<WorkspaceEntity> workspaces = List<WorkspaceEntity>.from(
+        state.workspaces,
+      );
+
+      final idx = workspaces.indexWhere(
+        (e) => e.id == event.workspaceLastMessage.id,
+      );
+      if (idx == -1) return;
+
+      final workspaceLastMessage = event.workspaceLastMessage;
+
+      workspaces[idx] = workspaces[idx].copyWith(
+        lastMessage: workspaceLastMessage.lastMessage,
+        lastMessageTime: workspaceLastMessage.lastMessageTime,
+      );
+
+      workspaces.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+
+      emit(state.copyWith(workspaces: workspaces));
+    });
+
+    handleSubEvent<ListenWorkspaceLastMessageEvent>((event, emit) async {
+      _streamSubscription?.cancel();
+      _streamSubscription = listenWorkspaceLastMessageUseCase.call().listen((
+        value,
+      ) {
+        add(UpdateWorkspaceLastMessageEvent(workspaceLastMessage: value));
+      });
     });
   }
 }

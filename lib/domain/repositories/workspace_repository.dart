@@ -8,4 +8,6 @@ abstract class WorkspaceRepository {
     required int offset,
     String? keyWord,
   });
+
+  Stream<WorkspaceEntity> listenLastMessages();
 }

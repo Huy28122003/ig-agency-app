@@ -26,5 +26,12 @@ class SearchKeyWorkChangeEvent extends WorkspaceEvent {
   SearchKeyWorkChangeEvent({required this.value});
 }
 
-class SearchLoadMoreEvent extends WorkspaceEvent{}
+class SearchLoadMoreEvent extends WorkspaceEvent {}
 
+class UpdateWorkspaceLastMessageEvent extends WorkspaceEvent {
+  final WorkspaceEntity workspaceLastMessage;
+
+  UpdateWorkspaceLastMessageEvent({required this.workspaceLastMessage});
+}
+
+class ListenWorkspaceLastMessageEvent extends WorkspaceEvent {}

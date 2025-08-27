@@ -29,4 +29,10 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     return Result.completed(filtered.sublist(start, end));
   }
+
+  @override
+  Stream<WorkspaceEntity> listenLastMessages() {
+    // TODO: implement listenLastMessages
+    throw UnimplementedError();
+  }
 }
