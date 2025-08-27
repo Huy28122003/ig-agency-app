@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
+import '../profile_bloc.dart';
 import 'profile_option_item.dart';
 
 class ProfileOption extends StatelessWidget {
@@ -21,14 +23,21 @@ class ProfileOption extends StatelessWidget {
       ),
       child: Column(
         children: [
-          ProfileOptionItem(
-            title: 'Bio',
-            iconPath: Assets.icons.icBio.path,
-            onTap: () {
-              // TODO hoannk: Route to bio page
+          BlocSelector<ProfileBloc, ProfileState, String?>(
+            selector: (state) {
+              return state.user?.bio;
             },
-            subtitle: 'Xin chào, tôi sử dụng IG Agency',
-            isFirst: true,
+            builder: (context, bio) {
+              return ProfileOptionItem(
+                title: 'Bio',
+                iconPath: Assets.icons.icBio.path,
+                onTap: () {
+                  // TODO hoannk: Route to bio page
+                },
+                subtitle: bio,
+                isFirst: true,
+              );
+            },
           ),
           const Divider(
             height: 1,
