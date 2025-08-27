@@ -8,6 +8,7 @@ class AppTextField extends StatelessWidget {
     super.key,
     this.controller,
     this.initialValue,
+    this.labelText,
     this.hintText,
     this.errorText,
     this.obscureText = false,
@@ -25,10 +26,12 @@ class AppTextField extends StatelessWidget {
       vertical: 12,
       horizontal: 20,
     ),
+    this.style,
   });
 
   final TextEditingController? controller;
   final String? initialValue;
+  final String? labelText;
   final String? hintText;
   final String? errorText;
   final bool obscureText;
@@ -43,6 +46,8 @@ class AppTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final EdgeInsets? contentPadding;
+
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +70,25 @@ class AppTextField extends StatelessWidget {
           onFieldSubmitted: onFieldSubmitted,
           maxLines: onEditingComplete != null ? 1 : maxLines,
           maxLength: maxLength,
-          style: TextStyle(
-            color: AppColors.textDefaultTextSub2,
-            fontSize: 16,
-            fontFamily: FontFamily.segoeUI,
-            fontWeight: FontWeight.w600,
-            height: 1.50,
-          ),
+          style:
+              style ??
+              TextStyle(
+                color: AppColors.textDefaultTextSub2,
+                fontSize: 16,
+                fontFamily: FontFamily.segoeUI,
+                fontWeight: FontWeight.w600,
+                height: 1.50,
+              ),
+          cursorColor: style?.color ?? AppColors.textDefaultTextSub2,
           decoration: InputDecoration(
+            labelText: labelText,
+            labelStyle: TextStyle(
+              color: AppColors.textDefaultTextSub,
+              fontSize: 14,
+              fontFamily: FontFamily.segoeUI,
+              fontWeight: FontWeight.w600,
+              height: 1.14,
+            ),
             hintText: hintText,
             hintStyle: TextStyle(
               color: AppColors.textDefaultTextSub,
@@ -82,12 +98,20 @@ class AppTextField extends StatelessWidget {
               height: 1.50,
             ),
             isDense: true,
+            prefixIconConstraints: BoxConstraints(
+              maxHeight: 20,
+              maxWidth: 20 + (contentPadding?.left ?? 0),
+            ),
             prefixIcon: prefixIcon != null
                 ? Padding(
                     padding: EdgeInsets.only(left: contentPadding?.left ?? 0),
                     child: prefixIcon,
                   )
                 : null,
+            suffixIconConstraints: BoxConstraints(
+              maxHeight: 20,
+              maxWidth: 20 + (contentPadding?.right ?? 0),
+            ),
             suffixIcon: suffixIcon != null
                 ? Padding(
                     padding: EdgeInsets.only(right: contentPadding?.right ?? 0),
