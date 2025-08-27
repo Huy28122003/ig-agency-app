@@ -1,12 +1,18 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/usecases/logout_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_dark_mode_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/set_dark_mode_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_in_app_alerts_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/set_in_app_alerts_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/stream_user_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/update_user_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../../domain/usecases/fetch_current_user_use_case.dart';
+import '../../../../../domain/usecases/use_case.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
 
@@ -22,13 +28,19 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     required SetDarkModeUseCase setDarkModeUseCase,
     required GetInAppAlertsUseCase getInAppAlertsUseCase,
     required SetInAppAlertsUseCase setInAppAlertsUseCase,
+    required StreamUserUseCase streamUserUseCase,
+    required UpdateUserUseCase updateUserUseCase,
+    required FetchCurrentUserUseCase getCurrentUserUseCase,
   }) : _logoutUseCase = logoutUseCase,
        _getDarkModeUseCase = getDarkModeUseCase,
        _setDarkModeUseCase = setDarkModeUseCase,
        _getInAppAlertsUseCase = getInAppAlertsUseCase,
        _setInAppAlertsUseCase = setInAppAlertsUseCase,
+       _streamUserUseCase = streamUserUseCase,
+       _getCurrentUserUseCase = getCurrentUserUseCase,
        super(SettingHomeState()) {
     _registerHandlers();
+    _initializeUserListener();
   }
 
   final LogoutUseCase _logoutUseCase;
@@ -36,6 +48,10 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   final SetDarkModeUseCase _setDarkModeUseCase;
   final GetInAppAlertsUseCase _getInAppAlertsUseCase;
   final SetInAppAlertsUseCase _setInAppAlertsUseCase;
+  final FetchCurrentUserUseCase _getCurrentUserUseCase;
+  final StreamUserUseCase _streamUserUseCase;
+
+  StreamSubscription<UserEntity>? _userSubscription;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -45,6 +61,14 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     handleSubEvent<ToggleInAppAlertsEvent>(_onToggleInAppAlerts);
 
     handleSubEvent<LogoutEvent>(_onLogout);
+
+    handleSubEvent<UpdateUserEvent>(_onUpdateUser);
+  }
+
+  void _initializeUserListener() {
+    _userSubscription = _streamUserUseCase.call(NoParam()).listen((user) {
+      add(UpdateUserEvent(user: user));
+    });
   }
 
   Future<void> _onLoadData(
@@ -55,6 +79,18 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
 
     final darkModeResult = await _getDarkModeUseCase.call(null);
     final inAppAlertsResult = await _getInAppAlertsUseCase.call(null);
+    final userResult = await _getCurrentUserUseCase.call(null);
+
+    // Check if user is not found
+    if (!userResult.success || userResult.data == null) {
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.failure,
+          pageErrorMessage: userResult.failure?.message ?? 'User not found',
+        ),
+      );
+      return;
+    }
 
     emit(
       state.copyWith(
@@ -65,6 +101,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
         isInAppAlerts: inAppAlertsResult.success
             ? inAppAlertsResult.data ?? false
             : false,
+        user: userResult.data,
       ),
     );
   }
@@ -116,5 +153,18 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     final result = await _logoutUseCase.call(null);
 
     emit(state.copyWith(processing: false, isLogoutSuccess: result.success));
+  }
+
+  Future<void> _onUpdateUser(
+    UpdateUserEvent event,
+    Emitter<SettingHomeState> emit,
+  ) async {
+    emit(state.copyWith(user: event.user));
+  }
+
+  @override
+  Future<void> close() {
+    _userSubscription?.cancel();
+    return super.close();
   }
 }
