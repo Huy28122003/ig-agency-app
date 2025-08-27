@@ -40,6 +40,8 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     handleLoadData<LoadDataEvent>(_onLoadData);
 
     handleSubEvent<DeleteAccountEvent>(_onDeleteAccount);
+
+    handleSubEvent<UpdateUserEvent>(_onUpdateUser);
   }
 
   void _initializeUserListener() {
@@ -81,6 +83,13 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     emit(
       state.copyWith(processing: false, isDeleteAccountSuccess: result.success),
     );
+  }
+
+  Future<void> _onUpdateUser(
+    UpdateUserEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(state.copyWith(user: event.user));
   }
 
   @override
