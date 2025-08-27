@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import '../../resources/colors.dart';
 
 class CircleNetworkAvatar extends StatelessWidget {
-  const CircleNetworkAvatar({super.key, required this.imageUrl, this.size});
+  const CircleNetworkAvatar({
+    super.key,
+    required this.imageUrl,
+    this.size = 44,
+  });
 
   final String imageUrl;
-  final double? size;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +21,11 @@ class CircleNetworkAvatar extends StatelessWidget {
       height: size,
       child: CachedNetworkImage(
         imageUrl: imageUrl,
-        imageBuilder: (context, imageProvider) =>
-            ClipOval(child: Image(image: imageProvider)),
+        imageBuilder: (context, imageProvider) => CircleAvatar(
+          radius: size / 2,
+          backgroundColor: AppColors.surfaceContainerGrayStrong05,
+          backgroundImage: imageProvider,
+        ),
         placeholder: (_, _) => _buildPlaceholder(),
         errorWidget: (_, _, _) => _buildError(),
       ),
