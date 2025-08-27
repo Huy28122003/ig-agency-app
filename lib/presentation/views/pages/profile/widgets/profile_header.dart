@@ -9,7 +9,14 @@ import '../../../../resources/colors.dart';
 import '../profile_bloc.dart';
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
+  const ProfileHeader({
+    super.key,
+    required this.onChangeAvatar,
+    required this.onEditName,
+  });
+
+  final VoidCallback onChangeAvatar;
+  final VoidCallback onEditName;
 
   @override
   Widget build(BuildContext context) {
@@ -43,26 +50,29 @@ class ProfileHeader extends StatelessWidget {
         Positioned(
           right: 4,
           bottom: 4,
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: ShapeDecoration(
-              color: AppColors.iconDefaultDefaultInverted,
-              shape: OvalBorder(),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 3.19,
-                right: 3.19,
-                top: 4.17,
-                bottom: 4.94,
+          child: GestureDetector(
+            onTap: onChangeAvatar,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: ShapeDecoration(
+                color: AppColors.iconDefaultDefaultInverted,
+                shape: OvalBorder(),
               ),
-              child: Assets.icons.icCamera.svg(
-                width: 13.61,
-                height: 10.89,
-                colorFilter: ColorFilter.mode(
-                  AppColors.iconDefaultDefault,
-                  BlendMode.srcIn,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 3.19,
+                  right: 3.19,
+                  top: 4.17,
+                  bottom: 4.94,
+                ),
+                child: Assets.icons.icCamera.svg(
+                  width: 13.61,
+                  height: 10.89,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.iconDefaultDefault,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
@@ -95,12 +105,15 @@ class ProfileHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              Assets.icons.icEdit.svg(
-                width: 18,
-                height: 18,
-                colorFilter: ColorFilter.mode(
-                  AppColors.iconDefaultDefault,
-                  BlendMode.srcIn,
+              GestureDetector(
+                onTap: onEditName,
+                child: Assets.icons.icEdit.svg(
+                  width: 18,
+                  height: 18,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.iconDefaultDefault,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ],

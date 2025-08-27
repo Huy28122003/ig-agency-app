@@ -84,7 +84,14 @@ class _ProfileMobileLayoutState extends State<ProfileMobileLayout> {
             child: Column(
               spacing: 20,
               children: [
-                ProfileHeader(),
+                ProfileHeader(
+                  onChangeAvatar: () {
+                    // TODO hoannk: Route
+                  },
+                  onEditName: () {
+                    // TODO hoannk: Route
+                  },
+                ),
                 ProfileOption(),
                 DeleteAccountButton(
                   onDeleteAccount: () {
