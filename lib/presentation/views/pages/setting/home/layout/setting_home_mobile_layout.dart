@@ -4,7 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 
 import '../../widgets/general_setting_home_section.dart';
-import '../../widgets/logout_button.dart';
+import '../../widgets/log_out_button.dart';
 import '../../widgets/profile_setting_home_section.dart';
 import '../../widgets/setting_home_mobile_header.dart';
 import '../setting_home_bloc.dart';
@@ -53,8 +53,8 @@ class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
                       },
                     ),
                     const GeneralSettingHomeSection(),
-                    LogoutButton(
-                      onLogout: () {
+                    LogOutButton(
+                      onLogOut: () {
                         _settingHomeBloc.add(LogoutEvent());
                       },
                     ),

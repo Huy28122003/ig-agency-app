@@ -22,7 +22,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
           items: [
             SettingItem(
               icon: Assets.icons.icDarkMode.svg(width: 32, height: 32),
-              title: 'Dark mode',
+              title: 'Dark Mode',
               trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
                 selector: (state) => state.isDarkMode,
                 builder: (context, isDarkMode) {
@@ -44,7 +44,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
             ),
             SettingItem(
               icon: Assets.icons.icPinMessages.svg(width: 32, height: 32),
-              title: 'Pin Messages',
+              title: 'Pinned Messages',
               isShowArrow: true,
               onTap: () {
                 context.router.push(const PinnedMessageRoute());
@@ -64,7 +64,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
             ),
             SettingItem(
               icon: Assets.icons.icInAppAlerts.svg(width: 32, height: 32),
-              title: 'In App alerts',
+              title: 'In App Alerts',
               trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
                 selector: (state) => state.isInAppAlerts,
                 builder: (context, isInAppAlerts) {

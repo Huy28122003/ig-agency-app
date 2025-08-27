@@ -15,9 +15,9 @@ class SettingHomeMobileHeader extends StatelessWidget {
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            const Color(0xFFFFDB3F),
-            const Color(0xFFFFBA32),
             const Color(0xFFFF7E4C),
+            const Color(0xFFFFBA32),
+            const Color(0xFFFFDB3F),
           ],
         ),
         shape: RoundedRectangleBorder(

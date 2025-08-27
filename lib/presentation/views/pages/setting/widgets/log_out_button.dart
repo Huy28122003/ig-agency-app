@@ -3,15 +3,15 @@ import 'package:flutter/widgets.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
 
-class LogoutButton extends StatelessWidget {
-  const LogoutButton({super.key, required this.onLogout});
+class LogOutButton extends StatelessWidget {
+  const LogOutButton({super.key, required this.onLogOut});
 
-  final VoidCallback onLogout;
+  final VoidCallback onLogOut;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onLogout,
+      onTap: onLogOut,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -27,7 +27,7 @@ class LogoutButton extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Logout',
+                  'Log Out',
                   style: TextStyle(
                     color: AppColors.textAlertTextError,
                     fontSize: 16,
