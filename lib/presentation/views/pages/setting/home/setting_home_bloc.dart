@@ -30,14 +30,14 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     required SetInAppAlertsUseCase setInAppAlertsUseCase,
     required StreamUserUseCase streamUserUseCase,
     required UpdateUserUseCase updateUserUseCase,
-    required FetchCurrentUserUseCase getCurrentUserUseCase,
+    required FetchCurrentUserUseCase fetchCurrentUserUseCase,
   }) : _logoutUseCase = logoutUseCase,
        _getDarkModeUseCase = getDarkModeUseCase,
        _setDarkModeUseCase = setDarkModeUseCase,
        _getInAppAlertsUseCase = getInAppAlertsUseCase,
        _setInAppAlertsUseCase = setInAppAlertsUseCase,
        _streamUserUseCase = streamUserUseCase,
-       _getCurrentUserUseCase = getCurrentUserUseCase,
+       _fetchCurrentUserUseCase = fetchCurrentUserUseCase,
        super(SettingHomeState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -48,7 +48,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   final SetDarkModeUseCase _setDarkModeUseCase;
   final GetInAppAlertsUseCase _getInAppAlertsUseCase;
   final SetInAppAlertsUseCase _setInAppAlertsUseCase;
-  final FetchCurrentUserUseCase _getCurrentUserUseCase;
+  final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
   final StreamUserUseCase _streamUserUseCase;
 
   StreamSubscription<UserEntity>? _userSubscription;
@@ -79,7 +79,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
 
     final darkModeResult = await _getDarkModeUseCase.call(null);
     final inAppAlertsResult = await _getInAppAlertsUseCase.call(null);
-    final userResult = await _getCurrentUserUseCase.call(null);
+    final userResult = await _fetchCurrentUserUseCase(NoParam());
 
     // Check if user is not found
     if (!userResult.success || userResult.data == null) {
