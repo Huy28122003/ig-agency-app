@@ -109,7 +109,14 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
           ),
           SizedBox(width: 12),
           if (!widget.isSeen)
-            Container(color: AppColors.iconPrimaryDefault, width: 6, height: 6),
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: AppColors.iconPrimaryDefault,
+                shape: BoxShape.circle,
+              ),
+            ),
         ],
       ),
     );
