@@ -49,7 +49,7 @@ class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
                   children: [
                     ProfileSettingHomeSection(
                       onEdit: () {
-                        // TODO hoannk: Route
+                        context.router.push(const ProfileRoute());
                       },
                     ),
                     GeneralSettingHomeSection(

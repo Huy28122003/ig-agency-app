@@ -106,4 +106,15 @@ class AuthRepositoryImpl implements AuthRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<Result> deleteAccount(String userId) async {
+    try {
+      await _authRemoteDataSource.deleteAccount(userId);
+      clearToken();
+      return Result.completed(null);
+    } catch (e) {
+      return Result.failure(FailureConverter.convert(e));
+    }
+  }
 }
