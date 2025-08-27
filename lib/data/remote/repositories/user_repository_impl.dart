@@ -61,4 +61,24 @@ class UserRepositoryImpl implements UserRepository {
       return Result.failure(FailureConverter.convert(e));
     }
   }
+
+  @override
+  Future<Result> updateUserBio(String bio) async {
+    try {
+      // TODO hoannk: Call API update user bio
+
+      final user = _ramCache.getLatestProfileInfo();
+      if (user != null) {
+        final newUser = user.copyWith(bio: bio);
+        _ramCache.saveProfileInfo(newUser);
+        return Result.completed(null);
+      } else {
+        return Result.failure(
+          FailureConverter.convert(Exception('User not found')),
+        );
+      }
+    } catch (e) {
+      return Result.failure(FailureConverter.convert(e));
+    }
+  }
 }
