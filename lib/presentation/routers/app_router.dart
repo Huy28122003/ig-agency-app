@@ -41,7 +41,7 @@ class AppRouter extends RootStackRouter {
       initial: true,
       children: [
         CustomRoute(
-          page: WorkspaceListRoute.page,
+          page: WorkspaceRoute.page,
           // transitionsBuilder: TransitionsBuilders.noTransition,
         ),
         CustomRoute(

@@ -15,8 +15,8 @@ class _NavMobileLayoutState extends State<NavMobileLayout> {
     AppBottomNavigationItem(
       selectedIcon: const Icon(Icons.home_rounded),
       icon: const Icon(Icons.home),
-      label: 'Work place',
-      page: WorkspaceListRoute(),
+      label: 'Workspace',
+      page: WorkspaceRoute(),
     ),
     AppBottomNavigationItem(
       selectedIcon: const Icon(Icons.search),
