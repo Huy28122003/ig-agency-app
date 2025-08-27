@@ -52,9 +52,7 @@ class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
                         context.router.push(const ProfileRoute());
                       },
                     ),
-                    GeneralSettingHomeSection(
-                      settingHomeBloc: _settingHomeBloc,
-                    ),
+                    const GeneralSettingHomeSection(),
                     LogoutButton(
                       onLogout: () {
                         _settingHomeBloc.add(LogoutEvent());

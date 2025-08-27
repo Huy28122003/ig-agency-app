@@ -9,12 +9,12 @@ import 'setting_card.dart';
 import 'setting_item.dart';
 
 class GeneralSettingHomeSection extends StatelessWidget {
-  const GeneralSettingHomeSection({super.key, required this.settingHomeBloc});
-
-  final SettingHomeBloc settingHomeBloc;
+  const GeneralSettingHomeSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final settingHomeBloc = context.read<SettingHomeBloc>();
+
     return Column(
       spacing: 20,
       children: [

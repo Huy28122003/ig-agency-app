@@ -6,9 +6,11 @@ class ProfileState extends BaseState<ProfileState> {
     super.pageErrorMessage,
     super.processing,
     this.isDeleteAccountSuccess = false,
+    this.user,
   });
 
   final bool isDeleteAccountSuccess;
+  final UserEntity? user;
 
   @override
   ProfileState copyWith({
@@ -16,6 +18,7 @@ class ProfileState extends BaseState<ProfileState> {
     String? pageErrorMessage,
     bool? processing,
     bool? isDeleteAccountSuccess,
+    UserEntity? user,
   }) {
     return ProfileState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -23,9 +26,10 @@ class ProfileState extends BaseState<ProfileState> {
       processing: processing ?? this.processing,
       isDeleteAccountSuccess:
           isDeleteAccountSuccess ?? this.isDeleteAccountSuccess,
+      user: user ?? this.user,
     );
   }
 
   @override
-  List<Object?> get props => [...super.props, isDeleteAccountSuccess];
+  List<Object?> get props => [...super.props, isDeleteAccountSuccess, user];
 }

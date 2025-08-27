@@ -1,29 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 
+import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
+import '../profile_bloc.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      spacing: 16,
-      children: [_buildAvatar(), _buildInfo()],
+    return BlocSelector<ProfileBloc, ProfileState, UserEntity?>(
+      selector: (state) {
+        return state.user;
+      },
+      builder: (context, user) {
+        final currentUser = user;
+
+        if (currentUser == null) {
+          return const SizedBox();
+        }
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 16,
+          children: [
+            _buildAvatar(currentUser.avatar),
+            _buildInfo(currentUser.name, currentUser.email),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(String avatar) {
     return Stack(
       children: [
-        const CircleNetworkAvatar(
-          imageUrl: 'https://placehold.co/80x80',
-          size: 80,
-        ),
+        CircleNetworkAvatar(imageUrl: avatar, size: 80),
         Positioned(
           right: 4,
           bottom: 4,
@@ -56,7 +72,7 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildInfo() {
+  Widget _buildInfo(String name, String email) {
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -68,7 +84,7 @@ class ProfileHeader extends StatelessWidget {
             spacing: 8,
             children: [
               Text(
-                'Trần Văn Bê',
+                name,
                 style: TextStyle(
                   color: AppColors.textDefaultTextDefault,
                   fontSize: 20,
@@ -88,7 +104,7 @@ class ProfileHeader extends StatelessWidget {
             ],
           ),
           Text(
-            'coconut.210@gmail.com',
+            email,
             style: TextStyle(
               color: AppColors.textDefaultTextSub2,
               fontSize: 14,
