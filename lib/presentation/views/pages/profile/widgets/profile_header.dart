@@ -109,7 +109,7 @@ class ProfileHeader extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: onEditName,
-                child: Assets.icons.icEdit.svg(
+                child: Assets.icons.icEditSize18.svg(
                   width: 18,
                   height: 18,
                   colorFilter: ColorFilter.mode(
