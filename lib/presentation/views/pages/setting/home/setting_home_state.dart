@@ -8,11 +8,13 @@ class SettingHomeState extends BaseState<SettingHomeState> {
     this.isDarkMode = false,
     this.isInAppAlerts = true,
     this.isLogoutSuccess = false,
+    this.user,
   });
 
   final bool isDarkMode;
   final bool isInAppAlerts;
   final bool isLogoutSuccess;
+  final UserEntity? user;
 
   @override
   SettingHomeState copyWith({
@@ -22,6 +24,7 @@ class SettingHomeState extends BaseState<SettingHomeState> {
     bool? isDarkMode,
     bool? isInAppAlerts,
     bool? isLogoutSuccess,
+    UserEntity? user,
   }) {
     return SettingHomeState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -30,6 +33,7 @@ class SettingHomeState extends BaseState<SettingHomeState> {
       isDarkMode: isDarkMode ?? this.isDarkMode,
       isInAppAlerts: isInAppAlerts ?? this.isInAppAlerts,
       isLogoutSuccess: isLogoutSuccess ?? this.isLogoutSuccess,
+      user: user ?? this.user,
     );
   }
 
@@ -39,5 +43,6 @@ class SettingHomeState extends BaseState<SettingHomeState> {
     isDarkMode,
     isInAppAlerts,
     isLogoutSuccess,
+    user,
   ];
 }

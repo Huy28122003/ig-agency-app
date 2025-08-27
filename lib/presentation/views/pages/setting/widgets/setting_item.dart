@@ -23,41 +23,39 @@ class SettingItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Padding(
+      child: Container(
+        color: Colors.transparent,
         padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          height: 32,
-          child: Row(
-            children: [
-              icon,
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: AppColors.textDefaultTextDefault,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 1.50,
-                  ),
+        child: Row(
+          children: [
+            icon,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: AppColors.textDefaultTextDefault,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  height: 1.50,
                 ),
               ),
-              if (trailing != null) ...[
-                const SizedBox(width: 8),
-                trailing!,
-              ] else if (isShowArrow) ...[
-                const SizedBox(width: 8),
-                Assets.icons.icNext.svg(
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.iconDefaultDefault,
-                    BlendMode.srcIn,
-                  ),
+            ),
+            if (trailing != null) ...[
+              const SizedBox(width: 8),
+              trailing!,
+            ] else if (isShowArrow) ...[
+              const SizedBox(width: 8),
+              Assets.icons.icNext.svg(
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  AppColors.iconDefaultDefault,
+                  BlendMode.srcIn,
                 ),
-              ],
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );

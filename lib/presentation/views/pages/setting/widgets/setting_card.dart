@@ -12,6 +12,7 @@ class SettingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      clipBehavior: Clip.hardEdge,
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerGrayStrong05,
         shape: RoundedRectangleBorder(
