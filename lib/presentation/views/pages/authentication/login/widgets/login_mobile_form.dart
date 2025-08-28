@@ -88,7 +88,9 @@ class LoginMobileForm extends StatelessWidget {
               child: Text(
                 'Login',
                 style: TextStyle(
-                  color: AppColors.textDefaultTextInvertedDisabled,
+                  color: isFormValid
+                      ? AppColors.textDefaultTextInverted
+                      : AppColors.textDefaultTextInvertedDisabled,
                   fontSize: 16,
                   fontFamily: FontFamily.segoeUI,
                   fontWeight: FontWeight.w700,
@@ -105,7 +107,7 @@ class LoginMobileForm extends StatelessWidget {
             context.router.push(WorkspaceRoute());
           },
           child: Text(
-            'Forgot Password',
+            'Forgot Password?',
             style: TextStyle(
               color: AppColors.textDefaultTextSub2,
               fontSize: 16,

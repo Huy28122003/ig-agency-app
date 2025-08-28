@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 class SettingMobileLayout extends StatelessWidget {
@@ -6,6 +5,9 @@ class SettingMobileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AutoRouter();
+    return Scaffold(
+      backgroundColor: Colors.grey,
+      appBar: AppBar(title: const Text('Settings')),
+    );
   }
 }

@@ -57,6 +57,7 @@ dependencies:
   flutter_native_splash: ^2.4.6
   otp_pin_field: ^1.4.1
   pull_to_refresh_flutter3: ^2.0.2
+  cached_network_image: ^3.4.1
   intl: ^0.20.2
   card_loading: ^0.3.2
 

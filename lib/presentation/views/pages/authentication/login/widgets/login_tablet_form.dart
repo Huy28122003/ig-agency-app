@@ -88,7 +88,9 @@ class LoginTabletForm extends StatelessWidget {
               child: Text(
                 'Login',
                 style: TextStyle(
-                  color: AppColors.textDefaultTextInvertedDisabled,
+                  color: isFormValid
+                      ? AppColors.textDefaultTextInverted
+                      : AppColors.textDefaultTextInvertedDisabled,
                   fontSize: 16,
                   fontFamily: FontFamily.segoeUI,
                   fontWeight: FontWeight.w700,
@@ -104,7 +106,7 @@ class LoginTabletForm extends StatelessWidget {
             context.router.push(ForgotPasswordRoute());
           },
           child: Text(
-            'Forgot Password',
+            'Forgot Password?',
             style: TextStyle(
               color: AppColors.textDefaultTextSub2,
               fontSize: 16,

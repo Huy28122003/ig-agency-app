@@ -10,22 +10,28 @@ abstract class AppColors {
   static const Color textDefaultTextSub2 = Color(0xFF697282);
   static const Color textAlertTextError = Color(0xFFFA2B36);
   static final Color textDefaultTextInvertedDisabled = Colors.white.withValues(
-    alpha: 0.88,
+    alpha: 0.17,
   );
   static const Color textDefaultTextDefault = Color(0xFF1D2838);
   static const Color textDefaultTextInverted = Colors.white;
+
+  /// Icon
+  static const Color iconDefaultDefault = Color(0xFF08090A);
 
   /// Outline
   static const Color outlineGrayStrong200 = Color(0xFFE5E7EB);
   static const Color outlineAlertError = Color(0xFFFA2B36);
   static const Color outlinePrimaryDefault = Color(0xFFFCB732);
+  static const Color outlineAlertErrorLight = Color(0xFFFFC9C9);
 
   /// Surface
   static const Color surfaceContainerPrimaryPrimaryDefault = primary;
   static const Color surfaceBackgroundBackground = Color(0xFFFFFFFF);
   static const Color surfaceContainerPrimaryPrimaryDisabled = Color(0xFFFEE2AD);
   static const Color surfaceContainerPrimaryPrimaryLight = Color(0xFFFEFCE8);
-  static const Color surfaceContainerGrayStrong2 = Color(0xFFE5E7EB);
+  static const Color surfaceContainerGrayStrong2 = Color(0xFFF8FAFB);
+  static const Color surfaceContainerGrayStrong05 = Color(0xFFF8FAFB);
+  static const Color surfaceContainerAlertErrorLight = Color(0xFFFEE1E1);
 
   /// Icon
   static const Color iconDefaultDefaultSub = Color(0xFF6A7282);
