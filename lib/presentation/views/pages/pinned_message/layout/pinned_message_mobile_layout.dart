@@ -1,23 +1,59 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../gen/assets.gen.dart';
+import '../../../../../gen/fonts.gen.dart';
+import '../../../../resources/colors.dart';
+
 class PinnedMessageMobileLayout extends StatelessWidget {
   const PinnedMessageMobileLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
-      body: Container(
-        decoration: BoxDecoration(color: Colors.white),
-        alignment: Alignment.center,
-        child: GestureDetector(
-          child: Text('Pinned'),
-          onTap: () {
-            context.router.root.pop();
-          },
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        // systemOverlayStyle: SystemUiOverlayStyle.light, // Light status bar
+        backgroundColor: AppColors.surfaceContainerPrimaryPrimaryDefault,
+        elevation: 0,
+        toolbarHeight: 60,
+        title: Text(
+          'Pinned Messages',
+          style: TextStyle(
+            color: AppColors.textDefaultTextInverted,
+            fontSize: 22,
+            fontFamily: FontFamily.segoeUI,
+            fontWeight: FontWeight.w700,
+            height: 1.27,
+          ),
+        ),
+        centerTitle: true,
+        leadingWidth: 52,
+        leading: Container(
+          padding: const EdgeInsets.only(left: 12),
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            padding: EdgeInsets.all(8),
+            onPressed: () {
+              context.router.pop();
+            },
+            icon: Assets.icons.icArrowLeft.svg(
+              height: 24,
+              width: 24,
+              colorFilter: ColorFilter.mode(
+                AppColors.iconDefaultDefaultInverted,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: AppColors.outlineGrayStrong200, height: 1),
         ),
       ),
+      body: SafeArea(child: SingleChildScrollView()),
     );
   }
 }
