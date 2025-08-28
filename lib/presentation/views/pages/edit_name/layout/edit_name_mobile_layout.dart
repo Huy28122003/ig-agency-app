@@ -152,4 +152,10 @@ class _EditNameMobileLayoutState extends State<EditNameMobileLayout> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 }
