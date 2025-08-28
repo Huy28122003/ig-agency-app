@@ -51,7 +51,7 @@ class ProfileOption extends StatelessWidget {
             title: 'Reset Password',
             iconPath: Assets.icons.icPassword.path,
             onTap: () {
-              // TODO hoannk: Route to reset password page
+              context.router.push(const ChangePasswordRoute());
             },
             isLast: true,
           ),
