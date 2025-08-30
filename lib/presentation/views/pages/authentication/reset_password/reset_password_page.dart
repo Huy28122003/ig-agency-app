@@ -17,16 +17,16 @@ class ResetPasswordPage
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<ResetPasswordBloc>().add(LoadDataEvent());
+    context.read<ResetPasswordBloc>().add(LoadDataEvent(email));
   }
 
   @override
   Widget mobileBuilder(BuildContext context) {
-    return ResetPasswordMobileLayout(email: email);
+    return ResetPasswordMobileLayout();
   }
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return ResetPasswordTabletLayout(email: email);
+    return ResetPasswordTabletLayout();
   }
 }

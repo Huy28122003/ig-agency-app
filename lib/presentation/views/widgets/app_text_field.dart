@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../gen/assets.gen.dart';
 import '../../../gen/fonts.gen.dart';
 import '../../resources/colors.dart';
 
-class AppTextField extends StatelessWidget {
+class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
     this.controller,
-    this.initialValue,
+    this.value = '',
     this.labelText,
     this.hintText,
     this.errorText,
@@ -30,7 +31,7 @@ class AppTextField extends StatelessWidget {
   });
 
   final TextEditingController? controller;
-  final String? initialValue;
+  final String value;
   final String? labelText;
   final String? hintText;
   final String? errorText;
@@ -50,28 +51,57 @@ class AppTextField extends StatelessWidget {
   final TextStyle? style;
 
   @override
+  State<AppTextField> createState() => _AppTextFieldState();
+}
+
+class _AppTextFieldState extends State<AppTextField> {
+  late TextEditingController _controller;
+  bool _obscureText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? TextEditingController();
+    _controller.text = widget.value;
+    _obscureText = widget.obscureText;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant AppTextField oldWidget) {
+    if (_controller.text != widget.value) {
+      _controller.text = widget.value;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isError = errorText != null;
+    final isError = widget.errorText != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         TextFormField(
-          initialValue: initialValue,
-          controller: controller,
-          focusNode: focusNode,
-          obscureText: obscureText,
+          controller: _controller,
+          focusNode: widget.focusNode,
+          obscureText: _obscureText,
           obscuringCharacter: '*',
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          onChanged: onChanged,
-          onEditingComplete: onEditingComplete,
-          onFieldSubmitted: onFieldSubmitted,
-          maxLines: onEditingComplete != null ? 1 : maxLines,
-          maxLength: maxLength,
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          onChanged: widget.onChanged,
+          onEditingComplete: widget.onEditingComplete,
+          onFieldSubmitted: widget.onFieldSubmitted,
+          maxLines: widget.onEditingComplete != null ? 1 : widget.maxLines,
+          maxLength: widget.maxLength,
           style:
-              style ??
+              widget.style ??
               TextStyle(
                 color: AppColors.textDefaultTextSub2,
                 fontSize: 16,
@@ -79,9 +109,9 @@ class AppTextField extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 height: 1.50,
               ),
-          cursorColor: style?.color ?? AppColors.textDefaultTextSub2,
+          cursorColor: widget.style?.color ?? AppColors.textDefaultTextSub2,
           decoration: InputDecoration(
-            labelText: labelText,
+            labelText: widget.labelText,
             labelStyle: TextStyle(
               color: AppColors.textDefaultTextSub,
               fontSize: 14,
@@ -89,7 +119,7 @@ class AppTextField extends StatelessWidget {
               fontWeight: FontWeight.w600,
               height: 1.14,
             ),
-            hintText: hintText,
+            hintText: widget.hintText,
             hintStyle: TextStyle(
               color: AppColors.textDefaultTextSub,
               fontSize: 16,
@@ -100,22 +130,28 @@ class AppTextField extends StatelessWidget {
             isDense: true,
             prefixIconConstraints: BoxConstraints(
               maxHeight: 20,
-              maxWidth: 20 + (contentPadding?.left ?? 0),
+              maxWidth: 20 + (widget.contentPadding?.left ?? 0),
             ),
-            prefixIcon: prefixIcon != null
+            prefixIcon: widget.prefixIcon != null
                 ? Padding(
-                    padding: EdgeInsets.only(left: contentPadding?.left ?? 0),
-                    child: prefixIcon,
+                    padding: EdgeInsets.only(
+                      left: widget.contentPadding?.left ?? 0,
+                    ),
+                    child: widget.prefixIcon,
                   )
                 : null,
             suffixIconConstraints: BoxConstraints(
               maxHeight: 20,
-              maxWidth: 20 + (contentPadding?.right ?? 0),
+              maxWidth: 20 + (widget.contentPadding?.right ?? 0),
             ),
-            suffixIcon: suffixIcon != null
+            suffixIcon: widget.obscureText
+                ? _buildSuffixIcon()
+                : widget.suffixIcon != null
                 ? Padding(
-                    padding: EdgeInsets.only(right: contentPadding?.right ?? 0),
-                    child: suffixIcon,
+                    padding: EdgeInsets.only(
+                      right: widget.contentPadding?.right ?? 0,
+                    ),
+                    child: widget.suffixIcon,
                   )
                 : null,
             border: UnderlineInputBorder(
@@ -142,13 +178,13 @@ class AppTextField extends StatelessWidget {
                 width: 1,
               ),
             ),
-            contentPadding: contentPadding,
+            contentPadding: widget.contentPadding,
           ),
         ),
         if (isError) ...[
           const SizedBox(height: 4),
           Text(
-            errorText!,
+            widget.errorText!,
             style: TextStyle(
               color: AppColors.textAlertTextError,
               fontSize: 14,
@@ -159,6 +195,23 @@ class AppTextField extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  Widget? _buildSuffixIcon() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _obscureText = !_obscureText;
+        });
+      },
+      child: SizedBox(
+        height: 20,
+        width: 20,
+        child: _obscureText
+            ? Assets.icons.icEye.svg()
+            : Assets.icons.icEyeOff.svg(),
+      ),
     );
   }
 }

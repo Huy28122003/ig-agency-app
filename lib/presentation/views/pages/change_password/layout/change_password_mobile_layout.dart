@@ -19,24 +19,11 @@ class ChangePasswordMobileLayout extends StatefulWidget {
 class _ChangePasswordMobileLayoutState
     extends State<ChangePasswordMobileLayout> {
   late final ChangePasswordBloc _changePasswordBloc;
-  late final TextEditingController _currentPasswordController;
-  late final TextEditingController _newPasswordController;
-  late final TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
     super.initState();
     _changePasswordBloc = context.read<ChangePasswordBloc>();
-
-    _currentPasswordController = TextEditingController(
-      text: _changePasswordBloc.state.currentPassword,
-    );
-    _newPasswordController = TextEditingController(
-      text: _changePasswordBloc.state.newPassword,
-    );
-    _confirmPasswordController = TextEditingController(
-      text: _changePasswordBloc.state.confirmPassword,
-    );
   }
 
   @override
@@ -131,23 +118,21 @@ class _ChangePasswordMobileLayoutState
                 BlocSelector<
                   ChangePasswordBloc,
                   ChangePasswordState,
-                  (bool, String?)
+                  (String, String?)
                 >(
                   selector: (state) => (
-                    state.isObscureCurrentPassword,
+                    state.currentPassword,
                     state.errorCurrentPasswordMessage,
                   ),
                   builder: (context, state) {
-                    final (
-                      isObscureCurrentPassword,
-                      errorCurrentPasswordMessage,
-                    ) = state;
+                    final (currentPassword, errorCurrentPasswordMessage) =
+                        state;
 
                     return AppTextField(
-                      controller: _currentPasswordController,
-                      obscureText: isObscureCurrentPassword,
+                      value: currentPassword,
                       errorText: errorCurrentPasswordMessage,
                       hintText: 'Current Password',
+                      obscureText: true,
                       textInputAction: TextInputAction.next,
                       style: const TextStyle(
                         color: AppColors.textDefaultTextSub2,
@@ -159,38 +144,23 @@ class _ChangePasswordMobileLayoutState
                       onChanged: (value) => _changePasswordBloc.add(
                         CurrentPasswordChangedEvent(value),
                       ),
-                      suffixIcon: GestureDetector(
-                        onTap: () => _changePasswordBloc.add(
-                          ToggleCurrentPasswordVisibilityEvent(),
-                        ),
-                        child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: isObscureCurrentPassword
-                              ? Assets.icons.icEye.svg()
-                              : Assets.icons.icEyeOff.svg(),
-                        ),
-                      ),
                     );
                   },
                 ),
                 BlocSelector<
                   ChangePasswordBloc,
                   ChangePasswordState,
-                  (bool, String?)
+                  (String, String?)
                 >(
-                  selector: (state) => (
-                    state.isObscureNewPassword,
-                    state.errorNewPasswordMessage,
-                  ),
+                  selector: (state) =>
+                      (state.newPassword, state.errorNewPasswordMessage),
                   builder: (context, state) {
-                    final (isObscureNewPassword, errorNewPasswordMessage) =
-                        state;
+                    final (newPassword, errorNewPasswordMessage) = state;
 
                     return AppTextField(
-                      controller: _newPasswordController,
-                      obscureText: isObscureNewPassword,
+                      value: newPassword,
                       errorText: errorNewPasswordMessage,
+                      obscureText: true,
                       hintText: 'New Password',
                       textInputAction: TextInputAction.next,
                       style: const TextStyle(
@@ -203,39 +173,25 @@ class _ChangePasswordMobileLayoutState
                       onChanged: (value) => _changePasswordBloc.add(
                         NewPasswordChangedEvent(value),
                       ),
-                      suffixIcon: GestureDetector(
-                        onTap: () => _changePasswordBloc.add(
-                          ToggleNewPasswordVisibilityEvent(),
-                        ),
-                        child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: isObscureNewPassword
-                              ? Assets.icons.icEye.svg()
-                              : Assets.icons.icEyeOff.svg(),
-                        ),
-                      ),
                     );
                   },
                 ),
                 BlocSelector<
                   ChangePasswordBloc,
                   ChangePasswordState,
-                  (bool, String?)
+                  (String, String?)
                 >(
                   selector: (state) => (
-                    state.isObscureConfirmPassword,
+                    state.confirmPassword,
                     state.errorConfirmPasswordMessage,
                   ),
                   builder: (context, state) {
-                    final (
-                      isObscureConfirmPassword,
-                      errorConfirmPasswordMessage,
-                    ) = state;
+                    final (confirmPassword, errorConfirmPasswordMessage) =
+                        state;
 
                     return AppTextField(
-                      controller: _confirmPasswordController,
-                      obscureText: isObscureConfirmPassword,
+                      value: confirmPassword,
+                      obscureText: true,
                       errorText: errorConfirmPasswordMessage,
                       hintText: 'Confirm New Password',
                       textInputAction: TextInputAction.done,
@@ -249,18 +205,6 @@ class _ChangePasswordMobileLayoutState
                       onChanged: (value) => _changePasswordBloc.add(
                         ConfirmPasswordChangedEvent(value),
                       ),
-                      suffixIcon: GestureDetector(
-                        onTap: () => _changePasswordBloc.add(
-                          ToggleConfirmPasswordVisibilityEvent(),
-                        ),
-                        child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: isObscureConfirmPassword
-                              ? Assets.icons.icEye.svg()
-                              : Assets.icons.icEyeOff.svg(),
-                        ),
-                      ),
                     );
                   },
                 ),
@@ -270,13 +214,5 @@ class _ChangePasswordMobileLayoutState
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _currentPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
   }
 }

@@ -26,18 +26,6 @@ class ConfirmPasswordChangedEvent extends ChangePasswordEvent {
   final String confirmPassword;
 }
 
-class ToggleCurrentPasswordVisibilityEvent extends ChangePasswordEvent {
-  const ToggleCurrentPasswordVisibilityEvent();
-}
-
-class ToggleNewPasswordVisibilityEvent extends ChangePasswordEvent {
-  const ToggleNewPasswordVisibilityEvent();
-}
-
-class ToggleConfirmPasswordVisibilityEvent extends ChangePasswordEvent {
-  const ToggleConfirmPasswordVisibilityEvent();
-}
-
 class SavePasswordEvent extends ChangePasswordEvent {
   const SavePasswordEvent();
 }

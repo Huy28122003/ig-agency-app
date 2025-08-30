@@ -11,8 +11,7 @@ import '../../../../../resources/colors.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 
 class OtpMobileLayout extends StatefulWidget {
-  final String email;
-  const OtpMobileLayout({super.key, required this.email});
+  const OtpMobileLayout({super.key});
 
   @override
   State<OtpMobileLayout> createState() => _OtpMobileLayoutState();
@@ -48,13 +47,11 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
           listenWhen: (prev, curr) => prev.otpStatus != curr.otpStatus,
           listener: (context, state) {
             if (state.otpStatus == VerifyStatus.valid) {
-              context.router.push(ResetPasswordRoute(email: widget.email));
+              context.router.push(ResetPasswordRoute(email: state.email));
             } else if (state.otpStatus == VerifyStatus.invalid) {
               _otpKey.currentState?.clearOtp();
-
               // Show error message
             }
-            _otpBloc.add(ResetOtpStatusEvent());
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +89,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
             Text(
               'OTP Verification',
               style: TextStyle(
-                color: AppColors.textDefaultTextInvertedDisabled,
+                color: AppColors.textDefaultTextInverted,
                 fontSize: 32,
                 fontFamily: FontFamily.segoeUI,
                 fontWeight: FontWeight.w700,
@@ -170,9 +167,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                       AppColors.surfaceContainerPrimaryPrimaryDefault,
 
                   onPressed: () {
-                    context.router.push(
-                      ResetPasswordRoute(email: widget.email),
-                    );
+                    // Todo: Refactor logic ui
                   },
                   child: Text(
                     'Continue',

@@ -5,7 +5,6 @@ import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
 
-import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../login_bloc.dart';
@@ -32,7 +31,7 @@ class LoginTabletForm extends StatelessWidget {
                   final (email, errorEmailMessage) = state;
 
                   return AppTextField(
-                    initialValue: email,
+                    value: email,
                     errorText: errorEmailMessage,
                     hintText: 'Email',
                     keyboardType: TextInputType.emailAddress,
@@ -47,8 +46,8 @@ class LoginTabletForm extends StatelessWidget {
               BlocBuilder<LoginBloc, LoginState>(
                 builder: (context, state) {
                   return AppTextField(
-                    initialValue: state.password,
-                    obscureText: state.isObscurePassword,
+                    value: state.password,
+                    obscureText: true,
                     hintText: 'Password',
                     errorText: state.errorPasswordMessage,
                     textInputAction: TextInputAction.done,
@@ -60,17 +59,6 @@ class LoginTabletForm extends StatelessWidget {
                         loginBloc.add(SubmitLoginEvent());
                       }
                     },
-                    suffixIcon: GestureDetector(
-                      onTap: () =>
-                          loginBloc.add(TogglePasswordVisibilityEvent()),
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: state.isObscurePassword
-                            ? Assets.icons.icEye.svg()
-                            : Assets.icons.icEyeOff.svg(),
-                      ),
-                    ),
                   );
                 },
               ),

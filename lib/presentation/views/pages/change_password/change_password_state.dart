@@ -9,9 +9,6 @@ class ChangePasswordState extends BaseState<ChangePasswordState> {
     this.newPassword = '',
     this.confirmPassword = '',
     this.isSaveSuccess = false,
-    this.isObscureCurrentPassword = true,
-    this.isObscureNewPassword = true,
-    this.isObscureConfirmPassword = true,
     this.errorCurrentPasswordMessage,
     this.errorNewPasswordMessage,
     this.errorConfirmPasswordMessage,
@@ -21,9 +18,6 @@ class ChangePasswordState extends BaseState<ChangePasswordState> {
   final String newPassword;
   final String confirmPassword;
   final bool isSaveSuccess;
-  final bool isObscureCurrentPassword;
-  final bool isObscureNewPassword;
-  final bool isObscureConfirmPassword;
   final String? errorCurrentPasswordMessage;
   final String? errorNewPasswordMessage;
   final String? errorConfirmPasswordMessage;
@@ -42,9 +36,6 @@ class ChangePasswordState extends BaseState<ChangePasswordState> {
     String? newPassword,
     String? confirmPassword,
     bool? isSaveSuccess,
-    bool? isObscureCurrentPassword,
-    bool? isObscureNewPassword,
-    bool? isObscureConfirmPassword,
     String? errorCurrentPasswordMessage,
     String? errorNewPasswordMessage,
     String? errorConfirmPasswordMessage,
@@ -58,11 +49,6 @@ class ChangePasswordState extends BaseState<ChangePasswordState> {
       newPassword: newPassword ?? this.newPassword,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       isSaveSuccess: isSaveSuccess ?? this.isSaveSuccess,
-      isObscureCurrentPassword:
-          isObscureCurrentPassword ?? this.isObscureCurrentPassword,
-      isObscureNewPassword: isObscureNewPassword ?? this.isObscureNewPassword,
-      isObscureConfirmPassword:
-          isObscureConfirmPassword ?? this.isObscureConfirmPassword,
       errorCurrentPasswordMessage: forceResetErrorMessages
           ? null
           : (errorCurrentPasswordMessage ?? this.errorCurrentPasswordMessage),
@@ -82,9 +68,6 @@ class ChangePasswordState extends BaseState<ChangePasswordState> {
     newPassword,
     confirmPassword,
     isSaveSuccess,
-    isObscureCurrentPassword,
-    isObscureNewPassword,
-    isObscureConfirmPassword,
     errorCurrentPasswordMessage,
     errorNewPasswordMessage,
     errorConfirmPasswordMessage,

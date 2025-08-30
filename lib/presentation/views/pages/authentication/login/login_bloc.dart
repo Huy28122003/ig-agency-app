@@ -30,11 +30,6 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
       (event, emit) async => emit(state.copyWith(password: event.password)),
     );
 
-    handleSubEvent<TogglePasswordVisibilityEvent>(
-      (_, emit) async =>
-          emit(state.copyWith(isObscurePassword: !state.isObscurePassword)),
-    );
-
     handleSubEvent<SubmitLoginEvent>(_onSubmitLogin);
   }
 
