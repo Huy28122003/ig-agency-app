@@ -56,6 +56,8 @@ class ProfileSettingHomeSection extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           height: 1.50,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         currentUser.email,
@@ -66,6 +68,8 @@ class ProfileSettingHomeSection extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                           height: 1.43,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

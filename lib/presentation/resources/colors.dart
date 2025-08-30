@@ -17,6 +17,7 @@ abstract class AppColors {
 
   /// Icon
   static const Color iconDefaultDefault = Color(0xFF08090A);
+  static const Color iconDefaultDefaultInverted = Color(0xFFFFFFFF);
 
   /// Outline
   static const Color outlineGrayStrong200 = Color(0xFFE5E7EB);

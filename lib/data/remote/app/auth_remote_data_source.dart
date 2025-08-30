@@ -18,4 +18,6 @@ abstract class AuthRemoteDataSource {
   Future<bool> verifyOtpCode(String code);
 
   Future<bool> sendNewPassword(String email, String newPassword);
+
+  Future<void> deleteAccount(String userId);
 }

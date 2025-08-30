@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import '../app/auth_remote_data_source.dart';
 import '../models/requests/login_request_model.dart';
 import '../models/requests/registration_request_model.dart';
+import '../models/requests/delete_account_request_model.dart';
 
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -33,7 +34,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> login(String email, String password) async{
+  Future<void> login(String email, String password) async {
     try {
       final loginRequestModel = LoginRequestModel(
         email: email,
@@ -114,6 +115,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       // Simulate revoking tokens
       return Future.value(true);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteAccount(String userId) async {
+    try {
+      final deleteAccountRequestModel = DeleteAccountRequestModel(
+        userId: userId,
+      );
+      // return _apiService.deleteAccount(deleteAccountRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
