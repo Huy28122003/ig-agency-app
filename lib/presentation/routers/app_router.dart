@@ -12,6 +12,7 @@ import '../views/pages/authentication/reset_password/reset_password_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
 import '../views/pages/profile/profile_page.dart';
+import '../views/pages/edit_name/edit_name_page.dart';
 import '../views/pages/search/search_page.dart';
 import '../views/pages/setting/home/setting_home_page.dart';
 import '../views/pages/setting/shell/setting_page.dart';
@@ -58,6 +59,7 @@ class AppRouter extends RootStackRouter {
             ),
             AutoRoute(page: PinnedMessageRoute.page),
             AutoRoute(page: ProfileRoute.page),
+            AutoRoute(page: EditNameRoute.page),
           ],
         ),
         AutoRoute(page: WSDetailRoute.page),
@@ -77,6 +79,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: WSDetailRoute.page),
     AutoRoute(page: PinnedMessageRoute.page),
     AutoRoute(page: ProfileRoute.page),
+    AutoRoute(page: EditNameRoute.page),
     AutoRoute(page: ChatInfoRoute.page),
     AutoRoute(page: SharedContentRoute.page),
   ];

@@ -89,7 +89,7 @@ class _ProfileMobileLayoutState extends State<ProfileMobileLayout> {
                     // TODO hoannk: Route
                   },
                   onEditName: () {
-                    // TODO hoannk: Route
+                    context.router.push(const EditNameRoute());
                   },
                 ),
                 ProfileOption(),
