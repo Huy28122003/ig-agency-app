@@ -141,6 +141,9 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
       ),
       body: SafeArea(
         child: BlocConsumer<PinnedMessageBloc, PinnedMessageState>(
+          listenWhen: (previous, current) =>
+              previous.processing != current.processing ||
+              previous.canLoadMore != current.canLoadMore,
           listener: (context, state) {
             if (!state.processing && state.pageStatus == PageStatus.loaded) {
               if (_refreshController.isRefresh) {
