@@ -19,5 +19,7 @@ abstract class AuthRemoteDataSource {
 
   Future<bool> sendNewPassword(String email, String newPassword);
 
+  Future<void> changePassword(String currentPassword, String newPassword);
+
   Future<void> deleteAccount(String userId);
 }

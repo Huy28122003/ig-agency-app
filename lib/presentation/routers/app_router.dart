@@ -14,6 +14,7 @@ import '../views/pages/pinned_message/pinned_message_page.dart';
 import '../views/pages/profile/profile_page.dart';
 import '../views/pages/edit_name/edit_name_page.dart';
 import '../views/pages/edit_bio/edit_bio_page.dart';
+import '../views/pages/change_password/change_password_page.dart';
 import '../views/pages/search/search_page.dart';
 import '../views/pages/setting/home/setting_home_page.dart';
 import '../views/pages/setting/shell/setting_page.dart';
@@ -62,6 +63,7 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: ProfileRoute.page),
             AutoRoute(page: EditNameRoute.page),
             AutoRoute(page: EditBioRoute.page),
+            AutoRoute(page: ChangePasswordRoute.page),
           ],
         ),
         AutoRoute(page: WSDetailRoute.page),
@@ -83,6 +85,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ProfileRoute.page),
     AutoRoute(page: EditNameRoute.page),
     AutoRoute(page: EditBioRoute.page),
+    AutoRoute(page: ChangePasswordRoute.page),
     AutoRoute(page: ChatInfoRoute.page),
     AutoRoute(page: SharedContentRoute.page),
   ];

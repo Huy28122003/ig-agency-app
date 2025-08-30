@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import '../app/auth_remote_data_source.dart';
 import '../models/requests/login_request_model.dart';
 import '../models/requests/registration_request_model.dart';
+import '../models/requests/change_password_request_model.dart';
 import '../models/requests/delete_account_request_model.dart';
 
 @Injectable(as: AuthRemoteDataSource)
@@ -115,6 +116,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       // Simulate revoking tokens
       return Future.value(true);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      final changePasswordRequestModel = ChangePasswordRequestModel(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
+      // return _apiService.changePassword(changePasswordRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

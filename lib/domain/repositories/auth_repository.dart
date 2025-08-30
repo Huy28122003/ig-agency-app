@@ -19,5 +19,7 @@ abstract class AuthRepository {
 
   Future<bool> sendNewPassword(String email, String newPassword);
 
+  Future<Result> changePassword(String currentPassword, String newPassword);
+
   Future<Result> deleteAccount(String userId);
 }
