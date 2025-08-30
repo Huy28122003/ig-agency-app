@@ -190,7 +190,7 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                 left: 20,
                 right: 20,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
