@@ -158,4 +158,10 @@ class _EditBioMobileLayoutState extends State<EditBioMobileLayout> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _bioController.dispose();
+    super.dispose();
+  }
 }
