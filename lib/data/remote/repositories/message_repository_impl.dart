@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
 
-import '../../../domain/entities/message_entity.dart';
+import '../../../domain/entities/message/message.dart';
 import '../../../domain/repositories/message_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
 import '../../../shared/commons/result.dart';

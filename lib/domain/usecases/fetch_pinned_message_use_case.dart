@@ -2,7 +2,7 @@ import 'package:ig_agency_app/domain/repositories/message_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../shared/commons/result.dart';
-import '../entities/message_entity.dart';
+import '../entities/message/message.dart';
 import 'use_case.dart';
 
 @injectable

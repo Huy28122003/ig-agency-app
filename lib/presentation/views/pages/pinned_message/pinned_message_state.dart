@@ -8,14 +8,14 @@ class PinnedMessageState extends BaseState<PinnedMessageState> {
     this.messages = const [],
   });
 
-  final List<MessageEntity> messages;
+  final List<PinnedMessageUIModel> messages;
 
   @override
   PinnedMessageState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    List<MessageEntity>? messages,
+    List<PinnedMessageUIModel>? messages,
   }) {
     return PinnedMessageState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -26,5 +26,5 @@ class PinnedMessageState extends BaseState<PinnedMessageState> {
   }
 
   @override
-  List<Object?> get props => [...super.props];
+  List<Object?> get props => [...super.props, messages];
 }
