@@ -1,24 +1,25 @@
+import 'package:equatable/equatable.dart';
 import '../../enums/message_enums.dart';
 import 'text_segment.dart';
 
-sealed class MessageContent {
+sealed class MessageContent extends Equatable {
   const MessageContent();
 
   // Text message
-  factory MessageContent.text({
+  const factory MessageContent.text({
     required String text,
     List<TextSegment>? textSegments,
   }) = TextMessageContent;
 
   // Image message
-  factory MessageContent.image({
+  const factory MessageContent.image({
     required String imageUrl,
     double? width,
     double? height,
   }) = ImageMessageContent;
 
   // Video message
-  factory MessageContent.video({
+  const factory MessageContent.video({
     required String videoUrl,
     required Duration duration,
     String? thumbnailUrl,
@@ -27,7 +28,7 @@ sealed class MessageContent {
   }) = VideoMessageContent;
 
   // File message
-  factory MessageContent.file({
+  const factory MessageContent.file({
     required String fileUrl,
     required String fileName,
     required String fileExtension,
@@ -36,7 +37,7 @@ sealed class MessageContent {
   }) = FileMessageContent;
 
   // System message
-  factory MessageContent.system({
+  const factory MessageContent.system({
     required SystemMessageType systemType,
     String? message,
   }) = SystemMessageContent;
@@ -46,6 +47,9 @@ class TextMessageContent extends MessageContent {
   final String text;
   final List<TextSegment>? textSegments;
   const TextMessageContent({required this.text, this.textSegments});
+
+  @override
+  List<Object?> get props => [text, textSegments];
 }
 
 class ImageMessageContent extends MessageContent {
@@ -53,6 +57,9 @@ class ImageMessageContent extends MessageContent {
   final double? width;
   final double? height;
   const ImageMessageContent({required this.imageUrl, this.width, this.height});
+
+  @override
+  List<Object?> get props => [imageUrl, width, height];
 }
 
 class VideoMessageContent extends MessageContent {
@@ -68,6 +75,9 @@ class VideoMessageContent extends MessageContent {
     this.width,
     this.height,
   });
+
+  @override
+  List<Object?> get props => [videoUrl, duration, thumbnailUrl, width, height];
 }
 
 class AudioMessageContent extends MessageContent {
@@ -79,6 +89,9 @@ class AudioMessageContent extends MessageContent {
     required this.duration,
     required this.audioSize,
   });
+
+  @override
+  List<Object?> get props => [audioUrl, duration, audioSize];
 }
 
 class FileMessageContent extends MessageContent {
@@ -94,10 +107,22 @@ class FileMessageContent extends MessageContent {
     required this.fileSize,
     this.fileType,
   });
+
+  @override
+  List<Object?> get props => [
+    fileUrl,
+    fileName,
+    fileExtension,
+    fileSize,
+    fileType,
+  ];
 }
 
 class SystemMessageContent extends MessageContent {
   final SystemMessageType systemType;
   final String? message;
   const SystemMessageContent({required this.systemType, this.message});
+
+  @override
+  List<Object?> get props => [systemType, message];
 }

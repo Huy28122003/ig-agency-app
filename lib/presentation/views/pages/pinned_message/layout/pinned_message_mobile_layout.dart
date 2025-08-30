@@ -2,11 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
+import '../../../../../shared/commons/enums/status.dart';
 import '../../../../resources/colors.dart';
-import '../../../models/pinned_message_ui_model.dart';
+import '../../../widgets/app_pull_to_refresh.dart';
 import '../../../widgets/pinned_message_bubble.dart';
 import '../pinned_message_bloc.dart';
 
@@ -20,11 +22,19 @@ class PinnedMessageMobileLayout extends StatefulWidget {
 
 class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
   late final PinnedMessageBloc _pinnedMessageBloc;
+  late final RefreshController _refreshController;
 
   @override
   void initState() {
     super.initState();
     _pinnedMessageBloc = context.read<PinnedMessageBloc>();
+    _refreshController = RefreshController();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 
   Future<void> _showOptionSheet(BuildContext context, String messageId) async {
@@ -76,6 +86,14 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
     }
   }
 
+  void _onRefresh() {
+    _pinnedMessageBloc.add(RefreshPinnedMessageEvent());
+  }
+
+  void _onLoadMore() {
+    _pinnedMessageBloc.add(LoadMorePinnedMessageEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,42 +139,54 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
           child: Container(color: AppColors.outlineGrayStrong200, height: 1),
         ),
       ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child:
-              BlocSelector<
-                PinnedMessageBloc,
-                PinnedMessageState,
-                List<PinnedMessageUIModel>
-              >(
-                selector: (state) {
-                  return state.messages;
-                },
-                builder: (context, messages) {
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(20),
-                    itemBuilder: (context, index) => PinnedMessageBubble(
-                      key: ValueKey(messages[index].id),
-                      message: messages[index],
-                      onTap: () {
-                        final messageId = messages[index].id;
-                        if (messageId == null) return;
-                        _showOptionSheet(context, messageId);
-                      },
-                    ),
-                    separatorBuilder: (_, _) => Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Divider(
-                        color: AppColors.outlineGrayStrong200,
-                        height: 2,
-                      ),
-                    ),
-                    itemCount: messages.length,
-                  );
-                },
+      body: SafeArea(
+        child: BlocConsumer<PinnedMessageBloc, PinnedMessageState>(
+          listener: (context, state) {
+            if (!state.processing && state.pageStatus == PageStatus.loaded) {
+              if (_refreshController.isRefresh) {
+                _refreshController.refreshCompleted();
+              }
+              if (_refreshController.isLoading) {
+                if (!state.canLoadMore) {
+                  _refreshController.loadNoData();
+                } else {
+                  _refreshController.loadComplete();
+                }
+              }
+            }
+          },
+          builder: (context, state) {
+            return AppPullToRefresh(
+              refreshController: _refreshController,
+              onRefresh: _onRefresh,
+              onLoadMore: state.canLoadMore ? _onLoadMore : null,
+              child: ListView.separated(
+                padding: EdgeInsets.only(
+                  top: 20,
+                  left: 20,
+                  right: 20,
+                  bottom: 20,
+                ),
+                itemBuilder: (context, index) => PinnedMessageBubble(
+                  key: ValueKey(state.messages[index].id),
+                  message: state.messages[index],
+                  onTap: () {
+                    final messageId = state.messages[index].id;
+                    if (messageId == null) return;
+                    _showOptionSheet(context, messageId);
+                  },
+                ),
+                separatorBuilder: (_, _) => Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Divider(
+                    color: AppColors.outlineGrayStrong200,
+                    height: 2,
+                  ),
+                ),
+                itemCount: state.messages.length,
               ),
+            );
+          },
         ),
       ),
     );

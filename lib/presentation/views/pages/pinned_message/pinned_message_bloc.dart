@@ -32,7 +32,6 @@ class PinnedMessageBloc
 
   final int _limit = 10;
   int _offset = 0;
-  bool _canLoadMore = true;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -55,10 +54,16 @@ class PinnedMessageBloc
       final messages = result.data
           ?.map((e) => PinnedMessageMapper.fromMessageEntity(e))
           .toList();
-      emit(state.copyWith(pageStatus: PageStatus.loaded, messages: messages));
 
       _offset += _limit;
-      _canLoadMore = messages?.length == _limit;
+
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.loaded,
+          messages: messages,
+          canLoadMore: messages?.length == _limit,
+        ),
+      );
     } else {
       emit(
         state.copyWith(
@@ -78,36 +83,36 @@ class PinnedMessageBloc
         [];
   }
 
-  void _updatePagination(int messagesLength) {
-    _offset += min(messagesLength, _limit);
-    _canLoadMore = messagesLength == _limit;
-  }
-
   Future<void> _onRefreshPinnedMessage(
     RefreshPinnedMessageEvent event,
     Emitter<PinnedMessageState> emit,
   ) async {
     _offset = 0;
-    _canLoadMore = true;
 
-    emit(state.copyWith(processing: true));
+    emit(state.copyWith(processing: true, canLoadMore: true));
     final messages = await _fetch(offset: _offset);
 
-    _updatePagination(messages.length);
+    _offset += min(messages.length, _limit);
 
-    emit(state.copyWith(processing: false, messages: messages));
+    emit(
+      state.copyWith(
+        processing: false,
+        messages: messages,
+        canLoadMore: messages.length == _limit,
+      ),
+    );
   }
 
   Future<void> _onLoadMorePinnedMessage(
     LoadMorePinnedMessageEvent event,
     Emitter<PinnedMessageState> emit,
   ) async {
-    if (!_canLoadMore) return;
+    if (!state.canLoadMore) return;
 
     emit(state.copyWith(processing: true));
     final messages = await _fetch(offset: _offset);
 
-    _updatePagination(messages.length);
+    _offset += min(messages.length, _limit);
 
     emit(
       state.copyWith(
@@ -115,6 +120,7 @@ class PinnedMessageBloc
         messages: messages.isEmpty
             ? state.messages
             : [...state.messages, ...messages],
+        canLoadMore: messages.length == _limit,
       ),
     );
   }
@@ -140,10 +146,6 @@ class PinnedMessageBloc
           messages: messages,
         ),
       );
-
-      // Reset the success flag after a short delay
-      await Future.delayed(const Duration(milliseconds: 100));
-      emit(state.copyWith(isUnpinSuccess: false));
 
       _offset = max(0, _offset - 1);
     } else {
