@@ -8,7 +8,6 @@ class LoginState extends BaseState<LoginState> {
     this.email = '',
     this.password = '',
     this.isSuccess = false,
-    this.isObscurePassword = true,
     this.errorPasswordMessage,
     this.errorEmailMessage,
   });
@@ -16,7 +15,6 @@ class LoginState extends BaseState<LoginState> {
   final String email;
   final String password;
   final bool isSuccess;
-  final bool isObscurePassword;
   final String? errorEmailMessage;
   final String? errorPasswordMessage;
 
@@ -30,7 +28,6 @@ class LoginState extends BaseState<LoginState> {
     String? email,
     String? password,
     bool? isSuccess,
-    bool? isObscurePassword,
     String? errorPasswordMessage,
     String? errorEmailMessage,
     bool forceResetErrorMessages = false,
@@ -42,7 +39,6 @@ class LoginState extends BaseState<LoginState> {
       password: password ?? this.password,
       processing: processing ?? this.processing,
       isSuccess: isSuccess ?? this.isSuccess,
-      isObscurePassword: isObscurePassword ?? this.isObscurePassword,
       errorPasswordMessage: forceResetErrorMessages
           ? null
           : errorPasswordMessage ?? this.errorPasswordMessage,
@@ -58,7 +54,6 @@ class LoginState extends BaseState<LoginState> {
     email,
     password,
     isSuccess,
-    isObscurePassword,
     errorPasswordMessage,
     errorEmailMessage,
   ];

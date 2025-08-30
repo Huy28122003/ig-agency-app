@@ -28,16 +28,6 @@ class ChangePasswordBloc
     handleSubEvent<NewPasswordChangedEvent>(_onNewPasswordChanged);
     handleSubEvent<ConfirmPasswordChangedEvent>(_onConfirmPasswordChanged);
 
-    handleSubEvent<ToggleCurrentPasswordVisibilityEvent>(
-      _onToggleCurrentPasswordVisibility,
-    );
-    handleSubEvent<ToggleNewPasswordVisibilityEvent>(
-      _onToggleNewPasswordVisibility,
-    );
-    handleSubEvent<ToggleConfirmPasswordVisibilityEvent>(
-      _onToggleConfirmPasswordVisibility,
-    );
-
     handleSubEvent<SavePasswordEvent>(_onSavePassword);
   }
 
@@ -67,31 +57,6 @@ class ChangePasswordBloc
     Emitter<ChangePasswordState> emit,
   ) async {
     emit(state.copyWith(confirmPassword: event.confirmPassword));
-  }
-
-  Future<void> _onToggleCurrentPasswordVisibility(
-    ToggleCurrentPasswordVisibilityEvent event,
-    Emitter<ChangePasswordState> emit,
-  ) async {
-    emit(
-      state.copyWith(isObscureCurrentPassword: !state.isObscureCurrentPassword),
-    );
-  }
-
-  Future<void> _onToggleNewPasswordVisibility(
-    ToggleNewPasswordVisibilityEvent event,
-    Emitter<ChangePasswordState> emit,
-  ) async {
-    emit(state.copyWith(isObscureNewPassword: !state.isObscureNewPassword));
-  }
-
-  Future<void> _onToggleConfirmPasswordVisibility(
-    ToggleConfirmPasswordVisibilityEvent event,
-    Emitter<ChangePasswordState> emit,
-  ) async {
-    emit(
-      state.copyWith(isObscureConfirmPassword: !state.isObscureConfirmPassword),
-    );
   }
 
   Future<void> _onSavePassword(

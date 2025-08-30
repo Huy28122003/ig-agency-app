@@ -10,8 +10,6 @@ class RegistrationState extends BaseState<RegistrationState> {
     this.password = '',
     this.confirmPassword = '',
     this.isSuccess = false,
-    this.isObscurePassword = true,
-    this.isObscureConfirmPassword = true,
     this.errorNameMessage,
     this.errorEmailMessage,
     this.errorPasswordMessage,
@@ -23,8 +21,6 @@ class RegistrationState extends BaseState<RegistrationState> {
   final String password;
   final String confirmPassword;
   final bool isSuccess;
-  final bool isObscurePassword;
-  final bool isObscureConfirmPassword;
   final String? errorNameMessage;
   final String? errorEmailMessage;
   final String? errorPasswordMessage;
@@ -46,8 +42,6 @@ class RegistrationState extends BaseState<RegistrationState> {
     String? password,
     String? confirmPassword,
     bool? isSuccess,
-    bool? isObscurePassword,
-    bool? isObscureConfirmPassword,
     String? errorNameMessage,
     String? errorEmailMessage,
     String? errorPasswordMessage,
@@ -63,9 +57,6 @@ class RegistrationState extends BaseState<RegistrationState> {
       confirmPassword: confirmPassword ?? this.confirmPassword,
       isSuccess: isSuccess ?? this.isSuccess,
       processing: processing ?? this.processing,
-      isObscurePassword: isObscurePassword ?? this.isObscurePassword,
-      isObscureConfirmPassword:
-          isObscureConfirmPassword ?? this.isObscureConfirmPassword,
       errorNameMessage: forceResetErrorMessages
           ? null
           : errorNameMessage ?? this.errorNameMessage,
@@ -89,8 +80,6 @@ class RegistrationState extends BaseState<RegistrationState> {
     password,
     confirmPassword,
     isSuccess,
-    isObscurePassword,
-    isObscureConfirmPassword,
     errorNameMessage,
     errorEmailMessage,
     errorPasswordMessage,

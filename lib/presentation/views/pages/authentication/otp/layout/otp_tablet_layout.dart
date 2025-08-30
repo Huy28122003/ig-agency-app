@@ -11,8 +11,7 @@ import '../../../../../routers/app_router.dart';
 import '../../../../widgets/app_button.dart';
 
 class OtpTabletLayout extends StatefulWidget {
-  final String email;
-  const OtpTabletLayout({super.key, required this.email});
+  const OtpTabletLayout({super.key});
 
   @override
   State<OtpTabletLayout> createState() => _OtpTabletLayoutState();
@@ -56,18 +55,17 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
               listenWhen: (prev, curr) => prev.otpStatus != curr.otpStatus,
               listener: (context, state) {
                 if (state.otpStatus == VerifyStatus.valid) {
-                  context.router.push(ResetPasswordRoute(email: widget.email));
+                  context.router.push(ResetPasswordRoute(email: state.email));
                 } else if (state.otpStatus == VerifyStatus.invalid) {
                   // Show error message
                   _otpKey.currentState?.clearOtp();
                 }
-                _otpBloc.add(ResetOtpStatusEvent());
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       context.router.pop();
                     },
                     child: Container(
@@ -134,7 +132,9 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                           AppButton.primary(
                             backgroundColor: AppColors
                                 .surfaceContainerPrimaryPrimaryDisabled,
-                            onPressed: () {},
+                            onPressed: () {
+                              //Todo: Recheck Logic ui
+                            },
                             child: Text(
                               'Send code',
                               style: TextStyle(

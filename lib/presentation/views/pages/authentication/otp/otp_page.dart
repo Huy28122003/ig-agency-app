@@ -10,21 +10,21 @@ import 'package:ig_agency_app/presentation/views/pages/authentication/otp/layout
 class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
   final String email;
 
-  OtpPage({super.key, required this.email});
+  const OtpPage({super.key, required this.email});
 
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<OtpBloc>().add(LoadDataEvent());
+    context.read<OtpBloc>().add(LoadDataEvent(email));
   }
 
   @override
   Widget mobileBuilder(BuildContext context) {
-    return OtpMobileLayout(email: email);
+    return OtpMobileLayout();
   }
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return OtpTabletLayout(email: email);
+    return OtpTabletLayout();
   }
 }

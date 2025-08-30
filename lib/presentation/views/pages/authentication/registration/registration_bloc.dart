@@ -43,19 +43,6 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
           emit(state.copyWith(confirmPassword: event.confirmPassword)),
     );
 
-    handleSubEvent<TogglePasswordVisibilityEvent>(
-      (_, emit) async =>
-          emit(state.copyWith(isObscurePassword: !state.isObscurePassword)),
-    );
-
-    handleSubEvent<ToggleConfirmPasswordVisibilityEvent>(
-      (_, emit) async => emit(
-        state.copyWith(
-          isObscureConfirmPassword: !state.isObscureConfirmPassword,
-        ),
-      ),
-    );
-
     handleSubEvent<SubmitRegistrationEvent>(_onSubmitRegistration);
   }
 

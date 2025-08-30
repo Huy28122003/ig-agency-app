@@ -35,11 +35,3 @@ class ConfirmPasswordChangedEvent extends RegistrationEvent {
 
   final String confirmPassword;
 }
-
-class TogglePasswordVisibilityEvent extends RegistrationEvent {
-  const TogglePasswordVisibilityEvent();
-}
-
-class ToggleConfirmPasswordVisibilityEvent extends RegistrationEvent {
-  const ToggleConfirmPasswordVisibilityEvent();
-}

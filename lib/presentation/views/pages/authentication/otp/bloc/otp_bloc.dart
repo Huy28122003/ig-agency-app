@@ -14,7 +14,7 @@ class OtpBloc extends BaseBloc<OtpEvent, OtpState> {
 
   OtpBloc({required this.verifyOtpUseCase}) : super(OtpState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loaded));
+      emit(state.copyWith(pageStatus: PageStatus.loaded, email: event.email));
     });
 
     handleSubEvent<VerifyOtpEvent>((event, emit) async {
@@ -30,9 +30,6 @@ class OtpBloc extends BaseBloc<OtpEvent, OtpState> {
       }else{
         // Loi call api
       }
-    });
-    handleSubEvent<ResetOtpStatusEvent>((event, emit) async {
-      emit(state.copyWith(otpStatus: VerifyStatus.initial));
     });
   }
 }

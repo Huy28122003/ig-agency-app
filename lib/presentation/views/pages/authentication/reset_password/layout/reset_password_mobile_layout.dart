@@ -6,14 +6,11 @@ import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
-import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../../routers/app_router.dart';
 
 class ResetPasswordMobileLayout extends StatefulWidget {
-  const ResetPasswordMobileLayout({super.key, required this.email});
-
-  final String email;
+  const ResetPasswordMobileLayout({super.key});
 
   @override
   State<ResetPasswordMobileLayout> createState() =>
@@ -31,25 +28,33 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              const Color(0xFFFF7E4C),
-              const Color(0xFFFFBA32),
-              const Color(0xFFFFDB3F),
+    return BlocListener<ResetPasswordBloc, ResetPasswordState>(
+      listenWhen: (prev, curr) => prev.isResetSuccess != curr.isResetSuccess,
+      listener: (context, state) {
+        if (state.isResetSuccess) {
+          context.router.replaceAll([LoginRoute()]);
+        }
+      },
+      child: Scaffold(
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                const Color(0xFFFF7E4C),
+                const Color(0xFFFFBA32),
+                const Color(0xFFFFDB3F),
+              ],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildPanel()),
             ],
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            Expanded(child: _buildPanel()),
-          ],
         ),
       ),
     );
@@ -79,7 +84,7 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
             Text(
               'Reset Password',
               style: TextStyle(
-                color: AppColors.textDefaultTextInvertedDisabled,
+                color: AppColors.textDefaultTextInverted,
                 fontSize: 32,
                 fontFamily: FontFamily.segoeUI,
                 fontWeight: FontWeight.w700,
@@ -105,104 +110,65 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
         top: false,
         child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, top: 80),
-          child: BlocListener<ResetPasswordBloc, ResetPasswordState>(
-            listenWhen: (prev, curr) =>
-            prev.verifyStatus != curr.verifyStatus ||
-                prev.isResetSuccess != curr.isResetSuccess,
-            listener: (context, state) {
-              if (state.verifyStatus == VerifyStatus.valid) {
-                _resetPasswordBloc.add(
-                  SendNewPasswordEvent(email: widget.email),
-                );
-              } else if (state.isResetSuccess) {
-                context.router.replaceAll([LoginRoute()]);
-              }
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
-                    selector: (state) => state.isObscureNewPassword,
-                    builder: (context, isObscure) {
-                      return AppTextField(
-                        errorText: context.select(
-                          (ResetPasswordBloc bloc) => bloc.state.errorMessage,
-                        ),
-                        obscureText: isObscure,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
-                        hintText: "New password",
-                        suffixIcon: GestureDetector(
-                          onTap: () => context.read<ResetPasswordBloc>().add(
-                            ToggleObscureNewPasswordEvent(),
-                          ),
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: isObscure
-                                ? Assets.icons.icEye.svg()
-                                : Assets.icons.icEyeOff.svg(),
-                          ),
-                        ),
-                        onChanged: (value) => context
-                            .read<ResetPasswordBloc>()
-                            .add(NewPasswordChangedEvent(newPassword: value)),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
-                    selector: (state) => state.isObscureConfirmPassword,
-                    builder: (context, isObscure) {
-                      return AppTextField(
-                        errorText: context.select(
-                          (ResetPasswordBloc bloc) => bloc.state.errorMessage,
-                        ),
-                        obscureText: isObscure,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
-                        hintText: "Confirm New Password",
-                        suffixIcon: GestureDetector(
-                          onTap: () => context.read<ResetPasswordBloc>().add(
-                            ToggleObscureConfirmPasswordEvent(),
-                          ),
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: isObscure
-                                ? Assets.icons.icEye.svg()
-                                : Assets.icons.icEyeOff.svg(),
-                          ),
-                        ),
-                        onChanged: (value) =>
-                            context.read<ResetPasswordBloc>().add(
-                              ConfirmPasswordChangedEvent(
-                                confirmPassword: value,
-                              ),
-                            ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 40),
-                  AppButton.primary(
-                    backgroundColor:
-                        AppColors.surfaceContainerPrimaryPrimaryDefault,
-                    onPressed: () {
-                      _resetPasswordBloc.add(VerifyPasswordsEvent());
-                    },
-                    child: Text(
-                      'Reset Password',
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextInvertedDisabled,
-                        fontSize: 16,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w700,
-                        height: 1.50,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                BlocSelector<ResetPasswordBloc, ResetPasswordState, String>(
+                  selector: (state) => (state.newPassword),
+                  builder: (context, newPassword) {
+                    return AppTextField(
+                      obscureText: true,
+                      value: newPassword,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      hintText: "New password",
+                      onChanged: (value) => _resetPasswordBloc.add(
+                        NewPasswordChangedEvent(newPassword: value),
                       ),
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
+                BlocSelector<
+                  ResetPasswordBloc,
+                  ResetPasswordState,
+                  (String?, String)
+                >(
+                  selector: (state) =>
+                      (state.errorMessage, state.confirmPassword),
+                  builder: (context, data) {
+                    return AppTextField(
+                      obscureText: true,
+                      errorText: data.$1,
+                      value: data.$2,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      hintText: "Confirm New Password",
+                      onChanged: (value) => _resetPasswordBloc.add(
+                        ConfirmPasswordChangedEvent(confirmPassword: value),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 40),
+                AppButton.primary(
+                  backgroundColor:
+                      AppColors.surfaceContainerPrimaryPrimaryDefault,
+                  onPressed: () {
+                    _resetPasswordBloc.add(ConfirmResetPasswordEvent());
+                  },
+                  child: Text(
+                    'Reset Password',
+                    style: TextStyle(
+                      color: AppColors.textDefaultTextInvertedDisabled,
+                      fontSize: 16,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w700,
+                      height: 1.50,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
