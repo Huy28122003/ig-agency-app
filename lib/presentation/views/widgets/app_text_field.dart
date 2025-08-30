@@ -40,7 +40,7 @@ class AppTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final VoidCallback? onEditingComplete;
   final void Function(String)? onFieldSubmitted;
-  final int maxLines;
+  final int? maxLines;
   final int? maxLength;
   final Widget? prefixIcon;
   final Widget? suffixIcon;

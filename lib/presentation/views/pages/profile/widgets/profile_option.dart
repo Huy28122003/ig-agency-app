@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
+import '../../../../routers/app_router.dart';
 import '../profile_bloc.dart';
 import 'profile_option_item.dart';
 
@@ -32,7 +34,7 @@ class ProfileOption extends StatelessWidget {
                 title: 'Bio',
                 iconPath: Assets.icons.icBio.path,
                 onTap: () {
-                  // TODO hoannk: Route to bio page
+                  context.router.push(const EditBioRoute());
                 },
                 subtitle: bio,
                 isFirst: true,

@@ -10,4 +10,6 @@ abstract class UserRepository {
   Future<Result> updateUser(UserEntity user);
 
   Future<Result> updateUserName(String name);
+
+  Future<Result> updateUserBio(String bio);
 }
