@@ -12,9 +12,14 @@ import 'circle_network_avatar.dart';
 import 'network_image.dart';
 
 class PinnedMessageBubble extends StatefulWidget {
-  const PinnedMessageBubble({super.key, required this.message});
+  const PinnedMessageBubble({
+    super.key,
+    required this.message,
+    required this.onTap,
+  });
 
   final PinnedMessageUIModel message;
+  final VoidCallback onTap;
 
   @override
   State<PinnedMessageBubble> createState() => _PinnedMessageBubbleState();
@@ -91,7 +96,10 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    _buildPinnedMessageContent(),
+                    GestureDetector(
+                      onTap: widget.onTap,
+                      child: _buildPinnedMessageContent(),
+                    ),
                     Positioned(
                       left: -10,
                       top: -10,

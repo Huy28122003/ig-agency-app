@@ -13,16 +13,26 @@ class MessageRepositoryImpl implements MessageRepository {
   final MessageRemoteDataSource _messageRemoteDataSource;
 
   @override
-  Future<Result<List<MessageEntity>>> getPinnedMessages(
+  Future<Result<List<MessageEntity>>> fetchPinnedMessages(
     int limit,
     int offset,
   ) async {
     try {
-      final messages = await _messageRemoteDataSource.getPinnedMessages(
+      final messages = await _messageRemoteDataSource.fetchPinnedMessage(
         limit,
         offset,
       );
       return Result.completed(messages);
+    } catch (e) {
+      return Result.failure(FailureConverter.convert(e));
+    }
+  }
+
+  @override
+  Future<Result<void>> unpinMessage(String messageId) async {
+    try {
+      await _messageRemoteDataSource.unpinMessage(messageId);
+      return Result.completed(null);
     } catch (e) {
       return Result.failure(FailureConverter.convert(e));
     }

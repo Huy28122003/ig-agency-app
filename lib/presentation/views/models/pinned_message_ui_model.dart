@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../domain/entities/message/message.dart';
 import '../../../shared/commons/enums/pinned_message_type.dart';
 
-class PinnedMessageUIModel {
-  PinnedMessageUIModel({
+class PinnedMessageUIModel extends Equatable {
+  const PinnedMessageUIModel({
     this.id,
     required this.senderName,
     required this.senderAvatarUrl,
@@ -35,4 +36,16 @@ class PinnedMessageUIModel {
   final MessageContent content;
   final String? hostName;
   final List<TextSpan>? textSpans;
+
+  @override
+  List<Object?> get props => [
+    id,
+    senderName,
+    senderAvatarUrl,
+    pinnedAt,
+    type,
+    content,
+    hostName,
+    textSpans,
+  ];
 }

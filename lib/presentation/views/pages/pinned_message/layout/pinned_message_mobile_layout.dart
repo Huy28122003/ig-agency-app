@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,8 +10,71 @@ import '../../../models/pinned_message_ui_model.dart';
 import '../../../widgets/pinned_message_bubble.dart';
 import '../pinned_message_bloc.dart';
 
-class PinnedMessageMobileLayout extends StatelessWidget {
+class PinnedMessageMobileLayout extends StatefulWidget {
   const PinnedMessageMobileLayout({super.key});
+
+  @override
+  State<PinnedMessageMobileLayout> createState() =>
+      _PinnedMessageMobileLayoutState();
+}
+
+class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
+  late final PinnedMessageBloc _pinnedMessageBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _pinnedMessageBloc = context.read<PinnedMessageBloc>();
+  }
+
+  Future<void> _showOptionSheet(BuildContext context, String messageId) async {
+    final result = await showCupertinoModalPopup<bool>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.68),
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            child: Text(
+              'Unpin',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.colorsBlue,
+                fontSize: 17,
+                // fontFamily: 'SF Pro',
+                fontWeight: FontWeight.w500,
+                height: 1.29,
+                letterSpacing: -0.43,
+              ),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
+          child: Text(
+            'Cancel',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.colorsBlue,
+              fontSize: 17,
+              // fontFamily: 'SF Pro',
+              fontWeight: FontWeight.w600,
+              height: 1.29,
+              letterSpacing: -0.43,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (result == true) {
+      _pinnedMessageBloc.add(UnpinMessageEvent(messageId: messageId));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +132,20 @@ class PinnedMessageMobileLayout extends StatelessWidget {
                 selector: (state) {
                   return state.messages;
                 },
-                builder: (context, state) {
+                builder: (context, messages) {
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(20),
-                    itemBuilder: (context, index) =>
-                        PinnedMessageBubble(message: state[index]),
+                    itemBuilder: (context, index) => PinnedMessageBubble(
+                      key: ValueKey(messages[index].id),
+                      message: messages[index],
+                      onTap: () {
+                        final messageId = messages[index].id;
+                        if (messageId == null) return;
+                        _showOptionSheet(context, messageId);
+                      },
+                    ),
                     separatorBuilder: (_, _) => Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Divider(
@@ -82,7 +153,7 @@ class PinnedMessageMobileLayout extends StatelessWidget {
                         height: 2,
                       ),
                     ),
-                    itemCount: state.length,
+                    itemCount: messages.length,
                   );
                 },
               ),

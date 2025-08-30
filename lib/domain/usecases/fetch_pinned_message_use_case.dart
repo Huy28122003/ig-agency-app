@@ -16,7 +16,7 @@ class FetchPinnedMessageUseCase
   Future<Result<List<MessageEntity>>> call(
     FetchPinnedMessageParams params,
   ) async {
-    return await _messageRepository.getPinnedMessages(
+    return await _messageRepository.fetchPinnedMessages(
       params.limit,
       params.offset,
     );

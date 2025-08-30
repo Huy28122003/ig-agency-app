@@ -12,12 +12,21 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   final MessageMockService _messageMockService;
 
   @override
-  Future<List<MessageEntity>> getPinnedMessages(int limit, int offset) async {
+  Future<List<MessageEntity>> fetchPinnedMessage(int limit, int offset) async {
     try {
       final List<MessageEntity> pinnedMessages = _messageMockService
-          .mockPinnedMessages(limit: limit, offset: offset);
+          .mockFetchPinnedMessages(limit: limit, offset: offset);
 
       return pinnedMessages;
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> unpinMessage(String messageId) async {
+    try {
+      await _messageMockService.mockUnpinMessage(messageId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

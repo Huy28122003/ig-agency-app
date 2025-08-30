@@ -1,10 +1,12 @@
+import 'package:equatable/equatable.dart';
+
 import '../../enums/message_enums.dart';
 import 'message_content.dart';
 import 'message_reply.dart';
 import 'message_sender.dart';
 
-class MessageEntity {
-  MessageEntity({
+class MessageEntity extends Equatable {
+  const MessageEntity({
     this.id,
     required this.sender,
     required this.createdAt,
@@ -42,4 +44,45 @@ class MessageEntity {
   final MessageReply? reply;
   final bool isPinned;
   final DateTime? pinnedAt;
+
+  MessageEntity copyWith({
+    String? id,
+    MessageSender? sender,
+    DateTime? createdAt,
+    MessageType? type,
+    MessageContent? content,
+    MessageStatus? status,
+    int? groupId,
+    String? groupName,
+    MessageReply? reply,
+    bool? isPinned,
+    DateTime? pinnedAt,
+  }) => MessageEntity(
+    id: id ?? this.id,
+    sender: sender ?? this.sender,
+    createdAt: createdAt ?? this.createdAt,
+    type: type ?? this.type,
+    content: content ?? this.content,
+    status: status ?? this.status,
+    groupId: groupId ?? this.groupId,
+    groupName: groupName ?? this.groupName,
+    reply: reply ?? reply,
+    isPinned: isPinned ?? this.isPinned,
+    pinnedAt: pinnedAt ?? this.pinnedAt,
+  );
+
+  @override
+  List<Object?> get props => [
+    id,
+    sender,
+    createdAt,
+    type,
+    content,
+    status,
+    groupId,
+    groupName,
+    reply,
+    isPinned,
+    pinnedAt,
+  ];
 }

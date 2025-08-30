@@ -296,40 +296,6 @@ class MessageMockService {
     return messages;
   }
 
-  List<MessageEntity> mockPinnedMessages({
-    int? groupId,
-    int limit = 10,
-    int offset = 0,
-  }) {
-    if (groupId != null) {
-      final messages = _messageMockData[groupId];
-
-      if (messages == null || messages.isEmpty) {
-        return [];
-      }
-
-      return messages
-          .where((element) => element.isPinned)
-          .toList()
-          .skip(offset)
-          .take(limit)
-          .toList();
-    }
-
-    final messages = _messageMockData.values.expand((e) => e).toList();
-
-    if (messages.isEmpty) {
-      return [];
-    }
-
-    return messages
-        .where((element) => element.isPinned)
-        .toList()
-        .skip(offset)
-        .take(limit)
-        .toList();
-  }
-
   MessageContent _generateContent(MessageType type) {
     switch (type) {
       case MessageType.text:
@@ -400,5 +366,80 @@ class MessageMockService {
     } catch (e) {
       return (null, null);
     }
+  }
+
+  // Mock function call
+  List<MessageEntity> mockFetchPinnedMessages({
+    int? groupId,
+    int limit = 10,
+    int offset = 0,
+  }) {
+    if (groupId != null) {
+      final messages = _messageMockData[groupId];
+
+      if (messages == null || messages.isEmpty) {
+        return [];
+      }
+
+      return messages
+          .where((element) => element.isPinned)
+          .toList()
+          .skip(offset)
+          .take(limit)
+          .toList();
+    }
+
+    final messages = _messageMockData.values.expand((e) => e).toList();
+
+    if (messages.isEmpty) {
+      return [];
+    }
+
+    return messages
+        .where((element) => element.isPinned)
+        .toList()
+        .skip(offset)
+        .take(limit)
+        .toList();
+  }
+
+  Future<void> mockUnpinMessage(String messageId) async {
+    MessageEntity? targetMessage;
+    int? targetGroupId;
+    int? targetMessageIndex;
+
+    for (final entry in _messageMockData.entries) {
+      final groupId = entry.key;
+      final messages = entry.value;
+
+      final messageIndex = messages.indexWhere(
+        (message) => message.id == messageId,
+      );
+      if (messageIndex != -1) {
+        targetMessage = messages[messageIndex];
+        targetGroupId = groupId;
+        targetMessageIndex = messageIndex;
+        break;
+      }
+    }
+
+    if (targetMessage == null ||
+        targetMessageIndex == null ||
+        targetGroupId == null) {
+      throw Exception('Message not found');
+    }
+
+    if (!targetMessage.isPinned) {
+      throw Exception('Message is not pinned');
+    }
+
+    final updatedMessage = targetMessage.copyWith(
+      isPinned: false,
+      pinnedAt: null,
+    );
+
+    final messages = _messageMockData[targetGroupId]!;
+    messages[targetMessageIndex] = updatedMessage;
+    _messageMockData[targetGroupId] = messages;
   }
 }
