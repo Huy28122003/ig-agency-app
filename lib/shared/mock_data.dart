@@ -4,7 +4,7 @@ class MockData {
   static List<WorkspaceEntity> getWorkspaces() {
     return [
       WorkspaceEntity(
-        id: '1',
+        id: 1,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=1',
         workspaceName: 'Design Team',
         lastMessage: 'Please review the latest designs.',
@@ -14,7 +14,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '2',
+        id: 2,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=2',
         workspaceName: 'Marketing',
         lastMessage: 'Campaign launch is scheduled for next week.',
@@ -24,7 +24,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '3',
+        id: 3,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=3',
         workspaceName: 'Development',
         lastMessage: 'The new feature has been deployed.',
@@ -34,7 +34,7 @@ class MockData {
         isPin: true,
       ),
       WorkspaceEntity(
-        id: '4',
+        id: 4,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=4',
         workspaceName: 'HR Team',
         lastMessage: 'Don\'t forget the team meeting tomorrow.',
@@ -44,7 +44,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '5',
+        id: 5,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=5',
         workspaceName: 'Sales',
         lastMessage: 'Quarterly sales report is ready for review.',
@@ -54,7 +54,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '6',
+        id: 6,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=6',
         workspaceName: 'Finance',
         lastMessage: 'Budget proposal draft is ready.',
@@ -64,7 +64,7 @@ class MockData {
         isPin: true,
       ),
       WorkspaceEntity(
-        id: '7',
+        id: 7,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=7',
         workspaceName: 'Support',
         lastMessage: 'Ticket #342 has been resolved.',
@@ -74,7 +74,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '8',
+        id: 8,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=8',
         workspaceName: 'QA Team',
         lastMessage: 'All test cases passed successfully.',
@@ -84,7 +84,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '9',
+        id: 9,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=9',
         workspaceName: 'Product',
         lastMessage: 'User feedback report has been shared.',
@@ -94,7 +94,7 @@ class MockData {
         isPin: true,
       ),
       WorkspaceEntity(
-        id: '10',
+        id: 10,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=10',
         workspaceName: 'Legal',
         lastMessage: 'Contract review completed.',
@@ -104,7 +104,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '11',
+        id: 11,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=11',
         workspaceName: 'Engineering',
         lastMessage: 'Code refactor completed.',
@@ -114,7 +114,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '12',
+        id: 12,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=12',
         workspaceName: 'Research',
         lastMessage: 'New study materials uploaded.',
@@ -124,7 +124,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '13',
+        id: 13,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=13',
         workspaceName: 'Security',
         lastMessage: 'System audit scheduled.',
@@ -134,7 +134,7 @@ class MockData {
         isPin: true,
       ),
       WorkspaceEntity(
-        id: '14',
+        id: 14,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=14',
         workspaceName: 'Admin',
         lastMessage: 'Office supplies restocked.',
@@ -144,7 +144,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '15',
+        id: 15,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=15',
         workspaceName: 'Operations',
         lastMessage: 'Daily report has been uploaded.',
@@ -154,7 +154,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '16',
+        id: 16,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=16',
         workspaceName: 'Board',
         lastMessage: 'Next board meeting on Friday.',
@@ -164,7 +164,7 @@ class MockData {
         isPin: true,
       ),
       WorkspaceEntity(
-        id: '17',
+        id: 17,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=17',
         workspaceName: 'Partners',
         lastMessage: 'Agreement draft shared.',
@@ -174,7 +174,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '18',
+        id: 18,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=18',
         workspaceName: 'Vendors',
         lastMessage: 'Invoice for last month received.',
@@ -184,7 +184,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '19',
+        id: 19,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=19',
         workspaceName: 'Clients',
         lastMessage: 'Feedback session scheduled.',
@@ -194,7 +194,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '20',
+        id: 20,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=20',
         workspaceName: 'Community',
         lastMessage: 'Event photos uploaded.',
@@ -204,7 +204,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '21',
+        id: 21,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=21',
         workspaceName: 'Training',
         lastMessage: 'New training session announced.',
@@ -214,7 +214,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '22',
+        id: 22,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=22',
         workspaceName: 'Projects',
         lastMessage: 'Milestone 2 completed.',
@@ -224,7 +224,7 @@ class MockData {
         isPin: true,
       ),
       WorkspaceEntity(
-        id: '23',
+        id: 23,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=23',
         workspaceName: 'Analytics',
         lastMessage: 'Dashboard updated with new metrics.',
@@ -234,7 +234,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '24',
+        id: 24,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=24',
         workspaceName: 'Design System',
         lastMessage: 'New components added.',
@@ -244,7 +244,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '25',
+        id: 25,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=25',
         workspaceName: 'UI/UX',
         lastMessage: 'Wireframes finalized.',
@@ -254,7 +254,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '26',
+        id: 26,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=26',
         workspaceName: 'Content',
         lastMessage: 'Blog post draft uploaded.',
@@ -264,7 +264,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '27',
+        id: 27,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=27',
         workspaceName: 'PR Team',
         lastMessage: 'Press release shared with media.',
@@ -274,7 +274,7 @@ class MockData {
         isPin: true,
       ),
       WorkspaceEntity(
-        id: '28',
+        id: 28,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=28',
         workspaceName: 'Event Team',
         lastMessage: 'Venue confirmed for annual meetup.',
@@ -284,7 +284,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '29',
+        id: 29,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=29',
         workspaceName: 'Innovation',
         lastMessage: 'Prototype testing results uploaded.',
@@ -294,7 +294,7 @@ class MockData {
         isPin: false,
       ),
       WorkspaceEntity(
-        id: '30',
+        id: 30,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=30',
         workspaceName: 'Management',
         lastMessage: 'Monthly KPI review scheduled.',

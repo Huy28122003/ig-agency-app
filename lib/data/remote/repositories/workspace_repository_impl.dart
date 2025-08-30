@@ -24,8 +24,8 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
               .toList()
         : allData;
 
-    final start = offset;
-    final end = (offset + limit).clamp(0, filtered.length);
+    final start = (offset - 1) * limit;
+    final end = (start + limit).clamp(0, filtered.length);
 
     return Result.completed(filtered.sublist(start, end));
   }

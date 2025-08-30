@@ -1,5 +1,5 @@
 class WorkspaceEntity {
-  final String id;
+  final int id;
   final String workspaceAvatar;
   final String workspaceName;
   final String lastMessage;
@@ -24,6 +24,9 @@ class WorkspaceEntity {
     String? workspaceName,
     String? lastMessage,
     DateTime? lastMessageTime,
+    bool? isSeen,
+    bool? isPin,
+    bool? isMute,
   }) {
     return WorkspaceEntity(
       id: id,
@@ -31,9 +34,9 @@ class WorkspaceEntity {
       workspaceName: workspaceName ?? this.workspaceName,
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
-      isSeen: isSeen,
-      isMute: isMute,
-      isPin: isPin,
+      isSeen: isSeen ?? this.isSeen,
+      isMute: isMute ?? this.isMute,
+      isPin: isPin ?? this.isPin,
     );
   }
 }

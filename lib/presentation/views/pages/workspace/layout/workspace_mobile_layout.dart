@@ -42,7 +42,7 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
       listener: (context, state) {
         _refreshController.refresh(state.pagingStatus);
       },
-      listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
+      listenWhen: (prev, curr) => prev.pagingStatus != curr.pagingStatus,
       child: Column(
         children: [
           _buildHeader(),
@@ -77,15 +77,26 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                     physics: ClampingScrollPhysics(),
                     itemBuilder: (context, index) {
                       final workspace = state[index];
-                      print(workspace.lastMessageTime);
                       return SuperMenuPopupWidget(
                         isMute: workspace.isMute,
                         isPin: workspace.isPin,
                         isSeen: workspace.isSeen,
                         onTapDelete: () {},
-                        onTapMask: () {},
-                        onTapMute: () {},
-                        onTapPin: () {},
+                        onTapMask: () {
+                          _workspaceBloc.add(
+                            SeenWorkspaceEvent(workspaceId: workspace.id),
+                          );
+                        },
+                        onTapMute: () {
+                          _workspaceBloc.add(
+                            MuteWorkspaceEvent(workspaceId: workspace.id),
+                          );
+                        },
+                        onTapPin: () {
+                          _workspaceBloc.add(
+                            PinWorkspaceEvent(workspaceId: workspace.id),
+                          );
+                        },
                         child: WorkspaceTileWidget(
                           isMute: workspace.isMute,
                           isPin: workspace.isPin,
