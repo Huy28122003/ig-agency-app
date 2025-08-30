@@ -35,3 +35,21 @@ class UpdateWorkspaceLastMessageEvent extends WorkspaceEvent {
 }
 
 class ListenWorkspaceLastMessageEvent extends WorkspaceEvent {}
+
+class PinWorkspaceEvent extends WorkspaceEvent {
+  final int indexWorkspace;
+
+  PinWorkspaceEvent({required this.indexWorkspace});
+}
+
+class MuteWorkspaceEvent extends WorkspaceEvent {
+  final int indexWorkspace;
+
+  MuteWorkspaceEvent({required this.indexWorkspace});
+}
+
+class SeenWorkspaceEvent extends WorkspaceEvent {
+  final int indexWorkspace;
+
+  SeenWorkspaceEvent({required this.indexWorkspace});
+}

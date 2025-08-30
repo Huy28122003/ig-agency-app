@@ -5,6 +5,8 @@ class WorkspaceEntity {
   final String lastMessage;
   final DateTime lastMessageTime;
   final bool isSeen;
+  final bool isMute;
+  final bool isPin;
 
   WorkspaceEntity({
     required this.id,
@@ -13,6 +15,8 @@ class WorkspaceEntity {
     required this.lastMessage,
     required this.lastMessageTime,
     required this.isSeen,
+    required this.isMute,
+    required this.isPin,
   });
 
   WorkspaceEntity copyWith({
@@ -28,6 +32,8 @@ class WorkspaceEntity {
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
       isSeen: isSeen,
+      isMute: isMute,
+      isPin: isPin,
     );
   }
 }

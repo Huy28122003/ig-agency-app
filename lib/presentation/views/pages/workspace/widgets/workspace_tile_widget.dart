@@ -13,6 +13,8 @@ class WorkspaceTileWidget extends StatefulWidget {
     required this.lastMessage,
     required this.lastMessageTime,
     required this.isSeen,
+    required this.isMute,
+    required this.isPin,
   });
 
   final String workspaceAvatar;
@@ -20,6 +22,8 @@ class WorkspaceTileWidget extends StatefulWidget {
   final String lastMessage;
   final DateTime lastMessageTime;
   final bool isSeen;
+  final bool isMute;
+  final bool isPin;
 
   @override
   State<WorkspaceTileWidget> createState() => _WorkspaceTileWidgetState();
@@ -117,6 +121,8 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
                 shape: BoxShape.circle,
               ),
             ),
+          if (widget.isPin) Assets.icons.icPin.svg(),
+          if (!widget.isMute) Assets.icons.icBlockNotification.svg(),
         ],
       ),
     );

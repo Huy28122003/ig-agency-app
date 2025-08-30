@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
+import '../../../../../gen/assets.gen.dart' show Assets;
+
 class SuperMenuPopupWidget extends StatefulWidget {
   final Widget child;
   final VoidCallback onTapMask;
   final VoidCallback onTapPin;
   final VoidCallback onTapMute;
   final VoidCallback onTapDelete;
+  final bool isMute;
+  final bool isPin;
+  final bool isSeen;
 
   const SuperMenuPopupWidget({
     super.key,
@@ -18,6 +23,9 @@ class SuperMenuPopupWidget extends StatefulWidget {
     required this.onTapPin,
     required this.onTapMute,
     required this.onTapDelete,
+    required this.isMute,
+    required this.isPin,
+    required this.isSeen,
   });
 
   @override
@@ -60,6 +68,9 @@ class _SuperMenuPopupWidgetState extends State<SuperMenuPopupWidget> {
               child: Material(
                 color: Colors.transparent,
                 child: _MenuPopup(
+                  isSeen: widget.isSeen,
+                  isPin: widget.isPin,
+                  isMute: widget.isMute,
                   onTapMask: () {
                     _hidePopup();
                     widget.onTapMask();
@@ -94,6 +105,7 @@ class _SuperMenuPopupWidgetState extends State<SuperMenuPopupWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.isSeen);
     final size = MediaQuery.sizeOf(context);
     return GestureDetector(
       child: widget.child,
@@ -109,12 +121,18 @@ class _MenuPopup extends StatefulWidget {
   final VoidCallback onTapPin;
   final VoidCallback onTapMute;
   final VoidCallback onTapDelete;
+  final bool isMute;
+  final bool isPin;
+  final bool isSeen;
 
   const _MenuPopup({
     required this.onTapMask,
     required this.onTapPin,
     required this.onTapMute,
     required this.onTapDelete,
+    required this.isMute,
+    required this.isPin,
+    required this.isSeen,
   });
 
   @override
@@ -139,19 +157,37 @@ class _MenuPopupState extends State<_MenuPopup> {
       width: 250,
       child: Column(
         children: [
-          _buildItem(title: "Mark as unread", onTap: widget.onTapMask),
+          _buildItem(
+            title: widget.isSeen ? "Mark as unread" : "Mark as read",
+            onTap: widget.onTapMask,
+            icon: widget.isSeen
+                ? Assets.icons.icLetter.svg()
+                : Assets.icons.icLetterOpen.svg(),
+          ),
           Container(
             width: double.infinity,
             height: 1,
             color: Color(0xFF808080).withValues(alpha: 0.55),
           ),
-          _buildItem(title: "Pin", onTap: widget.onTapPin),
+          _buildItem(
+            title: widget.isPin ? "Unpin" : "Pin",
+            onTap: widget.onTapPin,
+            icon: widget.isPin
+                ? Assets.icons.icUnpin.svg()
+                : Assets.icons.icPin.svg(),
+          ),
           Container(
             width: double.infinity,
             height: 1,
             color: Color(0xFF808080).withValues(alpha: 0.55),
           ),
-          _buildItem(title: "Pin", onTap: widget.onTapMute),
+          _buildItem(
+            title: widget.isMute ? "Unmute" : "Mute",
+            onTap: widget.onTapMute,
+            icon: widget.isMute
+                ? Assets.icons.icBlockNotification.svg()
+                : Assets.icons.icNotification.svg(),
+          ),
           Container(
             width: double.infinity,
             height: 1,
@@ -167,6 +203,7 @@ class _MenuPopupState extends State<_MenuPopup> {
               fontSize: 16,
               height: 24 / 16,
             ),
+            icon: Assets.icons.icTrash.svg(),
           ),
         ],
       ),

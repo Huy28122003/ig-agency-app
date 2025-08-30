@@ -30,11 +30,10 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
       );
 
       if (result.success) {
+        List<WorkspaceEntity>? workspaces = result.data;
+        _sort(workspaces ?? []);
         emit(
-          state.copyWith(
-            pageStatus: PageStatus.loaded,
-            workspaces: result.data,
-          ),
+          state.copyWith(pageStatus: PageStatus.loaded, workspaces: workspaces),
         );
       } else {
         emit(state.copyWith(pageStatus: PageStatus.failure));
@@ -165,6 +164,30 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
       ) {
         add(UpdateWorkspaceLastMessageEvent(workspaceLastMessage: value));
       });
+    });
+
+    handleSubEvent<SeenWorkspaceEvent>((event, emit) async {});
+  }
+
+  void _sort(List<WorkspaceEntity> workspaces) {
+    _sortWorkspacesByTime(workspaces);
+    _sortWorkspacesByPin(workspaces);
+  }
+
+  void _sortWorkspacesByPin(List<WorkspaceEntity> workspaces) {
+    if (workspaces.isEmpty) return;
+    workspaces.sort((a, b) {
+      if (a.isPin == b.isPin) {
+        return 0;
+      }
+      return a.isPin ? -1 : 1;
+    });
+  }
+
+  void _sortWorkspacesByTime(List<WorkspaceEntity> workspaces) {
+    if (workspaces.isEmpty) return;
+    workspaces.sort((a, b) {
+      return b.lastMessageTime.compareTo(a.lastMessageTime);
     });
   }
 }

@@ -77,12 +77,18 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                     physics: ClampingScrollPhysics(),
                     itemBuilder: (context, index) {
                       final workspace = state[index];
+                      print(workspace.lastMessageTime);
                       return SuperMenuPopupWidget(
+                        isMute: workspace.isMute,
+                        isPin: workspace.isPin,
+                        isSeen: workspace.isSeen,
                         onTapDelete: () {},
                         onTapMask: () {},
                         onTapMute: () {},
                         onTapPin: () {},
                         child: WorkspaceTileWidget(
+                          isMute: workspace.isMute,
+                          isPin: workspace.isPin,
                           workspaceAvatar: workspace.workspaceAvatar,
                           workspaceName: workspace.workspaceName,
                           lastMessage: workspace.lastMessage,
@@ -125,12 +131,18 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                           physics: ClampingScrollPhysics(),
                           itemBuilder: (context, index) {
                             final workspace = workspaces[index];
+
                             return SuperMenuPopupWidget(
+                              isMute: workspace.isMute,
+                              isPin: workspace.isPin,
+                              isSeen: workspace.isSeen,
                               onTapDelete: () {},
                               onTapMask: () {},
                               onTapMute: () {},
                               onTapPin: () {},
                               child: WorkspaceTileWidget(
+                                isMute: workspace.isMute,
+                                isPin: workspace.isPin,
                                 workspaceAvatar: workspace.workspaceAvatar,
                                 workspaceName: workspace.workspaceName,
                                 lastMessage: workspace.lastMessage,

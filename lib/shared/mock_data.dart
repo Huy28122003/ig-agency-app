@@ -10,6 +10,8 @@ class MockData {
         lastMessage: 'Please review the latest designs.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 15)),
         isSeen: false,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '2',
@@ -18,6 +20,8 @@ class MockData {
         lastMessage: 'Campaign launch is scheduled for next week.',
         lastMessageTime: DateTime.now().subtract(const Duration(days: 200)),
         isSeen: true,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '3',
@@ -26,6 +30,8 @@ class MockData {
         lastMessage: 'The new feature has been deployed.',
         lastMessageTime: DateTime.now().subtract(const Duration(days: 1)),
         isSeen: true,
+        isMute: false,
+        isPin: true,
       ),
       WorkspaceEntity(
         id: '4',
@@ -34,6 +40,8 @@ class MockData {
         lastMessage: 'Don\'t forget the team meeting tomorrow.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 30)),
         isSeen: false,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '5',
@@ -42,6 +50,8 @@ class MockData {
         lastMessage: 'Quarterly sales report is ready for review.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 2)),
         isSeen: true,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '6',
@@ -50,6 +60,8 @@ class MockData {
         lastMessage: 'Budget proposal draft is ready.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 12)),
         isSeen: false,
+        isMute: false,
+        isPin: true,
       ),
       WorkspaceEntity(
         id: '7',
@@ -58,6 +70,8 @@ class MockData {
         lastMessage: 'Ticket #342 has been resolved.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 5)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '8',
@@ -66,6 +80,8 @@ class MockData {
         lastMessage: 'All test cases passed successfully.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 55)),
         isSeen: false,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '9',
@@ -74,6 +90,8 @@ class MockData {
         lastMessage: 'User feedback report has been shared.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 8)),
         isSeen: true,
+        isMute: false,
+        isPin: true,
       ),
       WorkspaceEntity(
         id: '10',
@@ -82,6 +100,8 @@ class MockData {
         lastMessage: 'Contract review completed.',
         lastMessageTime: DateTime.now().subtract(const Duration(days: 2)),
         isSeen: false,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '11',
@@ -90,6 +110,8 @@ class MockData {
         lastMessage: 'Code refactor completed.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 15)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '12',
@@ -98,6 +120,8 @@ class MockData {
         lastMessage: 'New study materials uploaded.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 3)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '13',
@@ -106,6 +130,8 @@ class MockData {
         lastMessage: 'System audit scheduled.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 42)),
         isSeen: false,
+        isMute: false,
+        isPin: true,
       ),
       WorkspaceEntity(
         id: '14',
@@ -114,6 +140,8 @@ class MockData {
         lastMessage: 'Office supplies restocked.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 6)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '15',
@@ -122,6 +150,8 @@ class MockData {
         lastMessage: 'Daily report has been uploaded.',
         lastMessageTime: DateTime.now().subtract(const Duration(days: 3)),
         isSeen: false,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '16',
@@ -130,6 +160,8 @@ class MockData {
         lastMessage: 'Next board meeting on Friday.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 7)),
         isSeen: false,
+        isMute: false,
+        isPin: true,
       ),
       WorkspaceEntity(
         id: '17',
@@ -138,6 +170,8 @@ class MockData {
         lastMessage: 'Agreement draft shared.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 9)),
         isSeen: true,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '18',
@@ -146,6 +180,8 @@ class MockData {
         lastMessage: 'Invoice for last month received.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 10)),
         isSeen: false,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '19',
@@ -154,6 +190,8 @@ class MockData {
         lastMessage: 'Feedback session scheduled.',
         lastMessageTime: DateTime.now().subtract(const Duration(days: 1)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '20',
@@ -162,6 +200,8 @@ class MockData {
         lastMessage: 'Event photos uploaded.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 25)),
         isSeen: true,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '21',
@@ -170,6 +210,8 @@ class MockData {
         lastMessage: 'New training session announced.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 12)),
         isSeen: false,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '22',
@@ -178,6 +220,8 @@ class MockData {
         lastMessage: 'Milestone 2 completed.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 2)),
         isSeen: false,
+        isMute: true,
+        isPin: true,
       ),
       WorkspaceEntity(
         id: '23',
@@ -186,6 +230,8 @@ class MockData {
         lastMessage: 'Dashboard updated with new metrics.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 15)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '24',
@@ -194,6 +240,8 @@ class MockData {
         lastMessage: 'New components added.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 59)),
         isSeen: false,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '25',
@@ -202,6 +250,8 @@ class MockData {
         lastMessage: 'Wireframes finalized.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 20)),
         isSeen: true,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '26',
@@ -210,6 +260,8 @@ class MockData {
         lastMessage: 'Blog post draft uploaded.',
         lastMessageTime: DateTime.now().subtract(const Duration(days: 4)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '27',
@@ -218,6 +270,8 @@ class MockData {
         lastMessage: 'Press release shared with media.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 18)),
         isSeen: false,
+        isMute: false,
+        isPin: true,
       ),
       WorkspaceEntity(
         id: '28',
@@ -226,6 +280,8 @@ class MockData {
         lastMessage: 'Venue confirmed for annual meetup.',
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 18)),
         isSeen: false,
+        isMute: true,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '29',
@@ -234,6 +290,8 @@ class MockData {
         lastMessage: 'Prototype testing results uploaded.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 7)),
         isSeen: true,
+        isMute: false,
+        isPin: false,
       ),
       WorkspaceEntity(
         id: '30',
@@ -242,6 +300,8 @@ class MockData {
         lastMessage: 'Monthly KPI review scheduled.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 13)),
         isSeen: true,
+        isMute: false,
+        isPin: true,
       ),
     ];
   }
