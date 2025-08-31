@@ -7,6 +7,7 @@ import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/menu_po
 import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/workspace_tile_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
+import 'package:ig_agency_app/presentation/views/widgets/confirm_dialog.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
@@ -81,7 +82,14 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                         isMute: workspace.isMute,
                         isPin: workspace.isPin,
                         isSeen: workspace.isSeen,
-                        onTapDelete: () {},
+                        onTapDelete: () async {
+                          final result = await ConfirmDialog.show(
+                            context,
+                            title: "Delete this entire\nconversations?",
+                            okText: "Delete",
+                            cancelText: "Cancel",
+                          );
+                        },
                         onTapMask: () {
                           _workspaceBloc.add(
                             SeenWorkspaceEvent(workspaceId: workspace.id),

@@ -39,6 +39,7 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
     handleSubEvent<LoadMoreDataEvent>(_onLoadMoreData);
+    handleSubEvent<DeleteWorkspaceEvent>(_onDeleteWorkspace);
   }
 
   Future<void> _onMuteWorkspace(
@@ -261,6 +262,15 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
     } else {
       emit(state.copyWith(pagingStatus: PagingStatus.loadFailed));
     }
+  }
+
+  Future<void> _onDeleteWorkspace(
+    DeleteWorkspaceEvent event,
+    Emitter<WorkspaceState> emit,
+  ) async {
+    List<WorkspaceEntity> workspaces = List.from(state.workspaces);
+    workspaces.removeWhere((e) => e.id == event.workspaceId);
+    emit(state.copyWith(workspaces: workspaces));
   }
 
   void _sort(List<WorkspaceEntity> workspaces) {

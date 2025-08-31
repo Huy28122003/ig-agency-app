@@ -53,3 +53,9 @@ class SeenWorkspaceEvent extends WorkspaceEvent {
 
   SeenWorkspaceEvent({required this.workspaceId});
 }
+
+class DeleteWorkspaceEvent extends WorkspaceEvent {
+  final int workspaceId;
+
+  DeleteWorkspaceEvent({required this.workspaceId});
+}
