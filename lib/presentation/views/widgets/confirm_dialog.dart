@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import '../../../gen/fonts.gen.dart';
 import '../../resources/colors.dart';
@@ -113,6 +114,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
                       Expanded(
                         child: AppButton.text(
                           onPressed: () {
+                            context.router.pop(false);
                             widget.onCancel?.call();
                           },
                           child: Text(
@@ -136,6 +138,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
                       Expanded(
                         child: AppButton.text(
                           onPressed: () {
+                            context.router.pop(true);
                             widget.onConfirm?.call();
                           },
                           child: Text(

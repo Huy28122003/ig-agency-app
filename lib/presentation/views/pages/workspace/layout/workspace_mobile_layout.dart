@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/enums/unmute_time_enum.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/menu_popup_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/workspace_tile_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
 import 'package:ig_agency_app/presentation/views/widgets/confirm_dialog.dart';
+import 'package:ig_agency_app/presentation/views/widgets/menu_dialog.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
@@ -95,7 +97,37 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                             SeenWorkspaceEvent(workspaceId: workspace.id),
                           );
                         },
-                        onTapMute: () {
+                        onTapMute: () async {
+                          if (workspace.isMute) {
+                            final result =
+                                await MenuDialog.show<UnMuteTimeEnum>(
+                                  onTap: (value) {},
+                                  context: context,
+                                  title: "Mute this chat?",
+                                  items: [
+                                    MenuItem(
+                                      content: "For 15 minutes",
+                                      value: UnMuteTimeEnum.m15,
+                                    ),
+                                    MenuItem(
+                                      content: "For 1 hour",
+                                      value: UnMuteTimeEnum.d1,
+                                    ),
+                                    MenuItem(
+                                      content: "For 8 hours",
+                                      value: UnMuteTimeEnum.h8,
+                                    ),
+                                    MenuItem(
+                                      content: "For 24 hours",
+                                      value: UnMuteTimeEnum.h24,
+                                    ),
+                                    MenuItem(
+                                      content: "Until I change it",
+                                      value: UnMuteTimeEnum.life,
+                                    ),
+                                  ],
+                                );
+                          }
                           _workspaceBloc.add(
                             MuteWorkspaceEvent(workspaceId: workspace.id),
                           );
