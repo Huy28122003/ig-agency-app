@@ -31,8 +31,8 @@ class SettingHomeMobileHeader extends StatelessWidget {
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
+            left: 20,
+            right: 20,
             top: 10,
             bottom: 30,
           ),
