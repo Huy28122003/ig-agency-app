@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../../domain/entities/message/message.dart';
 import '../../../shared/commons/enums/pinned_message_type.dart';
@@ -12,8 +11,6 @@ class PinnedMessageUIModel extends Equatable {
     required this.pinnedAt,
     required this.type,
     required this.content,
-    this.hostName,
-    this.textSpans,
   });
 
   bool get isText =>
@@ -34,8 +31,6 @@ class PinnedMessageUIModel extends Equatable {
   final DateTime pinnedAt;
   final PinnedMessageType type;
   final MessageContent content;
-  final String? hostName;
-  final List<TextSpan>? textSpans;
 
   @override
   List<Object?> get props => [
@@ -45,7 +40,5 @@ class PinnedMessageUIModel extends Equatable {
     pinnedAt,
     type,
     content,
-    hostName,
-    textSpans,
   ];
 }

@@ -25,11 +25,8 @@ class MessageRepositoryImpl implements MessageRepository {
         offset,
       );
 
-      final pageNumber = (offset / limit).floor() + 1;
       final pagedResult = PagingTranslator.fromPagingResponseModel(
         pagingResponse,
-        pageNumber,
-        limit,
       );
 
       return Result.completed(pagedResult);

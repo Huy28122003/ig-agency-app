@@ -7,7 +7,9 @@ import 'package:ig_agency_app/shared/extensions/int_ext.dart';
 import '../../../domain/entities/message/message.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../gen/fonts.gen.dart';
+import '../../../shared/utils/text_message_display_util.dart';
 import '../models/pinned_message_ui_model.dart';
+
 import 'circle_network_avatar.dart';
 import 'network_image.dart';
 
@@ -117,10 +119,19 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
 
   Widget _buildPinnedMessageContent() {
     if (_message.isText) {
-      return _PinnedMessageText(
-        textSpans: _message.textSpans,
-        hostName: _message.hostName,
+      final textStyle = const TextStyle(
+        color: AppColors.textDefaultTextDefault,
+        fontSize: 16,
+        fontFamily: FontFamily.segoeUI,
+        fontWeight: FontWeight.w400,
+        height: 1.50,
       );
+
+      final (textSpans, hostName) = TextMessageDisplayUtil.parseTextContent(
+        _message.content,
+        textStyle,
+      );
+      return _PinnedMessageText(textSpans: textSpans, hostName: hostName);
     }
 
     if (_message.isImage) {

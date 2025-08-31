@@ -55,14 +55,17 @@ class PinnedMessageBloc
         .map((e) => PinnedMessageMapper.fromMessageEntity(e))
         .toList();
 
+    final currentPage = (offset / _limit).floor() + 1;
     final totalPages = (pagedResult.totalRecords / _limit).ceil();
-    final isLastPage = pagedResult.pageNumber >= totalPages;
+    final isLastPage = currentPage >= totalPages;
 
-    final fetchStatus = isLastPage
-        ? PagingStatus.noMoreData
-        : (isRefresh
-              ? PagingStatus.refreshCompleted
-              : PagingStatus.loadCompleted);
+    final fetchStatus = messages.isEmpty
+        ? PagingStatus.empty
+        : (isLastPage
+              ? PagingStatus.noMoreData
+              : (isRefresh
+                    ? PagingStatus.refreshCompleted
+                    : PagingStatus.loadCompleted));
 
     return (messages, fetchStatus);
   }
@@ -128,7 +131,10 @@ class PinnedMessageBloc
     LoadMorePinnedMessageEvent event,
     Emitter<PinnedMessageState> emit,
   ) async {
-    if (state.pagingStatus == PagingStatus.noMoreData) return;
+    if (state.pagingStatus == PagingStatus.loading ||
+        state.pagingStatus == PagingStatus.noMoreData) {
+      return;
+    }
 
     emit(state.copyWith(processing: true, pagingStatus: PagingStatus.loading));
 

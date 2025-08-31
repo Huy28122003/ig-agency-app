@@ -3,11 +3,35 @@ import 'package:flutter/widgets.dart';
 import '../../domain/entities/message/message.dart';
 import '../../domain/enums/message_enums.dart';
 
-class TextParser {
-  static (List<TextSpan>, String?) parseText(
+class TextMessageDisplayUtil {
+  static (List<TextSpan>, String?) parseTextContent(
+    MessageContent content,
+    TextStyle? textStyle, {
+    TextStyle? linkStyle,
+    TextStyle? mentionStyle,
+  }) {
+    final textContent = content as TextMessageContent;
+
+    if (textContent.textSegments != null &&
+        textContent.textSegments!.isNotEmpty) {
+      return _handleTextSegments(
+        textContent.text,
+        textContent.textSegments!,
+        textStyle: textStyle,
+        linkStyle: linkStyle,
+        mentionStyle: mentionStyle,
+      );
+    } else {
+      return ([TextSpan(text: textContent.text, style: textStyle)], null);
+    }
+  }
+
+  static (List<TextSpan>, String?) _handleTextSegments(
     String text,
     List<TextSegment> textSegments, {
     TextStyle? textStyle,
+    TextStyle? linkStyle,
+    TextStyle? mentionStyle,
   }) {
     textSegments.sort((a, b) => a.start.compareTo(b.start));
     final spans = <TextSpan>[];
@@ -15,8 +39,8 @@ class TextParser {
 
     int lastIndex = 0;
 
-    final linkStyle = textStyle?.copyWith(decoration: TextDecoration.underline);
-    final mentionStyle = textStyle?.copyWith(fontWeight: FontWeight.w700);
+    linkStyle ??= textStyle?.copyWith(decoration: TextDecoration.underline);
+    mentionStyle ?? textStyle?.copyWith(fontWeight: FontWeight.w700);
 
     for (final ann in textSegments) {
       if (ann.start > lastIndex) {
