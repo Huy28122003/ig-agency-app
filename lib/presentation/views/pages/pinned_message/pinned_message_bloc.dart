@@ -40,65 +40,86 @@ class PinnedMessageBloc
     handleSubEvent<LoadMorePinnedMessageEvent>(_onLoadMorePinnedMessage);
   }
 
+  Future<(List<PinnedMessageUIModel>, PagingStatus)?> _getPinnedMessages(
+    int offset, {
+    bool isRefresh = false,
+  }) async {
+    final result = await _fetchPinnedMessageUseCase.call(
+      FetchPinnedMessageParams(limit: _limit, offset: offset),
+    );
+
+    if (!result.success || result.data == null) return null;
+
+    final pagedResult = result.data!;
+    final messages = pagedResult.data
+        .map((e) => PinnedMessageMapper.fromMessageEntity(e))
+        .toList();
+
+    final totalPages = (pagedResult.totalRecords / _limit).ceil();
+    final isLastPage = pagedResult.pageNumber >= totalPages;
+
+    final fetchStatus = isLastPage
+        ? PagingStatus.noMoreData
+        : (isRefresh
+              ? PagingStatus.refreshCompleted
+              : PagingStatus.loadCompleted);
+
+    return (messages, fetchStatus);
+  }
+
   Future<void> _onLoadData(
     LoadDataEvent event,
     Emitter<PinnedMessageState> emit,
   ) async {
     emit(state.copyWith(pageStatus: PageStatus.loading));
+    _offset = 0;
 
-    final result = await _fetchPinnedMessageUseCase.call(
-      FetchPinnedMessageParams(limit: _limit, offset: _offset),
-    );
-
-    if (result.success) {
-      final messages = result.data
-          ?.map((e) => PinnedMessageMapper.fromMessageEntity(e))
-          .toList();
-
-      _offset += _limit;
-
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.loaded,
-          messages: messages,
-          canLoadMore: messages?.length == _limit,
-        ),
-      );
-    } else {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.failure,
-          pageErrorMessage: result.failure?.message,
-        ),
-      );
+    final result = await _getPinnedMessages(_offset);
+    if (result == null) {
+      emit(state.copyWith(pageStatus: PageStatus.failure));
+      return;
     }
-  }
 
-  Future<List<PinnedMessageUIModel>> _fetch({required int offset}) async {
-    final result = await _fetchPinnedMessageUseCase.call(
-      FetchPinnedMessageParams(limit: _limit, offset: offset),
+    final (messages, pagingStatus) = result;
+    _offset = messages.length;
+    emit(
+      state.copyWith(
+        pageStatus: PageStatus.loaded,
+        pagingStatus: pagingStatus,
+        messages: messages,
+      ),
     );
-    if (!result.success) return [];
-    return result.data?.map(PinnedMessageMapper.fromMessageEntity).toList() ??
-        [];
   }
 
   Future<void> _onRefreshPinnedMessage(
     RefreshPinnedMessageEvent event,
     Emitter<PinnedMessageState> emit,
   ) async {
+    if (state.pagingStatus == PagingStatus.refreshing) return;
+
     _offset = 0;
+    emit(
+      state.copyWith(processing: true, pagingStatus: PagingStatus.refreshing),
+    );
 
-    emit(state.copyWith(processing: true, canLoadMore: true));
-    final messages = await _fetch(offset: _offset);
+    final result = await _getPinnedMessages(_offset, isRefresh: true);
+    if (result == null) {
+      emit(
+        state.copyWith(
+          processing: false,
+          pagingStatus: PagingStatus.refreshFailed,
+        ),
+      );
+      return;
+    }
 
-    _offset += min(messages.length, _limit);
-
+    final (messages, pagingStatus) = result;
+    _offset = messages.length;
     emit(
       state.copyWith(
         processing: false,
+        pagingStatus: PagingStatus.refreshCompleted,
         messages: messages,
-        canLoadMore: messages.length == _limit,
       ),
     );
   }
@@ -107,20 +128,30 @@ class PinnedMessageBloc
     LoadMorePinnedMessageEvent event,
     Emitter<PinnedMessageState> emit,
   ) async {
-    if (!state.canLoadMore) return;
+    if (state.pagingStatus == PagingStatus.noMoreData) return;
 
-    emit(state.copyWith(processing: true));
-    final messages = await _fetch(offset: _offset);
+    emit(state.copyWith(processing: true, pagingStatus: PagingStatus.loading));
 
-    _offset += min(messages.length, _limit);
+    final result = await _getPinnedMessages(_offset);
+    if (result == null) {
+      emit(
+        state.copyWith(
+          processing: false,
+          pagingStatus: PagingStatus.loadFailed,
+        ),
+      );
+      return;
+    }
+
+    final (messages, pagingStatus) = result;
+    _offset += messages.length;
+    final updatedMessages = [...state.messages, ...messages];
 
     emit(
       state.copyWith(
         processing: false,
-        messages: messages.isEmpty
-            ? state.messages
-            : [...state.messages, ...messages],
-        canLoadMore: messages.length == _limit,
+        pagingStatus: pagingStatus,
+        messages: updatedMessages,
       ),
     );
   }
@@ -139,23 +170,10 @@ class PinnedMessageBloc
       final messages = List<PinnedMessageUIModel>.from(state.messages)
         ..removeWhere((e) => e.id == event.messageId);
 
-      emit(
-        state.copyWith(
-          processing: false,
-          isUnpinSuccess: true,
-          messages: messages,
-        ),
-      );
-
       _offset = max(0, _offset - 1);
+      emit(state.copyWith(processing: false, messages: messages));
     } else {
-      emit(
-        state.copyWith(
-          processing: false,
-          isUnpinSuccess: false,
-          pageErrorMessage: result.failure?.message,
-        ),
-      );
+      emit(state.copyWith(processing: false));
     }
   }
 }

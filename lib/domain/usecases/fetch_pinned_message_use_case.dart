@@ -3,17 +3,18 @@ import 'package:injectable/injectable.dart';
 
 import '../../shared/commons/result.dart';
 import '../entities/message/message.dart';
+import '../entities/paged_result.dart';
 import 'use_case.dart';
 
 @injectable
 class FetchPinnedMessageUseCase
-    extends UseCase<List<MessageEntity>, FetchPinnedMessageParams> {
+    extends UseCase<PagedResult<MessageEntity>, FetchPinnedMessageParams> {
   final MessageRepository _messageRepository;
 
   FetchPinnedMessageUseCase(this._messageRepository);
 
   @override
-  Future<Result<List<MessageEntity>>> call(
+  Future<Result<PagedResult<MessageEntity>>> call(
     FetchPinnedMessageParams params,
   ) async {
     return await _messageRepository.fetchPinnedMessages(

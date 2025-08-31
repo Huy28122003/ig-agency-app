@@ -369,7 +369,7 @@ class MessageMockService {
   }
 
   // Mock function call
-  List<MessageEntity> mockFetchPinnedMessages({
+  (List<MessageEntity>, int) mockFetchPinnedMessages({
     int? groupId,
     int limit = 10,
     int offset = 0,
@@ -378,29 +378,34 @@ class MessageMockService {
       final messages = _messageMockData[groupId];
 
       if (messages == null || messages.isEmpty) {
-        return [];
+        return ([], 0);
       }
 
-      return messages
+      final allPinnedMessages = messages
           .where((element) => element.isPinned)
-          .toList()
+          .toList();
+
+      final pinnedMessages = allPinnedMessages
           .skip(offset)
           .take(limit)
           .toList();
+
+      return (pinnedMessages, allPinnedMessages.length);
     }
 
     final messages = _messageMockData.values.expand((e) => e).toList();
 
     if (messages.isEmpty) {
-      return [];
+      return ([], 0);
     }
 
-    return messages
+    final allPinnedMessages = messages
         .where((element) => element.isPinned)
-        .toList()
-        .skip(offset)
-        .take(limit)
         .toList();
+
+    final pinnedMessages = allPinnedMessages.skip(offset).take(limit).toList();
+
+    return (pinnedMessages, allPinnedMessages.length);
   }
 
   Future<void> mockUnpinMessage(String messageId) async {

@@ -15,5 +15,4 @@ class PagingResponseModel<T> {
   final int total;
   @JsonKey(name: 'result')
   final List<T> records;
-
 }

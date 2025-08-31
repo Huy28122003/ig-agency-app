@@ -5,39 +5,30 @@ class PinnedMessageState extends BaseState<PinnedMessageState> {
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing,
+    this.pagingStatus = PagingStatus.idle,
     this.messages = const [],
-    this.isUnpinSuccess = false,
-    this.canLoadMore = true,
   });
 
+  final PagingStatus pagingStatus;
   final List<PinnedMessageUIModel> messages;
-  final bool isUnpinSuccess;
-  final bool canLoadMore;
 
   @override
   PinnedMessageState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
+    PagingStatus? pagingStatus,
     List<PinnedMessageUIModel>? messages,
-    bool? isUnpinSuccess,
-    bool? canLoadMore,
   }) {
     return PinnedMessageState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
+      pagingStatus: pagingStatus ?? this.pagingStatus,
       messages: messages ?? this.messages,
-      isUnpinSuccess: isUnpinSuccess ?? this.isUnpinSuccess,
-      canLoadMore: canLoadMore ?? this.canLoadMore,
     );
   }
 
   @override
-  List<Object?> get props => [
-    ...super.props,
-    messages,
-    isUnpinSuccess,
-    canLoadMore,
-  ];
+  List<Object?> get props => [...super.props, pagingStatus, messages];
 }

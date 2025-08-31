@@ -42,7 +42,7 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 12,
         children: [
-          CircleNetworkAvatar(imageUrl: _message.senderAvatarUrl),
+          CircleNetworkAvatar(imageUrl: _message.senderAvatarUrl, size: 24),
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
