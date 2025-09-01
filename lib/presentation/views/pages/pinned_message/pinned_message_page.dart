@@ -15,8 +15,8 @@ class PinnedMessagePage
 
   @override
   void onInitState(BuildContext context) {
-    context.read<PinnedMessageBloc>().add(LoadDataEvent());
     super.onInitState(context);
+    context.read<PinnedMessageBloc>().add(LoadDataEvent());
   }
 
   @override
