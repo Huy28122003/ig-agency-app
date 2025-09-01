@@ -148,7 +148,10 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
     }
     if (sizingInformation.isMobile || sizingInformation.isTablet) {
       return GestureDetector(
-        onTap: () => KeyboardUtils.hideKeyboard(),
+        onTap: () {
+          KeyboardUtils.hideKeyboard();
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         child: builder,
       );
     }

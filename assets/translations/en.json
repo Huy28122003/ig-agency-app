@@ -1,0 +1,15 @@
+{
+  "login": {
+    "welcome_to": "Welcome to",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "need_new_account": "Need new account?",
+    "register": "Register"
+  },
+  "search": {
+    "search": "Search",
+    "group": "Group",
+    "message": "Message"
+  }
+}

@@ -6,9 +6,15 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 extension RefreshControllerExtension on RefreshController {
   void refresh(PagingStatus fetchStatus) {
     switch (fetchStatus) {
+      case PagingStatus.loading:
+        requestLoading();
+        break;
       case PagingStatus.loadCompleted:
         resetNoData();
         loadComplete();
+        break;
+      case PagingStatus.refreshing:
+        requestRefresh();
         break;
       case PagingStatus.refreshCompleted:
         resetNoData();
@@ -31,22 +37,27 @@ extension RefreshControllerExtension on RefreshController {
 extension ScopeFunctionForObject<T extends Object> on T? {
   Widget safeWithPageState(
     Widget Function(T it) operationFor,
-    PageStatus pageState, {
+    PagingStatus pageState, {
     EdgeInsets padding = EdgeInsets.zero,
     int numberCardLoading = 3,
     String? emptyMessage,
     Function? errorPress,
     String? errorMessage,
+    Widget? cardLoading,
+    IndexedWidgetBuilder? separatorBuilder,
   }) {
-    if (pageState == PageStatus.failure) {
+    if (pageState == PagingStatus.loadFailed) {
       return SizedBox();
     }
-    if (pageState == PageStatus.loading || this == null) {
-      return ListView.builder(
-        itemBuilder: (context, index) => AppCardLoading(padding: padding),
+    if (pageState == PagingStatus.idle || this == null) {
+      return ListView.separated(
+        itemBuilder: (context, index) =>
+            cardLoading ?? AppCardLoading(padding: padding),
         itemCount: numberCardLoading,
         shrinkWrap: true,
-        padding: EdgeInsets.zero,
+        padding: padding,
+        separatorBuilder:
+            separatorBuilder ?? (_, _) =>  const SizedBox(height: 16),
         physics: const NeverScrollableScrollPhysics(),
       );
     }

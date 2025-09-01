@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/shared/commons/failure.dart';
 
-import '../../../di/di.dart';
-import '../../utils/alert.dart';
 import '../../utils/logger.dart';
 
 class AppErrorHandler {
@@ -18,11 +16,11 @@ class AppErrorHandler {
     }
 
     logger.e(message, error: error, stackTrace: stackTrace);
-    getIt<AppAlertDialog>().show(
-      context,
-      type: AppAlertType.error,
-      message: message,
-      onConfirmBtnTap: onPressed,
-    );
+    // AppAlertDialog().show(
+    //   context,
+    //   type: AppAlertType.error,
+    //   message: message,
+    //   onConfirmBtnTap: onPressed,
+    // );
   }
 }

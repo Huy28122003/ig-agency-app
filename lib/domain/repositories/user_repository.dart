@@ -1,15 +1,14 @@
 import 'dart:async';
-import '../../shared/commons/result.dart';
 import '../entities/user_entity.dart';
 
 abstract class UserRepository {
-  Future<Result<UserEntity>> fetchCurrentUser();
+  Future<UserEntity> fetchCurrentUser();
 
   Stream<UserEntity> get userStream;
 
-  Future<Result> updateUser(UserEntity user);
+  Future updateUser(UserEntity user);
 
-  Future<Result> updateUserName(String name);
+  Future updateUserName(String name);
 
-  Future<Result> updateUserBio(String bio);
+  Future updateUserBio(String bio);
 }

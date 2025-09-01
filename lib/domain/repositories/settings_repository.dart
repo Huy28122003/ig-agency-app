@@ -1,11 +1,9 @@
-import '../../shared/commons/result.dart';
-
 abstract class SettingsRepository {
-  Future<Result<bool>> getDarkMode();
+  Future<bool> getDarkMode();
 
-  Future<Result> setDarkMode(bool isDarkMode);
+  Future setDarkMode(bool isDarkMode);
 
-  Future<Result<bool>> getInAppAlerts();
+  Future<bool> getInAppAlerts();
 
-  Future<Result> setInAppAlerts(bool isInAppAlerts);
+  Future setInAppAlerts(bool isInAppAlerts);
 }

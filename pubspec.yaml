@@ -45,12 +45,14 @@ dependencies:
   equatable: ^2.0.7
 
   # Localization
-  #  easy_localization: ^3.0.8
+  easy_localization: ^3.0.8
 
   # Discovering the state of the network
   connectivity_plus: ^6.1.5
 
   # Other
+  freezed: ^3.2.0
+  freezed_annotation: ^3.1.0
   responsive_builder: ^0.7.1
   one_context: ^4.1.0
   flutter_svg: ^2.0.13
