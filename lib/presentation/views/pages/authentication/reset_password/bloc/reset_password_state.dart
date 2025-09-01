@@ -1,24 +1,22 @@
 part of 'reset_password_bloc.dart';
 
 class ResetPasswordState extends BaseState<ResetPasswordState> {
-  final bool isObscureNewPassword;
-  final bool isObscureConfirmPassword;
   final String? errorMessage;
   final VerifyStatus verifyStatus;
   final String newPassword;
   final String confirmPassword;
+  final String email;
   final bool isResetSuccess;
 
   const ResetPasswordState({
     super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing = false,
-    this.isObscureNewPassword = true,
-    this.isObscureConfirmPassword = true,
     this.errorMessage = "",
     this.verifyStatus = VerifyStatus.initial,
     this.newPassword = "",
     this.confirmPassword = "",
+    this.email = "",
     this.isResetSuccess = false,
   });
 
@@ -29,9 +27,8 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
     bool? processing,
     VerifyStatus? otpStatus,
     String? errorMessage,
+    String? email,
     VerifyStatus? verifyStatus,
-    bool? isObscureNewPassword,
-    bool? isObscureConfirmPassword,
     String? newPassword,
     String? confirmPassword,
     bool? isResetSuccess,
@@ -40,11 +37,9 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
-      isObscureNewPassword: isObscureNewPassword ?? this.isObscureNewPassword,
-      isObscureConfirmPassword:
-          isObscureConfirmPassword ?? this.isObscureConfirmPassword,
       errorMessage: errorMessage,
       verifyStatus: verifyStatus ?? this.verifyStatus,
+      email: email ?? this.email,
       newPassword: newPassword ?? this.newPassword,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       isResetSuccess: isResetSuccess ?? this.isResetSuccess,
@@ -53,10 +48,10 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
 
   @override
   List<Object?> get props => [
-    isObscureConfirmPassword,
-    isObscureNewPassword,
+    ...super.props,
     errorMessage,
     verifyStatus,
+    email,
     newPassword,
     isResetSuccess,
     confirmPassword,

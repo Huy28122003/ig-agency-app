@@ -3,31 +3,31 @@ import 'package:flutter/widgets.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
 
-class LogoutButton extends StatelessWidget {
-  const LogoutButton({super.key, required this.onLogout});
+class DeleteAccountButton extends StatelessWidget {
+  const DeleteAccountButton({super.key, required this.onDeleteAccount});
 
-  final VoidCallback onLogout;
+  final VoidCallback onDeleteAccount;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onLogout,
+      onTap: onDeleteAccount,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerAlertErrorLight,
           border: Border.all(color: AppColors.outlineAlertErrorLight, width: 1),
           borderRadius: BorderRadius.circular(16),
         ),
         child: SizedBox(
-          height: 32,
+          height: 24,
           child: Row(
             children: [
-              Assets.icons.icLogout.svg(width: 32, height: 32),
+              Assets.icons.icProfileDelete.svg(width: 24, height: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Logout',
+                  'Delete Account',
                   style: TextStyle(
                     color: AppColors.textAlertTextError,
                     fontSize: 16,

@@ -3,6 +3,7 @@ import 'package:ig_agency_app/domain/usecases/register_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../../shared/commons/constants/string.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
 
@@ -42,19 +43,6 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
           emit(state.copyWith(confirmPassword: event.confirmPassword)),
     );
 
-    handleSubEvent<TogglePasswordVisibilityEvent>(
-      (_, emit) async =>
-          emit(state.copyWith(isObscurePassword: !state.isObscurePassword)),
-    );
-
-    handleSubEvent<ToggleConfirmPasswordVisibilityEvent>(
-      (_, emit) async => emit(
-        state.copyWith(
-          isObscureConfirmPassword: !state.isObscureConfirmPassword,
-        ),
-      ),
-    );
-
     handleSubEvent<SubmitRegistrationEvent>(_onSubmitRegistration);
   }
 
@@ -85,7 +73,7 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
         confirmPassword: state.confirmPassword,
       ),
     );
-
+    kTesting = true;
     emit(state.copyWith(processing: false, isSuccess: result.success));
   }
 }

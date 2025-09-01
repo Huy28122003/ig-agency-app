@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
 
-import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../registration_bloc.dart';
@@ -34,7 +33,7 @@ class RegistrationTabletForm extends StatelessWidget {
                   final (name, errorNameMessage) = state;
 
                   return AppTextField(
-                    initialValue: name,
+                    value: name,
                     errorText: errorNameMessage,
                     hintText: 'Name',
                     keyboardType: TextInputType.name,
@@ -55,7 +54,7 @@ class RegistrationTabletForm extends StatelessWidget {
                   final (email, errorEmailMessage) = state;
 
                   return AppTextField(
-                    initialValue: email,
+                    value: email,
                     errorText: errorEmailMessage,
                     hintText: 'Email',
                     keyboardType: TextInputType.emailAddress,
@@ -69,36 +68,20 @@ class RegistrationTabletForm extends StatelessWidget {
               BlocSelector<
                 RegistrationBloc,
                 RegistrationState,
-                (String, bool, String?)
+                (String, String?)
               >(
-                selector: (state) => (
-                  state.password,
-                  state.isObscurePassword,
-                  state.errorPasswordMessage,
-                ),
+                selector: (state) =>
+                    (state.password, state.errorPasswordMessage),
                 builder: (context, state) {
-                  final (password, isObscurePassword, errorPasswordMessage) =
-                      state;
+                  final (password, errorPasswordMessage) = state;
 
                   return AppTextField(
-                    initialValue: password,
-                    obscureText: isObscurePassword,
+                    value: password,
                     errorText: errorPasswordMessage,
                     hintText: 'Password',
                     textInputAction: TextInputAction.next,
                     onChanged: (value) =>
                         registrationBloc.add(PasswordChangedEvent(value)),
-                    suffixIcon: GestureDetector(
-                      onTap: () =>
-                          registrationBloc.add(TogglePasswordVisibilityEvent()),
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: isObscurePassword
-                            ? Assets.icons.icEye.svg()
-                            : Assets.icons.icEyeOff.svg(),
-                      ),
-                    ),
                   );
                 },
               ),
@@ -106,23 +89,15 @@ class RegistrationTabletForm extends StatelessWidget {
               BlocSelector<
                 RegistrationBloc,
                 RegistrationState,
-                (String, bool, String?)
+                (String, String?)
               >(
-                selector: (state) => (
-                  state.confirmPassword,
-                  state.isObscureConfirmPassword,
-                  state.errorConfirmPasswordMessage,
-                ),
+                selector: (state) =>
+                    (state.confirmPassword, state.errorConfirmPasswordMessage),
                 builder: (context, state) {
-                  final (
-                    confirmPassword,
-                    isObscureConfirmPassword,
-                    errorConfirmPasswordMessage,
-                  ) = state;
+                  final (confirmPassword, errorConfirmPasswordMessage) = state;
 
                   return AppTextField(
-                    initialValue: confirmPassword,
-                    obscureText: isObscureConfirmPassword,
+                    value: confirmPassword,
                     errorText: errorConfirmPasswordMessage,
                     hintText: 'Confirm Password',
                     textInputAction: TextInputAction.done,
@@ -131,18 +106,6 @@ class RegistrationTabletForm extends StatelessWidget {
                     ),
                     onEditingComplete: () =>
                         registrationBloc.add(SubmitRegistrationEvent()),
-                    suffixIcon: GestureDetector(
-                      onTap: () => registrationBloc.add(
-                        ToggleConfirmPasswordVisibilityEvent(),
-                      ),
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: isObscureConfirmPassword
-                            ? Assets.icons.icEye.svg()
-                            : Assets.icons.icEyeOff.svg(),
-                      ),
-                    ),
                   );
                 },
               ),

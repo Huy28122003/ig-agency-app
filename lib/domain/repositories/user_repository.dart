@@ -8,4 +8,8 @@ abstract class UserRepository {
   Stream<UserEntity> get userStream;
 
   Future<Result> updateUser(UserEntity user);
+
+  Future<Result> updateUserName(String name);
+
+  Future<Result> updateUserBio(String bio);
 }

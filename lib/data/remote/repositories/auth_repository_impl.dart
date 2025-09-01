@@ -130,4 +130,29 @@ class AuthRepositoryImpl implements AuthRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<Result> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      // Simulate change password process
+      await _authRemoteDataSource.changePassword(currentPassword, newPassword);
+      return Result.completed(null);
+    } catch (e) {
+      return Result.failure(FailureConverter.convert(e));
+    }
+  }
+
+  @override
+  Future<Result> deleteAccount(String userId) async {
+    try {
+      await _authRemoteDataSource.deleteAccount(userId);
+      clearToken();
+      return Result.completed(null);
+    } catch (e) {
+      return Result.failure(FailureConverter.convert(e));
+    }
+  }
 }

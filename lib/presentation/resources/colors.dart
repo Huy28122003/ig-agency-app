@@ -14,9 +14,13 @@ abstract class AppColors {
   );
   static const Color textDefaultTextDefault = Color(0xFF1D2838);
   static const Color textDefaultTextInverted = Colors.white;
+  static final Color textDefaultTextDefaultDisabled = Colors.black.withValues(
+    alpha: 0.17,
+  );
 
   /// Icon
   static const Color iconDefaultDefault = Color(0xFF08090A);
+  static const Color iconDefaultDefaultInverted = Color(0xFFFFFFFF);
 
   /// Outline
   static const Color outlineGrayStrong200 = Color(0xFFE5E7EB);

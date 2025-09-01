@@ -29,25 +29,34 @@ class _ForgotPasswordMobileLayoutState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              const Color(0xFFFF7E4C),
-              const Color(0xFFFFBA32),
-              const Color(0xFFFFDB3F),
+    return BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
+      listener: (BuildContext context, state) {
+        if (state.isSendMailSuccess) {
+          final email = state.email;
+          context.router.push(OtpRoute(email: email));
+          _forgotPasswordBloc.add(ResetSendMailEvent());
+        }
+      },
+      child: Scaffold(
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                const Color(0xFFFF7E4C),
+                const Color(0xFFFFBA32),
+                const Color(0xFFFFDB3F),
+              ],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildPanel()),
             ],
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            Expanded(child: _buildPanel()),
-          ],
         ),
       ),
     );
@@ -77,7 +86,7 @@ class _ForgotPasswordMobileLayoutState
             Text(
               'Forget Password?',
               style: TextStyle(
-                color: AppColors.textDefaultTextInvertedDisabled,
+                color: AppColors.textDefaultTextInverted,
                 fontSize: 32,
                 fontFamily: FontFamily.segoeUI,
                 fontWeight: FontWeight.w700,
@@ -103,73 +112,56 @@ class _ForgotPasswordMobileLayoutState
         top: false,
         child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, top: 80),
-          child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
-            listener: (context, state) {
-              if (state.isSendMailSuccess) {
-                final email = state.email;
-                context.router.push(OtpRoute(email: email));
-                _forgotPasswordBloc.add(ResetSendMailEvent());
-              }
-            },
-            listenWhen: (previous, current) =>
-                previous.isSendMailSuccess != current.isSendMailSuccess,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  BlocSelector<
-                    ForgotPasswordBloc,
-                    ForgotPasswordState,
-                    String?
-                  >(
-                    selector: (state) => state.errorMessage,
-                    builder: (context, errorMessage) {
-                      return AppTextField(
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        hintText: "Enter your email",
-                        onChanged: (value) {
-                          _forgotPasswordBloc.add(
-                            EmailChangeEvent(email: value),
-                          );
-                        },
-                        errorText: errorMessage,
-                      );
-                    },
-                  ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                BlocSelector<
+                  ForgotPasswordBloc,
+                  ForgotPasswordState,
+                  (String?, String)
+                >(
+                  selector: (state) => (state.errorMessage, state.email),
+                  builder: (context, data) {
+                    return AppTextField(
+                      value: data.$2,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      hintText: "Enter your email",
+                      onChanged: (value) {
+                        _forgotPasswordBloc.add(EmailChangeEvent(email: value));
+                      },
+                      errorText: data.$1,
+                    );
+                  },
+                ),
 
-                  SizedBox(height: 40),
-                  BlocSelector<ForgotPasswordBloc, ForgotPasswordState, bool>(
-                    selector: (state) => state.isEnableSendCode,
-                    builder: (context, isEnableSendCode) {
-                      return AppButton.primary(
-                        backgroundColor: isEnableSendCode
-                            ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                            : AppColors.surfaceContainerPrimaryPrimaryDisabled,
-                        onPressed: () {
-                          final state = context
-                              .read<ForgotPasswordBloc>()
-                              .state;
-                          if (state.errorMessage != null || state.email.isEmpty)
-                            return;
-
-                          _forgotPasswordBloc.add(SendOtpEvent());
-                          context.router.push(OtpRoute(email: state.email));
-                        },
-                        child: Text(
-                          'Send code',
-                          style: TextStyle(
-                            color: AppColors.textDefaultTextInvertedDisabled,
-                            fontSize: 16,
-                            fontFamily: FontFamily.segoeUI,
-                            fontWeight: FontWeight.w700,
-                            height: 1.50,
-                          ),
+                SizedBox(height: 40),
+                BlocSelector<ForgotPasswordBloc, ForgotPasswordState, bool>(
+                  selector: (state) => state.isEnableSendCode,
+                  builder: (context, isEnableSendCode) {
+                    return AppButton.primary(
+                      backgroundColor: isEnableSendCode
+                          ? AppColors.surfaceContainerPrimaryPrimaryDefault
+                          : AppColors.surfaceContainerPrimaryPrimaryDisabled,
+                      onPressed: () {
+                        _forgotPasswordBloc.add(SendOtpEvent());
+                      },
+                      child: Text(
+                        'Send code',
+                        style: TextStyle(
+                          color: isEnableSendCode
+                              ? AppColors.textDefaultTextInverted
+                              : AppColors.textDefaultTextInvertedDisabled,
+                          fontSize: 16,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.50,
                         ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),

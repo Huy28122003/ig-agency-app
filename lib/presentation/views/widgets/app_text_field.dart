@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../gen/assets.gen.dart';
 import '../../../gen/fonts.gen.dart';
 import '../../resources/colors.dart';
 
-class AppTextField extends StatelessWidget {
+class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
     this.controller,
-    this.initialValue,
+    this.value = '',
+    this.labelText,
     this.hintText,
     this.errorText,
     this.obscureText = false,
@@ -25,12 +27,14 @@ class AppTextField extends StatelessWidget {
       vertical: 12,
       horizontal: 20,
     ),
+    this.style,
     this.noBorder = false,
     this.hintStyle,
   });
 
   final TextEditingController? controller;
-  final String? initialValue;
+  final String value;
+  final String? labelText;
   final String? hintText;
   final String? errorText;
   final bool obscureText;
@@ -39,7 +43,7 @@ class AppTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final VoidCallback? onEditingComplete;
   final void Function(String)? onFieldSubmitted;
-  final int maxLines;
+  final int? maxLines;
   final int? maxLength;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -48,9 +52,41 @@ class AppTextField extends StatelessWidget {
   final bool noBorder;
   final TextStyle? hintStyle;
 
+  final TextStyle? style;
+
+  @override
+  State<AppTextField> createState() => _AppTextFieldState();
+}
+
+class _AppTextFieldState extends State<AppTextField> {
+  late TextEditingController _controller;
+  bool _obscureText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? TextEditingController();
+    _controller.text = widget.value;
+    _obscureText = widget.obscureText;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant AppTextField oldWidget) {
+    if (_controller.text != widget.value) {
+      _controller.text = widget.value;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isError = errorText != null;
+    final isError = widget.errorText != null;
 
     final underlineBorder = UnderlineInputBorder(
       borderSide: BorderSide(
@@ -66,27 +102,37 @@ class AppTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         TextFormField(
-          initialValue: initialValue,
-          controller: controller,
-          focusNode: focusNode,
-          obscureText: obscureText,
+          controller: _controller,
+          focusNode: widget.focusNode,
+          obscureText: _obscureText,
           obscuringCharacter: '*',
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          onChanged: onChanged,
-          onEditingComplete: onEditingComplete,
-          onFieldSubmitted: onFieldSubmitted,
-          maxLines: onEditingComplete != null ? 1 : maxLines,
-          maxLength: maxLength,
-          style: TextStyle(
-            color: AppColors.textDefaultTextSub2,
-            fontSize: 16,
-            fontFamily: FontFamily.segoeUI,
-            fontWeight: FontWeight.w600,
-            height: 1.50,
-          ),
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          onChanged: widget.onChanged,
+          onEditingComplete: widget.onEditingComplete,
+          onFieldSubmitted: widget.onFieldSubmitted,
+          maxLines: widget.onEditingComplete != null ? 1 : widget.maxLines,
+          maxLength: widget.maxLength,
+          style:
+              widget.style ??
+              TextStyle(
+                color: AppColors.textDefaultTextSub2,
+                fontSize: 16,
+                fontFamily: FontFamily.segoeUI,
+                fontWeight: FontWeight.w600,
+                height: 1.50,
+              ),
+          cursorColor: widget.style?.color ?? AppColors.textDefaultTextSub2,
           decoration: InputDecoration(
-            hintText: hintText,
+            labelText: widget.labelText,
+            labelStyle: TextStyle(
+              color: AppColors.textDefaultTextSub,
+              fontSize: 14,
+              fontFamily: FontFamily.segoeUI,
+              fontWeight: FontWeight.w600,
+              height: 1.14,
+            ),
+            hintText: widget.hintText,
             hintStyle:
                 hintStyle ??
                 TextStyle(
@@ -97,19 +143,32 @@ class AppTextField extends StatelessWidget {
                   height: 1.50,
                 ),
             isDense: true,
-            prefixIcon: prefixIcon != null
+            prefixIconConstraints: BoxConstraints(
+              maxHeight: 20,
+              maxWidth: 20 + (widget.contentPadding?.left ?? 0),
+            ),
+            prefixIcon: widget.prefixIcon != null
                 ? Padding(
-                    padding: EdgeInsets.only(left: contentPadding?.left ?? 0),
-                    child: prefixIcon,
+                    padding: EdgeInsets.only(
+                      left: widget.contentPadding?.left ?? 0,
+                    ),
+                    child: widget.prefixIcon,
                   )
                 : null,
-            suffixIcon: suffixIcon != null
+            suffixIconConstraints: BoxConstraints(
+              maxHeight: 20,
+              maxWidth: 20 + (widget.contentPadding?.right ?? 0),
+            ),
+            suffixIcon: widget.obscureText
+                ? _buildSuffixIcon()
+                : widget.suffixIcon != null
                 ? Padding(
-                    padding: EdgeInsets.only(right: contentPadding?.right ?? 0),
-                    child: suffixIcon,
+                    padding: EdgeInsets.only(
+                      right: widget.contentPadding?.right ?? 0,
+                    ),
+                    child: widget.suffixIcon,
                   )
                 : null,
-
             border: noBorder ? InputBorder.none : underlineBorder,
             enabledBorder: noBorder ? InputBorder.none : underlineBorder,
             focusedBorder: noBorder ? InputBorder.none : underlineBorder,
@@ -121,7 +180,7 @@ class AppTextField extends StatelessWidget {
         if (isError) ...[
           const SizedBox(height: 4),
           Text(
-            errorText!,
+            widget.errorText!,
             style: TextStyle(
               color: AppColors.textAlertTextError,
               fontSize: 14,
@@ -132,6 +191,23 @@ class AppTextField extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  Widget? _buildSuffixIcon() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _obscureText = !_obscureText;
+        });
+      },
+      child: SizedBox(
+        height: 20,
+        width: 20,
+        child: _obscureText
+            ? Assets.icons.icEye.svg()
+            : Assets.icons.icEyeOff.svg(),
+      ),
     );
   }
 }

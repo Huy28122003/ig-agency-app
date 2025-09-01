@@ -2,14 +2,9 @@ part of 'reset_password_bloc.dart';
 
 sealed class ResetPasswordEvent {}
 
-class LoadDataEvent extends ResetPasswordEvent {}
-
-class ToggleObscureNewPasswordEvent extends ResetPasswordEvent {}
-
-class ToggleObscureConfirmPasswordEvent extends ResetPasswordEvent {}
-
-class VerifyPasswordsEvent extends ResetPasswordEvent {
-  VerifyPasswordsEvent();
+class LoadDataEvent extends ResetPasswordEvent {
+  final String email;
+  LoadDataEvent(this.email);
 }
 
 class NewPasswordChangedEvent extends ResetPasswordEvent {
@@ -24,8 +19,6 @@ class ConfirmPasswordChangedEvent extends ResetPasswordEvent {
   ConfirmPasswordChangedEvent({required this.confirmPassword});
 }
 
-class SendNewPasswordEvent extends ResetPasswordEvent {
-  final String email;
-
-  SendNewPasswordEvent({required this.email});
+class ConfirmResetPasswordEvent extends ResetPasswordEvent {
+  ConfirmResetPasswordEvent();
 }

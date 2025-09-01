@@ -18,4 +18,8 @@ abstract class AuthRepository {
   Future<Result<bool>> verifyOtpCode(String code);
 
   Future<bool> sendNewPassword(String email, String newPassword);
+
+  Future<Result> changePassword(String currentPassword, String newPassword);
+
+  Future<Result> deleteAccount(String userId);
 }

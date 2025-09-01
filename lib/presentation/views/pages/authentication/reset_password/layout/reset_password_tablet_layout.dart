@@ -5,15 +5,12 @@ import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/reset_password/bloc/reset_password_bloc.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
-import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_button.dart';
 import '../../../../widgets/app_text_field.dart';
 
 class ResetPasswordTabletLayout extends StatefulWidget {
-  final String email;
-
-  const ResetPasswordTabletLayout({super.key, required this.email});
+  const ResetPasswordTabletLayout({super.key});
 
   @override
   State<ResetPasswordTabletLayout> createState() =>
@@ -31,41 +28,35 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              const Color(0xFFFF7E4C),
-              const Color(0xFFFFBA32),
-              const Color(0xFFFFDB3F),
-            ],
-          ),
-        ),
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.all(24.0),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceBackgroundBackground,
-              borderRadius: BorderRadius.circular(16),
+    return BlocListener<ResetPasswordBloc, ResetPasswordState>(
+      listenWhen: (prev, curr) => prev.isResetSuccess != curr.isResetSuccess,
+      listener: (context, state) {
+        if (state.isResetSuccess) {
+          context.router.replaceAll([LoginRoute()]);
+        }
+      },
+      child: Scaffold(
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                const Color(0xFFFF7E4C),
+                const Color(0xFFFFBA32),
+                const Color(0xFFFFDB3F),
+              ],
             ),
-            constraints: const BoxConstraints(maxHeight: 800, maxWidth: 480),
-            child: SizedBox.expand(
-              child: BlocListener<ResetPasswordBloc, ResetPasswordState>(
-                listenWhen: (prev, curr) =>
-                    prev.verifyStatus != curr.verifyStatus ||
-                    prev.isResetSuccess != curr.isResetSuccess,
-                listener: (context, state) {
-                  if (state.verifyStatus == VerifyStatus.valid) {
-                    _resetPasswordBloc.add(
-                      SendNewPasswordEvent(email: widget.email),
-                    );
-                  } else if (state.isResetSuccess) {
-                    context.router.replaceAll([LoginRoute()]);
-                  }
-                },
+          ),
+          child: Center(
+            child: Container(
+              margin: const EdgeInsets.all(24.0),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceBackgroundBackground,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              constraints: const BoxConstraints(maxHeight: 800, maxWidth: 480),
+              child: SizedBox.expand(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(
                     top: 40,
@@ -89,34 +80,19 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
-                        selector: (state) => state.isObscureNewPassword,
+                      BlocSelector<
+                        ResetPasswordBloc,
+                        ResetPasswordState,
+                        String
+                      >(
+                        selector: (state) => state.newPassword,
                         builder: (context, isObscure) {
                           return AppTextField(
-                            errorText: context.select(
-                              (ResetPasswordBloc bloc) =>
-                                  bloc.state.errorMessage,
-                            ),
-                            obscureText: isObscure,
                             keyboardType: TextInputType.none,
                             textInputAction: TextInputAction.done,
                             hintText: "New password",
-                            suffixIcon: GestureDetector(
-                              onTap: () {
-                                context.read<ResetPasswordBloc>().add(
-                                  ToggleObscureNewPasswordEvent(),
-                                );
-                              },
-                              child: SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: isObscure
-                                    ? Assets.icons.icEye.svg()
-                                    : Assets.icons.icEyeOff.svg(),
-                              ),
-                            ),
                             onChanged: (value) {
-                              context.read<ResetPasswordBloc>().add(
+                              _resetPasswordBloc.add(
                                 NewPasswordChangedEvent(newPassword: value),
                               );
                             },
@@ -125,34 +101,24 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                       ),
 
                       SizedBox(height: 20),
-                      BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
-                        selector: (state) => state.isObscureConfirmPassword,
+                      BlocSelector<
+                        ResetPasswordBloc,
+                        ResetPasswordState,
+                        (String?, String)
+                      >(
+                        selector: (state) =>
+                            (state.errorMessage, state.confirmPassword),
                         builder: (context, isObscure) {
                           return AppTextField(
                             errorText: context.select(
                               (ResetPasswordBloc bloc) =>
                                   bloc.state.errorMessage,
                             ),
-                            obscureText: isObscure,
                             keyboardType: TextInputType.none,
                             textInputAction: TextInputAction.done,
                             hintText: "Confirm New Password",
-                            suffixIcon: GestureDetector(
-                              onTap: () {
-                                context.read<ResetPasswordBloc>().add(
-                                  ToggleObscureConfirmPasswordEvent(),
-                                );
-                              },
-                              child: SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: isObscure
-                                    ? Assets.icons.icEye.svg()
-                                    : Assets.icons.icEyeOff.svg(),
-                              ),
-                            ),
                             onChanged: (value) {
-                              context.read<ResetPasswordBloc>().add(
+                              _resetPasswordBloc.add(
                                 ConfirmPasswordChangedEvent(
                                   confirmPassword: value,
                                 ),
@@ -167,7 +133,7 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                         backgroundColor:
                             AppColors.surfaceContainerPrimaryPrimaryDefault,
                         onPressed: () {
-                          _resetPasswordBloc.add(VerifyPasswordsEvent());
+                          _resetPasswordBloc.add(ConfirmResetPasswordEvent());
                         },
                         child: Text(
                           'Reset Password',
