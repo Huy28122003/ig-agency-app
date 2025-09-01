@@ -48,15 +48,13 @@ class PinnedMessageBloc
       FetchPinnedMessageParams(limit: _limit, offset: offset),
     );
 
-    if (!result.success || result.data == null) return null;
-
-    final pagedResult = result.data!;
-    final messages = pagedResult.data
+    final pagedResult = result.data;
+    final messages = pagedResult
         .map((e) => PinnedMessageMapper.fromMessageEntity(e))
         .toList();
 
     final currentPage = (offset / _limit).floor() + 1;
-    final totalPages = (pagedResult.totalRecords / _limit).ceil();
+    final totalPages = (result.totalRecords / _limit).ceil();
     final isLastPage = currentPage >= totalPages;
 
     final fetchStatus = messages.isEmpty
@@ -168,18 +166,14 @@ class PinnedMessageBloc
   ) async {
     emit(state.copyWith(processing: true));
 
-    final result = await _unpinMessageUseCase.call(
+    await _unpinMessageUseCase.call(
       UnpinMessageParams(messageId: event.messageId),
     );
 
-    if (result.success) {
-      final messages = List<PinnedMessageUIModel>.from(state.messages)
-        ..removeWhere((e) => e.id == event.messageId);
+    final messages = List<PinnedMessageUIModel>.from(state.messages)
+      ..removeWhere((e) => e.id == event.messageId);
 
-      _offset = max(0, _offset - 1);
-      emit(state.copyWith(processing: false, messages: messages));
-    } else {
-      emit(state.copyWith(processing: false));
-    }
+    _offset = max(0, _offset - 1);
+    emit(state.copyWith(processing: false, messages: messages));
   }
 }
