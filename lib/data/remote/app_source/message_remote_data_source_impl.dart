@@ -1,9 +1,9 @@
 import 'package:ig_agency_app/data/remote/app/message_remote_data_source.dart';
-import 'package:ig_agency_app/data/remote/models/response/paging_response_model.dart';
 import 'package:ig_agency_app/domain/entities/message/message.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../shared/commons/exception_converter.dart';
+import '../models/response/paged_response.dart';
 import '../services/mock/message_mock_service.dart';
 
 @Injectable(as: MessageRemoteDataSource)
@@ -13,7 +13,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   final MessageMockService _messageMockService;
 
   @override
-  Future<PagingResponseModel<MessageEntity>> fetchPinnedMessage(
+  Future<PagedResponse<MessageEntity>> fetchPinnedMessage(
     int limit,
     int offset,
   ) async {
@@ -26,7 +26,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
         offset: offset,
       );
 
-      return PagingResponseModel<MessageEntity>(
+      return PagedResponse<MessageEntity>(
         total: totalRecords,
         records: pinnedMessages,
       );

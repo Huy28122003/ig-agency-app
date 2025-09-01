@@ -10,10 +10,12 @@ class CircleNetworkAvatar extends StatelessWidget {
     super.key,
     required this.imageUrl,
     this.size = 44,
+    this.isGroupAvt = false,
   });
 
   final String imageUrl;
   final double size;
+  final bool isGroupAvt;
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +48,17 @@ class CircleNetworkAvatar extends StatelessWidget {
     // TODO hoannk: Add error
     return CircleAvatar(
       radius: size / 2,
-      child: Assets.icons.icDefaultAvatar.svg(
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-      ),
+      child: isGroupAvt
+          ? Assets.images.imgDefaultGroupAvatar.image(
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            )
+          : Assets.icons.icDefaultAvatar.svg(
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            ),
     );
   }
 }

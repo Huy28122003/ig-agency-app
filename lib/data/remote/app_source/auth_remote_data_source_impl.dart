@@ -41,6 +41,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
+      await Future.delayed(Duration(seconds: 1));
       // return _apiService.login(loginRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);

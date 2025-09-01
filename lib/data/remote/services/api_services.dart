@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/search_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
+import 'package:ig_agency_app/data/remote/models/response/search_result_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/requests/registration_request_model.dart';
@@ -19,11 +22,17 @@ abstract class ApiService {
 
   @POST('/register')
   Future<RegistrationResponseModel> register(
-    @Body() RegistrationRequestModel registrationRequestModel,
+    @Body() RegistrationRequestModel requestModel,
   );
 
   @POST('/change-password')
   Future<ChangePasswordResponseModel> changePassword(
-    @Body() ChangePasswordRequestModel changePasswordRequestModel,
+    @Body() ChangePasswordRequestModel requestModel,
+  );
+
+  //Search
+  @POST('/')
+  Future<PagedResponse<SearchResultResponse>> search(
+    @Body() SearchRequestModel request,
   );
 }

@@ -2,7 +2,6 @@ import 'package:ig_agency_app/domain/repositories/settings_repository.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../shared/commons/result.dart';
 import '../../local/app/settings_local_data_source.dart';
 
 @Injectable(as: SettingsRepository)
@@ -12,42 +11,38 @@ class SettingsRepositoryImpl implements SettingsRepository {
   SettingsRepositoryImpl(this._settingsLocalDataSource);
 
   @override
-  Future<Result<bool>> getDarkMode() async {
+  Future<bool> getDarkMode() async {
     try {
-      final isDarkMode = await _settingsLocalDataSource.getDarkMode();
-      return Result.completed(isDarkMode);
+      return await _settingsLocalDataSource.getDarkMode();
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result<void>> setDarkMode(bool isDarkMode) async {
+  Future setDarkMode(bool isDarkMode) async {
     try {
-      await _settingsLocalDataSource.setDarkMode(isDarkMode);
-      return Result.completed(null);
+      return await _settingsLocalDataSource.setDarkMode(isDarkMode);
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result<bool>> getInAppAlerts() async {
+  Future<bool> getInAppAlerts() async {
     try {
-      final isInAppAlerts = await _settingsLocalDataSource.getInAppAlerts();
-      return Result.completed(isInAppAlerts);
+      return await _settingsLocalDataSource.getInAppAlerts();
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result<void>> setInAppAlerts(bool isInAppAlerts) async {
+  Future setInAppAlerts(bool isInAppAlerts) async {
     try {
-      await _settingsLocalDataSource.setInAppAlerts(isInAppAlerts);
-      return Result.completed(null);
+      return await _settingsLocalDataSource.setInAppAlerts(isInAppAlerts);
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 }

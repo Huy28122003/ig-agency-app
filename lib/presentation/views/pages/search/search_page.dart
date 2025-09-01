@@ -15,7 +15,7 @@ class SearchPage
 
   @override
   void onInitState(BuildContext context) {
-    context.read<SearchBloc>().add(LoadDataEvent());
+    context.read<SearchBloc>().add(LoadData());
     super.onInitState(context);
   }
 

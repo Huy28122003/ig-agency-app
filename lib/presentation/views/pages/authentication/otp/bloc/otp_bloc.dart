@@ -19,17 +19,11 @@ class OtpBloc extends BaseBloc<OtpEvent, OtpState> {
 
     handleSubEvent<VerifyOtpEvent>((event, emit) async {
       final result = await verifyOtpUseCase.call(event.otpFromUser);
-      if (result.success) {
-        emit(
-          state.copyWith(
-            otpStatus: result.data ?? false
-                ? VerifyStatus.valid
-                : VerifyStatus.invalid,
-          ),
-        );
-      }else{
-        // Loi call api
-      }
+      emit(
+        state.copyWith(
+          otpStatus: result ? VerifyStatus.valid : VerifyStatus.invalid,
+        ),
+      );
     });
   }
 }

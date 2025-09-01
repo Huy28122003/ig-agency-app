@@ -58,18 +58,7 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
 
     final userResult = await _fetchCurrentUserUseCase(NoParam());
 
-    // Check if user is not found
-    if (!userResult.success || userResult.data == null) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.failure,
-          pageErrorMessage: userResult.failure?.message ?? 'User not found',
-        ),
-      );
-      return;
-    }
-
-    emit(state.copyWith(pageStatus: PageStatus.loaded, user: userResult.data));
+    emit(state.copyWith(pageStatus: PageStatus.loaded, user: userResult));
   }
 
   Future<void> _onDeleteAccount(
@@ -78,11 +67,9 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(processing: true));
 
-    final result = await _deleteAccountUseCase(DeleteAccountParam(userId: ''));
+    await _deleteAccountUseCase(DeleteAccountParam(userId: ''));
 
-    emit(
-      state.copyWith(processing: false, isDeleteAccountSuccess: result.success),
-    );
+    emit(state.copyWith(processing: false, isDeleteAccountSuccess: true));
   }
 
   Future<void> _onUpdateUser(

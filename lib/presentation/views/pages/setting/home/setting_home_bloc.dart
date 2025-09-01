@@ -81,27 +81,12 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     final inAppAlertsResult = await _getInAppAlertsUseCase.call(null);
     final userResult = await _fetchCurrentUserUseCase(NoParam());
 
-    // Check if user is not found
-    if (!userResult.success || userResult.data == null) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.failure,
-          pageErrorMessage: userResult.failure?.message ?? 'User not found',
-        ),
-      );
-      return;
-    }
-
     emit(
       state.copyWith(
         pageStatus: PageStatus.loaded,
-        isDarkMode: darkModeResult.success
-            ? darkModeResult.data ?? false
-            : false,
-        isInAppAlerts: inAppAlertsResult.success
-            ? inAppAlertsResult.data ?? false
-            : false,
-        user: userResult.data,
+        isDarkMode: darkModeResult,
+        isInAppAlerts: inAppAlertsResult,
+        user: userResult,
       ),
     );
   }
@@ -113,16 +98,9 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     final newDarkMode = !state.isDarkMode;
     emit(state.copyWith(processing: true));
 
-    final result = await _setDarkModeUseCase(
-      SetDarkModeParam(isDarkMode: newDarkMode),
-    );
+    await _setDarkModeUseCase(SetDarkModeParam(isDarkMode: newDarkMode));
 
-    emit(
-      state.copyWith(
-        processing: false,
-        isDarkMode: result.success ? newDarkMode : state.isDarkMode,
-      ),
-    );
+    emit(state.copyWith(processing: false, isDarkMode: newDarkMode));
   }
 
   Future<void> _onToggleInAppAlerts(
@@ -132,16 +110,11 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     final newInAppAlerts = !state.isInAppAlerts;
     emit(state.copyWith(processing: true));
 
-    final result = await _setInAppAlertsUseCase(
+    await _setInAppAlertsUseCase(
       SetInAppAlertsParam(isInAppAlerts: newInAppAlerts),
     );
 
-    emit(
-      state.copyWith(
-        processing: false,
-        isInAppAlerts: result.success ? newInAppAlerts : state.isInAppAlerts,
-      ),
-    );
+    emit(state.copyWith(processing: false, isInAppAlerts: newInAppAlerts));
   }
 
   Future<void> _onLogout(
@@ -149,10 +122,8 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     Emitter<SettingHomeState> emit,
   ) async {
     emit(state.copyWith(processing: true));
-
-    final result = await _logoutUseCase.call(null);
-
-    emit(state.copyWith(processing: false, isLogoutSuccess: result.success));
+    await _logoutUseCase.call(null);
+    emit(state.copyWith(processing: false, isLogoutSuccess: true));
   }
 
   Future<void> _onUpdateUser(

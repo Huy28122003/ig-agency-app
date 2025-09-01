@@ -3,7 +3,6 @@ import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/user_entity.dart';
-import '../../../shared/commons/result.dart';
 import '../../cache/ram_cache.dart';
 import '../app/auth_remote_data_source.dart';
 
@@ -15,31 +14,31 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._authRemoteDataSource, this._ramCache);
 
   @override
-  Future<void> clearToken() {
+  Future clearToken() async {
     try {
       // Simulate clearing token
-      return Future.value();
+      return;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<String?> getToken() {
+  Future getToken() async {
     try {
       // Simulate fetching token
-      return _authRemoteDataSource.getAccessToken();
+      return await _authRemoteDataSource.getAccessToken();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result> login(String email, String password) async {
+  Future login(String email, String password) async {
     try {
       // Simulate login process
       await _authRemoteDataSource.login(email, password);
-      _ramCache.saveProfileInfo(
+      return _ramCache.saveProfileInfo(
         UserEntity(
           id: '1',
           name: 'Đinh Thị Quỳnh',
@@ -49,27 +48,25 @@ class AuthRepositoryImpl implements AuthRepository {
           updatedAt: null,
         ),
       );
-      return Result.completed(null);
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result> logout() async {
+  Future logout() async {
     try {
       // Simulate login process
       await _authRemoteDataSource.logout();
-      clearToken();
       _ramCache.clearUserData();
-      return Result.completed(null);
+      return await clearToken();
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<void> saveToken(String token) {
+  Future saveToken(String token) async {
     try {
       // Simulate saving token
       return Future.value();
@@ -79,7 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result> register(String name, String email, String password) async {
+  Future register(String name, String email, String password) async {
     try {
       // Simulate register process
       await _authRemoteDataSource.register(name, email, password);
@@ -93,66 +90,59 @@ class AuthRepositoryImpl implements AuthRepository {
           updatedAt: null,
         ),
       );
-      return Result.completed(null);
-    } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
-    }
-  }
-
-  @override
-  Future<Result> sendOtpCode(String email) async {
-    try {
-      // Simulate register process
-      await _authRemoteDataSource.sendOtpCode(email);
-      return Result.completed(null);
-    } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
-    }
-  }
-
-  @override
-  Future<Result<bool>> verifyOtpCode(String code) async {
-    try {
-      // Simulate register process
-      final result = await _authRemoteDataSource.verifyOtpCode(code);
-      return Result.completed(result);
-    } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
-    }
-  }
-
-  @override
-  Future<bool> sendNewPassword(String email, String newPassword) {
-    try {
-      // Simulate register process
-      return _authRemoteDataSource.sendNewPassword(email, newPassword);
+      return;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result> changePassword(
-    String currentPassword,
-    String newPassword,
-  ) async {
+  Future sendOtpCode(String email) async {
     try {
-      // Simulate change password process
-      await _authRemoteDataSource.changePassword(currentPassword, newPassword);
-      return Result.completed(null);
+      // Simulate register process
+      return await _authRemoteDataSource.sendOtpCode(email);
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result> deleteAccount(String userId) async {
+  Future<bool> verifyOtpCode(String code) async {
+    try {
+      return await _authRemoteDataSource.verifyOtpCode(code);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future sendNewPassword(String email, String newPassword) async {
+    try {
+      return await _authRemoteDataSource.sendNewPassword(email, newPassword);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future changePassword(String currentPassword, String newPassword) async {
+    try {
+      return await _authRemoteDataSource.changePassword(
+        currentPassword,
+        newPassword,
+      );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future deleteAccount(String userId) async {
     try {
       await _authRemoteDataSource.deleteAccount(userId);
-      clearToken();
-      return Result.completed(null);
+      return await clearToken();
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 }

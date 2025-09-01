@@ -1,8 +1,8 @@
 import '../../../domain/entities/message/message.dart';
-import '../models/response/paging_response_model.dart';
+import '../models/response/paged_response.dart';
 
 abstract class MessageRemoteDataSource {
-  Future<PagingResponseModel<MessageEntity>> fetchPinnedMessage(
+  Future<PagedResponse<MessageEntity>> fetchPinnedMessage(
     int limit,
     int offset,
   );

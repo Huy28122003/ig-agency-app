@@ -1,10 +1,15 @@
+import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
+
 import '../../../domain/entities/paged_result.dart';
-import '../models/response/paging_response_model.dart';
 
 class PagingTranslator {
-  static PagedResult<T> fromPagingResponseModel<T>(
-    PagingResponseModel<T> response,
+  static PagedResult<TOut> toEntity<TIn, TOut>(
+    PagedResponse<TIn> response,
+    TOut Function(TIn) mapper,
   ) {
-    return PagedResult<T>(data: response.records, totalRecords: response.total);
+    return PagedResult<TOut>(
+      data: response.records.map(mapper).toList(),
+      totalRecords: response.total,
+    );
   }
 }

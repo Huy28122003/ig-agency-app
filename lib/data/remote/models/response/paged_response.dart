@@ -1,15 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'paging_response_model.g.dart';
+part 'paged_response.g.dart';
 
 @JsonSerializable(genericArgumentFactories: true)
-class PagingResponseModel<T> {
-  const PagingResponseModel({required this.total, required this.records});
+class PagedResponse<T> {
+  const PagedResponse({required this.total, required this.records});
 
-  factory PagingResponseModel.fromJson(
+  factory PagedResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) => _$PagingResponseModelFromJson(json, fromJsonT);
+  ) => _$PagedResponseFromJson(json, fromJsonT);
 
   @JsonKey(name: 'total_records')
   final int total;

@@ -32,8 +32,16 @@ class AppPullToRefresh extends StatelessWidget {
       controller: refreshController,
       enablePullDown: enablePullDown,
       enablePullUp: enablePullUp,
+
+      // enablePullDown: refreshController.headerStatus == RefreshStatus.completed
+      //     ? enablePullDown
+      //     : false,
+      // enablePullUp: refreshController.footerStatus == LoadStatus.canLoading
+      //     ? enablePullUp
+      //     : false,
       scrollController: scrollController,
-      header: header ?? const WaterDropHeader(waterDropColor: AppColors.primary),
+      header:
+          header ?? const WaterDropHeader(waterDropColor: AppColors.primary),
       footer: CustomFooter(
         builder: (context, mode) {
           Widget body;
@@ -42,12 +50,7 @@ class AppPullToRefresh extends StatelessWidget {
           } else {
             body = const SizedBox();
           }
-          return Container(
-            height: 55.0,
-            child: Center(
-              child: body,
-            ),
-          );
+          return SizedBox(height: 40.0, child: Center(child: body));
         },
       ),
       onRefresh: onRefresh,
