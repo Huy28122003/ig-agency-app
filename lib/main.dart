@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
@@ -12,6 +13,7 @@ void main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      EasyLocalization.ensureInitialized();
       Bloc.observer = AppBlocObserver();
       await configureDependencies();
       getIt.registerSingleton(AppRouter());
@@ -24,5 +26,12 @@ void main() async {
 }
 
 void _startApp() async {
-  runApp(MyApp());
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en'), Locale('vn')],
+      fallbackLocale: const Locale('en'),
+      path: 'assets/translations',
+      child: const MyApp(),
+    ),
+  );
 }

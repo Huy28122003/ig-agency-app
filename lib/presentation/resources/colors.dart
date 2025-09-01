@@ -30,6 +30,9 @@ abstract class AppColors {
 
   /// Surface
   static const Color surfaceContainerPrimaryPrimaryDefault = primary;
+  static const Color surfaceContainerSecondarySecondaryDefault = Color(
+    0xFF00BBA7,
+  );
   static const Color surfaceBackgroundBackground = Color(0xFFFFFFFF);
   static const Color surfaceContainerPrimaryPrimaryDisabled = Color(0xFFFEE2AD);
   static const Color surfaceContainerPrimaryPrimaryLight = Color(0xFFFEFCE8);

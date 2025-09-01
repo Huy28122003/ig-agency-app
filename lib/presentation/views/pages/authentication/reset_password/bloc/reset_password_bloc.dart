@@ -13,7 +13,7 @@ class ResetPasswordBloc
     extends BaseBloc<ResetPasswordEvent, ResetPasswordState> {
   final SendNewPasswordUseCase sendNewPasswordUseCase;
 
-  ResetPasswordBloc({ required this.sendNewPasswordUseCase})
+  ResetPasswordBloc({required this.sendNewPasswordUseCase})
     : super(ResetPasswordState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loaded, email: event.email));
@@ -29,17 +29,18 @@ class ResetPasswordBloc
 
     handleSubEvent<ConfirmResetPasswordEvent>((event, emit) async {
       emit(state.copyWith(processing: true));
-      final result = await sendNewPasswordUseCase.call(
-        SendNewPasswordParams(email: state.email, newPassword: state.newPassword),
+      await sendNewPasswordUseCase.call(
+        SendNewPasswordParams(
+          email: state.email,
+          newPassword: state.newPassword,
+        ),
       );
       await Future.delayed(const Duration(seconds: 1));
-
-      final isSuccess = result.success && (result.data ?? false);
 
       emit(
         state.copyWith(
           processing: false,
-          isResetSuccess: isSuccess,
+          isResetSuccess: true,
           errorMessage: '',
         ),
       );

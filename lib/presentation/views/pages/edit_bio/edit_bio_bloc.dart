@@ -42,23 +42,11 @@ class EditBioBloc extends BaseBloc<EditBioEvent, EditBioState> {
     emit(state.copyWith(pageStatus: PageStatus.loading));
 
     final userResult = await _fetchCurrentUserUseCase(NoParam());
-
-    // Check if user is not found
-    if (!userResult.success || userResult.data == null) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.failure,
-          pageErrorMessage: userResult.failure?.message ?? 'User not found',
-        ),
-      );
-      return;
-    }
-
     emit(
       state.copyWith(
         pageStatus: PageStatus.loaded,
-        user: userResult.data,
-        bio: userResult.data?.bio,
+        user: userResult,
+        bio: userResult.bio,
       ),
     );
   }
@@ -76,10 +64,8 @@ class EditBioBloc extends BaseBloc<EditBioEvent, EditBioState> {
   ) async {
     emit(state.copyWith(processing: true));
 
-    final result = await _updateUserBioUseCase.call(
-      UpdateUserBioParam(bio: state.bio),
-    );
+    await _updateUserBioUseCase.call(UpdateUserBioParam(bio: state.bio));
 
-    emit(state.copyWith(processing: false, isSaveSuccess: result.success));
+    emit(state.copyWith(processing: false, isSaveSuccess: true));
   }
 }

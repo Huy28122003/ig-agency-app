@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../gen/assets.gen.dart';
 import '../../resources/colors.dart';
 
 class CircleNetworkAvatar extends StatelessWidget {
@@ -9,10 +10,12 @@ class CircleNetworkAvatar extends StatelessWidget {
     super.key,
     required this.imageUrl,
     this.size = 44,
+    this.isGroupAvt = false,
   });
 
   final String imageUrl;
   final double size;
+  final bool isGroupAvt;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,8 @@ class CircleNetworkAvatar extends StatelessWidget {
 
   Widget _buildPlaceholder() {
     // TODO hoannk: Add placeholder
-    return const CircleAvatar(
+    return CircleAvatar(
+      radius: size / 2,
       backgroundColor: AppColors.surfaceContainerGrayStrong05,
       child: Center(child: CupertinoActivityIndicator()),
     );
@@ -42,11 +46,19 @@ class CircleNetworkAvatar extends StatelessWidget {
 
   Widget _buildError() {
     // TODO hoannk: Add error
-    return const CircleAvatar(
-      backgroundColor: AppColors.surfaceContainerGrayStrong05,
-      child: Center(
-        child: Icon(Icons.error, color: AppColors.textAlertTextError),
-      ),
+    return CircleAvatar(
+      radius: size / 2,
+      child: isGroupAvt
+          ? Assets.images.imgDefaultGroupAvatar.image(
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            )
+          : Assets.icons.icDefaultAvatar.svg(
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            ),
     );
   }
 }

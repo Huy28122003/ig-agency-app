@@ -50,10 +50,10 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     emit(state.copyWith(processing: true));
     _resetErrorMessages(emit);
 
-    final result = await _loginUseCase(
+    await _loginUseCase(
       LoginParam(email: state.email, password: state.password),
     );
     kTesting = true;
-    emit(state.copyWith(processing: false, isSuccess: result.success));
+    emit(state.copyWith(processing: false, isSuccess: true));
   }
 }

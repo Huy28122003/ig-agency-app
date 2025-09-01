@@ -43,22 +43,11 @@ class EditNameBloc extends BaseBloc<EditNameEvent, EditNameState> {
 
     final userResult = await _fetchCurrentUserUseCase(NoParam());
 
-    // Check if user is not found
-    if (!userResult.success || userResult.data == null) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.failure,
-          pageErrorMessage: userResult.failure?.message ?? 'User not found',
-        ),
-      );
-      return;
-    }
-
     emit(
       state.copyWith(
         pageStatus: PageStatus.loaded,
-        user: userResult.data,
-        name: userResult.data?.name,
+        user: userResult,
+        name: userResult.name,
       ),
     );
   }
@@ -76,10 +65,8 @@ class EditNameBloc extends BaseBloc<EditNameEvent, EditNameState> {
   ) async {
     emit(state.copyWith(processing: true));
 
-    final result = await _updateUserNameUseCase.call(
-      UpdateUserNameParam(name: state.name),
-    );
+    await _updateUserNameUseCase.call(UpdateUserNameParam(name: state.name));
 
-    emit(state.copyWith(processing: false, isSaveSuccess: result.success));
+    emit(state.copyWith(processing: false, isSaveSuccess: true));
   }
 }

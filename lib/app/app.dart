@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/di/di.dart';
 
@@ -25,7 +26,10 @@ class _MyAppState extends State<MyApp> {
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
       routeInformationProvider: _appRouter.routeInfoProvider(),
+      // builder: OneContext().builder,
       debugShowCheckedModeBanner: false,
+      supportedLocales: context.supportedLocales,
+      localizationsDelegates: context.localizationDelegates,
     );
   }
 }

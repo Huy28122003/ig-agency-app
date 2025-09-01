@@ -65,13 +65,13 @@ class ChangePasswordBloc
   ) async {
     emit(state.copyWith(processing: true));
 
-    final result = await _changePasswordUseCase.call(
+    await _changePasswordUseCase.call(
       ChangePasswordParam(
         currentPassword: state.currentPassword,
         newPassword: state.newPassword,
       ),
     );
 
-    emit(state.copyWith(processing: false, isSaveSuccess: result.success));
+    emit(state.copyWith(processing: false, isSaveSuccess: true));
   }
 }

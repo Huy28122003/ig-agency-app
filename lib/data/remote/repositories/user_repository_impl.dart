@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/repositories/user_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
-import '../../../shared/commons/result.dart';
 import '../../cache/ram_cache.dart';
 
 @Injectable(as: UserRepository)
@@ -17,68 +16,58 @@ class UserRepositoryImpl implements UserRepository {
   Stream<UserEntity> get userStream => _ramCache.getProfileInfoStream();
 
   @override
-  Future<Result<UserEntity>> fetchCurrentUser() async {
+  Future<UserEntity> fetchCurrentUser() async {
     try {
       final user = _ramCache.getLatestProfileInfo();
-      if (user != null) {
-        return Result.completed(user);
-      } else {
-        return Result.failure(
-          FailureConverter.convert(Exception('User not found')),
-        );
+      if (user == null) {
+        throw Exception('User not found');
       }
+      return user;
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result> updateUser(UserEntity user) async {
+  Future updateUser(UserEntity user) async {
     try {
       _ramCache.saveProfileInfo(user);
-      return Result.completed(null);
+      return;
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result> updateUserName(String name) async {
+  Future updateUserName(String name) async {
     try {
       // TODO hoannk: Call API update user name
 
       final user = _ramCache.getLatestProfileInfo();
-      if (user != null) {
-        final newUser = user.copyWith(name: name);
-        _ramCache.saveProfileInfo(newUser);
-        return Result.completed(null);
-      } else {
-        return Result.failure(
-          FailureConverter.convert(Exception('User not found')),
-        );
+      if (user == null) {
+        throw Exception('User not found');
       }
+      final newUser = user.copyWith(name: name);
+      _ramCache.saveProfileInfo(newUser);
+      return;
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<Result> updateUserBio(String bio) async {
+  Future updateUserBio(String bio) async {
     try {
       // TODO hoannk: Call API update user bio
-
       final user = _ramCache.getLatestProfileInfo();
-      if (user != null) {
-        final newUser = user.copyWith(bio: bio);
-        _ramCache.saveProfileInfo(newUser);
-        return Result.completed(null);
-      } else {
-        return Result.failure(
-          FailureConverter.convert(Exception('User not found')),
-        );
+      if (user == null) {
+        throw Exception('User not found');
       }
+      final newUser = user.copyWith(bio: bio);
+      _ramCache.saveProfileInfo(newUser);
+      return;
     } catch (e) {
-      return Result.failure(FailureConverter.convert(e));
+      throw FailureConverter.convert(e);
     }
   }
 }

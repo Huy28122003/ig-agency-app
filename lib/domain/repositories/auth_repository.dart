@@ -1,25 +1,23 @@
-import '../../shared/commons/result.dart';
-
 abstract class AuthRepository {
-  Future<Result> login(String email, String password);
+  Future login(String email, String password);
 
-  Future<Result> register(String name, String email, String password);
+  Future register(String name, String email, String password);
 
-  Future<Result> logout();
+  Future logout();
 
-  Future<String?> getToken();
+  Future getToken();
 
-  Future<void> saveToken(String token);
+  Future saveToken(String token);
 
-  Future<void> clearToken();
+  Future clearToken();
 
-  Future<Result> sendOtpCode(String email);
+  Future sendOtpCode(String email);
 
-  Future<Result<bool>> verifyOtpCode(String code);
+  Future verifyOtpCode(String code);
 
-  Future<bool> sendNewPassword(String email, String newPassword);
+  Future sendNewPassword(String email, String newPassword);
 
-  Future<Result> changePassword(String currentPassword, String newPassword);
+  Future changePassword(String currentPassword, String newPassword);
 
-  Future<Result> deleteAccount(String userId);
+  Future deleteAccount(String userId);
 }
