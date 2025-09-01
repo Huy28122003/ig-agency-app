@@ -4,7 +4,7 @@ import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/pages/search/search_bloc.dart';
 
 import '../widgets/body_search_widget.dart';
-import '../widgets/header_search_widget.dart';
+import '../widgets/header_search_mobile_widget.dart';
 
 class SearchMobileLayout extends StatelessWidget {
   const SearchMobileLayout({super.key});
@@ -15,7 +15,7 @@ class SearchMobileLayout extends StatelessWidget {
       backgroundColor: AppColors.surfaceBackgroundBackground,
       body: Column(
         children: [
-          HeaderSearchWidget(),
+          HeaderSearchMobileWidget(),
           Expanded(
             child: BlocBuilder<SearchBloc, SearchState>(
               buildWhen: (pre, cur) {
