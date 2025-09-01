@@ -17,6 +17,7 @@ abstract class AppColors {
   static final Color textDefaultTextDefaultDisabled = Colors.black.withValues(
     alpha: 0.17,
   );
+  static final Color textNeutralWhite = Colors.white;
 
   /// Icon
   static const Color iconDefaultDefault = Color(0xFF08090A);
@@ -36,7 +37,12 @@ abstract class AppColors {
   static const Color surfaceBackgroundBackground = Color(0xFFFFFFFF);
   static const Color surfaceContainerPrimaryPrimaryDisabled = Color(0xFFFEE2AD);
   static const Color surfaceContainerPrimaryPrimaryLight = Color(0xFFFEFCE8);
-  static const Color surfaceContainerGrayStrong2 = Color(0xFFF8FAFB);
+  static const Color surfaceContainerGrayStrong2 = Color(0xFFE5E7EB);
   static const Color surfaceContainerGrayStrong05 = Color(0xFFF8FAFB);
   static const Color surfaceContainerAlertErrorLight = Color(0xFFFEE1E1);
+  static final Color surfaceContainerAlphaAlphaBlack37 = Colors.black
+      .withValues(alpha: 0.37);
+
+  /// Others
+  static const Color colorsBlue = Color(0xFF007AFF);
 }
