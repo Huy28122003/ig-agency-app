@@ -13,7 +13,9 @@ import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 
 class BodySearchWidget extends StatelessWidget {
-  const BodySearchWidget({super.key});
+  const BodySearchWidget({super.key, this.numCardLoading = 10});
+
+  final int numCardLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class BodySearchWidget extends StatelessWidget {
                   margin: EdgeInsets.only(left: 56),
                 ),
                 cardLoading: SearchGroupCardLoading(),
-                numCardLoading: 10,
+                numCardLoading: numCardLoading,
                 onLoadMore: () {
                   context.read<SearchBloc>().add(LoadMoreResult());
                 },
