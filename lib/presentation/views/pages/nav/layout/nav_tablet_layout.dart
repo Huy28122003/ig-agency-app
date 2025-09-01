@@ -17,8 +17,8 @@ class NavTabletLayout extends StatelessWidget {
           return Row(
             children: [
               Container(
-                width: boxConstraints.maxWidth * 2 / 3,
-                constraints: BoxConstraints(minWidth: 80 + 200, maxWidth: 350),
+                width: boxConstraints.maxWidth * 2 / 2,
+                constraints: BoxConstraints(minWidth: 64 + 200, maxWidth: 350),
                 child: BlocBuilder<NavBloc, NavState>(
                   buildWhen: (pre, cur) => pre.currentIndex != cur.currentIndex,
                   builder: (context, state) {
@@ -35,7 +35,7 @@ class NavTabletLayout extends StatelessWidget {
                           children: [
                             NavigationRail(
                               extended: false,
-                              minWidth: 80,
+                              minWidth: 64,
                               selectedIndex: state.currentIndex,
                               onDestinationSelected: (int index) {
                                 tabsRouter.setActiveIndex(index);
