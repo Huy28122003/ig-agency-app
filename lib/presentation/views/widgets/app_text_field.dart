@@ -134,7 +134,7 @@ class _AppTextFieldState extends State<AppTextField> {
             ),
             hintText: widget.hintText,
             hintStyle:
-                hintStyle ??
+                widget.hintStyle ??
                 TextStyle(
                   color: AppColors.textDefaultTextSub,
                   fontSize: 16,
@@ -169,12 +169,14 @@ class _AppTextFieldState extends State<AppTextField> {
                     child: widget.suffixIcon,
                   )
                 : null,
-            border: noBorder ? InputBorder.none : underlineBorder,
-            enabledBorder: noBorder ? InputBorder.none : underlineBorder,
-            focusedBorder: noBorder ? InputBorder.none : underlineBorder,
-            disabledBorder: noBorder ? InputBorder.none : underlineBorder,
+            border: widget.noBorder ? InputBorder.none : underlineBorder,
+            enabledBorder: widget.noBorder ? InputBorder.none : underlineBorder,
+            focusedBorder: widget.noBorder ? InputBorder.none : underlineBorder,
+            disabledBorder: widget.noBorder
+                ? InputBorder.none
+                : underlineBorder,
 
-            contentPadding: contentPadding,
+            contentPadding: widget.contentPadding,
           ),
         ),
         if (isError) ...[
