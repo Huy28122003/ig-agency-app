@@ -172,16 +172,19 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(limit: 10, offset: state.indexPageSearch + 1),
     );
-
-    List<WorkspaceEntity> workspaces = state.workspaces;
-    workspaces.addAll(result);
-    emit(
-      state.copyWith(
-        pagingStatusSearch: PagingStatus.loadCompleted,
-        workspaces: workspaces,
-        indexPageSearch: state.indexPageSearch + 1,
-      ),
-    );
+    if (result.isEmpty) {
+      emit(state.copyWith(pagingStatusSearch: PagingStatus.noMoreData));
+    } else {
+      List<WorkspaceEntity> workspaces = List.from(state.workspaces);
+      workspaces.addAll(result);
+      emit(
+        state.copyWith(
+          pagingStatusSearch: PagingStatus.loadCompleted,
+          workspaces: workspaces,
+          indexPageSearch: state.indexPageSearch + 1,
+        ),
+      );
+    }
   }
 
   Future<void> _onLoadData(
@@ -231,16 +234,19 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(limit: 10, offset: state.indexPage + 1),
     );
-
-    List<WorkspaceEntity> workspaces = state.workspaces;
-    workspaces.addAll(result);
-    emit(
-      state.copyWith(
-        pagingStatus: PagingStatus.loadCompleted,
-        workspaces: workspaces,
-        indexPage: state.indexPage + 1,
-      ),
-    );
+    if (result.isEmpty) {
+      emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+    } else {
+      List<WorkspaceEntity> workspaces = List.from(state.workspaces);
+      workspaces.addAll(result);
+      emit(
+        state.copyWith(
+          pagingStatus: PagingStatus.loadCompleted,
+          workspaces: workspaces,
+          indexPage: state.indexPage + 1,
+        ),
+      );
+    }
   }
 
   Future<void> _onDeleteWorkspace(

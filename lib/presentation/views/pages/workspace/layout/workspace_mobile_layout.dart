@@ -166,62 +166,73 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
               },
             ),
             if (state)
-              BlocSelector<
-                WorkspaceBloc,
-                WorkspaceState,
-                (List<WorkspaceEntity>, PageStatus)
-              >(
-                selector: (state) {
-                  return (state.workspacesSearch, state.searchStatus);
+              BlocListener<WorkspaceBloc, WorkspaceState>(
+                listener: (context, state) {
+                  _searchRefreshController.refresh(state.pagingStatusSearch);
                 },
-                builder: (context, selected) {
-                  final workspaces = selected.$1;
-                  final status = selected.$2;
-                  if (status == PageStatus.loading) {
-                    return CupertinoActivityIndicator();
-                  } else if (status == PageStatus.loaded) {
-                    return Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.white,
-                      child: AppPullToRefresh(
-                        enablePullDown: true,
-                        onLoadMore: () {
-                          _workspaceBloc.add(SearchLoadMoreEvent());
-                        },
-                        refreshController: _searchRefreshController,
-                        child: ListView.builder(
-                          physics: ClampingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final workspace = workspaces[index];
+                listenWhen: (prev, curr) =>
+                    prev.pagingStatusSearch != curr.pagingStatusSearch,
+                child:
+                    BlocSelector<
+                      WorkspaceBloc,
+                      WorkspaceState,
+                      (List<WorkspaceEntity>, PageStatus)
+                    >(
+                      selector: (state) {
+                        return (state.workspacesSearch, state.searchStatus);
+                      },
+                      builder: (context, selected) {
+                        final workspaces = selected.$1;
+                        final status = selected.$2;
+                        if (status == PageStatus.loading) {
+                          return CupertinoActivityIndicator();
+                        } else if (status == PageStatus.loaded) {
+                          return Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: Colors.white,
+                            child: AppPullToRefresh(
+                              enablePullDown: true,
+                              onLoadMore: () {
+                                _workspaceBloc.add(SearchLoadMoreEvent());
+                              },
+                              refreshController: _searchRefreshController,
+                              child: ListView.builder(
+                                physics: ClampingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final workspace = workspaces[index];
 
-                            return SuperMenuPopupWidget(
-                              isMute: workspace.isMute,
-                              isPin: workspace.isPin,
-                              isSeen: workspace.isSeen,
-                              onTapDelete: () {},
-                              onTapMask: () {},
-                              onTapMute: () {},
-                              onTapPin: () {},
-                              child: WorkspaceTileWidget(
-                                isMute: workspace.isMute,
-                                isPin: workspace.isPin,
-                                workspaceAvatar: workspace.workspaceAvatar,
-                                workspaceName: workspace.workspaceName,
-                                lastMessage: workspace.lastMessage,
-                                lastMessageTime: workspace.lastMessageTime,
-                                isSeen: workspace.isSeen,
-                                countNewMessage: workspace.countNewMessage,
+                                  return SuperMenuPopupWidget(
+                                    isMute: workspace.isMute,
+                                    isPin: workspace.isPin,
+                                    isSeen: workspace.isSeen,
+                                    onTapDelete: () {},
+                                    onTapMask: () {},
+                                    onTapMute: () {},
+                                    onTapPin: () {},
+                                    child: WorkspaceTileWidget(
+                                      isMute: workspace.isMute,
+                                      isPin: workspace.isPin,
+                                      workspaceAvatar:
+                                          workspace.workspaceAvatar,
+                                      workspaceName: workspace.workspaceName,
+                                      lastMessage: workspace.lastMessage,
+                                      lastMessageTime:
+                                          workspace.lastMessageTime,
+                                      isSeen: workspace.isSeen,
+                                      countNewMessage:
+                                          workspace.countNewMessage,
+                                    ),
+                                  );
+                                },
+                                itemCount: workspaces.length,
                               ),
-                            );
-                          },
-                          itemCount: workspaces.length,
-                        ),
-                      ),
-                    );
-                  }
-                  return SizedBox();
-                },
+                            ),
+                          );
+                        }
+                        return SizedBox();
+                      },
+                    ),
               ),
           ],
         );
