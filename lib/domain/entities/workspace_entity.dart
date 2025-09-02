@@ -7,6 +7,7 @@ class WorkspaceEntity {
   final bool isSeen;
   final bool isMute;
   final bool isPin;
+  final int countNewMessage;
 
   WorkspaceEntity({
     required this.id,
@@ -17,6 +18,7 @@ class WorkspaceEntity {
     required this.isSeen,
     required this.isMute,
     required this.isPin,
+    this.countNewMessage = 0,
   });
 
   WorkspaceEntity copyWith({
@@ -27,6 +29,7 @@ class WorkspaceEntity {
     bool? isSeen,
     bool? isPin,
     bool? isMute,
+    int? countNewMessage,
   }) {
     return WorkspaceEntity(
       id: id,
@@ -37,6 +40,7 @@ class WorkspaceEntity {
       isSeen: isSeen ?? this.isSeen,
       isMute: isMute ?? this.isMute,
       isPin: isPin ?? this.isPin,
+      countNewMessage: countNewMessage ?? this.countNewMessage,
     );
   }
 }

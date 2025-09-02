@@ -15,6 +15,7 @@ class WorkspaceTileWidget extends StatefulWidget {
     required this.isSeen,
     required this.isMute,
     required this.isPin,
+    required this.countNewMessage,
   });
 
   final String workspaceAvatar;
@@ -24,6 +25,7 @@ class WorkspaceTileWidget extends StatefulWidget {
   final bool isSeen;
   final bool isMute;
   final bool isPin;
+  final int countNewMessage;
 
   @override
   State<WorkspaceTileWidget> createState() => _WorkspaceTileWidgetState();
@@ -78,7 +80,9 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
                   children: [
                     Flexible(
                       child: Text(
-                        widget.lastMessage,
+                        (widget.countNewMessage > 1 && !widget.isSeen)
+                            ? "${widget.countNewMessage} new messages"
+                            : widget.lastMessage,
                         style: TextStyle(
                           fontFamily: FontFamily.segoeUI,
                           fontSize: 14,
@@ -93,7 +97,10 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
                     ),
                     SizedBox(width: 4),
                     Container(
-                      color: AppColors.textDefaultTextSub2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.textDefaultTextSub2,
+                      ),
                       width: 4,
                       height: 4,
                     ),

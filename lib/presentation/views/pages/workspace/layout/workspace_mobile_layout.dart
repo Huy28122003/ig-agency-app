@@ -156,6 +156,7 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                           lastMessage: workspace.lastMessage,
                           lastMessageTime: workspace.lastMessageTime,
                           isSeen: workspace.isSeen,
+                          countNewMessage: workspace.countNewMessage,
                         ),
                       );
                     },
@@ -210,6 +211,7 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                                 lastMessage: workspace.lastMessage,
                                 lastMessageTime: workspace.lastMessageTime,
                                 isSeen: workspace.isSeen,
+                                countNewMessage: workspace.countNewMessage,
                               ),
                             );
                           },
