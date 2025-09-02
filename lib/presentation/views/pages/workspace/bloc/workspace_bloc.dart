@@ -40,6 +40,7 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
     handleSubEvent<LoadMoreDataEvent>(_onLoadMoreData);
     handleSubEvent<DeleteWorkspaceEvent>(_onDeleteWorkspace);
+    handleSubEvent<ToggleSearchEnableEvent>(_onToggleSearchEnableEvent);
   }
 
   Future<void> _onMuteWorkspace(
@@ -145,17 +146,13 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
       GetWorkspacesParams(keyWord: event.value, limit: 10, offset: 1),
     );
 
-    if (result.success) {
-      emit(
-        state.copyWith(
-          searchStatus: PageStatus.loaded,
-          workspacesSearch: result.data,
-          indexPageSearch: 1,
-        ),
-      );
-    } else {
-      emit(state.copyWith(searchStatus: PageStatus.failure));
-    }
+    emit(
+      state.copyWith(
+        searchStatus: PageStatus.loaded,
+        workspacesSearch: result,
+        indexPageSearch: 1,
+      ),
+    );
   }
 
   Future<void> _onSearchKeyWordChange(
@@ -176,40 +173,30 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
       GetWorkspacesParams(limit: 10, offset: state.indexPageSearch + 1),
     );
 
-    if (result.success && result.data != null && result.data!.isNotEmpty) {
-      List<WorkspaceEntity> workspaces = state.workspaces;
-      workspaces.addAll(result.data!);
-      emit(
-        state.copyWith(
-          pagingStatusSearch: PagingStatus.loadCompleted,
-          workspaces: workspaces,
-          indexPageSearch: state.indexPageSearch + 1,
-        ),
-      );
-    } else {
-      emit(state.copyWith(pagingStatusSearch: PagingStatus.loadFailed));
-    }
+    List<WorkspaceEntity> workspaces = state.workspaces;
+    workspaces.addAll(result);
+    emit(
+      state.copyWith(
+        pagingStatusSearch: PagingStatus.loadCompleted,
+        workspaces: workspaces,
+        indexPageSearch: state.indexPageSearch + 1,
+      ),
+    );
   }
 
   Future<void> _onLoadData(
     LoadDataEvent event,
     Emitter<WorkspaceState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loading));
+    emit(state.copyWith(pageStatus: PageStatus.loaded));
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(limit: 10, offset: state.indexPage),
     );
 
-    if (result.success) {
-      List<WorkspaceEntity>? workspaces = result.data;
-      _sort(workspaces ?? []);
-      emit(
-        state.copyWith(pageStatus: PageStatus.loaded, workspaces: workspaces),
-      );
-    } else {
-      emit(state.copyWith(pageStatus: PageStatus.failure));
-    }
+    List<WorkspaceEntity>? workspaces = result;
+    _sort(workspaces);
+    emit(state.copyWith(pageStatus: PageStatus.loaded, workspaces: workspaces));
   }
 
   Future<void> _onRefreshData(
@@ -223,19 +210,15 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
       GetWorkspacesParams(limit: 10, offset: 1),
     );
 
-    if (result.success) {
-      List<WorkspaceEntity>? workspaces = result.data;
-      _sort(workspaces ?? []);
-      emit(
-        state.copyWith(
-          pagingStatus: PagingStatus.refreshCompleted,
-          workspaces: workspaces,
-          indexPage: 1,
-        ),
-      );
-    } else {
-      emit(state.copyWith(pagingStatus: PagingStatus.refreshFailed));
-    }
+    List<WorkspaceEntity>? workspaces = result;
+    _sort(workspaces);
+    emit(
+      state.copyWith(
+        pagingStatus: PagingStatus.refreshCompleted,
+        workspaces: workspaces,
+        indexPage: 1,
+      ),
+    );
   }
 
   Future<void> _onLoadMoreData(
@@ -249,19 +232,15 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
       GetWorkspacesParams(limit: 10, offset: state.indexPage + 1),
     );
 
-    if (result.success && result.data != null && result.data!.isNotEmpty) {
-      List<WorkspaceEntity> workspaces = state.workspaces;
-      workspaces.addAll(result.data!);
-      emit(
-        state.copyWith(
-          pagingStatus: PagingStatus.loadCompleted,
-          workspaces: workspaces,
-          indexPage: state.indexPage + 1,
-        ),
-      );
-    } else {
-      emit(state.copyWith(pagingStatus: PagingStatus.loadFailed));
-    }
+    List<WorkspaceEntity> workspaces = state.workspaces;
+    workspaces.addAll(result);
+    emit(
+      state.copyWith(
+        pagingStatus: PagingStatus.loadCompleted,
+        workspaces: workspaces,
+        indexPage: state.indexPage + 1,
+      ),
+    );
   }
 
   Future<void> _onDeleteWorkspace(
@@ -289,5 +268,12 @@ class WorkspaceBloc extends BaseBloc<WorkspaceEvent, WorkspaceState> {
   void _sortWorkspacesByTime(List<WorkspaceEntity> workspaces) {
     if (workspaces.isEmpty) return;
     workspaces.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+  }
+
+  Future<void> _onToggleSearchEnableEvent(
+    ToggleSearchEnableEvent event,
+    Emitter<WorkspaceState> emit,
+  ) async {
+    emit(state.copyWith(isSearchMode: !state.isSearchMode));
   }
 }

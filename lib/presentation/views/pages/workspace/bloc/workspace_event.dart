@@ -59,3 +59,5 @@ class DeleteWorkspaceEvent extends WorkspaceEvent {
 
   DeleteWorkspaceEvent({required this.workspaceId});
 }
+
+class ToggleSearchEnableEvent extends WorkspaceEvent {}

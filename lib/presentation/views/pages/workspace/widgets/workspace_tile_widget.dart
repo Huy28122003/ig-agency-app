@@ -86,7 +86,7 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
                           overflow: TextOverflow.ellipsis,
                           fontWeight: widget.isSeen
                               ? FontWeight.w400
-                              : FontWeight.w600,
+                              : FontWeight.w700,
                         ),
                         maxLines: 1,
                       ),
@@ -107,6 +107,12 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
                       ),
                     ),
                   ],
+                ),
+                SizedBox(height: 8.5),
+                Container(
+                  width: double.infinity,
+                  height: 1,
+                  color: AppColors.outlineGrayStrong200,
                 ),
               ],
             ),

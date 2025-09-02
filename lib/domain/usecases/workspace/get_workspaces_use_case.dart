@@ -2,7 +2,6 @@ import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/domain/repositories/workspace_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
-import '../../../shared/commons/result.dart';
 
 @injectable
 class GetWorkspacesUseCase
@@ -12,7 +11,7 @@ class GetWorkspacesUseCase
   final WorkspaceRepository _workspaceRepository;
 
   @override
-  Future<Result<List<WorkspaceEntity>>> call(GetWorkspacesParams param) async {
+  Future<List<WorkspaceEntity>> call(GetWorkspacesParams param) async {
     return await _workspaceRepository.getWorkspaces(
       limit: param.limit,
       offset: param.offset,

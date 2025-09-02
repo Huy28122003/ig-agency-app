@@ -7,7 +7,7 @@ import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/menu_popup_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace/widgets/workspace_tile_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
-import 'package:ig_agency_app/presentation/views/widgets/app_text_field.dart';
+import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.dart';
 import 'package:ig_agency_app/presentation/views/widgets/confirm_dialog.dart';
 import 'package:ig_agency_app/presentation/views/widgets/menu_dialog.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
@@ -46,19 +46,27 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
         _refreshController.refresh(state.pagingStatus);
       },
       listenWhen: (prev, curr) => prev.pagingStatus != curr.pagingStatus,
-      child: Column(
-        children: [
-          _buildHeader(),
-          Expanded(child: _buildBody()),
-        ],
+      child: BlocListener<WorkspaceBloc, WorkspaceState>(
+        listener: (context, state) {
+          if (state.pageStatus == PageStatus.failure) {
+            // todo
+          }
+        },
+        listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(child: _buildBody()),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceBloc, WorkspaceState, String>(
+    return BlocSelector<WorkspaceBloc, WorkspaceState, bool>(
       selector: (state) {
-        return state.searchKeyWord;
+        return state.isSearchMode;
       },
       builder: (context, state) {
         return Stack(
@@ -76,7 +84,10 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                     _workspaceBloc.add(RefreshDataEvent());
                   },
                   refreshController: _refreshController,
-                  child: ListView.builder(
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 4.5);
+                    },
                     physics: ClampingScrollPhysics(),
                     itemBuilder: (context, index) {
                       final workspace = state[index];
@@ -153,7 +164,7 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                 );
               },
             ),
-            if (state.isNotEmpty)
+            if (state)
               BlocSelector<
                 WorkspaceBloc,
                 WorkspaceState,
@@ -258,7 +269,10 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child: AppTextField(
+              child: AppSearchTextField(
+                onSearchEnable: (value) {
+                  _workspaceBloc.add(ToggleSearchEnableEvent());
+                },
                 onChanged: (value) {
                   _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
                   _workspaceBloc.add(SearchEvent(value: value));
@@ -271,7 +285,7 @@ class _WorkspaceMobileLayoutState extends State<WorkspaceMobileLayout> {
                   height: 1.50,
                 ),
                 hintText: "Nhập tên nhóm",
-                noBorder: true,
+                // noBorder: true,
                 suffixIcon: Assets.icons.icSearch.svg(
                   width: 20,
                   height: 20,

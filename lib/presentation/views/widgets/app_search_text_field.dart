@@ -29,6 +29,7 @@ class AppSearchTextField extends StatefulWidget {
     this.isSearchEnable = false,
     this.enableCancel = true,
     this.onSearchEnable,
+    this.hintStyle,
   });
 
   final TextEditingController? controller;
@@ -50,6 +51,7 @@ class AppSearchTextField extends StatefulWidget {
   final bool isSearchEnable;
   final bool enableCancel;
   final TextStyle? style;
+  final TextStyle? hintStyle;
 
   @override
   State<AppSearchTextField> createState() => _AppSearchTextFieldState();
@@ -133,13 +135,15 @@ class _AppSearchTextFieldState extends State<AppSearchTextField> {
               height: 20 / 14,
             ),
             hintText: widget.hintText,
-            hintStyle: TextStyle(
-              color: AppColors.textDefaultTextSub,
-              fontSize: 14,
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w600,
-              height: 20 / 14,
-            ),
+            hintStyle:
+                widget.hintStyle ??
+                TextStyle(
+                  color: AppColors.textDefaultTextSub,
+                  fontSize: 14,
+                  fontFamily: FontFamily.segoeUI,
+                  fontWeight: FontWeight.w600,
+                  height: 20 / 14,
+                ),
             isDense: true,
             prefixIconConstraints: BoxConstraints(
               maxHeight: 20,
