@@ -1,63 +1,216 @@
 import 'package:flutter/material.dart';
 
-class ChatInputBar extends StatelessWidget {
+import '../../../../gen/assets.gen.dart';
+import '../../../../gen/fonts.gen.dart';
+import '../../../resources/colors.dart';
+import 'reply_message_section.dart';
+
+class ChatInputBar extends StatefulWidget {
   const ChatInputBar({
     super.key,
     this.onDocumentTap,
     this.onCameraTap,
     this.onImageTap,
     this.onSendTap,
-    this.controller,
-    this.hintText = 'Aa',
   });
 
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
   final VoidCallback? onImageTap;
   final VoidCallback? onSendTap;
-  final TextEditingController? controller;
-  final String hintText;
+
+  @override
+  State<ChatInputBar> createState() => _ChatInputBarState();
+}
+
+class _ChatInputBarState extends State<ChatInputBar> {
+  final ValueNotifier<bool> _hasOptions = ValueNotifier(false);
+  final ValueNotifier<bool> _hasSendButton = ValueNotifier(false);
+
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        _hasOptions.value = false;
+      } else {
+        _hasOptions.value = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool hasReplyMessage = true;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (hasReplyMessage) ReplyMessageSection(),
+        Container(
+          height: 64,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceContainerGrayStrong0,
+            border: Border(
+              top: BorderSide(width: 1, color: AppColors.outlineGrayStrong200),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x14000000),
+                blurRadius: 4,
+                offset: Offset(0, -2),
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              ValueListenableBuilder(
+                valueListenable: _hasOptions,
+                builder: (context, hasOptions, child) {
+                  if (hasOptions) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: _OptionsBar(
+                        onDocumentTap: widget.onDocumentTap,
+                        onCameraTap: widget.onCameraTap,
+                        onImageTap: widget.onImageTap,
+                      ),
+                    );
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: IconButton(
+                      padding: EdgeInsets.all(10),
+                      onPressed: () {},
+                      icon: RotatedBox(
+                        quarterTurns: 2,
+                        child: Assets.icons.icArrowLeft.svg(
+                          width: 24,
+                          height: 24,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.textDefaultTextDefault,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Expanded(child: _InputBar()),
+              ValueListenableBuilder(
+                valueListenable: _hasSendButton,
+                builder: (context, hasSendButton, child) {
+                  if (hasSendButton) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: IconButton(
+                        padding: EdgeInsets.all(10),
+                        onPressed: widget.onSendTap,
+                        icon: Assets.icons.icSend.svg(width: 24, height: 24),
+                      ),
+                    );
+                  }
+                  return const SizedBox(width: 12);
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OptionsBar extends StatelessWidget {
+  const _OptionsBar({this.onDocumentTap, this.onCameraTap, this.onImageTap});
+  final VoidCallback? onDocumentTap;
+  final VoidCallback? onCameraTap;
+  final VoidCallback? onImageTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: onDocumentTap,
+          child: SizedBox(
+            height: 44,
+            width: 44,
+            child: Assets.icons.icDocumentPrimary.svg(width: 24, height: 24),
+          ),
+        ),
+        GestureDetector(
+          onTap: onCameraTap,
+          child: SizedBox(
+            height: 44,
+            width: 44,
+            child: Assets.icons.icCameraPrimary.svg(width: 24, height: 24),
+          ),
+        ),
+        GestureDetector(
+          onTap: onImageTap,
+          child: SizedBox(
+            height: 44,
+            width: 44,
+            child: Assets.icons.icAlbumPrimary.svg(width: 24, height: 24),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InputBar extends StatelessWidget {
+  const _InputBar();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[300]!)),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.description, color: Colors.orange),
-            onPressed: onDocumentTap,
-          ),
-          IconButton(
-            icon: Icon(Icons.camera_alt, color: Colors.orange),
-            onPressed: onCameraTap,
-          ),
-          IconButton(
-            icon: Icon(Icons.image, color: Colors.orange),
-            onPressed: onImageTap,
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: ShapeDecoration(
+        color: AppColors.surfaceContainerGrayStrong2,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(width: 1, color: AppColors.outlineGrayStrong200),
+          borderRadius: BorderRadius.circular(9999),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x1970B250),
+            blurRadius: 6.50,
+            offset: Offset(0, 0),
+            spreadRadius: 0,
           ),
         ],
+      ),
+      child: TextFormField(
+        maxLines: 1,
+        style: TextStyle(
+          color: AppColors.textDefaultTextSub2,
+          fontSize: 16,
+          fontFamily: FontFamily.segoeUI,
+          fontWeight: FontWeight.w600,
+          height: 1.50,
+        ),
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+          hintText: 'Aa',
+          hintStyle: TextStyle(
+            color: AppColors.textDefaultTextSub2,
+            fontSize: 16,
+            fontFamily: FontFamily.segoeUI,
+            fontWeight: FontWeight.w600,
+            height: 1.50,
+          ),
+        ),
       ),
     );
   }

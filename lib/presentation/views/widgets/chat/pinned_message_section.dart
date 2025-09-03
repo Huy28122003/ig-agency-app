@@ -1,79 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:ig_agency_app/domain/entities/message/message_entity.dart';
+
+import '../../../../gen/assets.gen.dart';
+import '../../../../gen/fonts.gen.dart';
+import '../../../resources/colors.dart';
 
 class PinnedMessageSection extends StatelessWidget {
   const PinnedMessageSection({
     super.key,
-    required this.senderName,
-    required this.url,
-    required this.moreCount,
-    required this.message,
-    required this.time,
-    this.onTap,
+    required this.latestPinnedMessage,
+    required this.totalMessages,
   });
 
-  final String senderName;
-  final String url;
-  final int moreCount;
-  final String message;
-  final String time;
-  final VoidCallback? onTap;
+  final MessageEntity latestPinnedMessage;
+  final int totalMessages;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: AppColors.surfaceContainerGrayStrong1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        spacing: 6,
         children: [
-          Row(
-            children: [
-              Icon(Icons.push_pin, color: Colors.red, size: 16),
-              SizedBox(width: 8),
-              Text(
-                senderName,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          Text(url, style: TextStyle(color: Colors.blue, fontSize: 12)),
-          SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                '$moreCount more',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-              Icon(Icons.keyboard_arrow_down, size: 16),
-            ],
-          ),
-          SizedBox(height: 8),
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(message, style: TextStyle(fontSize: 14)),
-          ),
-          SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(time, style: TextStyle(color: Colors.grey, fontSize: 12)),
-              SizedBox(width: 8),
-              Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(4),
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              spacing: 12,
+              children: [
+                Assets.icons.icPinned.svg(width: 20, height: 20),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 2,
+                    children: [
+                      SizedBox(
+                        width: 247,
+                        child: Text(
+                          latestPinnedMessage.sender.name,
+                          style: TextStyle(
+                            color: AppColors.textDefaultTextDefault,
+                            fontSize: 14,
+                            fontFamily: FontFamily.segoeUI,
+                            fontWeight: FontWeight.w700,
+                            height: 1.43,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'https://docs.google.com/spreadsheets/d/16WB1MasxuLNu3YMlEo_QFDu65HKVWSfWYyZev2UCicQ/edit?gid=1320495092#gid=1320495092A',
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextDefault,
+                          fontSize: 12,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w400,
+                          height: 1.33,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-                child: Icon(Icons.camera_alt, color: Colors.white, size: 16),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 4,
+            children: [
+              Text(
+                '${totalMessages - 1} more',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.textDefaultTextSub2,
+                  fontSize: 12,
+                  fontFamily: FontFamily.segoeUI,
+                  fontWeight: FontWeight.w700,
+                  height: 1.33,
+                ),
               ),
+              Assets.icons.icArrowDownFillSize12.svg(width: 12, height: 12),
             ],
           ),
         ],

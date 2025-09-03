@@ -1,11 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../widgets/chat/reply_message_section.dart';
+import '../../../../../../domain/entities/message/message_entity.dart';
+import '../../../../../../gen/assets.gen.dart';
+import '../../../../../../gen/fonts.gen.dart';
+import '../../../../../resources/colors.dart';
 import '../../../../widgets/circle_network_avatar.dart';
 import '../../../../widgets/chat/chat_input_bar.dart';
 import '../../../../widgets/chat/pinned_message_section.dart';
 import '../widgets/chat_content.dart';
+import '../workspace_detail_bloc.dart';
 
 class WorkspaceDetailMobileLayout extends StatelessWidget {
   const WorkspaceDetailMobileLayout({super.key});
@@ -17,20 +22,41 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => context.router.pop(),
-        ),
-        title: Row(
+        leadingWidth: 44,
+        toolbarHeight: 60,
+        scrolledUnderElevation: 0,
+        leading: Stack(
           children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(16),
+            Positioned(
+              left: 8,
+              top: 0,
+              bottom: 0,
+              child: IconButton(
+                padding: EdgeInsets.all(0),
+                icon: Assets.icons.icArrowLeft.svg(
+                  height: 24,
+                  width: 24,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.iconDefaultDefault,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                onPressed: () => context.router.pop(),
               ),
-              child: Center(
+            ),
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                height: 18,
+                padding: const EdgeInsets.all(2),
+                decoration: ShapeDecoration(
+                  color: AppColors.iconAlertInfo,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                ),
                 child: Text(
                   '29',
                   style: TextStyle(
@@ -41,7 +67,11 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 12),
+          ],
+        ),
+        titleSpacing: 12,
+        title: Row(
+          children: [
             CircleNetworkAvatar(
               imageUrl: 'https://example.com/avatar.jpg',
               size: 40,
@@ -53,11 +83,23 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
                 children: [
                   Text(
                     'Whales - IG Agency 8%',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: AppColors.textDefaultTextDefault,
+                      fontSize: 16,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w700,
+                      height: 1.50,
+                    ),
                   ),
                   Text(
                     '99 Members, 29 Online',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                      color: AppColors.textDefaultTextSub2,
+                      fontSize: 14,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w400,
+                      height: 1.14,
+                    ),
                   ),
                 ],
               ),
@@ -65,63 +107,34 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: PinnedMessageSection(
-              senderName: 'Customer',
-              url: 'https://docs.google.com/spreadsheets/d/16...',
-              moreCount: 99,
-              message:
-                  'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.',
-              time: '6:32',
-            ),
-          ),
-          Expanded(
-            child: Stack(
-              children: [
-                ChatContent(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            BlocSelector<WSDetailBloc, WSDetailState, List<MessageEntity>>(
+              selector: (state) {
+                return state.messages;
+              },
+              builder: (context, messages) {
+                final latestPinnedMessage = messages.lastOrNull;
+                final hasPinnedMessage = latestPinnedMessage != null;
 
-                // Translate button
-                Positioned(
-                  top: 20,
-                  right: 12,
-                  child: GestureDetector(
-                    child: Container(
-                      height: 44,
-                      width: 44,
-                      decoration: BoxDecoration(shape: BoxShape.circle),
-                      child: Icon(Icons.translate_rounded, size: 24),
-                    ),
-                  ),
-                ),
+                if (!hasPinnedMessage) {
+                  return const SizedBox.shrink();
+                }
 
-                // Scroll button
-                Positioned(
-                  bottom: 10,
-                  right: 0,
-                  left: 0,
-                  child: Container(
-                    height: 44,
-                    width: 44,
-                    decoration: BoxDecoration(shape: BoxShape.circle),
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: SizedBox(
-                        width: 32,
-                        height: 32,
-                        child: Icon(Icons.arrow_circle_down_rounded, size: 32),
-                      ),
-                    ),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: PinnedMessageSection(
+                    latestPinnedMessage: latestPinnedMessage,
+                    totalMessages: messages.length,
                   ),
-                ),
-              ],
+                );
+              },
             ),
-          ),
-          ReplyMessageSection(),
-          ChatInputBar(),
-        ],
+            Expanded(child: ChatContent()),
+            ChatInputBar(),
+          ],
+        ),
       ),
     );
   }

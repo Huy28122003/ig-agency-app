@@ -14,8 +14,8 @@ class WSDetailPage
 
   @override
   void onInitState(BuildContext context) {
-    context.read<WSDetailBloc>().add(LoadDataEvent());
     super.onInitState(context);
+    context.read<WSDetailBloc>().add(LoadDataEvent());
   }
 
   @override
