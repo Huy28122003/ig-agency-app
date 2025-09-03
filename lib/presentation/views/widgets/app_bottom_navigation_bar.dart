@@ -57,6 +57,10 @@ class AppBottomNavigationBar extends StatelessWidget {
             onTap: () => onTap?.call(index),
             child: Column(
               children: [
+                (currentIndex == index)
+                    ? items[index].selectedIcon
+                    : items[index].icon,
+                SizedBox(height: 4),
                 Text(
                   items[index].label,
                   style: TextStyle(
@@ -69,10 +73,6 @@ class AppBottomNavigationBar extends StatelessWidget {
                     height: 14 / 10,
                   ),
                 ),
-                SizedBox(height: 4),
-                (currentIndex == index)
-                    ? items[index].selectedIcon
-                    : items[index].icon,
                 Spacer(),
                 if (currentIndex == index) Assets.icons.icIndicator.svg(),
               ],
