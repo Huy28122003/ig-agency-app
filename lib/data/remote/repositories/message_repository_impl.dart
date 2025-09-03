@@ -5,6 +5,7 @@ import '../../../domain/entities/paged_result.dart';
 import '../../../domain/repositories/message_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
 import '../app/message_remote_data_source.dart';
+import '../translators/paging_translator.dart';
 
 @Injectable(as: MessageRepository)
 class MessageRepositoryImpl implements MessageRepository {
@@ -23,6 +24,7 @@ class MessageRepositoryImpl implements MessageRepository {
         limit,
         offset,
       );
+      return PagingTranslator.toEntity(pagingResponse, (response) => response);
 
       // final pagedResult = PagingTranslator.toEntity(pagingResponse.records);
       //
