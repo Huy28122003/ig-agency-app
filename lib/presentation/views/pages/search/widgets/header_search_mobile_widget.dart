@@ -38,7 +38,6 @@ class HeaderSearchMobileWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
               Text(
                 'search.search'.tr(),
                 style: TextStyle(
