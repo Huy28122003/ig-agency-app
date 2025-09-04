@@ -49,7 +49,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
               child: GestureDetector(
                 child: Text('List'),
                 onTap: () {
-                  context.router.push(WSDetailRoute());
+                  context.router.push(
+                    WSDetailRoute(workspaceId: 1, userId: '1'),
+                  );
                 },
               ),
             ),

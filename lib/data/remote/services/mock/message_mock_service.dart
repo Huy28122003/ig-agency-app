@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:injectable/injectable.dart';
 
 import '../../../../domain/entities/message/message.dart';
+import '../../../../domain/entities/pinned_message_summary.dart';
 import '../../../../domain/enums/message_enums.dart';
 
 @singleton
@@ -248,11 +249,19 @@ class MessageMockService {
               break;
             case MessageType.image:
               final image = message.content as ImageMessageContent;
-              reply = reply.copyWith(previewImageUrl: image.imageUrl);
+              reply = reply.copyWith(
+                previewImageUrl: image.imageUrl,
+                previewWidth: image.width,
+                previewHeight: image.height,
+              );
               break;
             case MessageType.video:
               final video = message.content as VideoMessageContent;
-              reply = reply.copyWith(previewThumbnailUrl: video.thumbnailUrl);
+              reply = reply.copyWith(
+                previewThumbnailUrl: video.thumbnailUrl,
+                previewWidth: video.width,
+                previewHeight: video.height,
+              );
               break;
             case MessageType.file:
               final file = message.content as FileMessageContent;
@@ -446,5 +455,49 @@ class MessageMockService {
     final messages = _messageMockData[targetGroupId]!;
     messages[targetMessageIndex] = updatedMessage;
     _messageMockData[targetGroupId] = messages;
+  }
+
+  PinnedMessageSummary mockGetPinnedMessageSummary(int groupId) {
+    final pinnedMessages = (_messageMockData[groupId] ?? [])
+        .where((element) => element.isPinned)
+        .toList();
+
+    if (pinnedMessages.isEmpty) {
+      return PinnedMessageSummary(totalPinnedMessages: 0);
+    }
+
+    return PinnedMessageSummary(
+      latestMessage: pinnedMessages.lastOrNull,
+      totalPinnedMessages: pinnedMessages.length,
+    );
+  }
+
+  (List<MessageEntity>, int) mockFetchMessagesByGroupId({
+    required int groupId,
+    int limit = 10,
+    String? oldestMessageId,
+  }) {
+    final messages = _messageMockData[groupId];
+    if (messages == null || messages.isEmpty) {
+      return ([], 0);
+    }
+
+    var messageIndex = 0;
+
+    if (oldestMessageId == null) {
+      messageIndex = messages.length - 1;
+    } else {
+      messageIndex = messages.indexWhere(
+        (message) => message.id == oldestMessageId,
+      );
+      if (messageIndex == -1) {
+        throw Exception();
+      }
+    }
+
+    final offset = max(0, messageIndex + 1 - limit);
+    final newLimit = limit >= messageIndex ? limit : (messageIndex + 1);
+
+    return (messages.skip(offset).take(newLimit).toList(), messages.length);
   }
 }

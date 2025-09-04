@@ -8,6 +8,8 @@ class MessageReply {
   final String? previewThumbnailUrl;
   final String? previewAudioName;
   final String? previewFileName;
+  final double? previewWidth; // for image and video
+  final double? previewHeight; // for image and video
   final MessageType? originalMessageType;
 
   MessageReply({
@@ -18,6 +20,8 @@ class MessageReply {
     this.previewThumbnailUrl,
     this.previewAudioName,
     this.previewFileName,
+    this.previewWidth,
+    this.previewHeight,
     this.originalMessageType,
   });
 
@@ -27,6 +31,8 @@ class MessageReply {
     String? previewThumbnailUrl,
     String? previewAudioName,
     String? previewFileName,
+    double? previewWidth,
+    double? previewHeight,
   }) => MessageReply(
     messageId: messageId,
     senderName: senderName,
@@ -36,5 +42,7 @@ class MessageReply {
     previewAudioName: previewAudioName,
     previewFileName: previewFileName,
     originalMessageType: originalMessageType,
+    previewWidth: previewWidth ?? this.previewWidth,
+    previewHeight: previewHeight ?? this.previewHeight,
   );
 }

@@ -4,7 +4,7 @@ import '../../domain/entities/message/message.dart';
 import '../../domain/enums/message_enums.dart';
 
 class TextMessageDisplayUtil {
-  static (List<TextSpan>, String?) parseTextContent(
+  static (List<TextSpan>, String?, String?) parseTextContent(
     MessageContent content,
     TextStyle? textStyle, {
     TextStyle? linkStyle,
@@ -22,11 +22,11 @@ class TextMessageDisplayUtil {
         mentionStyle: mentionStyle,
       );
     } else {
-      return ([TextSpan(text: textContent.text, style: textStyle)], null);
+      return ([TextSpan(text: textContent.text, style: textStyle)], null, null);
     }
   }
 
-  static (List<TextSpan>, String?) _handleTextSegments(
+  static (List<TextSpan>, String?, String?) _handleTextSegments(
     String text,
     List<TextSegment> textSegments, {
     TextStyle? textStyle,
@@ -36,11 +36,12 @@ class TextMessageDisplayUtil {
     textSegments.sort((a, b) => a.start.compareTo(b.start));
     final spans = <TextSpan>[];
     String? hostName;
+    String? link;
 
     int lastIndex = 0;
 
     linkStyle ??= textStyle?.copyWith(decoration: TextDecoration.underline);
-    mentionStyle ?? textStyle?.copyWith(fontWeight: FontWeight.w700);
+    mentionStyle ??= textStyle?.copyWith(fontWeight: FontWeight.w700);
 
     for (final ann in textSegments) {
       if (ann.start > lastIndex) {
@@ -58,6 +59,7 @@ class TextMessageDisplayUtil {
         case TextSegmentType.link:
           spans.add(TextSpan(text: textPart, style: linkStyle));
           hostName = Uri.tryParse(textPart)?.host;
+          link = textPart;
           break;
         case TextSegmentType.mention:
           spans.add(TextSpan(text: textPart, style: mentionStyle));
@@ -73,6 +75,6 @@ class TextMessageDisplayUtil {
       spans.add(TextSpan(text: text.substring(lastIndex), style: textStyle));
     }
 
-    return (spans, hostName);
+    return (spans, hostName, link);
   }
 }

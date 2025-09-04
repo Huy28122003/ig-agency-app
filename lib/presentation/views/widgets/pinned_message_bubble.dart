@@ -127,7 +127,7 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
         height: 1.50,
       );
 
-      final (textSpans, hostName) = TextMessageDisplayUtil.parseTextContent(
+      final (textSpans, hostName, _) = TextMessageDisplayUtil.parseTextContent(
         _message.content,
         textStyle,
       );

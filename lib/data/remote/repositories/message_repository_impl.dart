@@ -2,16 +2,21 @@ import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/message/message.dart';
 import '../../../domain/entities/paged_result.dart';
+import '../../../domain/entities/pinned_message_summary.dart';
 import '../../../domain/repositories/message_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
 import '../app/message_remote_data_source.dart';
-import '../translators/paging_translator.dart';
+import '../services/mock/message_mock_service.dart';
 
 @Injectable(as: MessageRepository)
 class MessageRepositoryImpl implements MessageRepository {
-  MessageRepositoryImpl(this._messageRemoteDataSource);
+  MessageRepositoryImpl(
+    this._messageRemoteDataSource,
+    this._messageMockService,
+  );
 
   final MessageRemoteDataSource _messageRemoteDataSource;
+  final MessageMockService _messageMockService;
 
   @override
   Future<PagedResult<MessageEntity>> fetchPinnedMessages(
@@ -19,17 +24,12 @@ class MessageRepositoryImpl implements MessageRepository {
     int offset,
   ) async {
     // Todo: hoannk: rehandle this
+    // TODO: Sử dụng tạm mock tại repository
     try {
-      final pagingResponse = await _messageRemoteDataSource.fetchPinnedMessage(
-        limit,
-        offset,
-      );
-      return PagingTranslator.toEntity(pagingResponse, (response) => response);
+      final (pinnedMessages, totalRecords) = _messageMockService
+          .mockFetchPinnedMessages(limit: limit, offset: offset);
 
-      // final pagedResult = PagingTranslator.toEntity(pagingResponse.records);
-      //
-      // return Result.completed(pagedResult);
-      return PagedResult(data: [], totalRecords: 0);
+      return PagedResult(data: pinnedMessages, totalRecords: totalRecords);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -39,6 +39,64 @@ class MessageRepositoryImpl implements MessageRepository {
   Future unpinMessage(String messageId) async {
     try {
       return await _messageRemoteDataSource.unpinMessage(messageId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByGroupId(
+    int groupId,
+    int limit,
+    int offset,
+  ) async {
+    // Todo: hoannk: rehandle this
+    // TODO: Sử dụng tạm mock tại repository
+    try {
+      final (pinnedMessages, totalRecords) = _messageMockService
+          .mockFetchPinnedMessages(
+            groupId: groupId,
+            limit: limit,
+            offset: offset,
+          );
+
+      return PagedResult(data: pinnedMessages, totalRecords: totalRecords);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PinnedMessageSummary> getPinnedMessageSummaryByGroupId(
+    int groupId,
+  ) async {
+    // Todo: hoannk: rehandle this
+    // TODO: Sử dụng tạm mock tại repository
+    try {
+      final summary = _messageMockService.mockGetPinnedMessageSummary(groupId);
+      return summary;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PagedResult<MessageEntity>> fetchMessagesByGroupId(
+    int groupId,
+    int limit,
+    String? oldestMessageId,
+  ) async {
+    // Todo: hoannk: rehandle this
+    // TODO: Sử dụng tạm mock tại repository
+    try {
+      final (messages, totalRecords) = _messageMockService
+          .mockFetchMessagesByGroupId(
+            groupId: groupId,
+            limit: limit,
+            oldestMessageId: oldestMessageId,
+          );
+
+      return PagedResult(data: messages, totalRecords: totalRecords);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

@@ -6,9 +6,13 @@ class WSDetailState extends BaseState<WSDetailState> {
     super.pageErrorMessage,
     super.processing,
     this.messages = const [],
+    this.pinnedMessageSummary,
+    this.messageReply,
   });
 
   final List<MessageEntity> messages;
+  final PinnedMessageSummaryUiModel? pinnedMessageSummary;
+  final MessageReply? messageReply;
 
   @override
   WSDetailState copyWith({
@@ -16,15 +20,27 @@ class WSDetailState extends BaseState<WSDetailState> {
     String? pageErrorMessage,
     bool? processing,
     List<MessageEntity>? messages,
+    PinnedMessageSummaryUiModel? pinnedMessageSummary,
+    MessageReply? messageReply,
+    bool forceCloseReplyMessage = false,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
       messages: messages ?? this.messages,
+      pinnedMessageSummary: pinnedMessageSummary ?? this.pinnedMessageSummary,
+      messageReply: forceCloseReplyMessage
+          ? null
+          : messageReply ?? this.messageReply,
     );
   }
 
   @override
-  List<Object?> get props => [...super.props, messages];
+  List<Object?> get props => [
+    ...super.props,
+    messages,
+    pinnedMessageSummary,
+    messageReply,
+  ];
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../domain/entities/message/message_reply.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
@@ -8,12 +9,16 @@ import 'reply_message_section.dart';
 class ChatInputBar extends StatefulWidget {
   const ChatInputBar({
     super.key,
+    this.messageReply,
+    this.onReplyClose,
     this.onDocumentTap,
     this.onCameraTap,
     this.onImageTap,
     this.onSendTap,
   });
 
+  final MessageReply? messageReply;
+  final VoidCallback? onReplyClose;
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
   final VoidCallback? onImageTap;
@@ -43,12 +48,16 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasReplyMessage = true;
+    final bool hasReplyMessage = widget.messageReply != null;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (hasReplyMessage) ReplyMessageSection(),
+        if (hasReplyMessage)
+          ReplyMessageSection(
+            messageReply: widget.messageReply!,
+            onClose: widget.onReplyClose,
+          ),
         Container(
           height: 64,
           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -174,7 +183,6 @@ class _InputBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerGrayStrong2,
         shape: RoundedRectangleBorder(
@@ -201,7 +209,6 @@ class _InputBar extends StatelessWidget {
         ),
         decoration: const InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
           hintText: 'Aa',
           hintStyle: TextStyle(
             color: AppColors.textDefaultTextSub2,
@@ -210,6 +217,7 @@ class _InputBar extends StatelessWidget {
             fontWeight: FontWeight.w600,
             height: 1.50,
           ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         ),
       ),
     );

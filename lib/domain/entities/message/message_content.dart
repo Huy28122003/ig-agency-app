@@ -39,7 +39,7 @@ sealed class MessageContent extends Equatable {
   // System message
   const factory MessageContent.system({
     required SystemMessageType systemType,
-    String? message,
+    required String message,
   }) = SystemMessageContent;
 }
 
@@ -120,8 +120,8 @@ class FileMessageContent extends MessageContent {
 
 class SystemMessageContent extends MessageContent {
   final SystemMessageType systemType;
-  final String? message;
-  const SystemMessageContent({required this.systemType, this.message});
+  final String message;
+  const SystemMessageContent({required this.systemType, required this.message});
 
   @override
   List<Object?> get props => [systemType, message];

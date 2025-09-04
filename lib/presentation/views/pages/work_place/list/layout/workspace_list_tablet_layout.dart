@@ -21,7 +21,9 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
         child: GestureDetector(
           child: Text('List'),
           onTap: () {
-            context.router.replaceAll([WSDetailRoute()]);
+            context.router.replaceAll([
+              WSDetailRoute(workspaceId: 1, userId: '1'),
+            ]);
           },
         ),
       ),

@@ -62,6 +62,7 @@ dependencies:
   cached_network_image: ^3.4.1
   intl: ^0.20.2
   card_loading: ^0.3.2
+  any_link_preview: ^3.0.3
 
 dev_dependencies:
   flutter_test:

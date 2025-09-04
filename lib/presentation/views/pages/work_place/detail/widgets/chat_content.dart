@@ -6,7 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../domain/entities/message/message.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../widgets/chat/chat_message_bubble.dart';
+import '../../../../widgets/chat/system_message.dart';
 import '../workspace_detail_bloc.dart';
+
+const double _kMaxWidthContentRatio = 277 / 390;
 
 class ChatContent extends StatefulWidget {
   const ChatContent({super.key, this.horizontalPadding = 12});
@@ -20,16 +23,23 @@ class ChatContent extends StatefulWidget {
 class _ChatContentState extends State<ChatContent> {
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _isScrollToBottom = ValueNotifier(false);
+  late final String userId;
   @override
   void initState() {
     super.initState();
 
+    userId = context.read<WSDetailBloc>().userId;
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels <=
           _scrollController.position.maxScrollExtent - 100) {
-        _isScrollToBottom.value = true;
+        if (!_isScrollToBottom.value) {
+          _isScrollToBottom.value = true;
+        }
       } else {
-        _isScrollToBottom.value = false;
+        if (_isScrollToBottom.value) {
+          _isScrollToBottom.value = false;
+        }
       }
     });
 
@@ -40,6 +50,7 @@ class _ChatContentState extends State<ChatContent> {
 
   @override
   Widget build(BuildContext context) {
+    final maxWidth = MediaQuery.sizeOf(context).width * _kMaxWidthContentRatio;
     return Stack(
       children: [
         BlocSelector<WSDetailBloc, WSDetailState, List<MessageEntity>>(
@@ -49,12 +60,31 @@ class _ChatContentState extends State<ChatContent> {
           builder: (context, messages) {
             return ListView.separated(
               controller: _scrollController,
-              itemBuilder: (_, index) => ChatMessageBubble(
-                horizontalPadding: widget.horizontalPadding,
-                message: messages[index],
-                isOwnMessage: false,
-              ),
-              separatorBuilder: (_, _) => const SizedBox(height: 16),
+              itemBuilder: (_, index) {
+                final message = messages[index];
+                if (message.content is SystemMessageContent) {
+                  final systemMessage = message.content as SystemMessageContent;
+                  return SystemMessage(
+                    message: systemMessage.message,
+                    horizontalPadding: widget.horizontalPadding,
+                  );
+                }
+                return ChatMessageBubble(
+                  maxWidth: maxWidth,
+                  horizontalPadding: widget.horizontalPadding,
+                  message: messages[index],
+                  isOwnMessage: message.sender.id == userId,
+                );
+              },
+              separatorBuilder: (_, index) {
+                final currentMessage = messages[index];
+                final nextMessage = messages[index + 1];
+
+                if (currentMessage.isSystem && nextMessage.isSystem) {
+                  return const SizedBox(height: 0);
+                }
+                return const SizedBox(height: 16);
+              },
               itemCount: messages.length,
             );
           },

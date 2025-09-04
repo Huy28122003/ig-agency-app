@@ -7,3 +7,7 @@ sealed class WSDetailEvent {
 class LoadDataEvent extends WSDetailEvent {
   const LoadDataEvent();
 }
+
+class CloseReplyMessageEvent extends WSDetailEvent {
+  const CloseReplyMessageEvent();
+}
