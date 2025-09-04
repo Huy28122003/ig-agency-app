@@ -11,12 +11,7 @@ class LoginUseCase extends UseCase<void, LoginParam> {
 
   @override
   Future call(LoginParam param) async {
-    try{
-
-       await _authRepository.login(param.email, param.password);
-    } catch(e){
-      print(e);
-    }
+    return await _authRepository.login(param.email, param.password);
   }
 }
 

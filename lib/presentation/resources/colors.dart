@@ -37,6 +37,7 @@ abstract class AppColors {
   static const Color surfaceBackgroundBackground = Color(0xFFFFFFFF);
   static const Color surfaceContainerPrimaryPrimaryDisabled = Color(0xFFFEE2AD);
   static const Color surfaceContainerPrimaryPrimaryLight = Color(0xFFFEFCE8);
+  static const Color surfaceContainerGrayStrong0 = Color(0xFFFFFFFF);
   static const Color surfaceContainerGrayStrong2 = Color(0xFFE5E7EB);
   static const Color surfaceContainerGrayStrong05 = Color(0xFFF8FAFB);
   static const Color surfaceContainerAlertErrorLight = Color(0xFFFEE1E1);
