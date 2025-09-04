@@ -50,6 +50,12 @@ dependencies:
   # Discovering the state of the network
   connectivity_plus: ^6.1.5
 
+  # Camera
+  camera: ^0.11.2
+
+  # Permission
+  permission_handler: ^12.0.1
+
   # Other
   freezed: ^3.2.0
   freezed_annotation: ^3.1.0

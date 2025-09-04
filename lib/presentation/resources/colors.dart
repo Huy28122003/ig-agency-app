@@ -40,9 +40,12 @@ abstract class AppColors {
   static const Color surfaceContainerGrayStrong0 = Color(0xFFFFFFFF);
   static const Color surfaceContainerGrayStrong2 = Color(0xFFE5E7EB);
   static const Color surfaceContainerGrayStrong05 = Color(0xFFF8FAFB);
+  static const Color surfaceContainerGrayStrong95 = Color(0xFF030712);
   static const Color surfaceContainerAlertErrorLight = Color(0xFFFEE1E1);
   static final Color surfaceContainerAlphaAlphaBlack37 = Colors.black
       .withValues(alpha: 0.37);
+  static final Color surfaceContainerAlphaAlphaWhite17 = Colors.white
+      .withValues(alpha: 0.17);
 
   /// Others
   static const Color colorsBlue = Color(0xFF007AFF);
