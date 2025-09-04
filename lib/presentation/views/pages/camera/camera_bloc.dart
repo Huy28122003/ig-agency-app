@@ -50,8 +50,8 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
 
       /// Request permission, setup camera when the user granted
       final permission = await _permissionManager.checkCameraPermission();
+      await _permissionManager.checkMicroPermission();
       if (permission.isGranted && cameras.isNotEmpty) {
-        await _permissionManager.checkMicroPermission();
         _cameraController = null;
         _cameraController = CameraController(
           _description,

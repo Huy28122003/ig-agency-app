@@ -3,7 +3,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
-import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import '../../../../../gen/assets.gen.dart';
@@ -46,7 +45,7 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
         BlocListener<CameraBloc, CameraState>(
           listener: (context, state) {
             if (state.isCompleted) {
-              context.router.push(WSDetailRoute());
+              // context.router.push(WSDetailRoute());
             }
           },
         ),
@@ -54,7 +53,7 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
           listenWhen: (pre, cur) => pre.status != cur.status,
           listener: (context, state) {
             if (state.status.isNotAvailable) {
-              context.router.pop();
+              // context.router.pop();
             }
           },
         ),
