@@ -28,8 +28,6 @@ class AppTextField extends StatefulWidget {
       horizontal: 20,
     ),
     this.style,
-    this.noBorder = false,
-    this.hintStyle,
   });
 
   final TextEditingController? controller;
@@ -49,8 +47,6 @@ class AppTextField extends StatefulWidget {
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final EdgeInsets? contentPadding;
-  final bool noBorder;
-  final TextStyle? hintStyle;
 
   final TextStyle? style;
 
@@ -133,15 +129,13 @@ class _AppTextFieldState extends State<AppTextField> {
               height: 1.14,
             ),
             hintText: widget.hintText,
-            hintStyle:
-                widget.hintStyle ??
-                TextStyle(
-                  color: AppColors.textDefaultTextSub,
-                  fontSize: 16,
-                  fontFamily: FontFamily.segoeUI,
-                  fontWeight: FontWeight.w600,
-                  height: 1.50,
-                ),
+            hintStyle: TextStyle(
+              color: AppColors.textDefaultTextSub,
+              fontSize: 16,
+              fontFamily: FontFamily.segoeUI,
+              fontWeight: FontWeight.w600,
+              height: 1.50,
+            ),
             isDense: true,
             prefixIconConstraints: BoxConstraints(
               maxHeight: 20,
@@ -169,13 +163,10 @@ class _AppTextFieldState extends State<AppTextField> {
                     child: widget.suffixIcon,
                   )
                 : null,
-            border: widget.noBorder ? InputBorder.none : underlineBorder,
-            enabledBorder: widget.noBorder ? InputBorder.none : underlineBorder,
-            focusedBorder: widget.noBorder ? InputBorder.none : underlineBorder,
-            disabledBorder: widget.noBorder
-                ? InputBorder.none
-                : underlineBorder,
-
+            border: underlineBorder,
+            enabledBorder: underlineBorder,
+            focusedBorder: underlineBorder,
+            disabledBorder: underlineBorder,
             contentPadding: widget.contentPadding,
           ),
         ),
