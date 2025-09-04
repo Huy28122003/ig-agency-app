@@ -240,9 +240,13 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
           bottomRight: Radius.circular(24),
         ),
         gradient: LinearGradient(
-          colors: [Color(0xFFFFDC40), Color(0xFFFFBB33), Color(0xFFFF7E4D)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
+          colors: [
+            const Color(0xFFFF7E4C),
+            const Color(0xFFFFBA32),
+            const Color(0xFFFFDB3F),
+          ],
         ),
       ),
       child: SafeArea(
