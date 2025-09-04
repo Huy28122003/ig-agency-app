@@ -84,6 +84,15 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     final isError = widget.errorText != null;
 
+    final underlineBorder = UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: isError
+            ? AppColors.outlineAlertError
+            : AppColors.outlineGrayStrong200,
+        width: 1,
+      ),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -154,30 +163,10 @@ class _AppTextFieldState extends State<AppTextField> {
                     child: widget.suffixIcon,
                   )
                 : null,
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isError
-                    ? AppColors.outlineAlertError
-                    : AppColors.outlineGrayStrong200,
-                width: 1,
-              ),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isError
-                    ? AppColors.outlineAlertError
-                    : AppColors.outlineGrayStrong200,
-                width: 1,
-              ),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isError
-                    ? AppColors.outlineAlertError
-                    : AppColors.outlineGrayStrong200,
-                width: 1,
-              ),
-            ),
+            border: underlineBorder,
+            enabledBorder: underlineBorder,
+            focusedBorder: underlineBorder,
+            disabledBorder: underlineBorder,
             contentPadding: widget.contentPadding,
           ),
         ),

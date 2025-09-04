@@ -46,4 +46,8 @@ abstract class AppColors {
 
   /// Others
   static const Color colorsBlue = Color(0xFF007AFF);
+
+  /// Icon
+  static const Color iconDefaultDefaultSub = Color(0xFF6A7282);
+  static const Color iconPrimaryDefault = Color(0xFFFCB732);
 }

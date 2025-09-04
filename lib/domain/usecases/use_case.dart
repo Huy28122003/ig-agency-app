@@ -6,4 +6,6 @@ abstract class StreamUseCase<ReturnType, Param> {
   Stream<ReturnType> call(Param param);
 }
 
-class NoParam {}
+class NoParam {
+  const NoParam();
+}
