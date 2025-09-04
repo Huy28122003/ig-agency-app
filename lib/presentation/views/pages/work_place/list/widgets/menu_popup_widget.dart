@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
-import '../../../../../gen/assets.gen.dart' show Assets;
+import '../../../../../../gen/assets.gen.dart';
 
 class SuperMenuPopupWidget extends StatefulWidget {
   final Widget child;

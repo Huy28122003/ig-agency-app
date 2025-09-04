@@ -21,7 +21,6 @@ import '../views/pages/setting/shell/setting_page.dart';
 import '../views/pages/shared_content/shared_content_page.dart';
 import '../views/pages/work_place/detail/workspace_detail_page.dart';
 import '../views/pages/work_place/list/workspace_list_page.dart';
-import '../views/pages/workspace/workspace_page.dart';
 import 'auth_guard.dart';
 
 part 'app_router.gr.dart';
@@ -38,14 +37,13 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ForgotPasswordRoute.page),
     AutoRoute(page: OtpRoute.page),
     AutoRoute(page: ResetPasswordRoute.page),
-    AutoRoute(page: WorkspaceRoute.page),
     AutoRoute(
       guards: [getIt<AuthGuard>()],
       page: NavRoute.page,
       initial: true,
       children: [
         CustomRoute(
-          page: WorkspaceRoute.page,
+          page: WorkspaceListRoute.page,
           // transitionsBuilder: TransitionsBuilders.noTransition,
         ),
         CustomRoute(

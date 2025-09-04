@@ -29,7 +29,7 @@ class _NavMobileLayoutState extends State<NavMobileLayout> {
         ),
       ),
       label: 'Workspace',
-      page: WorkspaceRoute(),
+      page: WorkspaceListRoute(),
     ),
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icSearch.svg(
