@@ -3,7 +3,7 @@ import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 
-import '../../../../../gen/assets.gen.dart';
+import '../../../../../../gen/assets.gen.dart';
 
 class WorkspaceTileWidget extends StatefulWidget {
   const WorkspaceTileWidget({

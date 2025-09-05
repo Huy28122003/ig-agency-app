@@ -7,8 +7,8 @@ import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.d
 
 import '../../../../../../gen/fonts.gen.dart';
 
-class HeaderSearchWidget extends StatelessWidget {
-  const HeaderSearchWidget({super.key});
+class HeaderSearchMobileWidget extends StatelessWidget {
+  const HeaderSearchMobileWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,6 @@ class HeaderSearchWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
               Text(
                 'search.search'.tr(),
                 style: TextStyle(

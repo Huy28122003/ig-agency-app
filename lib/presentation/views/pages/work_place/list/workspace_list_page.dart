@@ -15,8 +15,8 @@ class WorkspaceListPage
 
   @override
   void onInitState(BuildContext context) {
-    context.read<WorkspaceListBloc>().add(LoadDataEvent());
     super.onInitState(context);
+    context.read<WorkspaceListBloc>().add(LoadDataEvent());
   }
 
   @override
