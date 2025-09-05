@@ -27,7 +27,7 @@ class NavTabletLayout extends StatelessWidget {
                     return AutoTabsRouter(
                       lazyLoad: true,
                       routes: const [
-                        WorkspaceRoute(),
+                        WorkspaceListRoute(),
                         SearchRoute(),
                         SettingRoute(),
                       ],
@@ -44,12 +44,16 @@ class NavTabletLayout extends StatelessWidget {
                               selectedIndex: state.currentIndex,
                               onDestinationSelected: (int index) {
                                 tabsRouter.setActiveIndex(index);
-                                context.read<NavBloc>().add(OnChangeTabEvent(index));
+                                context.read<NavBloc>().add(
+                                  OnChangeTabEvent(index),
+                                );
                               },
-                              destinations: const <NavigationRailDestination>[
+                              destinations: <NavigationRailDestination>[
                                 NavigationRailDestination(
                                   selectedIcon: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
                                     child: Row(
                                       children: [
                                         RotatedBox(
@@ -70,14 +74,17 @@ class NavTabletLayout extends StatelessWidget {
                                     ),
                                   ),
                                   icon: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
                                     child: Row(
                                       children: [
                                         Opacity(
                                           opacity: 0,
                                           child: RotatedBox(
                                             quarterTurns: 1,
-                                            child: Assets.icons.icIndicator.svg(),
+                                            child: Assets.icons.icIndicator
+                                                .svg(),
                                           ),
                                         ),
                                         SizedBox(width: 8),
@@ -97,7 +104,9 @@ class NavTabletLayout extends StatelessWidget {
                                 ),
                                 NavigationRailDestination(
                                   selectedIcon: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
                                     child: Row(
                                       children: [
                                         RotatedBox(
@@ -118,14 +127,17 @@ class NavTabletLayout extends StatelessWidget {
                                     ),
                                   ),
                                   icon: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
                                     child: Row(
                                       children: [
                                         Opacity(
                                           opacity: 0,
                                           child: RotatedBox(
                                             quarterTurns: 1,
-                                            child: Assets.icons.icIndicator.svg(),
+                                            child: Assets.icons.icIndicator
+                                                .svg(),
                                           ),
                                         ),
                                         SizedBox(width: 8),
@@ -145,7 +157,9 @@ class NavTabletLayout extends StatelessWidget {
                                 ),
                                 NavigationRailDestination(
                                   selectedIcon: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
                                     child: Row(
                                       children: [
                                         RotatedBox(
@@ -166,14 +180,17 @@ class NavTabletLayout extends StatelessWidget {
                                     ),
                                   ),
                                   icon: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
                                     child: Row(
                                       children: [
                                         Opacity(
                                           opacity: 0,
                                           child: RotatedBox(
                                             quarterTurns: 1,
-                                            child: Assets.icons.icIndicator.svg(),
+                                            child: Assets.icons.icIndicator
+                                                .svg(),
                                           ),
                                         ),
                                         SizedBox(width: 8),
