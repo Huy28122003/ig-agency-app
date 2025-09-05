@@ -37,8 +37,10 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 20, top: 12, right: 12),
+      padding: EdgeInsets.only(left: 20, top: 8, right: 12),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(100),
@@ -70,7 +72,6 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-
                         children: [
                           Text(
                             widget.workspaceName,
@@ -141,11 +142,11 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
                       ),
                   ],
                 ),
-                SizedBox(height: 8.5),
+                SizedBox(height: 8),
                 Container(
                   width: double.infinity,
                   height: 1,
-                  color: Colors.red,
+                  color: AppColors.outlineGrayStrong200,
                 ),
               ],
             ),
