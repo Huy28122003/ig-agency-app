@@ -65,77 +65,91 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.workspaceName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                    height: 26 / 18,
-                    color: AppColors.textDefaultTextDefault,
-                    fontFamily: FontFamily.segoeUI,
-                  ),
-                ),
-
                 Row(
                   children: [
-                    Flexible(
-                      child: Text(
-                        (widget.countNewMessage > 1 && !widget.isSeen)
-                            ? "${widget.countNewMessage} new messages"
-                            : widget.lastMessage,
-                        style: TextStyle(
-                          fontFamily: FontFamily.segoeUI,
-                          fontSize: 14,
-                          height: 20 / 14,
-                          overflow: TextOverflow.ellipsis,
-                          fontWeight: widget.isSeen
-                              ? FontWeight.w400
-                              : FontWeight.w700,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                        children: [
+                          Text(
+                            widget.workspaceName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              height: 26 / 18,
+                              color: AppColors.textDefaultTextDefault,
+                              fontFamily: FontFamily.segoeUI,
+                            ),
+                          ),
+
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  (widget.countNewMessage > 1 && !widget.isSeen)
+                                      ? "${widget.countNewMessage} new messages"
+                                      : widget.lastMessage,
+                                  style: TextStyle(
+                                    fontFamily: FontFamily.segoeUI,
+                                    fontSize: 14,
+                                    height: 20 / 14,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontWeight: widget.isSeen
+                                        ? FontWeight.w400
+                                        : FontWeight.w700,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.textDefaultTextSub2,
+                                ),
+                                width: 4,
+                                height: 4,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                _convertDateTimeToString(),
+                                style: TextStyle(
+                                  fontFamily: FontFamily.segoeUI,
+                                  fontSize: 14,
+                                  height: 20 / 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(width: 12),
+                    if (widget.isPin) Assets.icons.icPin.svg(),
+                    if (!widget.isMute) Assets.icons.icBlockNotification.svg(),
+                    if (!widget.isSeen)
+                      Container(
+                        margin: EdgeInsets.only(left: 4),
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: AppColors.iconPrimaryDefault,
+                          shape: BoxShape.circle,
                         ),
-                        maxLines: 1,
                       ),
-                    ),
-                    SizedBox(width: 4),
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.textDefaultTextSub2,
-                      ),
-                      width: 4,
-                      height: 4,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      _convertDateTimeToString(),
-                      style: TextStyle(
-                        fontFamily: FontFamily.segoeUI,
-                        fontSize: 14,
-                        height: 20 / 14,
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 8.5),
                 Container(
                   width: double.infinity,
                   height: 1,
-                  color: AppColors.outlineGrayStrong200,
+                  color: Colors.red,
                 ),
               ],
             ),
           ),
-          SizedBox(width: 12),
-          if (!widget.isSeen)
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(
-                color: AppColors.iconPrimaryDefault,
-                shape: BoxShape.circle,
-              ),
-            ),
-          if (widget.isPin) Assets.icons.icPin.svg(),
-          if (!widget.isMute) Assets.icons.icBlockNotification.svg(),
         ],
       ),
     );
