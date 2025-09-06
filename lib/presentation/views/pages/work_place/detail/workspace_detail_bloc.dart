@@ -45,6 +45,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<CloseReplyMessageEvent>(_onCloseReplyMessage);
+    handleSubEvent<UpdateScrollPositionEvent>(_onUpdateScrollPosition);
+    handleSubEvent<ReplyToMessageEvent>(_onReplyToMessage);
   }
 
   Future<void> _onCloseReplyMessage(
@@ -52,6 +54,20 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     emit(state.copyWith(forceCloseReplyMessage: true));
+  }
+
+  Future<void> _onUpdateScrollPosition(
+    UpdateScrollPositionEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(isScrollToBottom: event.isScrollToBottom));
+  }
+
+  Future<void> _onReplyToMessage(
+    ReplyToMessageEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(messageReply: event.message));
   }
 
   Future<void> _onLoadData(
@@ -78,10 +94,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         pageStatus: PageStatus.loaded,
         messages: result.data,
         pinnedMessageSummary: pinnedMessageSummary,
-        messageReply: result.data
-            .where((element) => element.reply != null)
-            .firstOrNull
-            ?.reply,
       ),
     );
   }

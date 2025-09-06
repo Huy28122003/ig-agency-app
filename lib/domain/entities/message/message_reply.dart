@@ -2,6 +2,7 @@ import '../../enums/message_enums.dart';
 
 class MessageReply {
   final String messageId;
+  final String senderId;
   final String senderName;
   final String? previewText;
   final String? previewImageUrl;
@@ -14,6 +15,7 @@ class MessageReply {
 
   MessageReply({
     required this.messageId,
+    required this.senderId,
     required this.senderName,
     this.previewText,
     this.previewImageUrl,
@@ -35,6 +37,7 @@ class MessageReply {
     double? previewHeight,
   }) => MessageReply(
     messageId: messageId,
+    senderId: senderId,
     senderName: senderName,
     previewText: previewText,
     previewImageUrl: previewImageUrl,

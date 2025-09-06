@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ig_agency_app/domain/entities/message/message.dart';
 
-import '../../../../domain/entities/message/message_reply.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
@@ -9,6 +9,7 @@ import 'reply_message_section.dart';
 class ChatInputBar extends StatefulWidget {
   const ChatInputBar({
     super.key,
+    required this.userId,
     this.messageReply,
     this.onReplyClose,
     this.onDocumentTap,
@@ -17,7 +18,8 @@ class ChatInputBar extends StatefulWidget {
     this.onSendTap,
   });
 
-  final MessageReply? messageReply;
+  final String userId;
+  final MessageEntity? messageReply;
   final VoidCallback? onReplyClose;
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
@@ -48,14 +50,16 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasReplyMessage = widget.messageReply != null;
+    final messageReply = widget.messageReply;
+    final bool hasReplyMessage = messageReply != null;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (hasReplyMessage)
           ReplyMessageSection(
-            messageReply: widget.messageReply!,
+            messageReply: messageReply,
+            isMe: widget.userId == messageReply.sender.id,
             onClose: widget.onReplyClose,
           ),
         Container(

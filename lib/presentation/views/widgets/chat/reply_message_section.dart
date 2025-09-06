@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../domain/entities/message/message_reply.dart';
+import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
@@ -10,25 +10,27 @@ import '../network_image.dart';
 class ReplyMessageSection extends StatelessWidget {
   const ReplyMessageSection({
     super.key,
+    required this.isMe,
     required this.messageReply,
     this.onClose,
   });
 
-  final MessageReply messageReply;
+  final bool isMe;
+  final MessageEntity messageReply;
   final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
     String? previewText;
     Widget? previewWidget;
-    switch (messageReply.originalMessageType) {
+    switch (messageReply.type) {
       case MessageType.text:
-        previewText = messageReply.previewText ?? '';
+        previewText = (messageReply.content as TextMessageContent).text;
         break;
       case MessageType.image:
         previewText = 'Image';
         previewWidget = NetworkImageWidget(
-          imageUrl: messageReply.previewImageUrl ?? '',
+          imageUrl: (messageReply.content as ImageMessageContent).imageUrl,
           maxWidth: 40,
           maxHeight: 40,
           borderRadius: BorderRadius.circular(8),
@@ -37,7 +39,8 @@ class ReplyMessageSection extends StatelessWidget {
       case MessageType.video:
         previewText = 'Video';
         previewWidget = NetworkImageWidget(
-          imageUrl: messageReply.previewThumbnailUrl ?? '',
+          imageUrl:
+              (messageReply.content as VideoMessageContent).thumbnailUrl ?? '',
           maxWidth: 40,
           maxHeight: 40,
           borderRadius: BorderRadius.circular(8),
@@ -83,7 +86,7 @@ class ReplyMessageSection extends StatelessWidget {
                     ),
                     Flexible(
                       child: Text(
-                        messageReply.senderName,
+                        isMe ? 'yourself' : messageReply.sender.name,
                         style: TextStyle(
                           color: AppColors.textDefaultTextDefault,
                           fontSize: 13,

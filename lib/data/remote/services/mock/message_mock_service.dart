@@ -237,6 +237,7 @@ class MessageMockService {
 
           reply = MessageReply(
             messageId: messageId,
+            senderId: message.sender.id,
             senderName: message.sender.name,
             originalMessageType: messageType,
           );

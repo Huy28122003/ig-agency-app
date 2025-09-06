@@ -8,11 +8,13 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.messages = const [],
     this.pinnedMessageSummary,
     this.messageReply,
+    this.isScrollToBottom = false,
   });
 
   final List<MessageEntity> messages;
   final PinnedMessageSummaryUiModel? pinnedMessageSummary;
-  final MessageReply? messageReply;
+  final MessageEntity? messageReply;
+  final bool isScrollToBottom;
 
   @override
   WSDetailState copyWith({
@@ -21,8 +23,9 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? processing,
     List<MessageEntity>? messages,
     PinnedMessageSummaryUiModel? pinnedMessageSummary,
-    MessageReply? messageReply,
+    MessageEntity? messageReply,
     bool forceCloseReplyMessage = false,
+    bool? isScrollToBottom,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -33,6 +36,7 @@ class WSDetailState extends BaseState<WSDetailState> {
       messageReply: forceCloseReplyMessage
           ? null
           : messageReply ?? this.messageReply,
+      isScrollToBottom: isScrollToBottom ?? this.isScrollToBottom,
     );
   }
 
@@ -42,5 +46,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     messages,
     pinnedMessageSummary,
     messageReply,
+    isScrollToBottom,
   ];
 }
