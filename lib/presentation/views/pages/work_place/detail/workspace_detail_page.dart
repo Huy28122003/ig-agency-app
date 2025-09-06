@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
 
 import '../../../../../di/di.dart';
+import '../../../../../domain/usecases/fetch_current_user_use_case.dart';
 import '../../../../../domain/usecases/get_pinned_message_summary_workspace_use_case.dart';
 import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case.dart';
+import '../../../../../domain/usecases/message/send_message_use_case.dart';
 import 'layout/workspace_detail_tablet_layout.dart';
 import 'layout/workspace_detail_mobile_layout.dart';
 import 'workspace_detail_bloc.dart';
@@ -43,10 +45,11 @@ class WSDetailPage
     return BlocProvider<WSDetailBloc>(
       create: (_) => WSDetailBloc(
         workspaceId: workspaceId,
-        userId: userId,
+        fetchCurrentUserUseCase: getIt<FetchCurrentUserUseCase>(),
         fetchMessageUseCase: getIt<FetchMessagesWorkspaceUseCase>(),
         getPinnedMessageSummaryWorkspaceUseCase:
             getIt<GetPinnedMessageSummaryWorkspaceUseCase>(),
+        sendMessageUseCase: getIt<SendMessageUseCase>(),
       ),
       child: this,
     );

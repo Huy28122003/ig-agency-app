@@ -26,7 +26,7 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
         leadingWidth: 44,
         toolbarHeight: 60,
         scrolledUnderElevation: 0,
-        leading:GestureDetector(
+        leading: GestureDetector(
           onTap: () => context.router.pop(),
           child: Stack(
             children: [
@@ -131,6 +131,9 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
                   messageReply: message,
                   onReplyClose: () {
                     bloc.add(CloseReplyMessageEvent());
+                  },
+                  onSendTap: (messageInput) {
+                    bloc.add(SendMessageEvent(content: messageInput));
                   },
                 );
               },

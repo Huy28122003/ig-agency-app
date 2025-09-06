@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../domain/entities/message/message_entity.dart';
+
 @lazySingleton
 class RamCache {
   RamCache();
@@ -39,5 +41,17 @@ class RamCache {
   void clearUserData() {
     _latestProfileValue = null;
     _profileInfoController.close();
+  }
+
+  // Mock message stream
+  final StreamController<MessageEntity> _messageController =
+      StreamController<MessageEntity>.broadcast();
+
+  void saveMessage(MessageEntity message) {
+    _messageController.sink.add(message);
+  }
+
+  Stream<MessageEntity> getMessageStream() {
+    return _messageController.stream;
   }
 }

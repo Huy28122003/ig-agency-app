@@ -8,6 +8,7 @@ import 'message_sender.dart';
 class MessageEntity extends Equatable {
   const MessageEntity({
     this.id,
+    required this.tempId,
     required this.sender,
     required this.createdAt,
     required this.type,
@@ -34,6 +35,7 @@ class MessageEntity extends Equatable {
       type == MessageType.system && content is SystemMessageContent;
 
   final String? id;
+  final String tempId;
   final MessageSender sender;
   final DateTime createdAt;
   final MessageType type;
@@ -47,6 +49,7 @@ class MessageEntity extends Equatable {
 
   MessageEntity copyWith({
     String? id,
+    String? tempId,
     MessageSender? sender,
     DateTime? createdAt,
     MessageType? type,
@@ -59,6 +62,7 @@ class MessageEntity extends Equatable {
     DateTime? pinnedAt,
   }) => MessageEntity(
     id: id ?? this.id,
+    tempId: tempId ?? this.tempId,
     sender: sender ?? this.sender,
     createdAt: createdAt ?? this.createdAt,
     type: type ?? this.type,
@@ -74,6 +78,7 @@ class MessageEntity extends Equatable {
   @override
   List<Object?> get props => [
     id,
+    tempId,
     sender,
     createdAt,
     type,

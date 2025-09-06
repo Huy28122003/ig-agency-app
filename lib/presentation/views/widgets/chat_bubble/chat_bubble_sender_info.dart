@@ -4,81 +4,73 @@ import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
 
 class ChatBubbleSenderInfo extends StatelessWidget {
-  const ChatBubbleSenderInfo({
-    super.key,
-    required this.message,
-    required this.opacity,
-  });
+  const ChatBubbleSenderInfo({super.key, required this.message});
 
   final MessageEntity message;
-  final double opacity;
 
   @override
   Widget build(BuildContext context) {
     final MessageReply? reply = message.reply;
     final bool hasReply = reply != null;
 
-    return Opacity(
-      opacity: opacity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (hasReply) ...[
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    message.sender.name,
-                    style: const TextStyle(
-                      color: AppColors.textDefaultTextSub2,
-                      fontSize: 12,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w600,
-                      height: 1.33,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const Text(
-                  ' replying to ',
-                  style: TextStyle(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (hasReply) ...[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  message.sender.name,
+                  style: const TextStyle(
                     color: AppColors.textDefaultTextSub2,
                     fontSize: 12,
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w600,
                     height: 1.33,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                Flexible(
-                  child: Text(
-                    reply.senderName,
-                    style: const TextStyle(
-                      color: AppColors.textDefaultTextSub2,
-                      fontSize: 12,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w700,
-                      height: 1.33,
-                    ),
+              ),
+              const Text(
+                ' replying to ',
+                style: TextStyle(
+                  color: AppColors.textDefaultTextSub2,
+                  fontSize: 12,
+                  fontFamily: FontFamily.segoeUI,
+                  fontWeight: FontWeight.w600,
+                  height: 1.33,
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  reply.senderName,
+                  style: const TextStyle(
+                    color: AppColors.textDefaultTextSub2,
+                    fontSize: 12,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w700,
+                    height: 1.33,
                   ),
                 ),
-              ],
-            ),
-          ] else
-            Text(
-              message.sender.name,
-              style: const TextStyle(
-                color: AppColors.textDefaultTextSub2,
-                fontSize: 12,
-                fontFamily: FontFamily.segoeUI,
-                fontWeight: FontWeight.w600,
-                height: 1.33,
               ),
+            ],
+          ),
+        ] else
+          Text(
+            message.sender.name,
+            style: const TextStyle(
+              color: AppColors.textDefaultTextSub2,
+              fontSize: 12,
+              fontFamily: FontFamily.segoeUI,
+              fontWeight: FontWeight.w600,
+              height: 1.33,
             ),
-          const SizedBox(height: 4),
-        ],
-      ),
+          ),
+        const SizedBox(height: 4),
+      ],
     );
   }
 }

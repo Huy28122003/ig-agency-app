@@ -9,7 +9,7 @@ import 'reply_message_section.dart';
 class ChatInputBar extends StatefulWidget {
   const ChatInputBar({
     super.key,
-    required this.userId,
+    this.userId,
     this.messageReply,
     this.onReplyClose,
     this.onDocumentTap,
@@ -18,13 +18,13 @@ class ChatInputBar extends StatefulWidget {
     this.onSendTap,
   });
 
-  final String userId;
+  final String? userId;
   final MessageEntity? messageReply;
   final VoidCallback? onReplyClose;
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
   final VoidCallback? onImageTap;
-  final VoidCallback? onSendTap;
+  final Function(String)? onSendTap;
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -35,6 +35,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
   final ValueNotifier<bool> _hasSendButton = ValueNotifier(false);
 
   final FocusNode _focusNode = FocusNode();
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -46,6 +47,23 @@ class _ChatInputBarState extends State<ChatInputBar> {
         _hasOptions.value = true;
       }
     });
+
+    _textEditingController.addListener(() {
+      final input = _textEditingController.text;
+
+      if (_hasSendButton.value && input.isEmpty) {
+        _hasSendButton.value = false;
+      } else if (!_hasSendButton.value && input.isNotEmpty) {
+        _hasSendButton.value = true;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -116,7 +134,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   );
                 },
               ),
-              Expanded(child: _InputBar()),
+              Expanded(
+                child: _InputBar(textEditingController: _textEditingController),
+              ),
               ValueListenableBuilder(
                 valueListenable: _hasSendButton,
                 builder: (context, hasSendButton, child) {
@@ -125,7 +145,10 @@ class _ChatInputBarState extends State<ChatInputBar> {
                       padding: const EdgeInsets.only(right: 10),
                       child: IconButton(
                         padding: EdgeInsets.all(10),
-                        onPressed: widget.onSendTap,
+                        onPressed: () {
+                          widget.onSendTap?.call(_textEditingController.text);
+                          _textEditingController.clear();
+                        },
                         icon: Assets.icons.icSend.svg(width: 24, height: 24),
                       ),
                     );
@@ -182,7 +205,9 @@ class _OptionsBar extends StatelessWidget {
 }
 
 class _InputBar extends StatelessWidget {
-  const _InputBar();
+  const _InputBar({required this.textEditingController});
+
+  final TextEditingController textEditingController;
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +228,7 @@ class _InputBar extends StatelessWidget {
         ],
       ),
       child: TextFormField(
+        controller: textEditingController,
         maxLines: 1,
         style: TextStyle(
           color: AppColors.textDefaultTextSub2,

@@ -23,7 +23,6 @@ class ChatContent extends StatefulWidget {
 
 class _ChatContentState extends State<ChatContent> {
   late final WSDetailBloc _bloc;
-  late final String userId;
 
   final ScrollController _scrollController = ScrollController();
   @override
@@ -32,27 +31,19 @@ class _ChatContentState extends State<ChatContent> {
 
     _bloc = context.read<WSDetailBloc>();
 
-    userId = _bloc.userId;
-
     _scrollController.addListener(_onScrollListener);
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (!_scrollController.hasClients) return;
-
-      final position = _scrollController.position;
-      if (position.maxScrollExtent > 0) {
-        _scrollController.jumpTo(position.maxScrollExtent);
-      }
+      _scrollToBottom(animated: false);
     });
   }
 
   void _onScrollListener() {
-    final isScrollToBottom =
+    final isShowScrollToBottomIcon =
         _scrollController.position.pixels <=
         _scrollController.position.maxScrollExtent - 100;
 
-    if (_bloc.state.isScrollToBottom != isScrollToBottom) {
-      _bloc.add(UpdateScrollPositionEvent(isScrollToBottom: isScrollToBottom));
+    if (_bloc.state.showScrollToBottomIcon != isShowScrollToBottomIcon) {
+      _bloc.add(ToggleShowScrollToBottomIcon());
     }
   }
 
@@ -62,8 +53,8 @@ class _ChatContentState extends State<ChatContent> {
       if (animated) {
         _scrollController.animateTo(
           position,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
+          duration: Duration(milliseconds: 100),
+          curve: Curves.linear,
         );
       } else {
         _scrollController.jumpTo(position);
@@ -75,7 +66,15 @@ class _ChatContentState extends State<ChatContent> {
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.sizeOf(context).width * _kMaxWidthContentRatio;
 
-    return BlocBuilder<WSDetailBloc, WSDetailState>(
+    return BlocConsumer<WSDetailBloc, WSDetailState>(
+      listenWhen: (previous, current) =>
+          previous.isNeedScrollToBottom != current.isNeedScrollToBottom,
+      listener: (context, state) {
+        if (state.isNeedScrollToBottom) {
+          _scrollToBottom();
+          _bloc.add(DisableIsNeedScrollToBottomEvent());
+        }
+      },
       buildWhen: (previous, current) =>
           previous.pinnedMessageSummary != current.pinnedMessageSummary,
       builder: (context, state) {
@@ -92,6 +91,7 @@ class _ChatContentState extends State<ChatContent> {
               builder: (context, messages) {
                 return ListView.separated(
                   controller: _scrollController,
+                  physics: const ClampingScrollPhysics(),
                   padding: EdgeInsets.only(top: hasPinnedMessages ? 56 : 0),
                   itemBuilder: (_, index) {
                     final message = messages[index];
@@ -107,7 +107,7 @@ class _ChatContentState extends State<ChatContent> {
                       maxWidth: maxWidth,
                       horizontalPadding: widget.horizontalPadding,
                       message: messages[index],
-                      isMe: message.sender.id == userId,
+                      isMe: message.sender.id == _bloc.userId,
                       onReply: () {
                         _bloc.add(ReplyToMessageEvent(message: message));
                       },
@@ -177,7 +177,7 @@ class _ChatContentState extends State<ChatContent> {
             ),
 
             BlocSelector<WSDetailBloc, WSDetailState, bool>(
-              selector: (state) => state.isScrollToBottom,
+              selector: (state) => state.showScrollToBottomIcon,
               builder: (context, showScrollToTopButton) {
                 return AnimatedPositioned(
                   bottom: showScrollToTopButton ? 10 : -44,
@@ -191,11 +191,7 @@ class _ChatContentState extends State<ChatContent> {
                     decoration: BoxDecoration(shape: BoxShape.circle),
                     child: GestureDetector(
                       onTap: () {
-                        _scrollController.animateTo(
-                          _scrollController.position.maxScrollExtent,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
+                        _scrollToBottom();
                       },
                       child: SizedBox(
                         width: 32,

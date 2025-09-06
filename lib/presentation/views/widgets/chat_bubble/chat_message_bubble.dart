@@ -157,10 +157,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                         : CrossAxisAlignment.start,
                     children: [
                       if (!widget.isMe) ...[
-                        ChatBubbleSenderInfo(
-                          message: _message,
-                          opacity: _animationHelper.getAvatarOpacity(value),
-                        ),
+                        ChatBubbleSenderInfo(message: _message),
                       ],
                       ChatBubbleContent(
                         message: _message,

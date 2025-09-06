@@ -20,4 +20,6 @@ abstract class MessageRepository {
     int limit,
     String? oldestMessageId,
   );
+
+  Future<MessageEntity> sendMessage(MessageEntity message);
 }

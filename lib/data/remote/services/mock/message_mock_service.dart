@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:injectable/injectable.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/entities/pinned_message_summary.dart';
 import '../../../../domain/enums/message_enums.dart';
@@ -216,6 +218,7 @@ class MessageMockService {
 
   List<MessageEntity> _createMockMessages(int groupId, {int count = 50}) {
     DateTime current = DateTime.now();
+    final uuid = const Uuid();
 
     final List<MessageEntity> messages = [];
 
@@ -284,12 +287,13 @@ class MessageMockService {
 
       messages.add(
         MessageEntity(
-          id: "msg_${groupId}_$i",
+          id: "msg_${groupId}_${current.millisecondsSinceEpoch}",
           sender: MessageSender(
             id: sender['id']!,
             name: sender['name']!,
             avatarUrl: sender['avatarUrl']!,
           ),
+          tempId: uuid.v4(),
           createdAt: current,
           type: type,
           content: content,
@@ -500,5 +504,25 @@ class MessageMockService {
     final newLimit = limit >= messageIndex ? limit : (messageIndex + 1);
 
     return (messages.skip(offset).take(newLimit).toList(), messages.length);
+  }
+
+  Future<MessageEntity> addMessage(MessageEntity message) async {
+    final messageId =
+        "msg_${message.groupId}_${DateTime.now().millisecondsSinceEpoch}";
+
+    final sentMessage = message.copyWith(
+      id: messageId,
+      status: MessageStatus.sent,
+    );
+
+    final groupId = message.groupId;
+    if (groupId != null) {
+      if (_messageMockData[groupId] == null) {
+        _messageMockData[groupId] = [];
+      }
+      _messageMockData[groupId]?.add(sentMessage);
+    }
+    RamCache().saveMessage(sentMessage);
+    return sentMessage;
   }
 }

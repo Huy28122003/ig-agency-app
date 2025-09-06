@@ -12,14 +12,28 @@ class CloseReplyMessageEvent extends WSDetailEvent {
   const CloseReplyMessageEvent();
 }
 
-class UpdateScrollPositionEvent extends WSDetailEvent {
-  const UpdateScrollPositionEvent({required this.isScrollToBottom});
-
-  final bool isScrollToBottom;
+class ToggleShowScrollToBottomIcon extends WSDetailEvent {
+  const ToggleShowScrollToBottomIcon();
 }
 
 class ReplyToMessageEvent extends WSDetailEvent {
   const ReplyToMessageEvent({required this.message});
+
+  final MessageEntity message;
+}
+
+class SendMessageEvent extends WSDetailEvent {
+  const SendMessageEvent({required this.content});
+
+  final dynamic content;
+}
+
+class DisableIsNeedScrollToBottomEvent extends WSDetailEvent {
+  const DisableIsNeedScrollToBottomEvent();
+}
+
+class UpdateMessageEvent extends WSDetailEvent {
+  const UpdateMessageEvent({required this.message});
 
   final MessageEntity message;
 }
