@@ -141,11 +141,17 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                       selector: (state) => state.inProgress,
                       builder: (BuildContext context, bool inProgress) {
                         return NavigationToolbar(
-                          leading: AppButton.icon(
-                            onPressed: () {},
-                            icon: Assets.icons.icAlbum.svg(
-                              width: 24,
-                              height: 24,
+                          leading: Container(
+                            width: 44,
+                            alignment: Alignment.centerLeft,
+                            child: AppButton.icon(
+                              onPressed: () {
+                                _cameraBloc.add(PickMediaEvent());
+                              },
+                              icon: Assets.icons.icAlbum.svg(
+                                width: 24,
+                                height: 24,
+                              ),
                             ),
                           ),
                           middle: TakeMediaButton(
