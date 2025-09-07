@@ -41,6 +41,7 @@ class WorkspaceListBloc
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
     handleSubEvent<LoadMoreDataEvent>(_onLoadMoreData);
     handleSubEvent<DeleteWorkspaceEvent>(_onDeleteWorkspace);
+    handleSubEvent<SelectWorkspaceEvent>(_onSelectWorkspace);
   }
 
   Future<void> _onMuteWorkspace(
@@ -278,5 +279,12 @@ class WorkspaceListBloc
   void _sortWorkspacesByTime(List<WorkspaceEntity> workspaces) {
     if (workspaces.isEmpty) return;
     workspaces.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+  }
+
+  Future<void> _onSelectWorkspace(
+    SelectWorkspaceEvent event,
+    Emitter<WorkspaceListState> emit,
+  ) async {
+    emit(state.copyWith(workspaceSelectedId: event.id));
   }
 }

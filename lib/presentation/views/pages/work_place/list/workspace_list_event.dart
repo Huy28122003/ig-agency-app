@@ -59,3 +59,9 @@ class DeleteWorkspaceEvent extends WorkspaceListEvent {
 
   DeleteWorkspaceEvent({required this.workspaceId});
 }
+
+class SelectWorkspaceEvent extends WorkspaceListEvent {
+  final int id;
+
+  SelectWorkspaceEvent({required this.id});
+}

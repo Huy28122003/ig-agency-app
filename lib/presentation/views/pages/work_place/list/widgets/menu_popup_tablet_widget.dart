@@ -6,7 +6,7 @@ import 'package:ig_agency_app/presentation/resources/colors.dart';
 
 import '../../../../../../gen/assets.gen.dart';
 
-class SuperMenuPopupWidget extends StatefulWidget {
+class SuperMenuPopupTabletWidget extends StatefulWidget {
   final Widget child;
   final VoidCallback onTapMask;
   final VoidCallback onTapPin;
@@ -16,7 +16,7 @@ class SuperMenuPopupWidget extends StatefulWidget {
   final bool isPin;
   final bool isSeen;
 
-  const SuperMenuPopupWidget({
+  const SuperMenuPopupTabletWidget({
     super.key,
     required this.child,
     required this.onTapMask,
@@ -29,10 +29,10 @@ class SuperMenuPopupWidget extends StatefulWidget {
   });
 
   @override
-  State<SuperMenuPopupWidget> createState() => _SuperMenuPopupWidgetState();
+  State<SuperMenuPopupTabletWidget> createState() => _SuperMenuPopupTabletWidgetState();
 }
 
-class _SuperMenuPopupWidgetState extends State<SuperMenuPopupWidget> {
+class _SuperMenuPopupTabletWidgetState extends State<SuperMenuPopupTabletWidget> {
   OverlayEntry? _overlayEntry;
 
   void _showPopup(BuildContext context, Size screenSize) {
@@ -55,13 +55,20 @@ class _SuperMenuPopupWidgetState extends State<SuperMenuPopupWidget> {
             ),
             Positioned(
               top: position.dy,
-              left: 0,
-              right: 0,
-              child: Material(child: widget.child),
+              left: position.dx,
+              width: size.width,
+              height: size.height,
+              child: Material(color: Colors.white, child: widget.child),
             ),
 
+            // Positioned(
+            //   top: position.dy,
+            //   left: 0,
+            //   right: 0,
+            //   child: Material(child: widget.child),
+            // ),
             Positioned(
-              left: screenSize.width / 2 - 250 / 2,
+              left: position.dx + 20,
               top: (position.dy + size.height + 224 + 5 > screenSize.height
                   ? position.dy - 185
                   : position.dy + size.height + 5),
@@ -226,7 +233,7 @@ class _MenuPopupState extends State<_MenuPopup> {
               child: Text(
                 title,
                 style:
-                    textStyle ??
+                textStyle ??
                     TextStyle(
                       color: AppColors.textDefaultTextDefault,
                       fontWeight: FontWeight.w400,

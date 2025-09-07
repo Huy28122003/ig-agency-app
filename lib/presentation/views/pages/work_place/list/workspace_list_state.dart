@@ -14,6 +14,7 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
     this.searchKeyWord = "",
     this.searchStatus = PageStatus.initial,
     this.isSearchMode = false,
+    this.workspaceSelectedId,
   });
 
   final PagingStatus pagingStatus;
@@ -25,6 +26,7 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
   final String searchKeyWord;
   final PageStatus searchStatus;
   final bool isSearchMode;
+  final int? workspaceSelectedId;
 
   @override
   WorkspaceListState copyWith({
@@ -40,6 +42,7 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
     List<WorkspaceEntity>? workspacesSearch,
     String? searchKeyWord,
     bool? isSearchMode,
+    int? workspaceSelectedId,
   }) {
     return WorkspaceListState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -54,6 +57,7 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
       workspacesSearch: workspacesSearch ?? this.workspacesSearch,
       searchKeyWord: searchKeyWord ?? this.searchKeyWord,
       isSearchMode: isSearchMode ?? this.isSearchMode,
+      workspaceSelectedId: workspaceSelectedId ?? this.workspaceSelectedId,
     );
   }
 
@@ -69,5 +73,6 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
     searchKeyWord,
     searchStatus,
     isSearchMode,
+    workspaceSelectedId,
   ];
 }

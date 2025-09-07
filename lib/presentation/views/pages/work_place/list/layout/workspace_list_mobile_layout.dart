@@ -14,8 +14,8 @@ import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/confirm_dialog.dart';
 import '../../../../widgets/menu_dialog.dart';
-import '../widgets/menu_popup_widget.dart';
-import '../widgets/workspace_tile_widget.dart';
+import '../widgets/menu_popup_mobile_widget.dart';
+import '../widgets/workspace_tile_mobile_widget.dart';
 
 class WorkspaceListMobileLayout extends StatefulWidget {
   const WorkspaceListMobileLayout({super.key});
@@ -96,7 +96,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                     physics: ClampingScrollPhysics(),
                     itemBuilder: (context, index) {
                       final workspace = state[index];
-                      return SuperMenuPopupWidget(
+                      return SuperMenuPopupMobileWidget(
                         isMute: workspace.isMute,
                         isPin: workspace.isPin,
                         isSeen: workspace.isSeen,
@@ -139,7 +139,8 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                             PinWorkspaceEvent(workspaceId: workspace.id),
                           );
                         },
-                        child: WorkspaceTileWidget(
+                        child: WorkspaceTileMobileWidget(
+                          onTap: (){},
                           isMute: workspace.isMute,
                           isPin: workspace.isPin,
                           workspaceAvatar: workspace.workspaceAvatar,
@@ -193,7 +194,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                                 itemBuilder: (context, index) {
                                   final workspace = workspaces[index];
 
-                                  return SuperMenuPopupWidget(
+                                  return SuperMenuPopupMobileWidget(
                                     isMute: workspace.isMute,
                                     isPin: workspace.isPin,
                                     isSeen: workspace.isSeen,
@@ -201,7 +202,8 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                                     onTapMask: () {},
                                     onTapMute: () {},
                                     onTapPin: () {},
-                                    child: WorkspaceTileWidget(
+                                    child: WorkspaceTileMobileWidget(
+                                      onTap: (){},
                                       isSearchMode: true,
                                       isMute: workspace.isMute,
                                       isPin: workspace.isPin,
