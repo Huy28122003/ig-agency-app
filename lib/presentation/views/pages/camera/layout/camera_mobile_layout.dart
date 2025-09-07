@@ -48,14 +48,14 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
           listenWhen: (pre, cur) => pre.media != cur.media,
           listener: (context, state) {
             if (state.media.isNotEmpty) {
-              context.router.push(
-                MediaPreviewRoute(
-                  avatar:
-                      "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
-                  mediaPath: state.media,
-                  isPhoto: state.isPhoto,
-                ),
-              );
+              // context.router.push(
+              //   MediaPreviewRoute(
+              //     avatar:
+              //         "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
+              //     mediaPath: state.media,
+              //     isPhoto: state.isPhoto,
+              //   ),
+              // );
             }
           },
         ),
@@ -141,11 +141,17 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                       selector: (state) => state.inProgress,
                       builder: (BuildContext context, bool inProgress) {
                         return NavigationToolbar(
-                          leading: AppButton.icon(
-                            onPressed: () {},
-                            icon: Assets.icons.icAlbum.svg(
-                              width: 24,
-                              height: 24,
+                          leading: Container(
+                            width: 44,
+                            alignment: Alignment.centerLeft,
+                            child: AppButton.icon(
+                              onPressed: () {
+                                _cameraBloc.add(PickMediaEvent());
+                              },
+                              icon: Assets.icons.icAlbum.svg(
+                                width: 24,
+                                height: 24,
+                              ),
                             ),
                           ),
                           middle: TakeMediaButton(
