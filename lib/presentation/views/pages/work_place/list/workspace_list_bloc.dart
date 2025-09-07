@@ -171,17 +171,21 @@ class WorkspaceListBloc
 
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(limit: 10, offset: state.indexPageSearch + 1),
+      GetWorkspacesParams(
+        limit: 10,
+        offset: state.indexPageSearch + 1,
+        keyWord: state.searchKeyWord,
+      ),
     );
     if (result.isEmpty) {
       emit(state.copyWith(pagingStatusSearch: PagingStatus.noMoreData));
     } else {
-      List<WorkspaceEntity> workspaces = List.from(state.workspaces);
+      List<WorkspaceEntity> workspaces = List.from(state.workspacesSearch);
       workspaces.addAll(result);
       emit(
         state.copyWith(
           pagingStatusSearch: PagingStatus.loadCompleted,
-          workspaces: workspaces,
+          workspacesSearch: workspaces,
           indexPageSearch: state.indexPageSearch + 1,
         ),
       );
@@ -281,6 +285,20 @@ class WorkspaceListBloc
     ToggleSearchEnableEvent event,
     Emitter<WorkspaceListState> emit,
   ) async {
-    emit(state.copyWith(isSearchMode: !state.isSearchMode));
+    if (event.value == state.isSearchMode) return;
+    if (!event.value) {
+      emit(
+        state.copyWith(
+          isSearchMode: event.value,
+          searchKeyWord: "",
+          workspacesSearch: const [],
+          indexPageSearch: 1,
+          searchStatus: PageStatus.initial,
+          pagingStatusSearch: PagingStatus.idle,
+        ),
+      );
+    } else {
+      emit(state.copyWith(isSearchMode: event.value));
+    }
   }
 }

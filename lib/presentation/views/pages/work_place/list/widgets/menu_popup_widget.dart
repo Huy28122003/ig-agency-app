@@ -105,7 +105,6 @@ class _SuperMenuPopupWidgetState extends State<SuperMenuPopupWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.isSeen);
     final size = MediaQuery.sizeOf(context);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

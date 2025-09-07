@@ -8,7 +8,6 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import '../../../../../../domain/entities/workspace_entity.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
-import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
@@ -67,10 +66,10 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
 
   Widget _buildBody() {
     return BlocSelector<WorkspaceListBloc, WorkspaceListState, bool>(
-      selector: (state) {
-        return state.isSearchMode;
+      selector: (searchModeState) {
+        return searchModeState.isSearchMode;
       },
-      builder: (context, state) {
+      builder: (context, searchModeState) {
         return Stack(
           children: [
             BlocSelector<
@@ -157,7 +156,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 );
               },
             ),
-            if (state)
+            if (searchModeState)
               BlocListener<WorkspaceListBloc, WorkspaceListState>(
                 listener: (context, state) {
                   _searchRefreshController.refresh(state.pagingStatusSearch);
@@ -280,7 +279,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
               ),
               child: AppSearchTextField(
                 onSearchEnable: (value) {
-                  _workspaceBloc.add(ToggleSearchEnableEvent());
+                  _workspaceBloc.add(ToggleSearchEnableEvent(value: value));
                 },
                 onChanged: (value) {
                   _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
@@ -294,15 +293,6 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                   height: 1.50,
                 ),
                 hintText: "Nhập tên nhóm",
-                // noBorder: true,
-                suffixIcon: Assets.icons.icSearch.svg(
-                  width: 20,
-                  height: 20,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.iconDefaultDefaultSub,
-                    BlendMode.srcIn,
-                  ),
-                ),
               ),
             ),
           ],
