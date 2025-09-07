@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/nav/nav_bloc.dart';
 
+import '../../../../../gen/assets.gen.dart';
+import '../../../../resources/colors.dart';
 import '../../../../routers/app_router.dart';
 
 class NavTabletLayout extends StatelessWidget {
@@ -34,30 +36,177 @@ class NavTabletLayout extends StatelessWidget {
                         return Row(
                           children: [
                             NavigationRail(
+                              useIndicator: true,
                               extended: false,
                               minWidth: 64,
+                              indicatorColor: Colors.transparent,
+                              labelType: NavigationRailLabelType.none,
                               selectedIndex: state.currentIndex,
                               onDestinationSelected: (int index) {
                                 tabsRouter.setActiveIndex(index);
+                                context.read<NavBloc>().add(
+                                  OnChangeTabEvent(index),
+                                );
                               },
-                              destinations: const <NavigationRailDestination>[
+                              destinations: <NavigationRailDestination>[
                                 NavigationRailDestination(
-                                  icon: Badge(
-                                    label: Text('4'),
-                                    child: Icon(Icons.chat_bubble_outline),
+                                  selectedIcon: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        RotatedBox(
+                                          quarterTurns: 1,
+                                          child: Assets.icons.icIndicator.svg(),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Assets.icons.icWorkspace.svg(
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.textPrimaryTextDefault,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  selectedIcon: Icon(Icons.chat_bubble),
-                                  label: Text('First'),
+                                  icon: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Opacity(
+                                          opacity: 0,
+                                          child: RotatedBox(
+                                            quarterTurns: 1,
+                                            child: Assets.icons.icIndicator
+                                                .svg(),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Assets.icons.icWorkspace.svg(
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.textDefaultTextSub2,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  label: const SizedBox.shrink(),
                                 ),
                                 NavigationRailDestination(
-                                  icon: Icon(Icons.search_outlined),
-                                  selectedIcon: Icon(Icons.search),
-                                  label: Text('Second'),
+                                  selectedIcon: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        RotatedBox(
+                                          quarterTurns: 1,
+                                          child: Assets.icons.icIndicator.svg(),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Assets.icons.icSearch.svg(
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.textPrimaryTextDefault,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  icon: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Opacity(
+                                          opacity: 0,
+                                          child: RotatedBox(
+                                            quarterTurns: 1,
+                                            child: Assets.icons.icIndicator
+                                                .svg(),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Assets.icons.icSearch.svg(
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.textDefaultTextSub2,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  label: const SizedBox.shrink(),
                                 ),
                                 NavigationRailDestination(
-                                  icon: Icon(Icons.settings),
-                                  selectedIcon: Icon(Icons.settings),
-                                  label: Text('Third'),
+                                  selectedIcon: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        RotatedBox(
+                                          quarterTurns: 1,
+                                          child: Assets.icons.icIndicator.svg(),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Assets.icons.icSetting.svg(
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.textPrimaryTextDefault,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  icon: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Opacity(
+                                          opacity: 0,
+                                          child: RotatedBox(
+                                            quarterTurns: 1,
+                                            child: Assets.icons.icIndicator
+                                                .svg(),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Assets.icons.icSetting.svg(
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.textDefaultTextSub2,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  label: const SizedBox.shrink(),
                                 ),
                               ],
                             ),
