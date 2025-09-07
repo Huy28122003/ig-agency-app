@@ -7,16 +7,18 @@ class CameraState extends BaseState<CameraState> {
     super.processing = false,
     this.isFontCamera = false,
     this.isFlashEnabled = false,
+    this.inProgress = false,
     this.status = CameraStatus.initial,
-    this.isCompleted = false,
-    this.cameras = const [],
+    this.media = '',
+    this.isPhoto = true,
   });
 
   final bool isFontCamera;
   final bool isFlashEnabled;
-  final bool isCompleted;
+  final bool inProgress;
+  final String media;
   final CameraStatus status;
-  final List<CameraDescription> cameras;
+  final bool isPhoto;
 
   @override
   CameraState copyWith({
@@ -24,20 +26,22 @@ class CameraState extends BaseState<CameraState> {
     String? pageErrorMessage,
     bool? processing,
     bool? isFontCamera,
+    bool? inProgress,
     bool? isFlashEnabled,
-    bool? isCompleted,
+    String? media,
     CameraStatus? status,
-    List<CameraDescription>? cameras,
+    bool? isPhoto,
   }) {
     return CameraState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
+      inProgress: inProgress ?? this.inProgress,
       isFontCamera: isFontCamera ?? this.isFontCamera,
       isFlashEnabled: isFlashEnabled ?? this.isFlashEnabled,
-      isCompleted: isCompleted ?? this.isCompleted,
+      media: media ?? this.media,
       status: status ?? this.status,
-      cameras: cameras ?? this.cameras,
+      isPhoto: isPhoto ?? this.isPhoto,
     );
   }
 
@@ -45,9 +49,10 @@ class CameraState extends BaseState<CameraState> {
   List<Object?> get props => [
     ...super.props,
     isFontCamera,
+    inProgress,
     isFlashEnabled,
-    isCompleted,
+    media,
     status,
-    cameras,
+    isPhoto,
   ];
 }

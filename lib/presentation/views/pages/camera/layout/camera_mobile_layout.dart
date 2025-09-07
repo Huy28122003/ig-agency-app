@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
+import 'package:ig_agency_app/presentation/views/pages/camera/widgets/camera_view.dart';
+import 'package:ig_agency_app/presentation/views/pages/camera/widgets/take_media_button.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import '../../../../../gen/assets.gen.dart';
@@ -43,9 +45,17 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
     return MultiBlocListener(
       listeners: [
         BlocListener<CameraBloc, CameraState>(
+          listenWhen: (pre, cur) => pre.media != cur.media,
           listener: (context, state) {
-            if (state.isCompleted) {
-              // context.router.push(WSDetailRoute());
+            if (state.media.isNotEmpty) {
+              context.router.push(
+                MediaPreviewRoute(
+                  avatar:
+                      "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
+                  mediaPath: state.media,
+                  isPhoto: state.isPhoto,
+                ),
+              );
             }
           },
         ),
@@ -66,20 +76,7 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
               Positioned.fill(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: BlocSelector<CameraBloc, CameraState, CameraStatus>(
-                    selector: (state) => state.status,
-                    builder: (context, status) {
-                      final cameraController = _cameraBloc.controller;
-                      if (!status.isReady || cameraController == null) {
-                        return Container(
-                          child: Assets.images.splashBackground.image(
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      }
-                      return CameraPreview(cameraController);
-                    },
-                  ),
+                  child: CameraView(),
                 ),
               ),
               Positioned(
@@ -134,34 +131,37 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                 right: 0,
                 child: SafeArea(
                   child: Container(
-                    padding: const EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                       left: 20,
                       bottom: 20,
                       right: 20,
                     ),
                     height: 80,
-                    child: NavigationToolbar(
-                      leading: AppButton.icon(
-                        onPressed: () {},
-                        icon: Assets.icons.icAlbum.svg(width: 24, height: 24),
-                      ),
-                      middle: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.surfaceContainerAlphaAlphaWhite17,
-                        ),
-                        height: 60,
-                        width: 60,
-                        alignment: Alignment.center,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.surfaceContainerGrayStrong0,
+                    child: BlocSelector<CameraBloc, CameraState, bool>(
+                      selector: (state) => state.inProgress,
+                      builder: (BuildContext context, bool inProgress) {
+                        return NavigationToolbar(
+                          leading: AppButton.icon(
+                            onPressed: () {},
+                            icon: Assets.icons.icAlbum.svg(
+                              width: 24,
+                              height: 24,
+                            ),
                           ),
-                          height: 40,
-                          width: 40,
-                        ),
-                      ),
+                          middle: TakeMediaButton(
+                            onTap: () {
+                              _cameraBloc.add(TakePhotoEvent());
+                            },
+                            onLongPressStart: () {
+                              _cameraBloc.add(StartRecordEvent());
+                            },
+                            onLongPressEnd: () {
+                              _cameraBloc.add(StopRecordEvent());
+                            },
+                            isInProgress: inProgress,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
