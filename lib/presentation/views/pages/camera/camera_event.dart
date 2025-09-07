@@ -20,6 +20,8 @@ class PauseRecordEvent extends CameraEvent {}
 
 class ResumRecordEvent extends CameraEvent {}
 
+class PickMediaEvent extends CameraEvent {}
+
 class AppLifecycleChangedEvent extends CameraEvent {
   final AppLifecycleState state;
 
