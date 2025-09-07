@@ -8,7 +8,6 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import '../../../../../../domain/entities/workspace_entity.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
-import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
@@ -66,11 +65,11 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceListBloc, WorkspaceListState, bool>(
+    return BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
       selector: (state) {
-        return state.isSearchMode;
+        return state.searchKeyWord;
       },
-      builder: (context, state) {
+      builder: (context, searchModeState) {
         return Stack(
           children: [
             BlocSelector<
@@ -157,7 +156,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 );
               },
             ),
-            if (state)
+            if (searchModeState.isNotEmpty)
               BlocListener<WorkspaceListBloc, WorkspaceListState>(
                 listener: (context, state) {
                   _searchRefreshController.refresh(state.pagingStatusSearch);
@@ -203,6 +202,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                                     onTapMute: () {},
                                     onTapPin: () {},
                                     child: WorkspaceTileWidget(
+                                      isSearchMode: true,
                                       isMute: workspace.isMute,
                                       isPin: workspace.isPin,
                                       workspaceAvatar:
@@ -278,32 +278,31 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child: AppSearchTextField(
-                onSearchEnable: (value) {
-                  _workspaceBloc.add(ToggleSearchEnableEvent());
-                },
-                onChanged: (value) {
-                  _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
-                  _workspaceBloc.add(SearchEvent(value: value));
-                },
-                hintStyle: TextStyle(
-                  color: AppColors.textDefaultTextSub,
-                  fontSize: 16,
-                  fontFamily: FontFamily.segoeUI,
-                  fontWeight: FontWeight.w600,
-                  height: 1.50,
-                ),
-                hintText: "Nhập tên nhóm",
-                // noBorder: true,
-                suffixIcon: Assets.icons.icSearch.svg(
-                  width: 20,
-                  height: 20,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.iconDefaultDefaultSub,
-                    BlendMode.srcIn,
+              child:
+                  BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+                    selector: (state) {
+                      return state.searchKeyWord;
+                    },
+                    builder: (context, state) {
+                      return AppSearchTextField(
+                        value: state,
+                        onChanged: (value) {
+                          _workspaceBloc.add(
+                            SearchKeyWorkChangeEvent(value: value),
+                          );
+                          _workspaceBloc.add(SearchEvent(value: value));
+                        },
+                        hintStyle: TextStyle(
+                          color: AppColors.textDefaultTextSub,
+                          fontSize: 16,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w600,
+                          height: 1.50,
+                        ),
+                        hintText: "Nhập tên nhóm",
+                      );
+                    },
                   ),
-                ),
-              ),
             ),
           ],
         ),
