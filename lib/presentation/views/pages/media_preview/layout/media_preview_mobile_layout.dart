@@ -7,8 +7,8 @@ import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../widgets/app_video_player.dart';
-import '../../../widgets/circle_network_avatar.dart';
 import '../media_preview_bloc.dart';
+import '../widgets/send_button_widget.dart';
 
 class MediaPreviewMobileLayout extends StatefulWidget {
   const MediaPreviewMobileLayout({super.key});
@@ -68,11 +68,15 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                       ),
                       Spacer(),
                       AppButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          // Todo: navigate
+                        },
                         icon: Assets.icons.icCrop.svg(width: 24, height: 24),
                       ),
                       AppButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          _bloc.add(SaveMediaEvent());
+                        },
                         icon: Assets.icons.icDownload.svg(
                           width: 24,
                           height: 24,
@@ -86,24 +90,7 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
             Positioned(
               bottom: 0,
               child: SafeArea(
-                child: Container(
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    bottom: 20,
-                    right: 20,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerAlphaAlphaWhite17,
-                    ),
-                    height: 44,
-                    width: 95,
-                    alignment: Alignment.center,
-                    child: Row(
-                      children: [CircleNetworkAvatar(imageUrl: _bloc.avatar)],
-                    ),
-                  ),
-                ),
+                child: SendButtonWidget(avatar: _bloc.avatar, onTap: () {}),
               ),
             ),
           ],
