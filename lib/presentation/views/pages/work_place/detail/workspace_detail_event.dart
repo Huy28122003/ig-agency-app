@@ -28,8 +28,8 @@ class SendMessageEvent extends WSDetailEvent {
   final dynamic content;
 }
 
-class DisableIsNeedScrollToBottomEvent extends WSDetailEvent {
-  const DisableIsNeedScrollToBottomEvent();
+class ResetScrollToBottomEvent extends WSDetailEvent {
+  const ResetScrollToBottomEvent();
 }
 
 class UpdateMessageEvent extends WSDetailEvent {

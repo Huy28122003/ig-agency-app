@@ -44,6 +44,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   final int _workspaceId;
+  int get workspaceId => _workspaceId;
 
   UserEntity? _user;
   String? get userId => _user?.id;
@@ -66,9 +67,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     );
     handleSubEvent<ReplyToMessageEvent>(_onReplyToMessage);
     handleSubEvent<SendMessageEvent>(_onSendMessage);
-    handleSubEvent<DisableIsNeedScrollToBottomEvent>(
-      _onDisableIsNeedScrollToBottom,
-    );
+    handleSubEvent<ResetScrollToBottomEvent>(_onDisableIsNeedScrollToBottom);
     handleSubEvent<UpdateMessageEvent>(_onUpdateMessage);
   }
 
@@ -108,33 +107,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       return;
     }
 
-    emit(state.copyWith(isNeedScrollToBottom: true));
+    emit(state.copyWith(scrollToBottom: true));
 
     try {
-      MessageEntity? message;
-      if (event.content is String) {
-        message = MessageEntity(
-          tempId: Uuid().v4(),
-          sender: MessageSender(
-            id: user.id,
-            name: user.name,
-            avatarUrl: user.avatar,
-          ),
-          createdAt: DateTime.now(),
-          type: MessageType.text,
-          content: TextMessageContent(text: event.content),
-          status: MessageStatus.pending,
-          groupId: _workspaceId,
-          reply: state.messageReply != null
-              ? MessageReply(
-                  messageId: state.messageReply!.id!,
-                  senderId: state.messageReply!.sender.id,
-                  senderName: state.messageReply!.sender.name,
-                  originalMessageType: state.messageReply!.type,
-                )
-              : null,
-        );
-      }
+      final message = createMessage(user, event.content);
 
       if (message != null) {
         emit(state.copyWith(messages: [...state.messages, message]));
@@ -146,10 +122,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   Future<void> _onDisableIsNeedScrollToBottom(
-    DisableIsNeedScrollToBottomEvent event,
+    ResetScrollToBottomEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    emit(state.copyWith(isNeedScrollToBottom: false));
+    emit(state.copyWith(scrollToBottom: false));
   }
 
   Future<void> _onUpdateMessage(
@@ -178,7 +154,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(state.copyWith(pageStatus: PageStatus.loading));
 
     final result = await _fetchMessageUseCase.call(
-      FetchMessagesWorkspaceParams(groupId: _workspaceId, limit: _limit),
+      FetchMessagesWorkspaceParams(workspaceId: _workspaceId, limit: _limit),
     );
 
     final pinnedMessageSummaryResult =
@@ -200,6 +176,67 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         pinnedMessageSummary: pinnedMessageSummary,
       ),
     );
+  }
+
+  MessageEntity? createMessage(UserEntity user, dynamic content) {
+    MessageEntity? message;
+    if (content is String) {
+      message = MessageEntity(
+        tempId: Uuid().v4(),
+        sender: MessageSender(
+          id: user.id,
+          name: user.name,
+          avatarUrl: user.avatar,
+        ),
+        createdAt: DateTime.now(),
+        type: MessageType.text,
+        content: TextMessageContent(text: content),
+        status: MessageStatus.pending,
+        workspaceId: _workspaceId,
+        reply: state.messageReply != null
+            ? createMessageReply(state.messageReply!)
+            : null,
+      );
+    }
+
+    return message;
+  }
+
+  MessageReply createMessageReply(MessageEntity message) {
+    var reply = MessageReply(
+      messageId: message.id!,
+      senderId: message.sender.id,
+      senderName: message.sender.name,
+      originalMessageType: message.type,
+    );
+
+    switch (message.type) {
+      case MessageType.text:
+        reply = reply.copyWith(
+          previewText: (message.content as TextMessageContent).text,
+        );
+        break;
+      case MessageType.image:
+        reply = reply.copyWith(
+          previewImageUrl: (message.content as ImageMessageContent).imageUrl,
+        );
+        break;
+      case MessageType.video:
+        reply = reply.copyWith(
+          previewThumbnailUrl:
+              (message.content as VideoMessageContent).thumbnailUrl,
+        );
+        break;
+      case MessageType.file:
+        reply = reply.copyWith(
+          previewFileName: (message.content as FileMessageContent).fileName,
+        );
+        break;
+      default:
+        break;
+    }
+
+    return reply;
   }
 
   @override

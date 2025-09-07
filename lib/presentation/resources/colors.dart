@@ -18,6 +18,7 @@ abstract class AppColors {
     alpha: 0.17,
   );
   static final Color textNeutralWhite = Colors.white;
+  static const Color textAlertTextInfo = Color(0xFF2B7FFF);
 
   /// Icon
   static const Color iconDefaultDefault = Color(0xFF08090A);

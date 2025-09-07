@@ -14,7 +14,7 @@ class MessageEntity extends Equatable {
     required this.type,
     required this.content,
     required this.status,
-    this.groupId,
+    this.workspaceId,
     this.groupName,
     this.reply,
     this.isPinned = false,
@@ -41,7 +41,7 @@ class MessageEntity extends Equatable {
   final MessageType type;
   final MessageContent content;
   final MessageStatus status;
-  final int? groupId;
+  final int? workspaceId;
   final String? groupName;
   final MessageReply? reply;
   final bool isPinned;
@@ -55,7 +55,7 @@ class MessageEntity extends Equatable {
     MessageType? type,
     MessageContent? content,
     MessageStatus? status,
-    int? groupId,
+    int? workspaceId,
     String? groupName,
     MessageReply? reply,
     bool? isPinned,
@@ -68,7 +68,7 @@ class MessageEntity extends Equatable {
     type: type ?? this.type,
     content: content ?? this.content,
     status: status ?? this.status,
-    groupId: groupId ?? this.groupId,
+    workspaceId: workspaceId ?? this.workspaceId,
     groupName: groupName ?? this.groupName,
     reply: reply ?? reply,
     isPinned: isPinned ?? this.isPinned,
@@ -84,7 +84,7 @@ class MessageEntity extends Equatable {
     type,
     content,
     status,
-    groupId,
+    workspaceId,
     groupName,
     reply,
     isPinned,

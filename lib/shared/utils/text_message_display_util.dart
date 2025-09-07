@@ -61,7 +61,7 @@ class TextMessageDisplayUtil {
           hostName = Uri.tryParse(textPart)?.host;
           link = textPart;
           break;
-        case TextSegmentType.mention:
+        case TextSegmentType.tag:
           spans.add(TextSpan(text: textPart, style: mentionStyle));
           break;
         default:

@@ -45,8 +45,8 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByGroupId(
-    int groupId,
+  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByWorkspaceId(
+    int workspaceId,
     int limit,
     int offset,
   ) async {
@@ -55,7 +55,7 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final (pinnedMessages, totalRecords) = _messageMockService
           .mockFetchPinnedMessages(
-            groupId: groupId,
+            groupId: workspaceId,
             limit: limit,
             offset: offset,
           );
@@ -67,13 +67,15 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<PinnedMessageSummary> getPinnedMessageSummaryByGroupId(
-    int groupId,
+  Future<PinnedMessageSummary> getPinnedMessageSummaryByWorkspaceId(
+    int workspaceId,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final summary = _messageMockService.mockGetPinnedMessageSummary(groupId);
+      final summary = _messageMockService.mockGetPinnedMessageSummary(
+        workspaceId,
+      );
       return summary;
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -81,8 +83,8 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<PagedResult<MessageEntity>> fetchMessagesByGroupId(
-    int groupId,
+  Future<PagedResult<MessageEntity>> fetchMessagesByWorkspaceId(
+    int workspaceId,
     int limit,
     String? oldestMessageId,
   ) async {
@@ -91,7 +93,7 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final (messages, totalRecords) = _messageMockService
           .mockFetchMessagesByGroupId(
-            groupId: groupId,
+            groupId: workspaceId,
             limit: limit,
             oldestMessageId: oldestMessageId,
           );

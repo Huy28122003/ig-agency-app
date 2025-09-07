@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/entities/pinned_message_summary.dart';
+import '../../../../domain/entities/user_entity.dart';
 import '../../../../domain/enums/message_enums.dart';
 
 @singleton
@@ -187,7 +188,7 @@ class MessageMockService {
           TextSegmentType.normal,
         );
         final user = _mockUsers[_random.nextInt(_mockUsers.length)];
-        addSegment("@${user['name']}", TextSegmentType.mention);
+        addSegment("@${user['name']}", TextSegmentType.tag);
         break;
 
       case 2:
@@ -203,7 +204,7 @@ class MessageMockService {
       case 3:
         // Mention + text + link
         final user = _mockUsers[_random.nextInt(_mockUsers.length)];
-        addSegment("@${user['name']} ", TextSegmentType.mention);
+        addSegment("@${user['name']} ", TextSegmentType.tag);
         addSegment(
           "${_mockTexts[_random.nextInt(_mockTexts.length)]} ",
           TextSegmentType.normal,
@@ -298,7 +299,7 @@ class MessageMockService {
           type: type,
           content: content,
           status: MessageStatus.sent,
-          groupId: groupId,
+          workspaceId: groupId,
           groupName: groupName,
           reply: reply,
           isPinned: type == MessageType.system ? false : _random.nextBool(),
@@ -508,14 +509,14 @@ class MessageMockService {
 
   Future<MessageEntity> addMessage(MessageEntity message) async {
     final messageId =
-        "msg_${message.groupId}_${DateTime.now().millisecondsSinceEpoch}";
+        "msg_${message.workspaceId}_${DateTime.now().millisecondsSinceEpoch}";
 
     final sentMessage = message.copyWith(
       id: messageId,
       status: MessageStatus.sent,
     );
 
-    final groupId = message.groupId;
+    final groupId = message.workspaceId;
     if (groupId != null) {
       if (_messageMockData[groupId] == null) {
         _messageMockData[groupId] = [];
@@ -524,5 +525,22 @@ class MessageMockService {
     }
     RamCache().saveMessage(sentMessage);
     return sentMessage;
+  }
+
+  List<UserEntity> mockGetMemberInGroup(
+    int groupId, {
+    int limit = 10,
+    int offset = 0,
+  }) {
+    return _mockUsers
+        .map(
+          (e) => UserEntity(
+            id: e['id']!,
+            name: e['name']!,
+            email: '',
+            avatar: e['avatarUrl']!,
+          ),
+        )
+        .toList();
   }
 }

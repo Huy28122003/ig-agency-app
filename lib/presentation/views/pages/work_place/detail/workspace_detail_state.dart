@@ -8,14 +8,14 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.messages = const [],
     this.pinnedMessageSummary,
     this.messageReply,
-    this.isNeedScrollToBottom = false,
+    this.scrollToBottom = false,
     this.showScrollToBottomIcon = false,
   });
 
   final List<MessageEntity> messages;
   final PinnedMessageSummaryUiModel? pinnedMessageSummary;
   final MessageEntity? messageReply;
-  final bool isNeedScrollToBottom;
+  final bool scrollToBottom;
   final bool showScrollToBottomIcon;
 
   @override
@@ -27,7 +27,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     PinnedMessageSummaryUiModel? pinnedMessageSummary,
     MessageEntity? messageReply,
     bool forceCloseReplyMessage = false,
-    bool? isNeedScrollToBottom,
+    bool? scrollToBottom,
     bool? showScrollToBottomIcon,
   }) {
     return WSDetailState(
@@ -39,7 +39,7 @@ class WSDetailState extends BaseState<WSDetailState> {
       messageReply: forceCloseReplyMessage
           ? null
           : messageReply ?? this.messageReply,
-      isNeedScrollToBottom: isNeedScrollToBottom ?? this.isNeedScrollToBottom,
+      scrollToBottom: scrollToBottom ?? this.scrollToBottom,
       showScrollToBottomIcon:
           showScrollToBottomIcon ?? this.showScrollToBottomIcon,
     );
@@ -51,7 +51,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     messages,
     pinnedMessageSummary,
     messageReply,
-    isNeedScrollToBottom,
+    scrollToBottom,
     showScrollToBottomIcon,
   ];
 }

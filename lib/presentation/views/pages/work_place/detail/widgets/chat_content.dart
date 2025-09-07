@@ -54,7 +54,7 @@ class _ChatContentState extends State<ChatContent> {
         _scrollController.animateTo(
           position,
           duration: Duration(milliseconds: 100),
-          curve: Curves.linear,
+          curve: Curves.easeOut,
         );
       } else {
         _scrollController.jumpTo(position);
@@ -68,11 +68,13 @@ class _ChatContentState extends State<ChatContent> {
 
     return BlocConsumer<WSDetailBloc, WSDetailState>(
       listenWhen: (previous, current) =>
-          previous.isNeedScrollToBottom != current.isNeedScrollToBottom,
+          previous.scrollToBottom != current.scrollToBottom,
       listener: (context, state) {
-        if (state.isNeedScrollToBottom) {
-          _scrollToBottom();
-          _bloc.add(DisableIsNeedScrollToBottomEvent());
+        if (state.scrollToBottom) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            _scrollToBottom();
+            _bloc.add(ResetScrollToBottomEvent());
+          });
         }
       },
       buildWhen: (previous, current) =>

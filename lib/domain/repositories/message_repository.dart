@@ -7,16 +7,18 @@ abstract class MessageRepository {
 
   Future unpinMessage(String messageId);
 
-  Future<PinnedMessageSummary> getPinnedMessageSummaryByGroupId(int groupId);
+  Future<PinnedMessageSummary> getPinnedMessageSummaryByWorkspaceId(
+    int workspaceId,
+  );
 
-  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByGroupId(
-    int groupId,
+  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByWorkspaceId(
+    int workspaceId,
     int limit,
     int offset,
   );
 
-  Future<PagedResult<MessageEntity>> fetchMessagesByGroupId(
-    int groupId,
+  Future<PagedResult<MessageEntity>> fetchMessagesByWorkspaceId(
+    int workspaceId,
     int limit,
     String? oldestMessageId,
   );

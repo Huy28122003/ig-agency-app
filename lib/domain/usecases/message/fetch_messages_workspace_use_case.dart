@@ -16,8 +16,8 @@ class FetchMessagesWorkspaceUseCase
   Future<PagedResult<MessageEntity>> call(
     FetchMessagesWorkspaceParams params,
   ) async {
-    return await _messageRepository.fetchMessagesByGroupId(
-      params.groupId,
+    return await _messageRepository.fetchMessagesByWorkspaceId(
+      params.workspaceId,
       params.limit,
       params.oldestMessageId,
     );
@@ -25,12 +25,12 @@ class FetchMessagesWorkspaceUseCase
 }
 
 class FetchMessagesWorkspaceParams {
-  final int groupId;
+  final int workspaceId;
   final int limit;
   final String? oldestMessageId;
 
   FetchMessagesWorkspaceParams({
-    required this.groupId,
+    required this.workspaceId,
     required this.limit,
     this.oldestMessageId,
   });

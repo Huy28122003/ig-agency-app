@@ -16,7 +16,7 @@ class GetPinnedMessageSummaryWorkspaceUseCase
   Future<PinnedMessageSummary> call(
     GetPinnedMessageSummaryWorkspaceParams params,
   ) async {
-    return await _messageRepository.getPinnedMessageSummaryByGroupId(
+    return await _messageRepository.getPinnedMessageSummaryByWorkspaceId(
       params.workspaceId,
     );
   }

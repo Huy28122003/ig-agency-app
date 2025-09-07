@@ -7,7 +7,7 @@ import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/circle_network_avatar.dart';
-import '../../../../widgets/chat/chat_input_bar.dart';
+import '../../../../widgets/chat_input/chat_input_bar.dart';
 import '../widgets/chat_content.dart';
 import '../workspace_detail_bloc.dart';
 
@@ -19,6 +19,7 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
     final bloc = context.read<WSDetailBloc>();
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -127,10 +128,20 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
               },
               builder: (context, message) {
                 return ChatInputBar(
+                  workspaceId: bloc.workspaceId,
                   userId: bloc.userId,
                   messageReply: message,
                   onReplyClose: () {
-                    bloc.add(CloseReplyMessageEvent());
+                    // TODO hoannk:
+                  },
+                  onDocumentTap: () {
+                    // TODO hoannk:
+                  },
+                  onCameraTap: () {
+                    // TODO hoannk:
+                  },
+                  onImageTap: () {
+                    // TODO hoannk:
                   },
                   onSendTap: (messageInput) {
                     bloc.add(SendMessageEvent(content: messageInput));
