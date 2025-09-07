@@ -44,38 +44,42 @@ class AppBottomNavigationBar extends StatelessWidget {
           BoxShadow(
             offset: Offset(0, -2),
             blurRadius: 4,
-            color: Colors.white.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: 0.04),
           ),
         ],
+        color: AppColors.surfaceBackgroundBackground,
       ),
       constraints: const BoxConstraints(maxHeight: 82),
       padding: EdgeInsets.only(top: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(items.length, (index) {
-          return GestureDetector(
-            onTap: () => onTap?.call(index),
-            child: Column(
-              children: [
-                (currentIndex == index)
-                    ? items[index].selectedIcon
-                    : items[index].icon,
-                SizedBox(height: 4),
-                Text(
-                  items[index].label,
-                  style: TextStyle(
-                    color: currentIndex == index
-                        ? AppColors.textPrimaryTextDefault
-                        : AppColors.textDefaultTextSub2,
-                    fontFamily: FontFamily.segoeUI,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10,
-                    height: 14 / 10,
+          return Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => onTap?.call(index),
+              child: Column(
+                children: [
+                  (currentIndex == index)
+                      ? items[index].selectedIcon
+                      : items[index].icon,
+                  SizedBox(height: 4),
+                  Text(
+                    items[index].label,
+                    style: TextStyle(
+                      color: currentIndex == index
+                          ? AppColors.textPrimaryTextDefault
+                          : AppColors.textDefaultTextSub2,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                      height: 14 / 10,
+                    ),
                   ),
-                ),
-                Spacer(),
-                if (currentIndex == index) Assets.icons.icIndicator.svg(),
-              ],
+                  Spacer(),
+                  if (currentIndex == index) Assets.icons.icIndicator.svg(),
+                ],
+              ),
             ),
           );
         }),
