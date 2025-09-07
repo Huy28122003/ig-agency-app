@@ -41,7 +41,6 @@ class WorkspaceListBloc
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
     handleSubEvent<LoadMoreDataEvent>(_onLoadMoreData);
     handleSubEvent<DeleteWorkspaceEvent>(_onDeleteWorkspace);
-    handleSubEvent<ToggleSearchEnableEvent>(_onToggleSearchEnableEvent);
   }
 
   Future<void> _onMuteWorkspace(
@@ -279,26 +278,5 @@ class WorkspaceListBloc
   void _sortWorkspacesByTime(List<WorkspaceEntity> workspaces) {
     if (workspaces.isEmpty) return;
     workspaces.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
-  }
-
-  Future<void> _onToggleSearchEnableEvent(
-    ToggleSearchEnableEvent event,
-    Emitter<WorkspaceListState> emit,
-  ) async {
-    if (event.value == state.isSearchMode) return;
-    if (!event.value) {
-      emit(
-        state.copyWith(
-          isSearchMode: event.value,
-          searchKeyWord: "",
-          workspacesSearch: const [],
-          indexPageSearch: 1,
-          searchStatus: PageStatus.initial,
-          pagingStatusSearch: PagingStatus.idle,
-        ),
-      );
-    } else {
-      emit(state.copyWith(isSearchMode: event.value));
-    }
   }
 }

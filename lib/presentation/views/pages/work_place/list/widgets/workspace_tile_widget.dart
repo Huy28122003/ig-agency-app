@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
-
 import '../../../../../../gen/assets.gen.dart';
 
 class WorkspaceTileWidget extends StatefulWidget {
@@ -16,6 +15,7 @@ class WorkspaceTileWidget extends StatefulWidget {
     required this.isMute,
     required this.isPin,
     required this.countNewMessage,
+    this.isSearchMode = false,
   });
 
   final String workspaceAvatar;
@@ -26,6 +26,7 @@ class WorkspaceTileWidget extends StatefulWidget {
   final bool isMute;
   final bool isPin;
   final int countNewMessage;
+  final bool isSearchMode;
 
   @override
   State<WorkspaceTileWidget> createState() => _WorkspaceTileWidgetState();
@@ -37,130 +38,182 @@ class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 20, top: 8, right: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Image.network(
-              fit: BoxFit.cover,
-              widget.workspaceAvatar,
-              width: 48,
-              height: 48,
-              errorBuilder: (context, error, stackTrace) {
-                return ClipOval(
-                  child: Assets.images.imgDefaultGroupAvatar.image(
-                    fit: BoxFit.cover,
-                    width: 48,
-                    height: 48,
-                  ),
-                );
-              },
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.workspaceName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                              height: 26 / 18,
-                              color: AppColors.textDefaultTextDefault,
-                              fontFamily: FontFamily.segoeUI,
-                            ),
-                          ),
+      padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
+      child: widget.isSearchMode
+          ? _buildSearchMode()
+          : _buildNormalMode(),
+    );
+  }
 
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  (widget.countNewMessage > 1 && !widget.isSeen)
-                                      ? "${widget.countNewMessage} new messages"
-                                      : widget.lastMessage,
+  Widget _buildSearchMode() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildAvatar(),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.workspaceName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                    height: 26 / 18,
+                    color: AppColors.textDefaultTextDefault,
+                    fontFamily: FontFamily.segoeUI,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _buildDivider(),
+      ],
+    );
+  }
+
+  Widget _buildNormalMode() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAvatar(),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.workspaceName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                                height: 26 / 18,
+                                color: AppColors.textDefaultTextDefault,
+                                fontFamily: FontFamily.segoeUI,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    (widget.countNewMessage > 1 &&
+                                        !widget.isSeen)
+                                        ? "${widget.countNewMessage} new messages"
+                                        : widget.lastMessage,
+                                    style: TextStyle(
+                                      fontFamily: FontFamily.segoeUI,
+                                      fontSize: 14,
+                                      height: 20 / 14,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontWeight: widget.isSeen
+                                          ? FontWeight.w400
+                                          : FontWeight.w700,
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.textDefaultTextSub2,
+                                  ),
+                                  width: 4,
+                                  height: 4,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  _convertDateTimeToString(),
                                   style: TextStyle(
                                     fontFamily: FontFamily.segoeUI,
                                     fontSize: 14,
                                     height: 20 / 14,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontWeight: widget.isSeen
-                                        ? FontWeight.w400
-                                        : FontWeight.w700,
                                   ),
-                                  maxLines: 1,
                                 ),
-                              ),
-                              SizedBox(width: 4),
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColors.textDefaultTextSub2,
-                                ),
-                                width: 4,
-                                height: 4,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                _convertDateTimeToString(),
-                                style: TextStyle(
-                                  fontFamily: FontFamily.segoeUI,
-                                  fontSize: 14,
-                                  height: 20 / 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(width: 12),
-                    if (widget.isPin) Assets.icons.icPin.svg(),
-                    if (!widget.isMute) Assets.icons.icBlockNotification.svg(),
-                    if (!widget.isSeen)
-                      Container(
-                        margin: EdgeInsets.only(left: 4),
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: AppColors.iconPrimaryDefault,
-                          shape: BoxShape.circle,
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  height: 1,
-                  color: AppColors.outlineGrayStrong200,
-                ),
-              ],
+                      const SizedBox(width: 12),
+                      if (widget.isPin) Assets.icons.icPin.svg(),
+                      if (!widget.isMute)
+                        Assets.icons.icBlockNotification.svg(),
+                      if (!widget.isSeen)
+                        Container(
+                          margin: const EdgeInsets.only(left: 4),
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: AppColors.iconPrimaryDefault,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        const SizedBox(height: 8),
+        _buildDivider(),
+      ],
+    );
+  }
+
+  Widget _buildAvatar() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(100),
+      child: Image.network(
+        widget.workspaceAvatar,
+        fit: BoxFit.cover,
+        width: 48,
+        height: 48,
+        errorBuilder: (context, error, stackTrace) {
+          return ClipOval(
+            child: Assets.images.imgDefaultGroupAvatar.image(
+              fit: BoxFit.cover,
+              width: 48,
+              height: 48,
+            ),
+          );
+        },
       ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      width: double.infinity,
+      height: 1,
+      color: AppColors.outlineGrayStrong200,
     );
   }
 
   String _convertDateTimeToString() {
     final isToday =
         now.year == widget.lastMessageTime.year &&
-        now.month == widget.lastMessageTime.month &&
-        now.day == widget.lastMessageTime.day;
+            now.month == widget.lastMessageTime.month &&
+            now.day == widget.lastMessageTime.day;
     if (isToday) {
       return widget.lastMessageTime.toHourMinuteAmPm;
     } else {

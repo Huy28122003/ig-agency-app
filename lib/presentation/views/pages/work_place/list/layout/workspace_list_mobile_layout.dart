@@ -65,9 +65,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceListBloc, WorkspaceListState, bool>(
-      selector: (searchModeState) {
-        return searchModeState.isSearchMode;
+    return BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+      selector: (state) {
+        return state.searchKeyWord;
       },
       builder: (context, searchModeState) {
         return Stack(
@@ -156,7 +156,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 );
               },
             ),
-            if (searchModeState)
+            if (searchModeState.isNotEmpty)
               BlocListener<WorkspaceListBloc, WorkspaceListState>(
                 listener: (context, state) {
                   _searchRefreshController.refresh(state.pagingStatusSearch);
@@ -202,6 +202,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                                     onTapMute: () {},
                                     onTapPin: () {},
                                     child: WorkspaceTileWidget(
+                                      isSearchMode: true,
                                       isMute: workspace.isMute,
                                       isPin: workspace.isPin,
                                       workspaceAvatar:
@@ -277,23 +278,31 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child: AppSearchTextField(
-                onSearchEnable: (value) {
-                  _workspaceBloc.add(ToggleSearchEnableEvent(value: value));
-                },
-                onChanged: (value) {
-                  _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
-                  _workspaceBloc.add(SearchEvent(value: value));
-                },
-                hintStyle: TextStyle(
-                  color: AppColors.textDefaultTextSub,
-                  fontSize: 16,
-                  fontFamily: FontFamily.segoeUI,
-                  fontWeight: FontWeight.w600,
-                  height: 1.50,
-                ),
-                hintText: "Nhập tên nhóm",
-              ),
+              child:
+                  BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+                    selector: (state) {
+                      return state.searchKeyWord;
+                    },
+                    builder: (context, state) {
+                      return AppSearchTextField(
+                        value: state,
+                        onChanged: (value) {
+                          _workspaceBloc.add(
+                            SearchKeyWorkChangeEvent(value: value),
+                          );
+                          _workspaceBloc.add(SearchEvent(value: value));
+                        },
+                        hintStyle: TextStyle(
+                          color: AppColors.textDefaultTextSub,
+                          fontSize: 16,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w600,
+                          height: 1.50,
+                        ),
+                        hintText: "Nhập tên nhóm",
+                      );
+                    },
+                  ),
             ),
           ],
         ),
