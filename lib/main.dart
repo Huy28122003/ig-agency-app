@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ void main() async {
     () async {
       WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
       EasyLocalization.ensureInitialized();
       Bloc.observer = AppBlocObserver();
