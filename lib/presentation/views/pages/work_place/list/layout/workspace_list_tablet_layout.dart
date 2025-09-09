@@ -72,7 +72,10 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
   Widget _buildHeader() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -84,11 +87,12 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
         ),
       ),
       child: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 20),
+              padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
               child: Text(
                 "workspace.workspace".tr(),
                 style: TextStyle(
@@ -127,13 +131,6 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                           );
                           _workspaceBloc.add(SearchEvent(value: value));
                         },
-                        hintStyle: TextStyle(
-                          color: AppColors.textDefaultTextSub,
-                          fontSize: 16,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w600,
-                          height: 1.50,
-                        ),
                         hintText: "workspace.hint_text_search".tr(),
                       );
                     },
@@ -171,8 +168,9 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                   },
                   refreshController: _refreshController,
                   child: ListView.separated(
+                    padding: EdgeInsets.symmetric(horizontal: 6),
                     separatorBuilder: (_, index) {
-                      return SizedBox(height: 4.5);
+                      return SizedBox(height: 4);
                     },
                     physics: ClampingScrollPhysics(),
                     itemBuilder: (_, index) {

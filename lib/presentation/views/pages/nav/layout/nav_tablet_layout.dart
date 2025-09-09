@@ -132,6 +132,8 @@ class NavTabletLayout extends StatelessWidget {
                                                     .textPrimaryTextDefault,
                                                 BlendMode.srcIn,
                                               ),
+                                              width: 24,
+                                              height: 24
                                             ),
                                           ),
                                         ],
@@ -214,6 +216,8 @@ class NavTabletLayout extends StatelessWidget {
                                                 AppColors.textDefaultTextSub2,
                                                 BlendMode.srcIn,
                                               ),
+                                              width: 24,
+                                              height: 24
                                             ),
                                           ),
                                         ],
