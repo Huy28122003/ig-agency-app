@@ -144,7 +144,7 @@ class WorkspaceListBloc
     emit(state.copyWith(searchStatus: PageStatus.loading));
 
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(keyWord: event.value, limit: 10, offset: 1),
+      GetWorkspacesParams(keyWord: event.value, limit: 15, offset: 1),
     );
 
     emit(
@@ -172,7 +172,7 @@ class WorkspaceListBloc
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(
-        limit: 10,
+        limit: 15,
         offset: state.indexPageSearch + 1,
         keyWord: state.searchKeyWord,
       ),
@@ -199,7 +199,7 @@ class WorkspaceListBloc
     emit(state.copyWith(pageStatus: PageStatus.loaded));
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(limit: 10, offset: state.indexPage),
+      GetWorkspacesParams(limit: 15, offset: state.indexPage),
     );
 
     List<WorkspaceEntity>? workspaces = result;
@@ -215,7 +215,7 @@ class WorkspaceListBloc
 
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(limit: 10, offset: 1),
+      GetWorkspacesParams(limit: 15, offset: 1),
     );
 
     List<WorkspaceEntity>? workspaces = result;
@@ -237,7 +237,7 @@ class WorkspaceListBloc
 
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(limit: 10, offset: state.indexPage + 1),
+      GetWorkspacesParams(limit: 15, offset: state.indexPage + 1),
     );
     if (result.isEmpty) {
       emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
