@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
@@ -87,7 +88,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
             ),
             SizedBox(height: 20),
             Text(
-              'OTP Verification',
+              'otp.title'.tr(),
               style: TextStyle(
                 color: AppColors.textDefaultTextInverted,
                 fontSize: 32,
@@ -121,7 +122,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
             child: Column(
               children: [
                 Text(
-                  "Please enter the OTP sent on your\nregistered email address",
+                  "otp.description".tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 20,
@@ -140,7 +141,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                   fieldWidth: (width - 80) / 6 - 4 * 5,
                   fieldHeight: (width - 80) / 6 - 4 * 5,
                   otpPinFieldDecoration:
-                      OtpPinFieldDecoration.defaultPinBoxDecoration,
+                  OtpPinFieldDecoration.defaultPinBoxDecoration,
                   otpPinFieldStyle: OtpPinFieldStyle(
                     textStyle: TextStyle(
                       fontWeight: FontWeight.w500,
@@ -150,27 +151,27 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                     fieldBorderRadius: 8.8,
                     fieldBorderWidth: 1.1,
                     defaultFieldBackgroundColor:
-                        AppColors.surfaceContainerGrayStrong2,
+                    AppColors.surfaceContainerGrayStrong2,
                     defaultFieldBorderColor: Colors.transparent,
                     activeFieldBorderColor: AppColors.outlinePrimaryDefault,
                     activeFieldBackgroundColor:
-                        AppColors.surfaceContainerPrimaryPrimaryLight,
+                    AppColors.surfaceContainerPrimaryPrimaryLight,
                     filledFieldBorderColor: AppColors.outlinePrimaryDefault,
                     filledFieldBackgroundColor:
-                        AppColors.surfaceContainerPrimaryPrimaryLight,
+                    AppColors.surfaceContainerPrimaryPrimaryLight,
                   ),
                   maxLength: 6,
                 ),
                 SizedBox(height: 40),
                 AppButton.primary(
                   backgroundColor:
-                      AppColors.surfaceContainerPrimaryPrimaryDefault,
+                  AppColors.surfaceContainerPrimaryPrimaryDefault,
 
                   onPressed: () {
                     // Todo: Refactor logic ui
                   },
                   child: Text(
-                    'Continue',
+                    'otp.continue'.tr(),
                     style: TextStyle(
                       color: AppColors.textDefaultTextInvertedDisabled,
                       fontSize: 16,

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
@@ -29,10 +30,12 @@ class SuperMenuPopupMobileWidget extends StatefulWidget {
   });
 
   @override
-  State<SuperMenuPopupMobileWidget> createState() => _SuperMenuPopupMobileWidgetState();
+  State<SuperMenuPopupMobileWidget> createState() =>
+      _SuperMenuPopupMobileWidgetState();
 }
 
-class _SuperMenuPopupMobileWidgetState extends State<SuperMenuPopupMobileWidget> {
+class _SuperMenuPopupMobileWidgetState
+    extends State<SuperMenuPopupMobileWidget> {
   OverlayEntry? _overlayEntry;
 
   void _showPopup(BuildContext context, Size screenSize) {
@@ -158,7 +161,9 @@ class _MenuPopupState extends State<_MenuPopup> {
       child: Column(
         children: [
           _buildItem(
-            title: widget.isSeen ? "Mark as unread" : "Mark as read",
+            title: widget.isSeen
+                ? "workspace.mark_as_unread".tr()
+                : "workspace.mark_as_read".tr(),
             onTap: widget.onTapMask,
             icon: widget.isSeen
                 ? Assets.icons.icLetter.svg()
@@ -170,7 +175,7 @@ class _MenuPopupState extends State<_MenuPopup> {
             color: Color(0xFF808080).withValues(alpha: 0.55),
           ),
           _buildItem(
-            title: widget.isPin ? "Unpin" : "Pin",
+            title: widget.isPin ? "workspace.unpin".tr() : "workspace.pin".tr(),
             onTap: widget.onTapPin,
             icon: widget.isPin
                 ? Assets.icons.icUnpin.svg()
@@ -182,7 +187,9 @@ class _MenuPopupState extends State<_MenuPopup> {
             color: Color(0xFF808080).withValues(alpha: 0.55),
           ),
           _buildItem(
-            title: widget.isMute ? "Unmute" : "Mute",
+            title: widget.isMute
+                ? "workspace.unmute".tr()
+                : "workspace.mute".tr(),
             onTap: widget.onTapMute,
             icon: widget.isMute
                 ? Assets.icons.icBlockNotification.svg()
@@ -194,7 +201,7 @@ class _MenuPopupState extends State<_MenuPopup> {
             color: Color(0xFF808080).withValues(alpha: 0.55),
           ),
           _buildItem(
-            title: "Delete",
+            title: "workspace.delete".tr(),
             onTap: widget.onTapDelete,
             textStyle: TextStyle(
               color: Color(0xFFFF3B30),
@@ -226,7 +233,7 @@ class _MenuPopupState extends State<_MenuPopup> {
               child: Text(
                 title,
                 style:
-                    textStyle ??
+                textStyle ??
                     TextStyle(
                       color: AppColors.textDefaultTextDefault,
                       fontWeight: FontWeight.w400,

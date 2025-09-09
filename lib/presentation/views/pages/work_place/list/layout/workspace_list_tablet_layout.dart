@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +13,6 @@ import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_pull_to_refresh.dart';
 import '../../../../widgets/app_search_text_field.dart';
-import '../../../../widgets/confirm_dialog.dart';
 import '../../../../widgets/menu_dialog.dart';
 import '../widgets/menu_popup_tablet_widget.dart';
 
@@ -56,7 +56,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
           padding: EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20)
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
             children: [
@@ -90,7 +90,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
             Padding(
               padding: const EdgeInsets.only(left: 20),
               child: Text(
-                "Workspace",
+                "workspace.workspace".tr(),
                 style: TextStyle(
                   fontFamily: FontFamily.segoeUI,
                   color: AppColors.textDefaultTextInverted,
@@ -134,7 +134,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                           fontWeight: FontWeight.w600,
                           height: 1.50,
                         ),
-                        hintText: "Nhập tên nhóm",
+                        hintText: "workspace.hint_text_search".tr(),
                       );
                     },
                   ),
@@ -190,14 +190,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                             isMute: workspace.isMute,
                             isPin: workspace.isPin,
                             isSeen: workspace.isSeen,
-                            onTapDelete: () async {
-                              final result = await ConfirmDialog.show(
-                                context,
-                                title: "Delete this entire\nconversations?",
-                                okText: "Delete",
-                                cancelText: "Cancel",
-                              );
-                            },
+                            onTapDelete: () async {},
                             onTapMask: () {
                               _workspaceBloc.add(
                                 SeenWorkspaceEvent(workspaceId: workspace.id),
@@ -209,11 +202,12 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                     await MenuDialog.show<UnMuteTimeEnum>(
                                       onTap: (value) {},
                                       context: context,
-                                      title: "Mute this chat?",
+                                      title: "workspace.unmute_title".tr(),
                                       items: UnMuteTimeEnum.values
                                           .map(
                                             (e) => MenuItem(
-                                              content: e.title,
+                                              content: 'workspace.${e.title}'
+                                                  .tr(),
                                               value: e,
                                             ),
                                           )

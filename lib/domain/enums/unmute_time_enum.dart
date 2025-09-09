@@ -1,9 +1,9 @@
 enum UnMuteTimeEnum {
-  m15("For 15 minutes"),
-  h1("For 1 hour"),
-  h8("For 8 hours"),
-  h24("For 24 hours"),
-  life("Until I change it");
+  m15("unmute_time_15"),
+  h1("unmute_time_1"),
+  h8("unmute_time_8"),
+  h24("unmute_time_24"),
+  life("unmute_time_life");
 
   final String title;
 

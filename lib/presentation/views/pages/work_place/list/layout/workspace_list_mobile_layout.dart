@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,14 +6,12 @@ import 'package:ig_agency_app/presentation/views/pages/work_place/list/workspace
 import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-
 import '../../../../../../domain/entities/workspace_entity.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
-import '../../../../widgets/confirm_dialog.dart';
 import '../../../../widgets/menu_dialog.dart';
 import '../widgets/menu_popup_mobile_widget.dart';
 import '../widgets/workspace_tile_mobile_widget.dart';
@@ -100,14 +99,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                         isMute: workspace.isMute,
                         isPin: workspace.isPin,
                         isSeen: workspace.isSeen,
-                        onTapDelete: () async {
-                          final result = await ConfirmDialog.show(
-                            context,
-                            title: "Delete this entire\nconversations?",
-                            okText: "Delete",
-                            cancelText: "Cancel",
-                          );
-                        },
+                        onTapDelete: () async {},
                         onTapMask: () {
                           _workspaceBloc.add(
                             SeenWorkspaceEvent(workspaceId: workspace.id),
@@ -119,11 +111,11 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                                 await MenuDialog.show<UnMuteTimeEnum>(
                                   onTap: (value) {},
                                   context: context,
-                                  title: "Mute this chat?",
+                                  title: "workspace.mute_title".tr(),
                                   items: UnMuteTimeEnum.values
                                       .map(
                                         (e) => MenuItem(
-                                          content: e.title,
+                                          content: 'workspace.${e.title}'.tr(),
                                           value: e,
                                         ),
                                       )
@@ -140,7 +132,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                           );
                         },
                         child: WorkspaceTileMobileWidget(
-                          onTap: (){},
+                          onTap: () {},
                           isMute: workspace.isMute,
                           isPin: workspace.isPin,
                           workspaceAvatar: workspace.workspaceAvatar,
@@ -203,7 +195,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                                     onTapMute: () {},
                                     onTapPin: () {},
                                     child: WorkspaceTileMobileWidget(
-                                      onTap: (){},
+                                      onTap: () {},
                                       isSearchMode: true,
                                       isMute: workspace.isMute,
                                       isPin: workspace.isPin,
@@ -258,7 +250,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
             Padding(
               padding: const EdgeInsets.only(left: 20),
               child: Text(
-                "Workspace",
+                "workspace.workspace".tr(),
                 style: TextStyle(
                   fontFamily: FontFamily.segoeUI,
                   color: AppColors.textDefaultTextInverted,
@@ -301,7 +293,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                           fontWeight: FontWeight.w600,
                           height: 1.50,
                         ),
-                        hintText: "Nhập tên nhóm",
+                        hintText: "workspace.hint_text_search".tr(),
                       );
                     },
                   ),
