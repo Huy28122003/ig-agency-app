@@ -21,6 +21,7 @@
     "mute": "Mute",
     "unmute": "Unmute",
     "delete": "Delete",
+    "unmute_title": "Mute this chat?",
     "unmute_time_15": "For 15 minutes",
     "unmute_time_1": "For 1 hour",
     "unmute_time_8": "For 8 hours",
