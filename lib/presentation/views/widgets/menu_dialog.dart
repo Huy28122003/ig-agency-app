@@ -51,6 +51,7 @@ class _MenuDialogState<T> extends State<MenuDialog<T>> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
+          constraints: BoxConstraints(maxWidth: 400),
           margin: EdgeInsets.symmetric(horizontal: 70),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12.0),
