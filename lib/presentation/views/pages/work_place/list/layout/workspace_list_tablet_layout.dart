@@ -52,11 +52,17 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
           }
         },
         listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(child: _buildBody()),
-          ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20)
+          ),
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildBody()),
+            ],
+          ),
         ),
       ),
     );
