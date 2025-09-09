@@ -53,6 +53,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
         },
         listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
         child: Container(
+          padding: EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20)
