@@ -56,6 +56,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
       final permission = await _permissionManager.checkCameraPermission();
       await _permissionManager.checkMicroPermission();
       if (permission.isGranted && _cameras.isNotEmpty) {
+        await _cameraController?.dispose();
         _cameraController = null;
         _cameraController = CameraController(
           _description,
@@ -173,13 +174,19 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
         newState != _oldLifecycleState) {
       _oldLifecycleState = newState;
       emit(state.copyWith(status: CameraStatus.dispose));
-      _cameraController?.dispose();
-      _cameraController == null;
+      await _cameraController?.dispose();
+      _cameraController = null;
     }
     if (event.state == AppLifecycleState.resumed &&
         _oldLifecycleState == AppLifecycleState.inactive) {
       _oldLifecycleState = newState;
       add(LoadDataEvent());
     }
+  }
+
+  @override
+  Future<void> close() async {
+    await _cameraController?.dispose();
+    return super.close();
   }
 }

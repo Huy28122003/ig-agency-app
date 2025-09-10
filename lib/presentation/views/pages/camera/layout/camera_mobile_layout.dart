@@ -46,15 +46,21 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
       listeners: [
         BlocListener<CameraBloc, CameraState>(
           listenWhen: (pre, cur) => pre.media != cur.media,
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state.media.isNotEmpty) {
-              context.router.push(
+              _cameraBloc.add(
+                AppLifecycleChangedEvent(AppLifecycleState.inactive),
+              );
+              await context.router.push(
                 MediaPreviewRoute(
                   avatar:
                       "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
                 ),
+              );
+              _cameraBloc.add(
+                AppLifecycleChangedEvent(AppLifecycleState.resumed),
               );
             }
           },
@@ -107,16 +113,23 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                             height: 24,
                           ),
                         ),
-                        BlocSelector<CameraBloc, CameraState, bool>(
-                          selector: (state) => state.isFlashEnabled,
-                          builder: (context, isFlashEnabled) {
-                            return AppButton.icon(
-                              onPressed: () {
-                                _cameraBloc.add(ChangeFlashEvent());
-                              },
-                              icon: isFlashEnabled
-                                  ? Assets.icons.icFlashEnable.svg()
-                                  : Assets.icons.icFlashDisable.svg(),
+                        BlocSelector<CameraBloc, CameraState, (bool, bool)>(
+                          selector: (state) =>
+                              (state.isFlashEnabled, state.inProgress),
+                          builder: (context, data) {
+                            return AnimatedSize(
+                              duration: Duration(milliseconds: 350),
+
+                              child: data.$2
+                                  ? SizedBox()
+                                  : AppButton.icon(
+                                      onPressed: () {
+                                        _cameraBloc.add(ChangeFlashEvent());
+                                      },
+                                      icon: data.$1
+                                          ? Assets.icons.icFlashEnable.svg()
+                                          : Assets.icons.icFlashDisable.svg(),
+                                    ),
                             );
                           },
                         ),
@@ -136,36 +149,46 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                       bottom: 20,
                       right: 20,
                     ),
-                    height: 80,
+                    // height: 80,
                     child: BlocSelector<CameraBloc, CameraState, bool>(
                       selector: (state) => state.inProgress,
                       builder: (BuildContext context, bool inProgress) {
-                        return NavigationToolbar(
-                          leading: Container(
-                            width: 44,
-                            alignment: Alignment.centerLeft,
-                            child: AppButton.icon(
-                              onPressed: () {
-                                _cameraBloc.add(PickMediaEvent());
-                              },
-                              icon: Assets.icons.icAlbum.svg(
-                                width: 24,
-                                height: 24,
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: AnimatedOpacity(
+                                duration: Duration(milliseconds: 350),
+                                opacity: inProgress ? 0 : 1,
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: AppButton.icon(
+                                    onPressed: () {
+                                      _cameraBloc.add(PickMediaEvent());
+                                    },
+                                    icon: Assets.icons.icAlbum.svg(
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          middle: TakeMediaButton(
-                            onTap: () {
-                              _cameraBloc.add(TakePhotoEvent());
-                            },
-                            onLongPressStart: () {
-                              _cameraBloc.add(StartRecordEvent());
-                            },
-                            onLongPressEnd: () {
-                              _cameraBloc.add(StopRecordEvent());
-                            },
-                            isInProgress: inProgress,
-                          ),
+                            Expanded(
+                              child: TakeMediaButton(
+                                onTap: () {
+                                  _cameraBloc.add(TakePhotoEvent());
+                                },
+                                onLongPressStart: () {
+                                  _cameraBloc.add(StartRecordEvent());
+                                },
+                                onLongPressEnd: () {
+                                  _cameraBloc.add(StopRecordEvent());
+                                },
+                                isInProgress: inProgress,
+                              ),
+                            ),
+                            Spacer(),
+                          ],
                         );
                       },
                     ),

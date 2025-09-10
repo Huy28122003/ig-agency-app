@@ -59,6 +59,9 @@ dependencies:
   # Permission
   permission_handler: ^12.0.1
 
+  # Crop image
+  image_cropper: ^9.1.0
+
   # Other
   freezed: ^3.2.0
   freezed_annotation: ^3.1.0

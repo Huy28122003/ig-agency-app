@@ -43,14 +43,17 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                   ),
-                  child: (_bloc.path.isEmpty)
-                      ? Center(child: CircularProgressIndicator())
-                      : _bloc.isPhoto
-                      ? FittedBox(
-                    fit: BoxFit.cover,
-                    child: Image.file(File(_bloc.path)),
-                  )
-                      : AppVideoPlayer(path: _bloc.path, isAutoPlay: true),
+                  child:
+                      BlocSelector<MediaPreviewBloc, MediaPreviewState, String>(
+                        selector: (state) => state.path,
+                        builder: (context, path) {
+                          return (path.isEmpty)
+                              ? Center(child: CircularProgressIndicator())
+                              : _bloc.isPhoto
+                              ? Image.file(File(path))
+                              : AppVideoPlayer(path: path, isAutoPlay: true);
+                        },
+                      ),
                 ),
               ),
             ),
@@ -73,14 +76,13 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                         ),
                       ),
                       Spacer(),
-                      AppButton.icon(
-                        onPressed: () {
-                          context.router.push(
-                            MediaEditRoute(mediaPath: _bloc.path),
-                          );
-                        },
-                        icon: Assets.icons.icCrop.svg(width: 24, height: 24),
-                      ),
+                      if (_bloc.isPhoto)
+                        AppButton.icon(
+                          onPressed: () {
+                            _bloc.add(EditMediaEvent());
+                          },
+                          icon: Assets.icons.icCrop.svg(width: 24, height: 24),
+                        ),
                       AppButton.icon(
                         onPressed: () {
                           _bloc.add(SaveMediaEvent());
