@@ -42,7 +42,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
   CameraController? get controller => _cameraController;
 
   CameraDescription get _description =>
-      _cameras.length > 1 ? _cameras[state.isFontCamera ? 0 : 1] : _cameras[0];
+      _cameras.length > 1 ? _cameras[state.isFontCamera ? 1 : 0] : _cameras[0];
 
   Future<void> _onLoadData(
     LoadDataEvent event,
@@ -167,16 +167,17 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     AppLifecycleChangedEvent event,
     Emitter<CameraState> emit,
   ) async {
+    if (state.status.isInitial) return;
     final newState = event.state;
-    if (newState == AppLifecycleState.inactive) {
-      if (newState == _oldLifecycleState) return;
+    if (newState == AppLifecycleState.inactive &&
+        newState != _oldLifecycleState) {
       _oldLifecycleState = newState;
-      emit(state.copyWith(status: CameraStatus.initial));
+      emit(state.copyWith(status: CameraStatus.dispose));
       _cameraController?.dispose();
       _cameraController == null;
     }
-    if (event.state == AppLifecycleState.resumed) {
-      if (newState == _oldLifecycleState) return;
+    if (event.state == AppLifecycleState.resumed &&
+        _oldLifecycleState == AppLifecycleState.inactive) {
       _oldLifecycleState = newState;
       add(LoadDataEvent());
     }

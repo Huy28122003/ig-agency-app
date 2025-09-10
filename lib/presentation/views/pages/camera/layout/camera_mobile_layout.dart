@@ -30,8 +30,8 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    context.read<CameraBloc>().add(AppLifecycleChangedEvent(state));
     super.didChangeAppLifecycleState(state);
+    context.read<CameraBloc>().add(AppLifecycleChangedEvent(state));
   }
 
   @override
@@ -48,14 +48,14 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
           listenWhen: (pre, cur) => pre.media != cur.media,
           listener: (context, state) {
             if (state.media.isNotEmpty) {
-              // context.router.push(
-              //   MediaPreviewRoute(
-              //     avatar:
-              //         "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
-              //     mediaPath: state.media,
-              //     isPhoto: state.isPhoto,
-              //   ),
-              // );
+              context.router.push(
+                MediaPreviewRoute(
+                  avatar:
+                      "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
+                  mediaPath: state.media,
+                  isPhoto: state.isPhoto,
+                ),
+              );
             }
           },
         ),
