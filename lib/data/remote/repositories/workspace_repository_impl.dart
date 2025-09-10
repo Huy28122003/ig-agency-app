@@ -1,9 +1,10 @@
 import 'package:ig_agency_app/domain/entities/paged_result.dart';
+import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
-import 'package:ig_agency_app/shared/mock_data.dart';
 import 'package:injectable/injectable.dart';
 import '../../../domain/repositories/workspace_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
+import '../../../shared/utils/mock_data.dart';
 
 @Injectable(as: WorkspaceRepository)
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
@@ -62,6 +63,23 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     required int groupId,
     required String bio,
   }) async {
-    return true;
+    try {
+      return true;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PagedResult<UserEntity>> getUserByWorkspaceId({
+    required int workspaceId,
+    required int offset,
+    required int limit,
+  }) {
+    try {
+      return MockData().getUsers();
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
   }
 }

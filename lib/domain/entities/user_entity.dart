@@ -9,6 +9,8 @@ class UserEntity extends Equatable {
     this.createdAt,
     this.updatedAt,
     this.bio,
+    this.lastActiveAt,
+    required this.isAdmin,
   });
 
   final String id;
@@ -18,6 +20,8 @@ class UserEntity extends Equatable {
   final String? bio;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? lastActiveAt;
+  final bool isAdmin;
 
   @override
   List<Object?> get props => [
@@ -28,6 +32,8 @@ class UserEntity extends Equatable {
     bio,
     createdAt,
     updatedAt,
+    isAdmin,
+    lastActiveAt,
   ];
 
   UserEntity copyWith({
@@ -38,6 +44,8 @@ class UserEntity extends Equatable {
     String? bio,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? lastActiveAt,
+    bool? isAdmin,
   }) {
     return UserEntity(
       id: id ?? this.id,
@@ -47,6 +55,8 @@ class UserEntity extends Equatable {
       bio: bio ?? this.bio,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      lastActiveAt: lastActiveAt ?? this.lastActiveAt,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 }

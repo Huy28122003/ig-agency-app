@@ -275,6 +275,10 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   info: ((state?.countMember ?? 0) > 0)
                       ? "${state?.countMember}"
                       : null,
+                  onTap: () {
+                    if (state == null) return;
+                    context.router.push(MembersRoute(workspaceId: state.id));
+                  },
                 ),
               ],
             );

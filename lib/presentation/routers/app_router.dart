@@ -14,6 +14,7 @@ import '../views/pages/authentication/reset_password/reset_password_page.dart';
 import '../views/pages/media_edit/media_edit_page.dart';
 import '../views/pages/media_preview/media_preview_page.dart';
 import '../views/pages/group_info/group_info_page.dart';
+import '../views/pages/members/members_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
 import '../views/pages/profile/profile_page.dart';
@@ -100,5 +101,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: MediaEditRoute.page),
     AutoRoute(page: GroupInfoRoute.page),
     AutoRoute(page: EditWorkspaceBioRoute.page),
+    AutoRoute(page: MembersRoute.page),
   ];
 }

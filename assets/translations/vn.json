@@ -43,5 +43,14 @@
   "workspace_bio": {
     "title": "Tiểu sử ",
     "done": "Hoàn th"
+  },
+  "members": {
+    "title": "Thành viên",
+    "members": "Thành viên",
+    "online": "Trực tuyến",
+    "active": "Hoạt động",
+    "ago": "trước",
+    "role_admin": "Quản trị viên",
+    "role_member": "Thành viên"
   }
 }

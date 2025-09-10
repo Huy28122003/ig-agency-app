@@ -59,5 +59,14 @@
   "workspace_bio": {
     "title": "Bio",
     "done": "Done"
+  },
+  "members": {
+    "title": "Member",
+    "members": "Members",
+    "online": "Online",
+    "active": "Active",
+    "ago": "ago",
+    "role_admin": "Admin",
+    "role_member": "Member"
   }
 }
