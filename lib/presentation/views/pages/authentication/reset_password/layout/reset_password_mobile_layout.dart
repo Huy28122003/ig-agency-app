@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/reset_password/bloc/reset_password_bloc.dart';
@@ -82,7 +83,7 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
             ),
             SizedBox(height: 20),
             Text(
-              'Reset Password',
+              'reset_password.title'.tr(),
               style: TextStyle(
                 color: AppColors.textDefaultTextInverted,
                 fontSize: 32,
@@ -121,7 +122,7 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                       value: newPassword,
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.done,
-                      hintText: "New password",
+                      hintText: "reset_password.hint_text_new_password".tr(),
                       onChanged: (value) => _resetPasswordBloc.add(
                         NewPasswordChangedEvent(newPassword: value),
                       ),
@@ -130,12 +131,12 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                 ),
                 SizedBox(height: 20),
                 BlocSelector<
-                  ResetPasswordBloc,
-                  ResetPasswordState,
-                  (String?, String)
+                    ResetPasswordBloc,
+                    ResetPasswordState,
+                    (String?, String)
                 >(
                   selector: (state) =>
-                      (state.errorMessage, state.confirmPassword),
+                  (state.errorMessage, state.confirmPassword),
                   builder: (context, data) {
                     return AppTextField(
                       obscureText: true,
@@ -143,7 +144,8 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                       value: data.$2,
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.done,
-                      hintText: "Confirm New Password",
+                      hintText: "reset_password.hint_text_confirm_password"
+                          .tr(),
                       onChanged: (value) => _resetPasswordBloc.add(
                         ConfirmPasswordChangedEvent(confirmPassword: value),
                       ),
@@ -153,12 +155,12 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                 SizedBox(height: 40),
                 AppButton.primary(
                   backgroundColor:
-                      AppColors.surfaceContainerPrimaryPrimaryDefault,
+                  AppColors.surfaceContainerPrimaryPrimaryDefault,
                   onPressed: () {
                     _resetPasswordBloc.add(ConfirmResetPasswordEvent());
                   },
                   child: Text(
-                    'Reset Password',
+                    'reset_password.reset_password'.tr(),
                     style: TextStyle(
                       color: AppColors.textDefaultTextInvertedDisabled,
                       fontSize: 16,

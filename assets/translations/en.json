@@ -12,6 +12,37 @@
     "group": "Group",
     "message": "Message"
   },
+  "workspace": {
+    "workspace": "Workspace",
+    "mark_as_read": "Mark as read",
+    "mark_as_unread": "Mark as unread",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "delete": "Delete",
+    "unmute_title": "Mute this chat?",
+    "unmute_time_15": "For 15 minutes",
+    "unmute_time_1": "For 1 hour",
+    "unmute_time_8": "For 8 hours",
+    "unmute_time_24": "For 24 hours",
+    "unmute_time_life": "Until I change it",
+    "hint_text_search": "Enter workspace name"
+  },
+  "general": {
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "forgot_password": {
+    "forgot_password": "Forgot Password?",
+    "hint_text_email": "Enter your email",
+    "send_code": "Send code"
+  },
+  "otp": {
+    "title": "OTP Verification",
+    "description": "Please enter the OTP sent on your\nregistered email address",
+    "continue": "Continue"
+  },
   "camera": {
     "send": "Send"
   }

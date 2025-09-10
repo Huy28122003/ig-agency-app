@@ -33,12 +33,16 @@ class _NavMobileLayoutState extends State<NavMobileLayout> {
     ),
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icSearch.svg(
+        width: 24,
+        height: 24,
         colorFilter: ColorFilter.mode(
           AppColors.textPrimaryTextDefault,
           BlendMode.srcIn,
         ),
       ),
       icon: Assets.icons.icSearch.svg(
+        width: 24,
+        height: 24,
         colorFilter: ColorFilter.mode(
           AppColors.textDefaultTextSub2,
           BlendMode.srcIn,
