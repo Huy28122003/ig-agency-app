@@ -45,5 +45,16 @@
   },
   "camera": {
     "send": "Send"
+  },
+  "dashboard": {
+    "dashboard": "Dashboard",
+    "total_member": "Total Members",
+    "details": "Details",
+    "all_violations": "All Violations",
+    "all devices": "All Devices",
+    "total_visits": "Total Visits",
+    "online": "Online",
+    "accept": "Accept",
+    "block": "Block"
   }
 }

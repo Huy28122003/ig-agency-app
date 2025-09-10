@@ -10,7 +10,6 @@ import '../views/pages/chat_info/chat_info_page.dart';
 import '../views/pages/empty_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/authentication/reset_password/reset_password_page.dart';
-import '../views/pages/media_edit/media_edit_page.dart';
 import '../views/pages/media_preview/media_preview_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
@@ -95,6 +94,5 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SharedContentRoute.page),
     AutoRoute(page: CameraRoute.page),
     AutoRoute(page: MediaPreviewRoute.page),
-    AutoRoute(page: MediaEditRoute.page),
   ];
 }
