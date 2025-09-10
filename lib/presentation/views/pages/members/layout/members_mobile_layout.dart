@@ -90,6 +90,7 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
           },
           builder: (context, state) {
             return AppListView<UserEntity>(
+              padding: EdgeInsets.only(bottom: 10),
               separatorBuilder: (context, index) {
                 return SizedBox();
               },
