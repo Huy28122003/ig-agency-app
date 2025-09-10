@@ -6,4 +6,6 @@ class ChatBubbleConstants {
 
   static const double replyIconSize = 28.0;
   static const double avatarSize = 32.0;
+  static const double continuationVerticalPadding = 4.0;
+  static const double continuationSystemVerticalPadding = 0.0;
 }

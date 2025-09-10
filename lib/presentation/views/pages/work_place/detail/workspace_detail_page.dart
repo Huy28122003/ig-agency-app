@@ -5,9 +5,13 @@ import 'package:ig_agency_app/presentation/base/base_page.dart';
 
 import '../../../../../di/di.dart';
 import '../../../../../domain/usecases/fetch_current_user_use_case.dart';
+import '../../../../../domain/usecases/fetch_pinned_message_use_case.dart';
 import '../../../../../domain/usecases/get_pinned_message_summary_workspace_use_case.dart';
 import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case.dart';
 import '../../../../../domain/usecases/message/send_message_use_case.dart';
+import '../../../../../domain/usecases/fetch_member_in_workspace_use_case.dart';
+import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
+import '../../../../../domain/usecases/search_member_in_workspace_use_case.dart';
 import 'layout/workspace_detail_tablet_layout.dart';
 import 'layout/workspace_detail_mobile_layout.dart';
 import 'workspace_detail_bloc.dart';
@@ -50,6 +54,10 @@ class WSDetailPage
         getPinnedMessageSummaryWorkspaceUseCase:
             getIt<GetPinnedMessageSummaryWorkspaceUseCase>(),
         sendMessageUseCase: getIt<SendMessageUseCase>(),
+        fetchMemberInWorkspaceUseCase: getIt<FetchMemberInWorkspaceUseCase>(),
+        searchMemberInWorkspaceUseCase: getIt<SearchMemberInWorkspaceUseCase>(),
+        fetchPinnedMessageUseCase: getIt<FetchPinnedMessageUseCase>(),
+        unpinMessageUseCase: getIt<UnpinMessageUseCase>(),
       ),
       child: this,
     );

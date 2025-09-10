@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
-import '../../models/pinned_message_summary_ui_model.dart';
+import '../../ui_models/pinned_message_summary_ui_model.dart';
 import '../../../resources/colors.dart';
 
 class PinnedMessageSection extends StatelessWidget {
-  const PinnedMessageSection({super.key, required this.pinnedMessageSummary});
+  const PinnedMessageSection({
+    super.key,
+    required this.pinnedMessageSummary,
+    required this.onTap,
+  });
 
   final PinnedMessageSummaryUiModel pinnedMessageSummary;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // TODO: Show bottom sheet pinned messages
-      },
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         clipBehavior: Clip.antiAlias,

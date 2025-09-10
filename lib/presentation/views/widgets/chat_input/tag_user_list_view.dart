@@ -34,8 +34,10 @@ class TagUserListView extends StatelessWidget {
         itemCount: users.length,
         itemBuilder: (context, index) =>
             _TagUserItem(user: users[index], onTap: () => onTap(users[index])),
-        separatorBuilder: (context, index) =>
-            Divider(height: 1, color: AppColors.outlineGrayStrong200),
+        separatorBuilder: (context, index) => Padding(
+          padding: EdgeInsets.only(left: 60),
+          child: Divider(height: 1, color: AppColors.outlineGrayStrong200),
+        ),
       ),
     );
   }

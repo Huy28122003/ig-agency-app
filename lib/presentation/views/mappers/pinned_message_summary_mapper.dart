@@ -1,6 +1,6 @@
 import '../../../domain/entities/pinned_message_summary.dart';
 import '../../../domain/entities/message/message_content.dart';
-import '../models/pinned_message_summary_ui_model.dart';
+import '../ui_models/pinned_message_summary_ui_model.dart';
 
 class PinnedMessageSummaryMapper {
   static PinnedMessageSummaryUiModel fromMessageEntity(

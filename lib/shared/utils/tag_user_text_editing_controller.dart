@@ -7,19 +7,31 @@ import '../../domain/entities/message/text_segment.dart';
 import '../../presentation/resources/colors.dart';
 
 class _UserTagData {
+  final String id;
   final String username;
   final String userId;
-  int start;
-  int end;
+  final int start;
+  final int end;
 
   _UserTagData({
+    required this.id,
     required this.username,
     required this.userId,
     required this.start,
     required this.end,
   });
 
-  TextSegment toTextSegment() {
+  _UserTagData copyWith({int? start, int? end}) {
+    return _UserTagData(
+      id: id,
+      username: username,
+      userId: userId,
+      start: start ?? this.start,
+      end: end ?? this.end,
+    );
+  }
+
+  TextSegment toTagTextSegment() {
     return TextSegment(
       type: TextSegmentType.tag,
       start: start,
@@ -34,22 +46,22 @@ class TagUserTextEditingController extends TextEditingController {
     addListener(_onTextChanged);
   }
 
-  final List<_UserTagData> _mentions = [];
-  List<_UserTagData> _lastMentions = [];
+  final List<_UserTagData> _tags = [];
+  String _previousText = '';
 
-  final _showMentionOverlayController = StreamController<bool>.broadcast();
-  Stream<bool> get showMentionOverlay => _showMentionOverlayController.stream;
+  final _showTagOverlayController = StreamController<bool>.broadcast();
+  Stream<bool> get showTagOverlay => _showTagOverlayController.stream;
 
-  final _mentionQueryController = StreamController<String>.broadcast();
-  Stream<String> get mentionQuery => _mentionQueryController.stream;
+  final _tagQueryController = StreamController<String>.broadcast();
+  Stream<String> get tagQuery => _tagQueryController.stream;
 
   Timer? _debounceTimer;
 
   @override
   void dispose() {
     removeListener(_onTextChanged);
-    _showMentionOverlayController.close();
-    _mentionQueryController.close();
+    _showTagOverlayController.close();
+    _tagQueryController.close();
     _debounceTimer?.cancel();
     super.dispose();
   }
@@ -57,78 +69,158 @@ class TagUserTextEditingController extends TextEditingController {
   void _onTextChanged() {
     final newText = value.text;
     final cursorPosition = value.selection.baseOffset;
+    final oldText = _previousText;
+    _previousText = newText;
 
-    _lastMentions = List.from(_mentions);
-    _mentions.clear();
-
-    final RegExp mentionPattern = RegExp(r'@([a-zA-Z0-9_]+)');
-    for (final match in mentionPattern.allMatches(newText)) {
-      final username = match.group(1)!;
-      final mention = _lastMentions
-          .where((u) => u.username == username)
-          .firstOrNull;
-      if (mention != null) {
-        addMention(mention.username, mention.userId);
-      }
-    }
+    _adjustAndCleanTags(oldText, newText);
 
     String? currentQuery;
     bool shouldShowOverlay = false;
 
-    if (cursorPosition > 0) {
-      final textBeforeCursor = newText.substring(0, cursorPosition);
-      final lastAtIndex = textBeforeCursor.lastIndexOf('@');
+    final atSignIndex = cursorPosition == 0
+        ? -1
+        : newText.lastIndexOf('@', cursorPosition - 1);
+    if (atSignIndex != -1) {
+      final potentialQuery = newText.substring(atSignIndex, cursorPosition);
 
-      if (lastAtIndex != -1) {
-        final potentialQuery = textBeforeCursor.substring(lastAtIndex + 1);
-        if (potentialQuery.isNotEmpty && !potentialQuery.contains(' ')) {
-          currentQuery = potentialQuery;
-          shouldShowOverlay = true;
-        } else if (potentialQuery.isEmpty) {
+      bool isInsideExistingTag = false;
+      for (final tag in _tags) {
+        if (cursorPosition > tag.start && cursorPosition <= tag.end) {
+          isInsideExistingTag = true;
+          break;
+        }
+      }
+
+      if (!isInsideExistingTag) {
+        final spaceAfterAt = potentialQuery.indexOf(' ', 1);
+        final newlineAfterAt = potentialQuery.indexOf('\n', 1);
+
+        final bool hasSpaceBeforeAt =
+            atSignIndex == 0 ||
+            (atSignIndex > 0 && newText[atSignIndex - 1] == ' ');
+
+        if (spaceAfterAt == -1 && newlineAfterAt == -1 && hasSpaceBeforeAt) {
+          currentQuery = potentialQuery.substring(1);
           shouldShowOverlay = true;
         }
       }
     }
 
-    _showMentionOverlayController.add(shouldShowOverlay);
-    if (shouldShowOverlay) {
+    if (shouldShowOverlay && currentQuery != null) {
       _debounceTimer?.cancel();
       _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-        _mentionQueryController.add(currentQuery ?? '');
+        _tagQueryController.add(currentQuery!);
       });
+    } else {
+      _debounceTimer?.cancel();
     }
+
+    _showTagOverlayController.add(shouldShowOverlay);
   }
 
-  void addMention(String username, String userId) {
+  void _adjustAndCleanTags(String oldText, String newText) {
+    if (oldText == newText) return;
+
+    final int oldLength = oldText.length;
+    final int newLength = newText.length;
+
+    int commonPrefix = 0;
+    while (commonPrefix < oldLength &&
+        commonPrefix < newLength &&
+        oldText.codeUnitAt(commonPrefix) == newText.codeUnitAt(commonPrefix)) {
+      commonPrefix++;
+    }
+
+    int commonSuffix = 0;
+    while (commonSuffix < oldLength &&
+        commonSuffix < newLength &&
+        oldText.codeUnitAt(oldLength - 1 - commonSuffix) ==
+            newText.codeUnitAt(newLength - 1 - commonSuffix) &&
+        (oldLength - 1 - commonSuffix) >= commonPrefix &&
+        (newLength - 1 - commonSuffix) >= commonPrefix) {
+      commonSuffix++;
+    }
+
+    final int oldEditedStart = commonPrefix;
+    final int oldEditedEnd = oldLength - commonSuffix;
+    final int newEditedEnd = newLength - commonSuffix;
+
+    final int lengthChange = newEditedEnd - oldEditedEnd;
+
+    final List<_UserTagData> updatedTags = [];
+    for (var tag in _tags) {
+      if (tag.end <= oldEditedStart) {
+        updatedTags.add(tag);
+      } else if (tag.start >= oldEditedEnd) {
+        tag = tag.copyWith(
+          start: tag.start + lengthChange,
+          end: tag.end + lengthChange,
+        );
+        updatedTags.add(tag);
+      }
+    }
+
+    final tags = updatedTags;
+    tags.removeWhere(
+      (tag) =>
+          tag.start < 0 ||
+          tag.end > newText.length ||
+          tag.start >= tag.end ||
+          newText.substring(tag.start, tag.end) != '@${tag.username}',
+    );
+
+    _tags
+      ..clear()
+      ..addAll(tags);
+  }
+
+  void addTag(String username, String userId) {
+    _showTagOverlayController.add(false);
+
     final currentText = value.text;
     final cursorPosition = value.selection.baseOffset;
 
-    final textBeforeCursor = currentText.substring(0, cursorPosition);
-    final lastAtIndex = textBeforeCursor.lastIndexOf('@');
-
-    if (lastAtIndex != -1) {
-      final prefixText = currentText.substring(0, lastAtIndex);
-      final suffixText = currentText.substring(cursorPosition);
-      final mentionText = '@$username';
-
-      final newText =
-          '$prefixText$mentionText $suffixText'; // add space after mention
-      final newCursorPosition = lastAtIndex + mentionText.length + 1;
-
-      value = TextEditingValue(
-        text: newText,
-        selection: TextSelection.collapsed(offset: newCursorPosition),
-      );
-
-      _mentions.add(
-        _UserTagData(
-          username: username,
-          userId: userId,
-          start: lastAtIndex,
-          end: lastAtIndex + mentionText.length,
-        ),
-      );
+    final atSignIndex = currentText.lastIndexOf('@', cursorPosition - 1);
+    if (atSignIndex == -1) {
+      return;
     }
+
+    final String tagText = '@$username';
+    final String newId =
+        'tag-$username-${DateTime.now().millisecondsSinceEpoch}';
+
+    final String newTextBeforeQuery = currentText.substring(0, atSignIndex);
+    final String newTextAfterQuery = currentText.substring(cursorPosition);
+
+    final String finalNewText =
+        '$newTextBeforeQuery$tagText $newTextAfterQuery';
+
+    value = TextEditingValue(
+      text: finalNewText,
+      selection: TextSelection.collapsed(
+        offset: newTextBeforeQuery.length + tagText.length + 1,
+      ),
+    );
+
+    final newTag = _UserTagData(
+      id: newId,
+      username: username,
+      userId: userId,
+      start: newTextBeforeQuery.length,
+      end: newTextBeforeQuery.length + tagText.length,
+    );
+    _tags.add(newTag);
+
+    final int diff = (tagText.length + 1) - (cursorPosition - atSignIndex);
+    for (var tag in _tags) {
+      if (tag.id != newTag.id && tag.start >= newTag.start) {
+        tag = tag.copyWith(start: tag.start + diff, end: tag.end + diff);
+      }
+    }
+  }
+
+  List<TextSegment> get tagTextSegments {
+    return _tags.map((e) => e.toTagTextSegment()).toList();
   }
 
   @override
@@ -140,13 +232,13 @@ class TagUserTextEditingController extends TextEditingController {
     final List<TextSpan> children = [];
     int currentPosition = 0;
 
-    _mentions.sort((a, b) => a.start.compareTo(b.start));
+    _tags.sort((a, b) => a.start.compareTo(b.start));
 
-    for (final mention in _mentions) {
-      if (mention.start > currentPosition) {
+    for (final tag in _tags) {
+      if (tag.start > currentPosition) {
         children.add(
           TextSpan(
-            text: text.substring(currentPosition, mention.start),
+            text: text.substring(currentPosition, tag.start),
             style: style,
           ),
         );
@@ -154,11 +246,11 @@ class TagUserTextEditingController extends TextEditingController {
 
       children.add(
         TextSpan(
-          text: text.substring(mention.start, mention.end),
+          text: text.substring(tag.start, tag.end),
           style: style?.copyWith(color: AppColors.textAlertTextInfo),
         ),
       );
-      currentPosition = mention.end;
+      currentPosition = tag.end;
     }
 
     if (currentPosition < text.length) {
@@ -168,9 +260,5 @@ class TagUserTextEditingController extends TextEditingController {
     }
 
     return TextSpan(style: style, children: children);
-  }
-
-  List<TextSegment> getMentionTextSegments() {
-    return _mentions.map((m) => m.toTextSegment()).toList();
   }
 }

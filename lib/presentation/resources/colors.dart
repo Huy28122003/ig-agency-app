@@ -49,4 +49,6 @@ abstract class AppColors {
 
   /// Others
   static const Color colorsBlue = Color(0xFF007AFF);
+
+  static Color? labelsTertiary = Color(0x4C3C3C43);
 }

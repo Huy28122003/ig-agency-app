@@ -20,47 +20,47 @@ class ChatOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Animation
-    // return AnimatedSwitcher(
-    //   duration: const Duration(milliseconds: 150),
-    //   transitionBuilder: (child, animation) {
-    //     final fade = CurvedAnimation(parent: animation, curve: Curves.linear);
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 50),
+      transitionBuilder: (child, animation) {
+        final fade = CurvedAnimation(parent: animation, curve: Curves.linear);
 
-    //     if (child.key == const Key('options-bar')) {
-    //       final slide = Tween<Offset>(
-    //         begin: const Offset(-0.2, 0),
-    //         end: Offset.zero,
-    //       ).animate(animation);
-    //       return SlideTransition(
-    //         position: slide,
-    //         child: FadeTransition(opacity: fade, child: child),
-    //       );
-    //     } else {
-    //       return FadeTransition(opacity: fade, child: child);
-    //     }
-    //   },
-    //   child: hasOptions
-    //       ? Padding(
-    //           key: const Key('options-bar'),
-    //           padding: const EdgeInsets.only(left: 12),
-    //           child: _buildOptionsBar(),
-    //         )
-    //       : Padding(
-    //           key: const Key('arrow'),
-    //           padding: const EdgeInsets.only(left: 10),
-    //           child: _buildArrow(),
-    //         ),
-    // );
-
-    if (hasOptions) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: _buildOptionsBar(),
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
-      child: _buildArrow(),
+        if (child.key == const Key('options-bar')) {
+          final slide = Tween<Offset>(
+            begin: const Offset(-0.2, 0),
+            end: Offset.zero,
+          ).animate(animation);
+          return SlideTransition(
+            position: slide,
+            child: FadeTransition(opacity: fade, child: child),
+          );
+        } else {
+          return FadeTransition(opacity: fade, child: child);
+        }
+      },
+      child: hasOptions
+          ? Padding(
+              key: const Key('options-bar'),
+              padding: const EdgeInsets.only(left: 12),
+              child: _buildOptionsBar(),
+            )
+          : Padding(
+              key: const Key('arrow'),
+              padding: const EdgeInsets.only(left: 10),
+              child: _buildArrow(),
+            ),
     );
+
+    // if (hasOptions) {
+    //   return Padding(
+    //     padding: const EdgeInsets.only(left: 12),
+    //     child: _buildOptionsBar(),
+    //   );
+    // }
+    // return Padding(
+    //   padding: const EdgeInsets.only(left: 10),
+    //   child: _buildArrow(),
+    // );
   }
 
   Widget _buildOptionsBar() {

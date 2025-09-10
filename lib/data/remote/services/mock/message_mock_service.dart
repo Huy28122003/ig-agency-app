@@ -541,6 +541,22 @@ class MessageMockService {
             avatar: e['avatarUrl']!,
           ),
         )
+        .skip(offset)
+        .take(limit)
+        .toList();
+  }
+
+  List<UserEntity> mockSearchMemberInGroup(int groupId, String query) {
+    return _mockUsers
+        .map(
+          (e) => UserEntity(
+            id: e['id']!,
+            name: e['name']!,
+            email: '',
+            avatar: e['avatarUrl']!,
+          ),
+        )
+        .where((e) => e.name.contains(query))
         .toList();
   }
 }

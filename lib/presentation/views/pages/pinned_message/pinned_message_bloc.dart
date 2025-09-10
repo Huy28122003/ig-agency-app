@@ -9,7 +9,7 @@ import '../../../../domain/usecases/fetch_pinned_message_use_case.dart';
 import '../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../base/base_state.dart';
 import '../../mappers/pinned_message_mapper.dart';
-import '../../models/pinned_message_ui_model.dart';
+import '../../ui_models/pinned_message_ui_model.dart';
 
 part 'pinned_message_event.dart';
 

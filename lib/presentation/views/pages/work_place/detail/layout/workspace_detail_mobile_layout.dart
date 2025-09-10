@@ -132,7 +132,7 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
                   userId: bloc.userId,
                   messageReply: message,
                   onReplyClose: () {
-                    // TODO hoannk:
+                    bloc.add(CloseReplyMessageEvent());
                   },
                   onDocumentTap: () {
                     // TODO hoannk:

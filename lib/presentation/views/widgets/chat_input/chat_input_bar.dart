@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/message/message.dart';
-import 'package:ig_agency_app/domain/usecases/fetch_member_in_workspace_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/search_member_in_workspace_use_case.dart';
+import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/chat_input/tag_user_list_view.dart';
 
-import '../../../../di/di.dart';
+import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/utils/tag_user_text_editing_controller.dart';
 import '../../../resources/colors.dart';
 import '../chat/reply_message_section.dart';
 import 'chat_option.dart';
 import 'chat_textfield.dart';
-import 'cubit/chat_input_cubit.dart';
 
 class ChatInputBar extends StatelessWidget {
   const ChatInputBar({
@@ -38,21 +36,14 @@ class ChatInputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ChatInputCubit(
-        fetchMemberInWorkspaceUseCase: getIt<FetchMemberInWorkspaceUseCase>(),
-        searchMemberInWorkspaceUseCase: getIt<SearchMemberInWorkspaceUseCase>(),
-        workspaceId: workspaceId,
-      )..fetchMembers(),
-      child: _ChatInputBar(
-        userId: userId,
-        messageReply: messageReply,
-        onReplyClose: onReplyClose,
-        onDocumentTap: onDocumentTap,
-        onCameraTap: onCameraTap,
-        onImageTap: onImageTap,
-        onSendTap: onSendTap,
-      ),
+    return _ChatInputBar(
+      userId: userId,
+      messageReply: messageReply,
+      onReplyClose: onReplyClose,
+      onDocumentTap: onDocumentTap,
+      onCameraTap: onCameraTap,
+      onImageTap: onImageTap,
+      onSendTap: onSendTap,
     );
   }
 }
@@ -81,7 +72,7 @@ class _ChatInputBar extends StatefulWidget {
 }
 
 class _ChatInputBarState extends State<_ChatInputBar> {
-  late final ChatInputCubit _cubit;
+  late final WSDetailBloc _bloc;
 
   final FocusNode _focusNode = FocusNode();
   late final TagUserTextEditingController _textEditingController;
@@ -92,28 +83,28 @@ class _ChatInputBarState extends State<_ChatInputBar> {
   @override
   void initState() {
     super.initState();
-    _cubit = context.read<ChatInputCubit>();
+    _bloc = context.read<WSDetailBloc>();
     _textEditingController = TagUserTextEditingController();
 
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
-        _cubit.updateHasOptions(false);
+        _bloc.add(UpdateHasOptionsEvent(hasOptions: false));
       } else {
-        _cubit.updateHasOptions(true);
+        _bloc.add(UpdateHasOptionsEvent(hasOptions: true));
       }
     });
 
     _textEditingController.addListener(() {
       final input = _textEditingController.text;
 
-      if (_cubit.state.hasSendButton && input.isEmpty) {
-        _cubit.updateHasSendButton(false);
-      } else if (!_cubit.state.hasSendButton && input.isNotEmpty) {
-        _cubit.updateHasSendButton(true);
+      if (_bloc.state.hasSendButton && input.isEmpty) {
+        _bloc.add(UpdateHasSendButtonEvent(hasSendButton: false));
+      } else if (!_bloc.state.hasSendButton && input.isNotEmpty) {
+        _bloc.add(UpdateHasSendButtonEvent(hasSendButton: true));
       }
     });
 
-    _textEditingController.showMentionOverlay.listen((show) {
+    _textEditingController.showTagOverlay.listen((show) {
       if (show) {
         _showOverlay();
       } else {
@@ -121,13 +112,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
       }
     });
 
-    // _textEditingController.mentionQuery.listen((query) {
-    //   _cubit.searchMembers(query);
-
-    //   if (_overlayEntry != null) {
-    //     _overlayEntry?.markNeedsBuild();
-    //   }
-    // });
+    _bloc.listenTagQuery(_textEditingController.tagQuery);
   }
 
   void _showOverlay() {
@@ -147,12 +132,12 @@ class _ChatInputBarState extends State<_ChatInputBar> {
         return Positioned(
           left: 10,
           right: 10,
-          bottom: MediaQuery.of(context).size.height - offset.dy + 10,
+          bottom: MediaQuery.of(context).size.height - offset.dy,
           child: Material(
             color: Colors.transparent,
             child: BlocProvider.value(
-              value: _cubit,
-              child: BlocConsumer<ChatInputCubit, ChatInputState>(
+              value: _bloc,
+              child: BlocConsumer<WSDetailBloc, WSDetailState>(
                 listenWhen: (previous, current) =>
                     previous.users != current.users,
                 listener: (context, state) {
@@ -171,8 +156,8 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                   return TagUserListView(
                     users: state.users,
                     onTap: (user) {
-                      _textEditingController.addMention(user.name, user.id);
-                      _hideOverlay();
+                      _textEditingController.addTag(user.name, user.id);
+                      _focusNode.requestFocus();
                     },
                   );
                 },
@@ -206,7 +191,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
     final messageReply = widget.messageReply;
     final bool hasReplyMessage = messageReply != null;
 
-    return BlocListener<ChatInputCubit, ChatInputState>(
+    return BlocListener<WSDetailBloc, WSDetailState>(
       listenWhen: (previous, current) => previous.users != current.users,
       listener: (context, state) {},
       child: Column(
@@ -219,6 +204,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
               onClose: widget.onReplyClose,
             ),
           Container(
+            key: _inputKey,
             padding: const EdgeInsets.symmetric(vertical: 10),
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
@@ -241,7 +227,9 @@ class _ChatInputBarState extends State<_ChatInputBar> {
             child: Row(
               spacing: 8,
               children: [
-                BlocBuilder<ChatInputCubit, ChatInputState>(
+                BlocBuilder<WSDetailBloc, WSDetailState>(
+                  buildWhen: (previous, current) =>
+                      previous.hasOptions != current.hasOptions,
                   builder: (context, state) {
                     return ChatOption(
                       hasOptions: state.hasOptions,
@@ -253,7 +241,6 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                 ),
                 Expanded(
                   child: ChatTextField(
-                    key: _inputKey,
                     textEditingController: _textEditingController,
                     focusNode: _focusNode,
                     onTapOutside: () {
@@ -261,7 +248,9 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                     },
                   ),
                 ),
-                BlocBuilder<ChatInputCubit, ChatInputState>(
+                BlocBuilder<WSDetailBloc, WSDetailState>(
+                  buildWhen: (previous, current) =>
+                      previous.hasSendButton != current.hasSendButton,
                   builder: (context, state) {
                     if (state.hasSendButton) {
                       return Padding(
@@ -269,7 +258,23 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                         child: IconButton(
                           padding: EdgeInsets.all(10),
                           onPressed: () {
-                            widget.onSendTap?.call(_textEditingController.text);
+                            final text = _textEditingController.text;
+                            final linkTextSegments = detechLinkTextSegment(
+                              text,
+                            );
+                            final tagTextSegments =
+                                _textEditingController.tagTextSegments;
+                            _bloc.add(
+                              SendMessageEvent(
+                                content: TextMessageContent(
+                                  text: text,
+                                  textSegments: [
+                                    ...tagTextSegments,
+                                    ...linkTextSegments,
+                                  ],
+                                ),
+                              ),
+                            );
                             _textEditingController.clear();
                           },
                           icon: Assets.icons.icSend.svg(width: 24, height: 24),
@@ -285,5 +290,24 @@ class _ChatInputBarState extends State<_ChatInputBar> {
         ],
       ),
     );
+  }
+
+  List<TextSegment> detechLinkTextSegment(String text) {
+    final regex = RegExp(r'https?://\S+');
+    final match = regex.allMatches(text);
+    if (match.isEmpty) {
+      return [];
+    }
+
+    return match
+        .map(
+          (e) => TextSegment(
+            type: TextSegmentType.link,
+            start: e.start,
+            end: e.end,
+            extra: e.group(0)!,
+          ),
+        )
+        .toList();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../shared/utils/text_message_display_util.dart';
 import '../../../resources/colors.dart';
@@ -70,16 +71,38 @@ class _TextMessageContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.only(
-              top: 4,
-              left: 12,
-              right: 12,
-              bottom: 8,
-            ),
+            padding: const EdgeInsets.only(top: 4, bottom: 8),
             decoration: const BoxDecoration(
               color: AppColors.surfaceContainerGrayStrong2,
             ),
-            child: RichText(text: TextSpan(children: textSpans)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: RichText(text: TextSpan(children: textSpans)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        message.createdAt.toShortTimeString(),
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextSub2,
+                          fontSize: 12,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w400,
+                          height: 1.33,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           if (link != null) ...[
             // Link preview implementation can be added here

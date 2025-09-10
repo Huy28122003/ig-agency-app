@@ -8,6 +8,6 @@ abstract class MemberRepository {
   });
   Future<List<UserEntity>> searchMembersInWorkspace({
     required int workspaceId,
-    String? query,
+    required String query,
   });
 }

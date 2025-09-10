@@ -38,7 +38,7 @@ class ChatTextField extends StatelessWidget {
         controller: textEditingController,
         focusNode: focusNode,
         onTapOutside: (event) => onTapOutside?.call(),
-        maxLines: 1,
+        maxLines: 5,
         style: TextStyle(
           color: AppColors.textDefaultTextSub2,
           fontSize: 16,

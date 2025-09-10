@@ -8,117 +8,106 @@ import '../../../domain/entities/message/message.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../gen/fonts.gen.dart';
 import '../../../shared/utils/text_message_display_util.dart';
-import '../models/pinned_message_ui_model.dart';
+import '../ui_models/pinned_message_ui_model.dart';
 
 import 'circle_network_avatar.dart';
 import 'network_image.dart';
 
-class PinnedMessageBubble extends StatefulWidget {
+class PinnedMessageBubble extends StatelessWidget {
   const PinnedMessageBubble({
     super.key,
     required this.message,
-    required this.onTap,
+    this.onTap,
+    this.onLongPress,
+    this.hasArrow = false,
   });
 
   final PinnedMessageUIModel message;
-  final VoidCallback onTap;
-
-  @override
-  State<PinnedMessageBubble> createState() => _PinnedMessageBubbleState();
-}
-
-class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
-  late PinnedMessageUIModel _message;
-
-  @override
-  void initState() {
-    super.initState();
-    _message = widget.message;
-  }
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final bool hasArrow;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        spacing: 12,
-        children: [
-          CircleNetworkAvatar(imageUrl: _message.senderAvatarUrl, size: 24),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    spacing: 8,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          _message.senderName,
-                          style: TextStyle(
-                            color: AppColors.textDefaultTextSub2,
-                            fontSize: 14,
-                            fontFamily: FontFamily.segoeUI,
-                            fontWeight: FontWeight.w700,
-                            height: 1.14,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Text(
-                        '•',
-                        style: TextStyle(
-                          color: AppColors.textDefaultTextSub2,
-                          fontSize: 14,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w400,
-                          height: 1.14,
-                        ),
-                      ),
-                      Text(
-                        _message.pinnedAt.toShortDateString(),
-                        style: TextStyle(
-                          color: AppColors.textDefaultTextSub2,
-                          fontSize: 14,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w400,
-                          height: 1.14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Stack(
-                  clipBehavior: Clip.none,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      spacing: 12,
+      children: [
+        CircleNetworkAvatar(imageUrl: message.senderAvatarUrl, size: 24),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  spacing: 8,
                   children: [
-                    GestureDetector(
-                      onTap: widget.onTap,
-                      child: _buildPinnedMessageContent(),
+                    Flexible(
+                      child: Text(
+                        message.senderName,
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextSub2,
+                          fontSize: 14,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    Positioned(
-                      left: -10,
-                      top: -10,
-                      child: Assets.icons.icPinned.svg(width: 20, height: 20),
+                    Text(
+                      '•',
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextSub2,
+                        fontSize: 14,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.14,
+                      ),
+                    ),
+                    Text(
+                      message.pinnedAt.toShortDateString(),
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextSub2,
+                        fontSize: 14,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.14,
+                      ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  GestureDetector(
+                    onTap: onTap,
+                    onLongPress: onLongPress,
+                    child: _buildPinnedMessageContent(),
+                  ),
+                  Positioned(
+                    left: -10,
+                    top: -10,
+                    child: Assets.icons.icPinned.svg(width: 20, height: 20),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildPinnedMessageContent() {
-    if (_message.isText) {
+    if (message.isText) {
       final textStyle = const TextStyle(
         color: AppColors.textDefaultTextDefault,
         fontSize: 16,
@@ -128,14 +117,14 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
       );
 
       final (textSpans, hostName, _) = TextMessageDisplayUtil.parseTextContent(
-        _message.content,
+        message.content,
         textStyle,
       );
       return _PinnedMessageText(textSpans: textSpans, hostName: hostName);
     }
 
-    if (_message.isImage) {
-      final imageContent = _message.content as ImageMessageContent;
+    if (message.isImage) {
+      final imageContent = message.content as ImageMessageContent;
       return _PinnedMessageImage(
         imageUrl: imageContent.imageUrl,
         width: imageContent.width,
@@ -143,8 +132,8 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
       );
     }
 
-    if (_message.isVideo) {
-      final videoContent = _message.content as VideoMessageContent;
+    if (message.isVideo) {
+      final videoContent = message.content as VideoMessageContent;
       return _PinnedMessageVideo(
         imageUrl: videoContent.thumbnailUrl ?? '',
         width: videoContent.width,
@@ -153,8 +142,8 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
       );
     }
 
-    if (_message.isFile) {
-      final fileContent = _message.content as FileMessageContent;
+    if (message.isFile) {
+      final fileContent = message.content as FileMessageContent;
 
       return _PinnedMessageFile(
         fileFullName: '${fileContent.fileName}.${fileContent.fileExtension}',
@@ -227,8 +216,8 @@ class _PinnedMessageImage extends StatelessWidget {
 class _PinnedMessageVideo extends StatelessWidget {
   const _PinnedMessageVideo({
     required this.imageUrl,
-    this.width,
-    this.height,
+    required this.width,
+    required this.height,
     required this.duration,
   });
 
@@ -250,11 +239,15 @@ class _PinnedMessageVideo extends StatelessWidget {
             fit: BoxFit.contain,
             child: Image(image: imageProvider),
           ),
-          Positioned(right: 7, bottom: 4, child: _buidlDurationChip()),
+          Positioned(right: 8, bottom: 8, child: _buildDurationChip(duration)),
           Align(
-            child: Icon(
-              Icons.play_circle_filled,
-              color: AppColors.textNeutralWhite,
+            child: Container(
+              padding: const EdgeInsets.all(9),
+              decoration: ShapeDecoration(
+                color: AppColors.surfaceContainerAlphaAlphaBlack37,
+                shape: const CircleBorder(),
+              ),
+              child: Assets.icons.icPlaySize30.svg(width: 30, height: 30),
             ),
           ),
         ],
@@ -263,33 +256,25 @@ class _PinnedMessageVideo extends StatelessWidget {
     );
   }
 
-  Widget _buidlDurationChip() {
+  Widget _buildDurationChip(Duration duration) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerAlphaAlphaBlack37,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(9999),
+          borderRadius: BorderRadius.all(Radius.circular(9999)),
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 10,
-        children: [
-          Text(
-            duration.toVideoDurationString(),
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              color: AppColors.textNeutralWhite,
-              fontSize: 12,
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w600,
-              height: 1.33,
-            ),
-          ),
-        ],
+      child: Text(
+        duration.toVideoDurationString(),
+        textAlign: TextAlign.right,
+        style: TextStyle(
+          color: AppColors.textNeutralWhite,
+          fontSize: 12,
+          fontFamily: FontFamily.segoeUI,
+          fontWeight: FontWeight.w600,
+          height: 1.33,
+        ),
       ),
     );
   }

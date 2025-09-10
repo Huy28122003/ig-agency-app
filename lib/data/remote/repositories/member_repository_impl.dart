@@ -25,8 +25,8 @@ class MemberRepositoryImpl implements MemberRepository {
   @override
   Future<List<UserEntity>> searchMembersInWorkspace({
     required int workspaceId,
-    String? query,
+    required String query,
   }) async {
-    return [];
+    return _messageMockService.mockSearchMemberInGroup(workspaceId, query);
   }
 }

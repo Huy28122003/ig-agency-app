@@ -21,7 +21,10 @@ class SearchMemberInWorkspaceUseCase
 
 class SearchMemberInWorkspaceParams {
   final int workspaceId;
-  final String? query;
+  final String query;
 
-  SearchMemberInWorkspaceParams({required this.workspaceId, this.query});
+  SearchMemberInWorkspaceParams({
+    required this.workspaceId,
+    required this.query,
+  });
 }

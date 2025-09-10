@@ -4,9 +4,18 @@ import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
 
 class ChatBubbleSenderInfo extends StatelessWidget {
-  const ChatBubbleSenderInfo({super.key, required this.message});
+  const ChatBubbleSenderInfo({
+    super.key,
+    required this.message,
+    required this.userId,
+    required this.isMe,
+  });
 
   final MessageEntity message;
+  final String userId;
+  final bool isMe;
+
+  bool get replyMessageSenderIdIsMe => userId == message.reply?.senderId;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +31,7 @@ class ChatBubbleSenderInfo extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  message.sender.name,
+                  isMe ? 'You' : message.sender.name,
                   style: const TextStyle(
                     color: AppColors.textDefaultTextSub2,
                     fontSize: 12,
@@ -46,7 +55,11 @@ class ChatBubbleSenderInfo extends StatelessWidget {
               ),
               Flexible(
                 child: Text(
-                  reply.senderName,
+                  isMe
+                      ? 'yourself'
+                      : replyMessageSenderIdIsMe
+                      ? 'you'
+                      : reply.senderName,
                   style: const TextStyle(
                     color: AppColors.textDefaultTextSub2,
                     fontSize: 12,
