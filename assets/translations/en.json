@@ -11,5 +11,8 @@
     "search": "Search",
     "group": "Group",
     "message": "Message"
+  },
+  "camera": {
+    "send": "Send"
   }
 }

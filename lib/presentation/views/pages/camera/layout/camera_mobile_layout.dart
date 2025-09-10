@@ -30,8 +30,8 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    context.read<CameraBloc>().add(AppLifecycleChangedEvent(state));
     super.didChangeAppLifecycleState(state);
+    context.read<CameraBloc>().add(AppLifecycleChangedEvent(state));
   }
 
   @override

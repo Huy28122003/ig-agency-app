@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../widgets/app_video_player.dart';
@@ -38,14 +39,19 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: (_bloc.path.isEmpty)
-                    ? Center(child: CircularProgressIndicator())
-                    : _bloc.isPhoto
-                    ? FittedBox(
-                        fit: BoxFit.cover,
-                        child: Image.file(File(_bloc.path)),
-                      )
-                    : AppVideoPlayer(path: _bloc.path, isAutoPlay: true),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                  ),
+                  child: (_bloc.path.isEmpty)
+                      ? Center(child: CircularProgressIndicator())
+                      : _bloc.isPhoto
+                      ? FittedBox(
+                    fit: BoxFit.cover,
+                    child: Image.file(File(_bloc.path)),
+                  )
+                      : AppVideoPlayer(path: _bloc.path, isAutoPlay: true),
+                ),
               ),
             ),
             Positioned(
@@ -69,7 +75,9 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                       Spacer(),
                       AppButton.icon(
                         onPressed: () {
-                          // Todo: navigate
+                          context.router.push(
+                            MediaEditRoute(mediaPath: _bloc.path),
+                          );
                         },
                         icon: Assets.icons.icCrop.svg(width: 24, height: 24),
                       ),
