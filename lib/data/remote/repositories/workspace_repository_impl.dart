@@ -69,6 +69,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       throw FailureConverter.convert(e);
     }
   }
+  @override
+  Future<bool> updateWorkspaceNotification({
+    required int groupId,
+    required bool isMute,
+  }) async {
+    try {
+      return true;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 
   @override
   Future<PagedResult<UserEntity>> getUserByWorkspaceId({

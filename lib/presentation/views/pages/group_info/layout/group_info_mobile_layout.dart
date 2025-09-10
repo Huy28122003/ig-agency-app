@@ -354,7 +354,9 @@ class GroupInfoMobileLayout extends StatelessWidget {
                             child: CupertinoSwitch(
                               value: workspace?.isMute ?? false,
                               onChanged: (_) {
-                                // todo: chua biet api se nhu the nao
+                                context.read<GroupInfoBloc>().add(
+                                  ToggleNotificationEvent(),
+                                );
                               },
                             ),
                           );

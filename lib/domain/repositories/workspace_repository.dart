@@ -20,4 +20,9 @@ abstract class WorkspaceRepository {
     required int offset,
     required int limit,
   });
+
+  Future<bool> updateWorkspaceNotification({
+    required int groupId,
+    required bool isMute,
+  });
 }
