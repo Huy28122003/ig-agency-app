@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ig_agency_app/gen/assets.gen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/entities/dashboard/overview_dashboard_type.dart';
+import 'package:ig_agency_app/domain/entities/dashboard/overview_member_status.dart';
+import 'package:ig_agency_app/presentation/views/pages/dashboard/home/dashboard_home_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/dashboard/home/widgets/notched_clipper.dart';
+import 'package:ig_agency_app/shared/utils/widget_util.dart';
 import '../../../../widgets/header_home_view.dart';
 
 class DashboardHomeMobileLayout extends StatefulWidget {
@@ -18,36 +22,42 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const HeaderHomeView(title: 'Dashboard', padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 30)),
-        Expanded(child: _buildBody()),
-      ],
+    return BlocBuilder<DashboardHomeBloc, DashboardHomeState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            const HeaderHomeView(
+              title: 'Dashboard',
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 30),
+            ),
+            Expanded(child: _buildBody(state)),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(DashboardHomeState state) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildOverviewMember(),
+          _buildOverviewMember(state),
           const SizedBox(height: 20),
-          Expanded(child: _buildListDashboardCard()),
+          Expanded(child: _buildListDashboardCard(state)),
         ],
       ),
     );
   }
 
-  Widget _buildOverviewMember() {
+  Widget _buildOverviewMember(DashboardHomeState state) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Color(0xFFE5E7EB)),
-        // boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6, spreadRadius: 2)],
       ),
       child: Row(
         children: [
@@ -62,8 +72,8 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
                     style: TextStyle(fontSize: 16, color: Color(0xFF6A7282), fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
-                    "299199",
+                  Text(
+                    '${state.totalMember}',
                     style: TextStyle(fontSize: 28, color: Color(0xFFFCB732), fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -88,13 +98,10 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _statusBox("Accept", "299199", Colors.white, Colors.black87),
-                const SizedBox(height: 8),
-                _statusBox("Online", "153469", Colors.green, Colors.black87),
-                const SizedBox(height: 8),
-                _statusBox("Block", "299", Colors.red, Colors.black87),
-              ],
+              children: state.listOverviewMember
+                  .map((e) => _statusBox(e.title, e.value, e.status.getColor()))
+                  .toList()
+                  .divide(const SizedBox(height: 8)),
             ),
           ),
         ],
@@ -102,26 +109,27 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
     );
   }
 
-  Widget _buildListDashboardCard() {
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 20,
-      shrinkWrap: true,
+  Widget _buildListDashboardCard(DashboardHomeState state) {
+    return GridView.builder(
       padding: EdgeInsets.zero,
-      children: [
-        _buildDashboardCard(title: 'All Violations', value: '999', iconSvg: Assets.icons.icViolation.svg()),
-        _buildDashboardCard(title: 'All Devices', value: '999', iconSvg: Assets.icons.icDevice.svg()),
-        _buildDashboardCard(title: 'Total Visits', value: '999999', iconSvg: Assets.icons.icView.svg()),
-        _buildDashboardCard(title: 'Total Messages', value: '999', iconSvg: Assets.icons.icMessage.svg()),
-      ],
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 20,
+      ),
+      itemCount: state.listOverviewDashboard.length,
+      itemBuilder: (context, index) {
+        final item = state.listOverviewDashboard[index];
+        return _buildDashboardCard(title: item.title, value: item.value, iconSvg: item.type.getIconWidget());
+      },
     );
   }
 
-  Widget _statusBox(String title, String value, Color valueColor, Color bgColor) {
+  Widget _statusBox(String title, String value, Color valueColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 17),
-      decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(color: Color(0xFF1E2939), borderRadius: BorderRadius.circular(12)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
