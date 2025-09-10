@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ig_agency_app/dependencies/permission/permission_manager.dart';
 import 'package:ig_agency_app/shared/commons/enums/permission.dart';
 import 'package:injectable/injectable.dart';
@@ -51,6 +53,25 @@ class PermissionHandler extends PermissionManager {
         return AppPermissionStatus.permanentlyDenied;
       case PermissionStatus.provisional:
         return AppPermissionStatus.provisional;
+    }
+  }
+
+  @override
+  Future checkSavingMedia() async {
+    if (Platform.isAndroid) {
+      final storage = await Permission.storage.status;
+      if (storage.isDenied) {
+        await Permission.storage.request();
+      }
+      final photos = await Permission.photos.status;
+      if (photos.isDenied) {
+        await Permission.photos.request();
+      }
+    } else if (Platform.isIOS) {
+      final status = await Permission.photosAddOnly.status;
+      if (status.isGranted) {
+        await Permission.photosAddOnly.request();
+      }
     }
   }
 }

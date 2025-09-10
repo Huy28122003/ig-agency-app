@@ -25,7 +25,7 @@ class MediaPickerImpl extends MediaManager {
   }
 
   @override
-  Future<bool> saveLocalImage(GlobalKey key) async {
+  Future<bool> saveMediaByBoundary(GlobalKey key) async {
     try {
       RenderRepaintBoundary boundary =
           key.currentContext!.findRenderObject() as RenderRepaintBoundary;
@@ -34,6 +34,17 @@ class MediaPickerImpl extends MediaManager {
         format: ui.ImageByteFormat.png,
       ));
       await ImageGallerySaverPlus.saveImage(byteData!.buffer.asUint8List());
+      return true;
+    } catch (e, s) {
+      logger.e(e, stackTrace: s);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> saveMediaToLib(String path) async {
+    try {
+      await ImageGallerySaverPlus.saveFile(path);
       return true;
     } catch (e, s) {
       logger.e(e, stackTrace: s);

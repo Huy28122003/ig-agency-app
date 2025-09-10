@@ -42,5 +42,8 @@
     "title": "OTP Verification",
     "description": "Please enter the OTP sent on your\nregistered email address",
     "continue": "Continue"
+  },
+  "camera": {
+    "send": "Send"
   }
 }

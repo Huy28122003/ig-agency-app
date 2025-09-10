@@ -33,6 +33,7 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/gen/
 
 # Symbolication related
 app.*.symbols
@@ -60,4 +61,5 @@ GeneratedPluginRegistrant.java
 *.g.dart
 *.config.dart
 *.gr.dart
+*.freezed.dart
 pubspec.lock

@@ -25,6 +25,7 @@ abstract class AppColors {
 
   /// Outline
   static const Color outlineGrayStrong200 = Color(0xFFE5E7EB);
+  static const Color outlineGrayStrong50 = Color(0xFFF9FAFB);
   static const Color outlineAlertError = Color(0xFFFA2B36);
   static const Color outlinePrimaryDefault = Color(0xFFFCB732);
   static const Color outlineAlertErrorLight = Color(0xFFFFC9C9);
