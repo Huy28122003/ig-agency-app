@@ -6,15 +6,14 @@ import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import '../../widgets/general_setting_home_section.dart';
 import '../../widgets/log_out_button.dart';
 import '../../widgets/profile_setting_home_section.dart';
-import '../../widgets/setting_home_mobile_header.dart';
+import '../../../../widgets/header_home_view.dart';
 import '../setting_home_bloc.dart';
 
 class SettingHomeMobileLayout extends StatefulWidget {
   const SettingHomeMobileLayout({super.key});
 
   @override
-  State<SettingHomeMobileLayout> createState() =>
-      _SettingHomeMobileLayoutState();
+  State<SettingHomeMobileLayout> createState() => _SettingHomeMobileLayoutState();
 }
 
 class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
@@ -39,8 +38,7 @@ class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-            const SettingHomeMobileHeader(),
-
+            const HeaderHomeView(title: 'Settings', padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 30)),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
