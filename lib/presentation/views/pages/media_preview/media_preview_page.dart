@@ -22,14 +22,14 @@ class MediaPreviewPage
   final bool isPhoto;
 
   @override
-  MediaPreviewBloc get buildController => super.buildController
+  MediaPreviewBloc get buildBloc => super.buildBloc
     ..avatar = avatar
     ..path = mediaPath
     ..isPhoto = isPhoto;
 
   @override
   void onInitState(BuildContext context) {
-    context.read<MediaPreviewBloc>().add(LoadDataEvent(avatar, mediaPath));
+    context.read<MediaPreviewBloc>().add(LoadDataEvent());
     super.onInitState(context);
   }
 

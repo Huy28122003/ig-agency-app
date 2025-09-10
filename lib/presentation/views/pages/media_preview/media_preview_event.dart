@@ -2,12 +2,7 @@ part of 'media_preview_bloc.dart';
 
 sealed class MediaPreviewEvent {}
 
-class LoadDataEvent extends MediaPreviewEvent {
-  final String avatar;
-  final String mediaPath;
-
-  LoadDataEvent(this.avatar, this.mediaPath);
-}
+class LoadDataEvent extends MediaPreviewEvent {}
 
 class SendMediaEvent extends MediaPreviewEvent {}
 

@@ -20,7 +20,7 @@ class MediaEditPage
   final bool isPhoto;
 
   @override
-  MediaEditBloc get buildController => super.buildController
+  MediaEditBloc get buildBloc => super.buildBloc
     ..path = mediaPath
     ..isPhoto = isPhoto;
 

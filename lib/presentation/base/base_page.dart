@@ -48,11 +48,11 @@ abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
   Widget mobileBuilder(BuildContext context);
 
 
-  B get buildController => getIt<B>();
+  B get buildBloc => getIt<B>();
 
   @override
   Widget wrappedRoute(BuildContext context) {
-    return BlocProvider<B>(create: (_) => buildController, child: this);
+    return BlocProvider<B>(create: (_) => buildBloc, child: this);
   }
 
   @override
