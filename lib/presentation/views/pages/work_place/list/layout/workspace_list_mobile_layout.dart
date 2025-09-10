@@ -12,6 +12,7 @@ import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
+import '../../../../widgets/header_home_view.dart';
 import '../../../../widgets/menu_dialog.dart';
 import '../widgets/menu_popup_mobile_widget.dart';
 import '../widgets/workspace_tile_mobile_widget.dart';
@@ -230,78 +231,34 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
+    return HeaderHomeView(
+      title: "workspace.workspace".tr(),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(100),
         ),
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            const Color(0xFFFF7E4C),
-            const Color(0xFFFFBA32),
-            const Color(0xFFFFDB3F),
-          ],
-        ),
-      ),
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Text(
-                "workspace.workspace".tr(),
-                style: TextStyle(
-                  fontFamily: FontFamily.segoeUI,
-                  color: AppColors.textDefaultTextInverted,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  height: 40 / 32,
-                ),
+        child: BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+          selector: (state) {
+            return state.searchKeyWord;
+          },
+          builder: (context, state) {
+            return AppSearchTextField(
+              value: state,
+              onChanged: (value) {
+                _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
+                _workspaceBloc.add(SearchEvent(value: value));
+              },
+              hintStyle: TextStyle(
+                color: AppColors.textDefaultTextSub,
+                fontSize: 16,
+                fontFamily: FontFamily.segoeUI,
+                fontWeight: FontWeight.w600,
+                height: 1.50,
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                top: 12,
-                bottom: 20,
-                left: 20,
-                right: 20,
-              ),
-              // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child:
-                  BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
-                    selector: (state) {
-                      return state.searchKeyWord;
-                    },
-                    builder: (context, state) {
-                      return AppSearchTextField(
-                        value: state,
-                        onChanged: (value) {
-                          _workspaceBloc.add(
-                            SearchKeyWorkChangeEvent(value: value),
-                          );
-                          _workspaceBloc.add(SearchEvent(value: value));
-                        },
-                        hintStyle: TextStyle(
-                          color: AppColors.textDefaultTextSub,
-                          fontSize: 16,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w600,
-                          height: 1.50,
-                        ),
-                        hintText: "workspace.hint_text_search".tr(),
-                      );
-                    },
-                  ),
-            ),
-          ],
+              hintText: "workspace.hint_text_search".tr(),
+            );
+          },
         ),
       ),
     );

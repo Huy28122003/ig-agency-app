@@ -52,6 +52,22 @@ class _NavMobileLayoutState extends State<NavMobileLayout> {
       page: SearchRoute(),
     ),
     AppBottomNavigationItem(
+      selectedIcon: Assets.icons.icAdmin.svg(
+        colorFilter: ColorFilter.mode(
+          AppColors.textPrimaryTextDefault,
+          BlendMode.srcIn,
+        ),
+      ),
+      icon: Assets.icons.icAdmin.svg(
+        colorFilter: ColorFilter.mode(
+          AppColors.textDefaultTextSub2,
+          BlendMode.srcIn,
+        ),
+      ),
+      label: 'Admin',
+      page: DashboardHomeRoute(),
+    ),
+    AppBottomNavigationItem(
       selectedIcon: Assets.icons.icSetting.svg(
         colorFilter: ColorFilter.mode(
           AppColors.textPrimaryTextDefault,
