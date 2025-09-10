@@ -53,11 +53,14 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
           }
         },
         listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(child: _buildBody()),
-          ],
+        child: Container(
+          color: AppColors.surfaceContainerGrayStrong0,
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildBody()),
+            ],
+          ),
         ),
       ),
     );
