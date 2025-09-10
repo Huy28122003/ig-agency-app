@@ -42,5 +42,16 @@
     "title": "OTP Verification",
     "description": "Please enter the OTP sent on your\nregistered email address",
     "continue": "Continue"
+  },
+  "group_info": {
+    "title": "Group Information",
+    "bio": "Bio",
+    "search_in_conversation": "Search in conversation",
+    "member": "Members",
+    "media_file": "View media, files and links",
+    "pin_message": "Pinned message",
+    "mute_notification": "Mute notifications",
+    "leave_group": "Leave Group"
+
   }
 }

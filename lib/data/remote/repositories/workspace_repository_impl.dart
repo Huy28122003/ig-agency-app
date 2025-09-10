@@ -18,18 +18,20 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
       final filtered = keyWord != null && keyWord.isNotEmpty
           ? allData
-          .where(
-            (e) => e.workspaceName.toLowerCase().contains(
-          keyWord.toLowerCase(),
-        ),
-      )
-          .toList()
+                .where(
+                  (e) => e.workspaceName.toLowerCase().contains(
+                    keyWord.toLowerCase(),
+                  ),
+                )
+                .toList()
           : allData;
 
       final total = filtered.length;
       final start = ((offset - 1) * limit).clamp(0, total);
       final end = (start + limit).clamp(0, total);
-      final pageData = start < end ? filtered.sublist(start, end) : <WorkspaceEntity>[];
+      final pageData = start < end
+          ? filtered.sublist(start, end)
+          : <WorkspaceEntity>[];
 
       return PagedResult<WorkspaceEntity>(data: pageData, totalRecords: total);
     } catch (e) {
@@ -41,5 +43,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Stream<WorkspaceEntity> listenLastMessages() {
     // TODO: implement listenLastMessages
     throw UnimplementedError();
+  }
+
+  @override
+  Future<WorkspaceEntity> getWorkspaceById({required int groupId}) async {
+    try {
+      final workspace = MockData.getWorkspaces().firstWhere(
+        (element) => element.id == groupId,
+      );
+      return workspace;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
   }
 }

@@ -8,5 +8,7 @@ abstract class WorkspaceRepository {
     String? keyWord,
   });
 
+  Future<WorkspaceEntity> getWorkspaceById({required int groupId});
+
   Stream<WorkspaceEntity> listenLastMessages();
 }

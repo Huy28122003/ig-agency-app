@@ -13,6 +13,9 @@ class MockData {
         isMute: false,
         isPin: true,
         countNewMessage: 3,
+        countMember: 8,
+        countPin: 2,
+        bio: 'Creative group focusing on UI/UX.',
       ),
       WorkspaceEntity(
         id: 2,
@@ -24,6 +27,8 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 12,
+        countPin: 1,
       ),
       WorkspaceEntity(
         id: 3,
@@ -35,6 +40,8 @@ class MockData {
         isMute: true,
         isPin: false,
         countNewMessage: 5,
+        countMember: 15,
+        countPin: 4,
       ),
       WorkspaceEntity(
         id: 4,
@@ -46,6 +53,8 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 6,
+        countPin: 0,
       ),
       WorkspaceEntity(
         id: 5,
@@ -57,6 +66,9 @@ class MockData {
         isMute: false,
         isPin: true,
         countNewMessage: 2,
+        countMember: 10,
+        countPin: 3,
+        bio: 'Manages budgets and financial planning.',
       ),
       WorkspaceEntity(
         id: 6,
@@ -68,6 +80,9 @@ class MockData {
         isMute: true,
         isPin: false,
         countNewMessage: 0,
+        countMember: 7,
+        countPin: 0,
+        bio: 'Oversees daily business operations.',
       ),
       WorkspaceEntity(
         id: 7,
@@ -79,6 +94,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 4,
+        countMember: 5,
+        countPin: 1,
+        bio: 'Ensures compliance and contracts.',
       ),
       WorkspaceEntity(
         id: 8,
@@ -90,6 +108,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 9,
+        countPin: 0,
+        bio: 'Testing and quality assurance.',
       ),
       WorkspaceEntity(
         id: 9,
@@ -101,6 +122,9 @@ class MockData {
         isMute: true,
         isPin: false,
         countNewMessage: 1,
+        countMember: 20,
+        countPin: 2,
+        bio: 'Customer support and helpdesk.',
       ),
       WorkspaceEntity(
         id: 10,
@@ -112,8 +136,10 @@ class MockData {
         isMute: false,
         isPin: true,
         countNewMessage: 0,
+        countMember: 14,
+        countPin: 3,
+        bio: 'Defines product roadmap and features.',
       ),
-      // 👉 tiếp tục copy pattern này cho tới id: 30
       WorkspaceEntity(
         id: 11,
         workspaceAvatar: 'https://i.pravatar.cc/150?img=11',
@@ -124,6 +150,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 6,
+        countMember: 11,
+        countPin: 2,
+        bio: 'Handles customer acquisition.',
       ),
       WorkspaceEntity(
         id: 12,
@@ -135,6 +164,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 4,
+        countPin: 0,
+        bio: 'System administrators and IT support.',
       ),
       WorkspaceEntity(
         id: 13,
@@ -146,6 +178,9 @@ class MockData {
         isMute: true,
         isPin: false,
         countNewMessage: 2,
+        countMember: 9,
+        countPin: 1,
+        bio: 'Research and innovation projects.',
       ),
       WorkspaceEntity(
         id: 14,
@@ -157,6 +192,9 @@ class MockData {
         isMute: false,
         isPin: true,
         countNewMessage: 0,
+        countMember: 6,
+        countPin: 3,
+        bio: 'Executive board of directors.',
       ),
       WorkspaceEntity(
         id: 15,
@@ -168,6 +206,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 1,
+        countMember: 50,
+        countPin: 0,
+        bio: 'Open community discussions.',
       ),
       WorkspaceEntity(
         id: 16,
@@ -179,6 +220,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 7,
+        countPin: 1,
+        bio: 'Handles supply chain and transport.',
       ),
       WorkspaceEntity(
         id: 17,
@@ -190,6 +234,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 2,
+        countMember: 13,
+        countPin: 2,
+        bio: 'Data analytics and reporting.',
       ),
       WorkspaceEntity(
         id: 18,
@@ -201,6 +248,9 @@ class MockData {
         isMute: true,
         isPin: false,
         countNewMessage: 0,
+        countMember: 6,
+        countPin: 0,
+        bio: 'Security and compliance team.',
       ),
       WorkspaceEntity(
         id: 19,
@@ -212,6 +262,9 @@ class MockData {
         isMute: false,
         isPin: true,
         countNewMessage: 4,
+        countMember: 18,
+        countPin: 3,
+        bio: 'Corporate social responsibility.',
       ),
       WorkspaceEntity(
         id: 20,
@@ -223,6 +276,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 35,
+        countPin: 1,
+        bio: 'Student projects and activities.',
       ),
       WorkspaceEntity(
         id: 21,
@@ -234,6 +290,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 5,
+        countMember: 9,
+        countPin: 2,
+        bio: 'Content creators and authors.',
       ),
       WorkspaceEntity(
         id: 22,
@@ -245,6 +304,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 14,
+        countPin: 1,
+        bio: 'Creative art sharing space.',
       ),
       WorkspaceEntity(
         id: 23,
@@ -256,6 +318,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 1,
+        countMember: 21,
+        countPin: 0,
+        bio: 'Professional and amateur athletes.',
       ),
       WorkspaceEntity(
         id: 24,
@@ -267,6 +332,9 @@ class MockData {
         isMute: true,
         isPin: false,
         countNewMessage: 0,
+        countMember: 30,
+        countPin: 2,
+        bio: 'Gaming enthusiasts and tournaments.',
       ),
       WorkspaceEntity(
         id: 25,
@@ -278,6 +346,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 2,
+        countMember: 16,
+        countPin: 3,
+        bio: 'Science and innovation research.',
       ),
       WorkspaceEntity(
         id: 26,
@@ -289,6 +360,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 8,
+        countPin: 0,
+        bio: 'Cooking and culinary team.',
       ),
       WorkspaceEntity(
         id: 27,
@@ -300,6 +374,9 @@ class MockData {
         isMute: false,
         isPin: true,
         countNewMessage: 3,
+        countMember: 22,
+        countPin: 4,
+        bio: 'Band and solo musicians.',
       ),
       WorkspaceEntity(
         id: 28,
@@ -311,6 +388,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 19,
+        countPin: 2,
+        bio: 'Medical professionals group.',
       ),
       WorkspaceEntity(
         id: 29,
@@ -322,6 +402,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 1,
+        countMember: 28,
+        countPin: 1,
+        bio: 'School and college teachers.',
       ),
       WorkspaceEntity(
         id: 30,
@@ -333,6 +416,9 @@ class MockData {
         isMute: false,
         isPin: false,
         countNewMessage: 0,
+        countMember: 25,
+        countPin: 0,
+        bio: 'Community-driven volunteer group.',
       ),
     ];
   }

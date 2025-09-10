@@ -8,6 +8,9 @@ class WorkspaceEntity {
   final bool isMute;
   final bool isPin;
   final int countNewMessage;
+  final int countMember;
+  final String? bio;
+  final int countPin;
 
   WorkspaceEntity({
     required this.id,
@@ -19,6 +22,9 @@ class WorkspaceEntity {
     required this.isMute,
     required this.isPin,
     this.countNewMessage = 0,
+    this.countMember = 0,
+    this.countPin = 0,
+    this.bio,
   });
 
   WorkspaceEntity copyWith({
@@ -30,6 +36,9 @@ class WorkspaceEntity {
     bool? isPin,
     bool? isMute,
     int? countNewMessage,
+    int? countMember,
+    int? countPin,
+    String? bio,
   }) {
     return WorkspaceEntity(
       id: id,
@@ -41,6 +50,9 @@ class WorkspaceEntity {
       isMute: isMute ?? this.isMute,
       isPin: isPin ?? this.isPin,
       countNewMessage: countNewMessage ?? this.countNewMessage,
+      countMember: countMember ?? this.countMember,
+      countPin: countPin ?? this.countPin,
+      bio: bio ?? this.bio,
     );
   }
 }
