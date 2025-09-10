@@ -116,12 +116,7 @@ class _EditWorkspaceBioMobileLayoutState
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(
-              top: 24,
-              left: 20,
-              right: 20,
-              bottom: 20,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             child:
                 BlocSelector<
                   EditWorkspaceBioBloc,
