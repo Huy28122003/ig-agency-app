@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/dashboard/overview_dashboard_type.dart';
 import 'package:ig_agency_app/domain/entities/dashboard/overview_member_status.dart';
+import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/pages/dashboard/home/dashboard_home_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/dashboard/home/widgets/notched_clipper.dart';
 import 'package:ig_agency_app/shared/utils/widget_util.dart';
@@ -11,7 +12,8 @@ class DashboardHomeMobileLayout extends StatefulWidget {
   const DashboardHomeMobileLayout({super.key});
 
   @override
-  State<DashboardHomeMobileLayout> createState() => _DashboardHomeMobileLayoutState();
+  State<DashboardHomeMobileLayout> createState() =>
+      _DashboardHomeMobileLayoutState();
 }
 
 class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
@@ -24,14 +26,22 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
   Widget build(BuildContext context) {
     return BlocBuilder<DashboardHomeBloc, DashboardHomeState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            const HeaderHomeView(
-              title: 'Dashboard',
-              padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 30),
-            ),
-            Expanded(child: _buildBody(state)),
-          ],
+        return Scaffold(
+          backgroundColor: AppColors.surfaceContainerGrayStrong0,
+          body: Column(
+            children: [
+              const HeaderHomeView(
+                title: 'Dashboard',
+                padding: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 10,
+                  bottom: 30,
+                ),
+              ),
+              Expanded(child: _buildBody(state)),
+            ],
+          ),
         );
       },
     );
@@ -55,9 +65,9 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Color(0xFFF9FAFB),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFE5E7EB)),
+        color: AppColors.outlineGrayStrong50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outlineGrayStrong200),
       ),
       child: Row(
         children: [
@@ -69,24 +79,41 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
                 children: [
                   const Text(
                     "Total Members",
-                    style: TextStyle(fontSize: 16, color: Color(0xFF6A7282), fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF6A7282),
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '${state.totalMember}',
-                    style: TextStyle(fontSize: 28, color: Color(0xFFFCB732), fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 28,
+                      color: Color(0xFFFCB732),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFFCB732),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
                     ),
                     onPressed: () {},
                     child: const Text(
                       "Details",
-                      style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -121,7 +148,11 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
       itemCount: state.listOverviewDashboard.length,
       itemBuilder: (context, index) {
         final item = state.listOverviewDashboard[index];
-        return _buildDashboardCard(title: item.title, value: item.value, iconSvg: item.type.getIconWidget());
+        return _buildDashboardCard(
+          title: item.title,
+          value: item.value,
+          iconSvg: item.type.getIconWidget(),
+        );
       },
     );
   }
@@ -129,18 +160,29 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
   Widget _statusBox(String title, String value, Color valueColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 17),
-      decoration: BoxDecoration(color: Color(0xFF1E2939), borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: Color(0xFF1E2939),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: const TextStyle(color: Color(0xFF99A1AF), fontSize: 16, fontWeight: FontWeight.w400),
+            style: const TextStyle(
+              color: Color(0xFF99A1AF),
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(color: valueColor, fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: valueColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.end,
             ),
           ),
@@ -149,7 +191,11 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
     );
   }
 
-  Widget _buildDashboardCard({required String title, required String value, required Widget iconSvg}) {
+  Widget _buildDashboardCard({
+    required String title,
+    required String value,
+    required Widget iconSvg,
+  }) {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -165,27 +211,49 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
                   Text(
                     title,
                     maxLines: 1,
-                    style: TextStyle(fontSize: 14, color: Color(0xFF1E2939), fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF1E2939),
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Flexible(
-                    child: Text(value, maxLines: 1, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      value,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 6),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                      ),
                     ),
                     onPressed: () {},
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("Details", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-                        SizedBox(width: 6),
-                        Icon(Icons.arrow_forward, size: 16),
+                        Text(
+                          "Details",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Icon(Icons.arrow_forward, size: 12),
                       ],
                     ),
                   ),
