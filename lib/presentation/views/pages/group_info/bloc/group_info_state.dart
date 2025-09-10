@@ -24,4 +24,7 @@ class GroupInfoState extends BaseState<GroupInfoState> {
       workspace: workspace ?? this.workspace,
     );
   }
+
+  @override
+  List<Object?> get props => [...super.props, workspace];
 }

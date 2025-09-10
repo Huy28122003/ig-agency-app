@@ -19,8 +19,19 @@ class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
       final result = await getWorkspaceByIdUseCase.call(event.groupId);
       emit(state.copyWith(pageStatus: PageStatus.loaded, workspace: result));
     });
-    handleSubEvent<ToggleNotificationEvent>((event, emit) async {
+    handleSubEvent<ToggleNotificationEvent>((event, emit) async {});
+    handleSubEvent<UpdateWorkspaceEvent>((event, emit) async {
+      final current = state.workspace;
+      if (current == null) return;
 
+      final updated = current.copyWith(
+        workspaceName: event.workspaceName,
+        bio: event.bio,
+        isMute: event.isMute,
+        countMember: event.countMember,
+      );
+
+      emit(state.copyWith(workspace: updated));
     });
   }
 }

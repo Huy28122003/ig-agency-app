@@ -65,7 +65,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
             children: [
               _buildHeaderInfo(context),
               SizedBox(height: 20),
-              _buildBody(),
+              _buildBody(context),
               SizedBox(height: 12),
               _buildLeaveGroupButton(),
             ],
@@ -106,11 +106,13 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   fit: BoxFit.cover,
                   width: 80,
                   height: 80,
-                  state?.workspaceAvatar??"",
+                  state?.workspaceAvatar ?? "",
                   errorBuilder: (context, _, _) {
                     return ClipOval(
                       child: Assets.images.defaultAvatar.image(
-                          width: 80, height: 80),
+                        width: 80,
+                        height: 80,
+                      ),
                     );
                   },
                 ),
@@ -183,31 +185,53 @@ class GroupInfoMobileLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return Column(
       children: [
-        GroupInfoCardWidget(
-          items: [
-            GroupInfoItem(
-              icon: Assets.icons.icBio.svg(
-                colorFilter: ColorFilter.mode(
-                  AppColors.iconPrimaryDefault,
-                  BlendMode.srcIn,
-                ),
-              ),
-              title: "group_info.bio".tr(),
-              trailing: RotatedBox(
-                quarterTurns: 2,
-                child: Assets.icons.icArrowLeft.svg(
-                  colorFilter: ColorFilter.mode(
-                    AppColors.iconDefaultDefaultSub2,
-                    BlendMode.srcIn,
+        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+          selector: (state) {
+            return state.workspace;
+          },
+          builder: (_, state) {
+            return GroupInfoCardWidget(
+              items: [
+                GroupInfoItem(
+                  icon: Assets.icons.icBio.svg(
+                    colorFilter: ColorFilter.mode(
+                      AppColors.iconPrimaryDefault,
+                      BlendMode.srcIn,
+                    ),
                   ),
+                  title: "group_info.bio".tr(),
+                  trailing: RotatedBox(
+                    quarterTurns: 2,
+                    child: Assets.icons.icArrowLeft.svg(
+                      colorFilter: ColorFilter.mode(
+                        AppColors.iconDefaultDefaultSub2,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  description: state?.bio,
+                  onTap: () async {
+                    final workspace = state;
+                    if (workspace == null) return;
+                    final result = await context.router.push(
+                      EditWorkspaceBioRoute(
+                        bio: workspace.bio ?? "",
+                        workspaceId: workspace.id,
+                      ),
+                    );
+
+                    if (result == null) return;
+                    context.read<GroupInfoBloc>().add(
+                      UpdateWorkspaceEvent(bio: result as String),
+                    );
+                  },
                 ),
-              ),
-              onTap: () {},
-            ),
-          ],
+              ],
+            );
+          },
         ),
 
         SizedBox(height: 12),
@@ -313,25 +337,25 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   ),
                   title: "group_info.mute_notification".tr(),
                   trailing:
-                  BlocSelector<
-                      GroupInfoBloc,
-                      GroupInfoState,
-                      WorkspaceEntity?
-                  >(
-                    selector: (state) => state.workspace,
-                    builder: (context, workspace) {
-                      return SizedBox(
-                        width: 51,
-                        height: 31,
-                        child: CupertinoSwitch(
-                          value: workspace?.isMute ?? false,
-                          onChanged: (_) {
-                            // todo: chua biet api se nhu the nao
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                      BlocSelector<
+                        GroupInfoBloc,
+                        GroupInfoState,
+                        WorkspaceEntity?
+                      >(
+                        selector: (state) => state.workspace,
+                        builder: (context, workspace) {
+                          return SizedBox(
+                            width: 51,
+                            height: 31,
+                            child: CupertinoSwitch(
+                              value: workspace?.isMute ?? false,
+                              onChanged: (_) {
+                                // todo: chua biet api se nhu the nao
+                              },
+                            ),
+                          );
+                        },
+                      ),
                 ),
               ],
             );

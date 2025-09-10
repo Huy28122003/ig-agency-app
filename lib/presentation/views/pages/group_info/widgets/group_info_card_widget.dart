@@ -66,7 +66,7 @@ class GroupInfoItem extends StatelessWidget {
         color: Colors.transparent,
         padding: const EdgeInsets.all(16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             icon,
             const SizedBox(width: 12),

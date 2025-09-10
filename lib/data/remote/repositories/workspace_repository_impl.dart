@@ -56,4 +56,12 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<bool> updateWorkspaceBio({
+    required int groupId,
+    required String bio,
+  }) async {
+    return true;
+  }
 }

@@ -7,6 +7,7 @@ import '../views/pages/authentication/login/login_page.dart';
 import '../views/pages/authentication/otp/otp_page.dart';
 import '../views/pages/camera/camera_page.dart';
 import '../views/pages/chat_info/chat_info_page.dart';
+import '../views/pages/edit_workspace_bio/edit_workspace_bio_page.dart';
 import '../views/pages/empty_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/authentication/reset_password/reset_password_page.dart';
@@ -92,5 +93,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SharedContentRoute.page),
     AutoRoute(page: CameraRoute.page),
     AutoRoute(page: GroupInfoRoute.page),
+    AutoRoute(page: EditWorkspaceBioRoute.page),
   ];
 }

@@ -39,5 +39,9 @@
     "pin_message": "Tin nhắn được ghim",
     "mute_notification": "Tắt tiếng thông báo",
     "leave_group": "Rời khỏi nhóm"
+  },
+  "workspace_bio": {
+    "title": "Tiểu sử ",
+    "done": "Hoàn th"
   }
 }

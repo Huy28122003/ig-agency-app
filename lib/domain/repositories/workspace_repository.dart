@@ -11,4 +11,6 @@ abstract class WorkspaceRepository {
   Future<WorkspaceEntity> getWorkspaceById({required int groupId});
 
   Stream<WorkspaceEntity> listenLastMessages();
+
+  Future<bool> updateWorkspaceBio({required int groupId, required String bio});
 }

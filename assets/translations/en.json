@@ -52,6 +52,9 @@
     "pin_message": "Pinned message",
     "mute_notification": "Mute notifications",
     "leave_group": "Leave Group"
-
+  },
+  "workspace_bio": {
+    "title": "Bio",
+    "done": "Done"
   }
 }

@@ -9,3 +9,17 @@ class LoadDataEvent extends GroupInfoEvent {
 }
 
 class ToggleNotificationEvent extends GroupInfoEvent {}
+
+class UpdateWorkspaceEvent extends GroupInfoEvent {
+  final String? workspaceName;
+  final String? bio;
+  final bool? isMute;
+  final int? countMember;
+
+  UpdateWorkspaceEvent({
+    this.workspaceName,
+    this.bio,
+    this.isMute,
+    this.countMember,
+  });
+}

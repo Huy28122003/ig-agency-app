@@ -15,7 +15,7 @@ class GroupInfoPage
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<GroupInfoBloc>().add(LoadDataEvent(groupId: 1));
+    context.read<GroupInfoBloc>().add(LoadDataEvent(groupId: 5));
   }
 
   @override
