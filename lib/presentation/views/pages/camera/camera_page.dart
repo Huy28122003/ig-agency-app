@@ -13,8 +13,8 @@ class CameraPage extends BasePage<CameraBloc, CameraEvent, CameraState> {
 
   @override
   void onInitState(BuildContext context) {
-    context.read<CameraBloc>().add(LoadDataEvent());
     super.onInitState(context);
+    context.read<CameraBloc>().add(LoadDataEvent());
   }
 
   @override

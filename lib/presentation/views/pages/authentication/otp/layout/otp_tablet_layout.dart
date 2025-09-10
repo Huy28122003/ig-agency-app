@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/otp/bloc/otp_bloc.dart';
@@ -88,7 +89,7 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                           Assets.images.appLogo.image(height: 120, width: 120),
                           const SizedBox(height: 40),
                           Text(
-                            'OTP Verification',
+                            'otp.title'.tr(),
                             style: TextStyle(
                               color: AppColors.textDefaultTextDefault,
                               fontSize: 32,
@@ -105,7 +106,7 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                             onChange: (value) {},
                             cursorColor: AppColors.outlinePrimaryDefault,
                             otpPinFieldDecoration:
-                                OtpPinFieldDecoration.defaultPinBoxDecoration,
+                            OtpPinFieldDecoration.defaultPinBoxDecoration,
                             otpPinFieldStyle: OtpPinFieldStyle(
                               textStyle: TextStyle(
                                 fontWeight: FontWeight.w500,
@@ -115,16 +116,16 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                               fieldBorderRadius: 8.8,
                               fieldBorderWidth: 1.1,
                               defaultFieldBackgroundColor:
-                                  AppColors.surfaceContainerGrayStrong2,
+                              AppColors.surfaceContainerGrayStrong2,
                               defaultFieldBorderColor: Colors.transparent,
                               activeFieldBorderColor:
-                                  AppColors.outlinePrimaryDefault,
+                              AppColors.outlinePrimaryDefault,
                               activeFieldBackgroundColor:
-                                  AppColors.surfaceContainerPrimaryPrimaryLight,
+                              AppColors.surfaceContainerPrimaryPrimaryLight,
                               filledFieldBorderColor:
-                                  AppColors.outlinePrimaryDefault,
+                              AppColors.outlinePrimaryDefault,
                               filledFieldBackgroundColor:
-                                  AppColors.surfaceContainerPrimaryPrimaryLight,
+                              AppColors.surfaceContainerPrimaryPrimaryLight,
                             ),
                             maxLength: 6,
                           ),
@@ -136,10 +137,10 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                               //Todo: Recheck Logic ui
                             },
                             child: Text(
-                              'Send code',
+                              'otp.continue'.tr(),
                               style: TextStyle(
                                 color:
-                                    AppColors.textDefaultTextInvertedDisabled,
+                                AppColors.textDefaultTextInvertedDisabled,
                                 fontSize: 16,
                                 fontFamily: FontFamily.segoeUI,
                                 fontWeight: FontWeight.w700,

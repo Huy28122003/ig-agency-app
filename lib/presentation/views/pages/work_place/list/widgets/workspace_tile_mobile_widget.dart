@@ -4,8 +4,8 @@ import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 import '../../../../../../gen/assets.gen.dart';
 
-class WorkspaceTileWidget extends StatefulWidget {
-  const WorkspaceTileWidget({
+class WorkspaceTileMobileWidget extends StatefulWidget {
+  const WorkspaceTileMobileWidget({
     super.key,
     required this.workspaceAvatar,
     required this.workspaceName,
@@ -15,6 +15,7 @@ class WorkspaceTileWidget extends StatefulWidget {
     required this.isMute,
     required this.isPin,
     required this.countNewMessage,
+    required this.onTap,
     this.isSearchMode = false,
   });
 
@@ -27,21 +28,25 @@ class WorkspaceTileWidget extends StatefulWidget {
   final bool isPin;
   final int countNewMessage;
   final bool isSearchMode;
+  final VoidCallback onTap;
 
   @override
-  State<WorkspaceTileWidget> createState() => _WorkspaceTileWidgetState();
+  State<WorkspaceTileMobileWidget> createState() => _WorkspaceTileMobileWidgetState();
 }
 
-class _WorkspaceTileWidgetState extends State<WorkspaceTileWidget> {
+class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
   final now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
-      child: widget.isSearchMode
-          ? _buildSearchMode()
-          : _buildNormalMode(),
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
+        child: widget.isSearchMode
+            ? _buildSearchMode()
+            : _buildNormalMode(),
+      ),
     );
   }
 

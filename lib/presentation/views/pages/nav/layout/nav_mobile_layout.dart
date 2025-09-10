@@ -17,33 +17,69 @@ class _NavMobileLayoutState extends State<NavMobileLayout> {
   List<AppBottomNavigationItem> items = [
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icWorkspace.svg(
-        colorFilter: ColorFilter.mode(AppColors.textPrimaryTextDefault, BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(
+          AppColors.textPrimaryTextDefault,
+          BlendMode.srcIn,
+        ),
       ),
-      icon: Assets.icons.icWorkspace.svg(colorFilter: ColorFilter.mode(AppColors.textDefaultTextSub2, BlendMode.srcIn)),
+      icon: Assets.icons.icWorkspace.svg(
+        colorFilter: ColorFilter.mode(
+          AppColors.textDefaultTextSub2,
+          BlendMode.srcIn,
+        ),
+      ),
       label: 'Workspace',
       page: WorkspaceListRoute(),
     ),
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icSearch.svg(
-        colorFilter: ColorFilter.mode(AppColors.textPrimaryTextDefault, BlendMode.srcIn),
+        width: 24,
+        height: 24,
+        colorFilter: ColorFilter.mode(
+          AppColors.textPrimaryTextDefault,
+          BlendMode.srcIn,
+        ),
       ),
-      icon: Assets.icons.icSearch.svg(colorFilter: ColorFilter.mode(AppColors.textDefaultTextSub2, BlendMode.srcIn)),
+      icon: Assets.icons.icSearch.svg(
+        width: 24,
+        height: 24,
+        colorFilter: ColorFilter.mode(
+          AppColors.textDefaultTextSub2,
+          BlendMode.srcIn,
+        ),
+      ),
       label: 'Search',
       page: SearchRoute(),
     ),
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icAdmin.svg(
-        colorFilter: ColorFilter.mode(AppColors.textPrimaryTextDefault, BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(
+          AppColors.textPrimaryTextDefault,
+          BlendMode.srcIn,
+        ),
       ),
-      icon: Assets.icons.icAdmin.svg(colorFilter: ColorFilter.mode(AppColors.textDefaultTextSub2, BlendMode.srcIn)),
+      icon: Assets.icons.icAdmin.svg(
+        colorFilter: ColorFilter.mode(
+          AppColors.textDefaultTextSub2,
+          BlendMode.srcIn,
+        ),
+      ),
       label: 'Admin',
       page: DashboardHomeRoute(),
     ),
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icSetting.svg(
-        colorFilter: ColorFilter.mode(AppColors.textPrimaryTextDefault, BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(
+          AppColors.textPrimaryTextDefault,
+          BlendMode.srcIn,
+        ),
       ),
-      icon: Assets.icons.icSetting.svg(colorFilter: ColorFilter.mode(AppColors.textDefaultTextSub2, BlendMode.srcIn)),
+      icon: Assets.icons.icSetting.svg(
+        colorFilter: ColorFilter.mode(
+          AppColors.textDefaultTextSub2,
+          BlendMode.srcIn,
+        ),
+      ),
       label: 'Setting',
       page: SettingHomeRoute(),
     ),

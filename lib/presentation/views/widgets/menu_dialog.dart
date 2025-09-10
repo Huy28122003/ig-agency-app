@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
@@ -50,6 +51,7 @@ class _MenuDialogState<T> extends State<MenuDialog<T>> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
+          constraints: BoxConstraints(maxWidth: 400),
           margin: EdgeInsets.symmetric(horizontal: 70),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12.0),
@@ -93,7 +95,7 @@ class _MenuDialogState<T> extends State<MenuDialog<T>> {
                   context.router.pop();
                 },
                 child: Text(
-                  widget.textCancel ?? "Cancel",
+                  widget.textCancel ?? "general.cancel".tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 17,
