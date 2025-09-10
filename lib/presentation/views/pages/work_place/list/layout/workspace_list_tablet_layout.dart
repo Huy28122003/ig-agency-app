@@ -196,21 +196,19 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                             },
                             onTapMute: () async {
                               if (workspace.isMute) {
-                                final result =
-                                    await MenuDialog.show<UnMuteTimeEnum>(
-                                      onTap: (value) {},
-                                      context: context,
-                                      title: "workspace.unmute_title".tr(),
-                                      items: UnMuteTimeEnum.values
-                                          .map(
-                                            (e) => MenuItem(
-                                              content: 'workspace.${e.title}'
-                                                  .tr(),
-                                              value: e,
-                                            ),
-                                          )
-                                          .toList(),
-                                    );
+                                await MenuDialog.show<UnMuteTimeEnum>(
+                                  onTap: (value) {},
+                                  context: context,
+                                  title: "workspace.unmute_title".tr(),
+                                  items: UnMuteTimeEnum.values
+                                      .map(
+                                        (e) => MenuItem(
+                                          content: 'workspace.${e.title}'.tr(),
+                                          value: e,
+                                        ),
+                                      )
+                                      .toList(),
+                                );
                               }
                               _workspaceBloc.add(
                                 MuteWorkspaceEvent(workspaceId: workspace.id),
