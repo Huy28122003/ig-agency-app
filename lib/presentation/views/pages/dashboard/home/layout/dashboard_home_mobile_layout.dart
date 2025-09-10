@@ -64,7 +64,7 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
                   const SizedBox(height: 6),
                   const Text(
                     "299199",
-                    style: TextStyle(fontSize: 32, color: Color(0xFFFCB732), fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 28, color: Color(0xFFFCB732), fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
@@ -127,12 +127,12 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
         children: [
           Text(
             title,
-            style: const TextStyle(color: Color(0xFF99A1AF), fontSize: 14, fontWeight: FontWeight.w400),
+            style: const TextStyle(color: Color(0xFF99A1AF), fontSize: 16, fontWeight: FontWeight.w400),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(color: valueColor, fontSize: 14, fontWeight: FontWeight.bold),
+              style: TextStyle(color: valueColor, fontSize: 16, fontWeight: FontWeight.bold),
               textAlign: TextAlign.end,
             ),
           ),
@@ -157,11 +157,11 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
                   Text(
                     title,
                     maxLines: 1,
-                    style: TextStyle(fontSize: 16, color: Color(0xFF1E2939), fontWeight: FontWeight.w400),
+                    style: TextStyle(fontSize: 14, color: Color(0xFF1E2939), fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 6),
                   Flexible(
-                    child: Text(value, maxLines: 1, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                    child: Text(value, maxLines: 1, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(height: 6),
                   ElevatedButton(
