@@ -47,7 +47,6 @@ abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
 
   Widget mobileBuilder(BuildContext context);
 
-
   B get buildBloc => getIt<B>();
 
   @override
@@ -103,6 +102,7 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
           buildWhen: (pre, cur) => pre.pageStatus != cur.pageStatus,
           builder: (context, state) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
               body: _buildBody(
                 context,
                 sizingInfo,
