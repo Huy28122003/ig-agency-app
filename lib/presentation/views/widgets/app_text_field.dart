@@ -28,6 +28,7 @@ class AppTextField extends StatefulWidget {
       horizontal: 20,
     ),
     this.style,
+    this.showUnderlineBorder = true,
   });
 
   final TextEditingController? controller;
@@ -49,6 +50,7 @@ class AppTextField extends StatefulWidget {
   final EdgeInsets? contentPadding;
 
   final TextStyle? style;
+  final bool showUnderlineBorder;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -163,10 +165,18 @@ class _AppTextFieldState extends State<AppTextField> {
                     child: widget.suffixIcon,
                   )
                 : null,
-            border: underlineBorder,
-            enabledBorder: underlineBorder,
-            focusedBorder: underlineBorder,
-            disabledBorder: underlineBorder,
+            border: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            enabledBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            focusedBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            disabledBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
             contentPadding: widget.contentPadding,
           ),
         ),
