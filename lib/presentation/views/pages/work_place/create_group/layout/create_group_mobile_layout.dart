@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dartx/dartx.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../domain/entities/user_entity.dart';
@@ -36,31 +38,34 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
           listener: (context, state) {
             if (state.createGroupSuccess) {
               //TODO: xử lý reload màn WorkspaceListPage khi tạo nhóm thành công
-              Navigator.of(context).pop();
+              context.router.pop();
             }
           },
         ),
       ],
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 4),
-                  _buildGroupName(),
-                  const SizedBox(height: 8),
-                  _buildInputSearch(),
-                  const SizedBox(height: 8),
-                  _buildListUserSelected(),
-                  Expanded(child: _buildListUser()),
-                ],
+      child: Scaffold(
+        backgroundColor: AppColors.surfaceBackgroundBackground,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Container(
+                color: AppColors.surfaceBackgroundBackground,
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 4),
+                    _buildGroupName(),
+                    const SizedBox(height: 8),
+                    _buildInputSearch(),
+                    const SizedBox(height: 8),
+                    _buildListUserSelected(),
+                    Expanded(child: _buildListUser()),
+                  ],
+                ),
               ),
-            ),
-            _buildButtonCreate(),
-          ],
+              _buildButtonCreate(),
+            ],
+          ),
         ),
       ),
     );
@@ -75,8 +80,8 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
           child: Stack(
             children: [
               Center(
-                child: const Text(
-                  'New Group',
+                child: Text(
+                  'create_group.title'.tr(),
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -93,8 +98,8 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
                     Navigator.of(context).pop();
                   },
                   child: Center(
-                    child: const Text(
-                      'Cancel',
+                    child: Text(
+                      'create_group.cancel'.tr(),
                       style: TextStyle(fontSize: 14, color: Color(0xFF6A7282)),
                     ),
                   ),
@@ -116,7 +121,7 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
       builder: (context, groupName) {
         return AppTextField(
           value: groupName,
-          hintText: 'Group name (optional)',
+          hintText: 'create_group.hint_group_name'.tr(),
           showUnderlineBorder: false,
           style: const TextStyle(
             fontSize: 16,
@@ -155,7 +160,7 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
               height: 20 / 14,
             ),
             fillColor: const Color(0xFFE5E7EB),
-            hintText: 'Search Member',
+            hintText: 'create_group.search_member'.tr(),
             contentPadding: const EdgeInsets.only(
               left: 16,
               right: 16,
@@ -251,9 +256,9 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
       },
       builder: (context, listUser) {
         if (listUser.$1.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
-              'No user found',
+              'create_group.no_user_found'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textDefaultTextSub,
@@ -263,7 +268,7 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
           );
         }
         return ListView.builder(
-          padding: EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 8),
+          padding: EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 60),
           itemCount: listUser.$1.length,
           itemBuilder: (context, index) {
             final item = listUser.$1[index];
@@ -349,8 +354,8 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                "Create group",
+              child: Text(
+                "create_group.create_group".tr(),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),

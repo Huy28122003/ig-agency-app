@@ -224,14 +224,15 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                     ),
               ),
             Positioned(
-              bottom: 20,
-              right: 10,
+              bottom: 22,
+              right: 20,
               child: SizedBox(
                 height: 56,
                 width: 56,
                 child: FloatingActionButton(
+                  elevation: 1.5,
                   shape: const CircleBorder(),
-                  backgroundColor: Color(0xFFFCB732),
+                  backgroundColor: AppColors.primary,
                   onPressed: () {
                     context.router.push(const CreateGroupRoute());
                   },
