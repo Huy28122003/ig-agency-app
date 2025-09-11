@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/dashboard/overview_dashboard_type.dart';
 import 'package:ig_agency_app/domain/entities/dashboard/overview_member_status.dart';
-import 'package:ig_agency_app/presentation/resources/colors.dart';
-import 'package:ig_agency_app/presentation/views/pages/dashboard/home/dashboard_home_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/dashboard/home/widgets/notched_clipper.dart';
 import 'package:ig_agency_app/shared/utils/widget_util.dart';
+import '../../../../../resources/colors.dart';
 import '../../../../widgets/header_home_view.dart';
+import '../dashboard_home_bloc.dart';
+import '../widgets/notched_clipper.dart';
 
 class DashboardHomeMobileLayout extends StatefulWidget {
   const DashboardHomeMobileLayout({super.key});
