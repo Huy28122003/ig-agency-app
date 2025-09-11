@@ -8,7 +8,6 @@ import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import '../../../../../../domain/entities/workspace_entity.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
-import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
@@ -249,13 +248,6 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
                 _workspaceBloc.add(SearchEvent(value: value));
               },
-              hintStyle: TextStyle(
-                color: AppColors.textDefaultTextSub,
-                fontSize: 16,
-                fontFamily: FontFamily.segoeUI,
-                fontWeight: FontWeight.w600,
-                height: 1.50,
-              ),
               hintText: "workspace.hint_text_search".tr(),
             );
           },
