@@ -49,6 +49,9 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     Emitter<CameraState> emit,
   ) async {
     try {
+      await _cameraController?.dispose();
+      _cameraController = null;
+
       /// Get available cameras
       _cameras = await availableCameras();
 
@@ -56,13 +59,14 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
       final permission = await _permissionManager.checkCameraPermission();
       await _permissionManager.checkMicroPermission();
       if (permission.isGranted && _cameras.isNotEmpty) {
-        await _cameraController?.dispose();
-        _cameraController = null;
         _cameraController = CameraController(
           _description,
           ResolutionPreset.high,
         );
         await _cameraController?.initialize();
+        await _cameraController?.setFlashMode(
+          state.isFlashEnabled ? FlashMode.auto : FlashMode.off,
+        );
       }
       emit(
         state.copyWith(
@@ -178,7 +182,8 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
       _cameraController = null;
     }
     if (event.state == AppLifecycleState.resumed &&
-        _oldLifecycleState == AppLifecycleState.inactive) {
+        _oldLifecycleState == AppLifecycleState.inactive &&
+        _cameraController?.value.isInitialized != true) {
       _oldLifecycleState = newState;
       add(LoadDataEvent());
     }

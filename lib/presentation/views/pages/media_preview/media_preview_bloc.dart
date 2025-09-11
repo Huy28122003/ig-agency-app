@@ -26,6 +26,7 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
   late String path;
   late String avatar;
   late bool isPhoto;
+  late double aspectRatio;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);

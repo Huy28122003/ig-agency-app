@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
-import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../widgets/app_video_player.dart';
@@ -36,7 +35,7 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            Positioned.fill(
+            Positioned(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
@@ -49,9 +48,15 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                         builder: (context, path) {
                           return (path.isEmpty)
                               ? Center(child: CircularProgressIndicator())
-                              : _bloc.isPhoto
-                              ? Image.file(File(path))
-                              : AppVideoPlayer(path: path, isAutoPlay: true);
+                              : AspectRatio(
+                                  aspectRatio: _bloc.aspectRatio,
+                                  child: _bloc.isPhoto
+                                      ? Image.file(File(path))
+                                      : AppVideoPlayer(
+                                          path: path,
+                                          isAutoPlay: true,
+                                        ),
+                                );
                         },
                       ),
                 ),

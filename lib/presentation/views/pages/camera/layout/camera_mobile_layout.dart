@@ -51,12 +51,14 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
               _cameraBloc.add(
                 AppLifecycleChangedEvent(AppLifecycleState.inactive),
               );
+              final aspectRatio = _cameraBloc.controller?.value.aspectRatio;
               await context.router.push(
                 MediaPreviewRoute(
                   avatar:
                       "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
+                  aspectRatio: 1 / (aspectRatio ?? 0),
                 ),
               );
               _cameraBloc.add(
@@ -79,11 +81,9 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
         body: SafeArea(
           child: Stack(
             children: [
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CameraView(),
-                ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: CameraView(),
               ),
               Positioned(
                 left: 0,
