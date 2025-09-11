@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/dashboard/overview_dashboard_type.dart';
@@ -30,9 +31,9 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
           backgroundColor: AppColors.surfaceContainerGrayStrong0,
           body: Column(
             children: [
-              const HeaderHomeView(
-                title: 'Dashboard',
-                padding: EdgeInsets.only(
+              HeaderHomeView(
+                title: 'dashboard.dashboard'.tr(),
+                padding: const EdgeInsets.only(
                   left: 20,
                   right: 20,
                   top: 10,
@@ -77,8 +78,8 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Total Members",
+                  Text(
+                    "dashboard.total_member".tr(),
                     style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFF6A7282),
@@ -107,8 +108,8 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
                       ),
                     ),
                     onPressed: () {},
-                    child: const Text(
-                      "Details",
+                    child: Text(
+                      "dashboard.details".tr(),
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -242,11 +243,11 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
                       ),
                     ),
                     onPressed: () {},
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "Details",
+                          "dashboard.details".tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,

@@ -15,17 +15,20 @@ class MediaPreviewPage
     required this.avatar,
     required this.mediaPath,
     this.isPhoto = false,
+    this.aspectRatio = 1,
   });
 
   final String avatar;
   final String mediaPath;
   final bool isPhoto;
+  final double aspectRatio;
 
   @override
   MediaPreviewBloc get buildBloc => super.buildBloc
     ..avatar = avatar
     ..path = mediaPath
-    ..isPhoto = isPhoto;
+    ..isPhoto = isPhoto
+    ..aspectRatio = aspectRatio;
 
   @override
   void onInitState(BuildContext context) {
