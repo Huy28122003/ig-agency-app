@@ -28,7 +28,7 @@ class AppTextField extends StatefulWidget {
       horizontal: 20,
     ),
     this.style,
-    this.border,
+    this.showUnderlineBorder = true,
   });
 
   final TextEditingController? controller;
@@ -49,7 +49,7 @@ class AppTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final EdgeInsets? contentPadding;
   final TextStyle? style;
-  final InputBorder? border;
+  final bool showUnderlineBorder;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -66,7 +66,7 @@ class _AppTextFieldState extends State<AppTextField> {
     _controller.text = widget.value;
     _obscureText = widget.obscureText;
     _controller.addListener(() {
-      setState(() {}); // update counter khi user nhập
+      setState(() {});
     });
   }
 
@@ -88,16 +88,14 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     final isError = widget.errorText != null;
 
-    final underlineBorder =
-        widget.border ??
-        UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: isError
-                ? AppColors.outlineAlertError
-                : AppColors.outlineGrayStrong200,
-            width: 1,
-          ),
-        );
+    final underlineBorder = UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: isError
+            ? AppColors.outlineAlertError
+            : AppColors.outlineGrayStrong200,
+        width: 1,
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,10 +182,18 @@ class _AppTextFieldState extends State<AppTextField> {
                     child: widget.suffixIcon,
                   )
                 : null,
-            border: underlineBorder,
-            enabledBorder: underlineBorder,
-            focusedBorder: underlineBorder,
-            disabledBorder: underlineBorder,
+            border: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            enabledBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            focusedBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            disabledBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
             contentPadding: widget.contentPadding,
           ),
         ),

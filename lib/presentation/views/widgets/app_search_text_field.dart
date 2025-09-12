@@ -30,6 +30,7 @@ class AppSearchTextField extends StatefulWidget {
     this.enableCancel = true,
     this.onSearchEnable,
     this.hintStyle,
+    this.fillColor,
   });
 
   final TextEditingController? controller;
@@ -52,6 +53,7 @@ class AppSearchTextField extends StatefulWidget {
   final bool enableCancel;
   final TextStyle? style;
   final TextStyle? hintStyle;
+  final Color? fillColor;
 
   @override
   State<AppSearchTextField> createState() => _AppSearchTextFieldState();
@@ -125,7 +127,7 @@ class _AppSearchTextFieldState extends State<AppSearchTextField> {
           decoration: InputDecoration(
             filled: true,
             // Bật background
-            fillColor: Colors.white,
+            fillColor: widget.fillColor ?? Colors.white,
             labelText: widget.labelText,
             labelStyle: TextStyle(
               color: AppColors.textDefaultTextSub,
