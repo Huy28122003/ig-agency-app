@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,7 +101,8 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
               },
               enablePullDown: false,
               data: state.members,
-              numCardLoading: 15,
+              numCardLoading: 10,
+              cardLoading: _buildLoading(),
               builder: (context, index) {
                 final member = state.members[index];
                 return MemberTileWidget(
@@ -113,6 +115,72 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CardLoading(
+                height: 48,
+                borderRadius: BorderRadius.all(Radius.circular(1000)),
+                width: 48,
+                margin: EdgeInsets.only(bottom: 10),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CardLoading(
+                                height: 25,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                width: double.infinity,
+                                margin: EdgeInsets.only(bottom: 10),
+                              ),
+                              const SizedBox(height: 6),
+                              CardLoading(
+                                height: 20,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                width: 150,
+                                margin: EdgeInsets.only(bottom: 10),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        CardLoading(
+                          height: 20,
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          width: 80,
+                          margin: EdgeInsets.only(bottom: 10),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
