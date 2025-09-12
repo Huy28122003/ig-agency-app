@@ -7,6 +7,7 @@ import '../../../../../../domain/entities/user_entity.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/app_checkbox.dart';
+import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/app_text_field.dart';
@@ -22,9 +23,30 @@ class CreateGroupMobileLayout extends StatefulWidget {
 }
 
 class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
+  late final ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      final bloc = context.read<CreateGroupBloc>();
+      if (bloc.state.pageStatus != PageStatus.loading &&
+          bloc.state.pagination.hasMore) {
+        bloc.add(LoadMoreDataEvent());
+      }
+    }
   }
 
   @override
@@ -268,6 +290,7 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
           );
         }
         return ListView.builder(
+          controller: _scrollController,
           padding: EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 60),
           itemCount: listUser.$1.length,
           itemBuilder: (context, index) {
