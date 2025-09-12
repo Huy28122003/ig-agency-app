@@ -17,12 +17,16 @@ class _NavMobileLayoutState extends State<NavMobileLayout> {
   List<AppBottomNavigationItem> items = [
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icWorkspace.svg(
+        width: 24,
+        height: 24,
         colorFilter: ColorFilter.mode(
           AppColors.textPrimaryTextDefault,
           BlendMode.srcIn,
         ),
       ),
       icon: Assets.icons.icWorkspace.svg(
+        width: 24,
+        height: 24,
         colorFilter: ColorFilter.mode(
           AppColors.textDefaultTextSub2,
           BlendMode.srcIn,
@@ -69,12 +73,16 @@ class _NavMobileLayoutState extends State<NavMobileLayout> {
     ),
     AppBottomNavigationItem(
       selectedIcon: Assets.icons.icSetting.svg(
+        width: 24,
+        height: 24,
         colorFilter: ColorFilter.mode(
           AppColors.textPrimaryTextDefault,
           BlendMode.srcIn,
         ),
       ),
       icon: Assets.icons.icSetting.svg(
+        width: 24,
+        height: 24,
         colorFilter: ColorFilter.mode(
           AppColors.textDefaultTextSub2,
           BlendMode.srcIn,
