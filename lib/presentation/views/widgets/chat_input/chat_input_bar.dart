@@ -225,6 +225,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
               ],
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               spacing: 8,
               children: [
                 BlocBuilder<WSDetailBloc, WSDetailState>(

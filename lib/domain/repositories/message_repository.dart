@@ -21,6 +21,7 @@ abstract class MessageRepository {
     int workspaceId,
     int limit,
     String? oldestMessageId,
+    String? targetMessageId,
   );
 
   Future<MessageEntity> sendMessage(MessageEntity message);

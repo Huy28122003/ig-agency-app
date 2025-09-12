@@ -19,11 +19,12 @@ class ChatTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: BoxConstraints(maxHeight: 120),
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerGrayStrong2,
         shape: RoundedRectangleBorder(
           side: BorderSide(width: 1, color: AppColors.outlineGrayStrong200),
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(16),
         ),
         shadows: [
           BoxShadow(
@@ -38,7 +39,8 @@ class ChatTextField extends StatelessWidget {
         controller: textEditingController,
         focusNode: focusNode,
         onTapOutside: (event) => onTapOutside?.call(),
-        maxLines: 5,
+        maxLines: null,
+        minLines: 1,
         style: TextStyle(
           color: AppColors.textDefaultTextSub2,
           fontSize: 16,

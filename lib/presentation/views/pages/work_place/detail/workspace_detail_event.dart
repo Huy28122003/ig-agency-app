@@ -104,3 +104,11 @@ class DisableShowTimeEvent extends WSDetailEvent {
 class GetPinnedMessageSummaryEvent extends WSDetailEvent {
   const GetPinnedMessageSummaryEvent();
 }
+
+class ResetScrollToTopEvent extends WSDetailEvent {
+  const ResetScrollToTopEvent();
+}
+
+class LoadMoreOldChatMessagesEvent extends WSDetailEvent {
+  const LoadMoreOldChatMessagesEvent();
+}

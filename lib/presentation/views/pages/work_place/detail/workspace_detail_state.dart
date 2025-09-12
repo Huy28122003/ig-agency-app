@@ -16,8 +16,12 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.isUnpinSuccess = false,
     this.pinnedMessages = const [],
     this.pinnedMessagesPagingStatus = PagingStatus.idle,
+    this.chatMessagesPagingStatus = PagingStatus.idle,
+    this.hasMoreOldMessages = true,
     this.jumpToMessageIndex,
+    this.scrollToTop = false,
     this.showTimeMessageId,
+    this.forceCloseScrollToTop = false,
   });
 
   final List<ChatMessageUIModel> chatMessages;
@@ -31,8 +35,12 @@ class WSDetailState extends BaseState<WSDetailState> {
   final bool isUnpinSuccess;
   final List<PinnedMessageUIModel> pinnedMessages;
   final PagingStatus pinnedMessagesPagingStatus;
+  final PagingStatus chatMessagesPagingStatus;
+  final bool hasMoreOldMessages;
   final int? jumpToMessageIndex;
+  final bool scrollToTop;
   final String? showTimeMessageId;
+  final bool forceCloseScrollToTop;
 
   @override
   WSDetailState copyWith({
@@ -51,7 +59,10 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? isUnpinSuccess,
     List<PinnedMessageUIModel>? pinnedMessages,
     PagingStatus? pinnedMessagesPagingStatus,
+    PagingStatus? chatMessagesPagingStatus,
+    bool? hasMoreOldMessages,
     int? jumpToMessageIndex,
+    bool? scrollToTop,
     bool forceCloseJumpToMessage = false,
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
@@ -75,9 +86,13 @@ class WSDetailState extends BaseState<WSDetailState> {
       pinnedMessages: pinnedMessages ?? this.pinnedMessages,
       pinnedMessagesPagingStatus:
           pinnedMessagesPagingStatus ?? this.pinnedMessagesPagingStatus,
+      chatMessagesPagingStatus:
+          chatMessagesPagingStatus ?? this.chatMessagesPagingStatus,
+      hasMoreOldMessages: hasMoreOldMessages ?? this.hasMoreOldMessages,
       jumpToMessageIndex: forceCloseJumpToMessage
           ? null
           : jumpToMessageIndex ?? this.jumpToMessageIndex,
+      scrollToTop: scrollToTop ?? this.scrollToTop,
       showTimeMessageId: forceDisableShowTime
           ? null
           : showTimeMessageId ?? this.showTimeMessageId,
@@ -98,7 +113,10 @@ class WSDetailState extends BaseState<WSDetailState> {
     isUnpinSuccess,
     pinnedMessages,
     pinnedMessagesPagingStatus,
+    chatMessagesPagingStatus,
+    hasMoreOldMessages,
     jumpToMessageIndex,
+    scrollToTop,
     showTimeMessageId,
   ];
 }

@@ -106,6 +106,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<ShowTimeEvent>(_onShowTime);
     handleSubEvent<DisableShowTimeEvent>(_onDisableShowTime);
     handleSubEvent<GetPinnedMessageSummaryEvent>(_onGetPinnedMessageSummary);
+    handleSubEvent<ResetScrollToTopEvent>(_onResetScrollToTop);
   }
 
   void _initializeMessageListener() {
@@ -544,6 +545,27 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final messageIndex = state.chatMessages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
+    if (messageIndex == -1) {
+      emit(state.copyWith(scrollToTop: true));
+      final messageResult = await _fetchMessageUseCase.call(
+        FetchMessagesWorkspaceParams(
+          workspaceId: _workspaceId,
+          limit: _limit,
+          oldestMessageId: state.chatMessages.first.message.id,
+        ),
+      );
+      final messages = messageResult.data;
+      final messageIndex = messages.indexWhere(
+        (message) => message.id == event.messageId,
+      );
+      emit(
+        state.copyWith(
+          chatMessages: _mapMessagesToUIModels(messages),
+          jumpToMessageIndex: messageIndex,
+        ),
+      );
+      return;
+    }
     emit(state.copyWith(jumpToMessageIndex: messageIndex));
   }
 
@@ -595,6 +617,13 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     );
 
     emit(state.copyWith(pinnedMessageSummary: uiModel));
+  }
+
+  Future<void> _onResetScrollToTop(
+    ResetScrollToTopEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(scrollToTop: false));
   }
 
   @override

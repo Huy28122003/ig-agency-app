@@ -20,6 +20,7 @@ class FetchMessagesWorkspaceUseCase
       params.workspaceId,
       params.limit,
       params.oldestMessageId,
+      params.targetMessageId,
     );
   }
 }
@@ -28,10 +29,12 @@ class FetchMessagesWorkspaceParams {
   final int workspaceId;
   final int limit;
   final String? oldestMessageId;
+  final String? targetMessageId;
 
   FetchMessagesWorkspaceParams({
     required this.workspaceId,
     required this.limit,
     this.oldestMessageId,
+    this.targetMessageId,
   });
 }

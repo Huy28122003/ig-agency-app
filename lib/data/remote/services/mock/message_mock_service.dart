@@ -219,21 +219,20 @@ class MessageMockService {
 
   List<MessageEntity> _createMockMessages(int groupId, {int count = 50}) {
     DateTime current = DateTime.now();
+    current = current.subtract(Duration(days: 365));
     final uuid = const Uuid();
 
     final List<MessageEntity> messages = [];
 
     for (int i = 0; i < count; i++) {
-      current = current.subtract(
-        _timeSteps[_random.nextInt(_timeSteps.length)],
-      );
+      current = current.add(_timeSteps[_random.nextInt(_timeSteps.length)]);
 
       final type =
           MessageType.values[_random.nextInt(MessageType.values.length)];
       final content = _generateContent(type);
 
       MessageReply? reply;
-      if (messages.isNotEmpty && _random.nextDouble() < 0.3) {
+      if (messages.isNotEmpty && _random.nextDouble() < 0.3 && i != 0) {
         final message = messages[_random.nextInt(messages.length)];
         final messageId = message.id;
         if (messageId != null && message.type != MessageType.system) {
@@ -482,6 +481,7 @@ class MessageMockService {
     required int groupId,
     int limit = 10,
     String? oldestMessageId,
+    String? targetMessageId,
   }) {
     final messages = _messageMockData[groupId];
     if (messages == null || messages.isEmpty) {
@@ -501,7 +501,20 @@ class MessageMockService {
       }
     }
 
-    final offset = max(0, messageIndex + 1 - limit);
+    var offset = 0;
+
+    if (targetMessageId != null) {
+      final targetMessageIndex = messages.indexWhere(
+        (message) => message.id == targetMessageId,
+      );
+      if (targetMessageIndex == -1) {
+        throw Exception();
+      } else {
+        offset = max(0, targetMessageIndex);
+      }
+    }
+
+    offset = max(0, messageIndex + 1 - limit);
     final newLimit = limit >= messageIndex ? limit : (messageIndex + 1);
 
     return (messages.skip(offset).take(newLimit).toList(), messages.length);

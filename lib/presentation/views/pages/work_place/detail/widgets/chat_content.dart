@@ -2,12 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../../domain/enums/message_enums.dart';
 import '../../../../../../gen/assets.gen.dart';
-import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
 import '../../../../widgets/chat/pinned_message_section.dart';
@@ -65,13 +63,25 @@ class _ChatContentState extends State<ChatContent> {
     }
   }
 
+  void _scrollToTop() {
+    if (_bloc.state.chatMessages.isNotEmpty) {
+      _itemScrollController.scrollTo(
+        index: 0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
   void _jumpToMessage(int index) {
-    _itemScrollController.scrollTo(
-      index: index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOutCubic,
-      alignment: 0.5,
-    );
+    if (index >= 0 && index < _bloc.state.chatMessages.length) {
+      _itemScrollController.scrollTo(
+        index: index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOutCubic,
+        alignment: 0.5,
+      );
+    }
   }
 
   @override
@@ -106,6 +116,16 @@ class _ChatContentState extends State<ChatContent> {
             }
           },
         ),
+        BlocListener<WSDetailBloc, WSDetailState>(
+          listenWhen: (previous, current) =>
+              previous.scrollToTop != current.scrollToTop,
+          listener: (context, state) {
+            if (state.scrollToTop) {
+              _scrollToTop();
+              _bloc.add(ResetScrollToTopEvent());
+            }
+          },
+        ),
       ],
       child: BlocBuilder<WSDetailBloc, WSDetailState>(
         buildWhen: (previous, current) =>
@@ -126,6 +146,9 @@ class _ChatContentState extends State<ChatContent> {
                   return state.chatMessages;
                 },
                 builder: (context, chatMessages) {
+                  if (chatMessages.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
                   return ScrollablePositionedList.builder(
                     itemScrollController: _itemScrollController,
                     itemPositionsListener: _itemPositionsListener,
@@ -137,58 +160,31 @@ class _ChatContentState extends State<ChatContent> {
                     itemBuilder: (_, index) {
                       final uiModel = chatMessages[index];
 
-                      return Column(
-                        children: [
-                          if (uiModel.shouldShowTime) ...[
-                            Container(
-                              margin: const EdgeInsets.only(top: 16),
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    uiModel.message.createdAt
-                                        .toShortDateString()
-                                        .toUpperCase(),
-                                    style: TextStyle(
-                                      color: AppColors.textDefaultTextDefault,
-                                      fontSize: 14,
-                                      fontFamily: FontFamily.segoeUI,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.43,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                          ChatMessageBubble(
-                            maxWidth: maxWidth,
-                            maxWidthReply: maxWidthReply,
-                            horizontalPadding: widget.horizontalPadding,
-                            uiModel: uiModel,
-                            userId: _bloc.userId!,
-                            onTap: () {
-                              final messageId = uiModel.message.id;
-                              if (uiModel.message.type == MessageType.text) {
-                                if (!uiModel.shouldShowTime &&
-                                    messageId != null) {
-                                  _bloc.add(
-                                    ShowTimeEvent(messageId: messageId),
-                                  );
-                                } else if (uiModel.shouldShowTime) {
-                                  _bloc.add(DisableShowTimeEvent());
-                                }
-                              }
-                            },
-                            onReply: () {
-                              _bloc.add(
-                                ReplyToMessageEvent(message: uiModel.message),
-                              );
-                            },
-                          ),
-                        ],
+                      return ChatMessageBubble(
+                        key: ValueKey(uiModel.message.id),
+                        maxWidth: maxWidth,
+                        maxWidthReply: maxWidthReply,
+                        horizontalPadding: widget.horizontalPadding,
+                        uiModel: uiModel,
+                        userId: _bloc.userId!,
+                        onTap: () {
+                          final messageId = uiModel.message.id;
+                          if (uiModel.message.type == MessageType.text) {
+                            if (!uiModel.shouldShowTime && messageId != null) {
+                              _bloc.add(ShowTimeEvent(messageId: messageId));
+                            } else if (uiModel.shouldShowTime) {
+                              _bloc.add(DisableShowTimeEvent());
+                            }
+                          }
+                        },
+                        onReply: () {
+                          _bloc.add(
+                            ReplyToMessageEvent(message: uiModel.message),
+                          );
+                        },
+                        onReplyTap: (messageId) {
+                          _bloc.add(JumpToMessageEvent(messageId: messageId));
+                        },
                       );
                     },
 

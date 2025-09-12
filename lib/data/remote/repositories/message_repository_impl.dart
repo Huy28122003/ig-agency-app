@@ -87,6 +87,7 @@ class MessageRepositoryImpl implements MessageRepository {
     int workspaceId,
     int limit,
     String? oldestMessageId,
+    String? targetMessageId,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
@@ -96,6 +97,7 @@ class MessageRepositoryImpl implements MessageRepository {
             groupId: workspaceId,
             limit: limit,
             oldestMessageId: oldestMessageId,
+            targetMessageId: targetMessageId,
           );
 
       return PagedResult(data: messages, totalRecords: totalRecords);

@@ -77,4 +77,22 @@ class TextMessageDisplayUtil {
 
     return (spans, hostName, link);
   }
+
+  static int calculateTextLines({
+    required String text,
+    required double maxWidth,
+    required TextStyle style,
+    int? maxLines,
+  }) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: maxLines,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: maxWidth);
+
+    final lineHeight = textPainter.preferredLineHeight;
+    final lineCount = (textPainter.size.height / lineHeight).ceil();
+
+    return lineCount;
+  }
 }
