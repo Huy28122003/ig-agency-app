@@ -23,7 +23,7 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surfaceBackgroundBackground,
         appBar: AppBar(
           leadingWidth: 52,
           leading: Container(
