@@ -4,9 +4,7 @@ import 'package:ig_agency_app/domain/entities/paged_result.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/shared/commons/models/pagination.dart';
-import 'package:ig_agency_app/shared/mock_data.dart';
 import 'package:injectable/injectable.dart';
-import '../../../domain/entities/user_entity.dart';
 import '../../../domain/repositories/workspace_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
 import '../../../shared/utils/mock_data.dart';
@@ -62,28 +60,26 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     String? keySearch,
   }) {
     return Future.value([
-      UserEntity(id: "1", name: "Pham Phu", email: ''),
-      UserEntity(id: "2", name: "Nguyen Van A", email: ''),
-      UserEntity(id: "3", name: "Le Thi B", email: ''),
-      UserEntity(id: "4", name: "Tran Van C", email: ''),
-      UserEntity(id: "5", name: "Hoang Thi D", email: ''),
-      UserEntity(id: "6", name: "Vu Van E", email: ''),
-      UserEntity(id: "7", name: "Pham Thi F", email: ''),
-      UserEntity(id: "8", name: "Nguyen Van G", email: ''),
-      UserEntity(id: "9", name: "Le Thi H", email: ''),
-      UserEntity(id: "10", name: "Tran Van I", email: ''),
-      UserEntity(id: "11", name: "Hoang Thi K", email: ''),
-      UserEntity(id: "12", name: "Vu Van L", email: ''),
-      UserEntity(id: "13", name: "Pham Thi M", email: ''),
-      UserEntity(id: "14", name: "Nguyen Van N", email: ''),
-      UserEntity(id: "15", name: "Le Thi O", email: ''),
-      UserEntity(id: "16", name: "Tran Van P", email: ''),
-      UserEntity(id: "17", name: "Hoang Thi Q", email: ''),
-      UserEntity(id: "18", name: "Vu Van R", email: ''),
+      UserEntity(id: "1", name: "Pham Phu", email: '', isAdmin: false),
+      UserEntity(id: "2", name: "Nguyen Van A", email: '', isAdmin: false),
+      UserEntity(id: "3", name: "Le Thi B", email: '', isAdmin: false),
+      UserEntity(id: "4", name: "Tran Van C", email: '', isAdmin: false),
+      UserEntity(id: "5", name: "Hoang Thi D", email: '', isAdmin: false),
+      UserEntity(id: "6", name: "Vu Van E", email: '', isAdmin: false),
+      UserEntity(id: "7", name: "Pham Thi F", email: '', isAdmin: false),
+      UserEntity(id: "8", name: "Nguyen Van G", email: '', isAdmin: false),
+      UserEntity(id: "9", name: "Le Thi H", email: '', isAdmin: false),
+      UserEntity(id: "10", name: "Tran Van I", email: '', isAdmin: false),
+      UserEntity(id: "11", name: "Hoang Thi K", email: '', isAdmin: false),
+      UserEntity(id: "12", name: "Vu Van L", email: '', isAdmin: false),
+      UserEntity(id: "13", name: "Pham Thi M", email: '', isAdmin: false),
+      UserEntity(id: "14", name: "Nguyen Van N", email: '', isAdmin: false),
+      UserEntity(id: "15", name: "Le Thi O", email: '', isAdmin: false),
+      UserEntity(id: "16", name: "Tran Van P", email: '', isAdmin: false),
+      UserEntity(id: "17", name: "Hoang Thi Q", email: '', isAdmin: false),
+      UserEntity(id: "18", name: "Vu Van R", email: '', isAdmin: false),
     ]);
   }
-}
-
 
   @override
   Future<WorkspaceEntity> getWorkspaceById({required int groupId}) async {
