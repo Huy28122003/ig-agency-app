@@ -183,7 +183,7 @@ class _UserProfileMobileLayoutState extends State<UserProfileMobileLayout> {
             title: 'Add to group',
             icon: Assets.icons.icAddMembers.svg(width: 24, height: 24),
             onTap: () {
-              //TODO
+              //TODO: mở màn AddToGroupPage
             },
           ),
         ),

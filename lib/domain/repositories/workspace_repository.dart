@@ -11,6 +11,12 @@ abstract class WorkspaceRepository {
     String? keyWord,
   });
 
+  // TODO: tương tự hàm getWorkspaces => quy về dùng chung 1 hàm
+  Future<List<WorkspaceEntity>> getListGroup({
+    required Pagination pagination,
+    String? keySearch,
+  });
+
   Stream<WorkspaceEntity> listenLastMessages();
 
   Future<List<UserEntity>> getListUser({
@@ -19,4 +25,6 @@ abstract class WorkspaceRepository {
   });
 
   Future<bool> createGroup(String groupName, List<UserEntity> members);
+
+  Future<bool> addUserToGroups(UserEntity user, List<WorkspaceEntity> groups);
 }

@@ -11,6 +11,7 @@ import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/app_text_field.dart';
+import '../../../../widgets/avatar_title_checkbox_row.dart';
 import '../../../../widgets/circle_network_avatar.dart';
 import '../create_group_bloc.dart';
 
@@ -297,51 +298,15 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
             final item = listUser.$1[index];
             final isSelected =
                 listUser.$2.firstOrNullWhere((e) => e.id == item.id) != null;
-            return InkWell(
+            return AvatarTitleCheckboxRow(
+              imageUrl: item.avatar,
+              title: item.name,
+              isSelected: isSelected,
               onTap: () {
                 context.read<CreateGroupBloc>().add(
                   SelectUserEvent(item, !isSelected),
                 );
               },
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        CircleNetworkAvatar(imageUrl: item.avatar, size: 48),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            item.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textDefaultTextDefault,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        AppCheckBox(
-                          value: isSelected,
-                          onChanged: (value) {
-                            context.read<CreateGroupBloc>().add(
-                              SelectUserEvent(item, !value),
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56),
-                    child: Divider(height: 1, color: Color(0xFFE5E7EB)),
-                  ),
-                ],
-              ),
             );
           },
         );
