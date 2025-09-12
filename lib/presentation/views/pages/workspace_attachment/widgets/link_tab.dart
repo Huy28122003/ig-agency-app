@@ -30,10 +30,10 @@ class _LinkTabState extends State<LinkTab> {
   Widget build(BuildContext context) {
     return BlocListener<WorkspaceAttachmentBloc, WorkspaceAttachmentState>(
       listener: (context, state) {
-        _refreshController.refresh(state.mediaPagingStatus);
+        _refreshController.refresh(state.linkPagingStatus);
       },
       listenWhen: (prev, curr) =>
-          prev.mediaPagingStatus != curr.mediaPagingStatus,
+          prev.linkPagingStatus != curr.linkPagingStatus,
       child:
           BlocSelector<
             WorkspaceAttachmentBloc,
@@ -48,7 +48,7 @@ class _LinkTabState extends State<LinkTab> {
                 refreshController: _refreshController,
                 enablePullDown: false,
                 onLoadMore: () {
-                  _workspaceAttachmentBloc.add(GetMediasEvent());
+                  _workspaceAttachmentBloc.add(GetLinksEvent());
                 },
                 child: ListView.separated(
                   physics: AlwaysScrollableScrollPhysics(),
