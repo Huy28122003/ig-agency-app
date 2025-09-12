@@ -52,5 +52,12 @@
     "ago": "trước",
     "role_admin": "Quản trị viên",
     "role_member": "Thành viên"
+  },
+  "attachment": {
+    "title": "Phương tiện, tập tin & liên kết",
+    "media": "Phương tiện",
+    "file": "Tập tin",
+    "link": "Liên kết",
+    "all_media": "Tất cả"
   }
 }

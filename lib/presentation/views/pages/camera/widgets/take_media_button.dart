@@ -24,6 +24,7 @@ class _TakeMediaButtonState extends State<TakeMediaButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool inProgress = false;
+  final _duration = Duration(milliseconds: 350);
 
   @override
   void initState() {
@@ -78,18 +79,18 @@ class _TakeMediaButtonState extends State<TakeMediaButton>
         alignment: Alignment.center,
         children: [
           AnimatedContainer(
-            width: 60 + (inProgress ? 20 : 0),
-            height: 60 + (inProgress ? 20 : 0),
+            width: 60 + (inProgress ? 35 : 0),
+            height: 60 + (inProgress ? 35 : 0),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerAlphaAlphaWhite17,
               shape: BoxShape.circle,
             ),
-            duration: Duration(milliseconds: 350),
+            duration: _duration,
           ),
           AnimatedContainer(
-            duration: Duration(milliseconds: 350),
-            width: 56 + (inProgress ? 20 : 0),
-            height: 56 + (inProgress ? 20 : 0),
+            duration: _duration,
+            width: 56 + (inProgress ? 35 : 0),
+            height: 56 + (inProgress ? 35 : 0),
             child: AnimatedBuilder(
               animation: _controller,
               builder: (context, child) => CircularProgressIndicator(
@@ -103,7 +104,7 @@ class _TakeMediaButtonState extends State<TakeMediaButton>
             ),
           ),
           AnimatedContainer(
-            duration: Duration(milliseconds: 350),
+            duration: _duration,
             width: 40 - (inProgress ? 10 : 0),
             height: 40 - (inProgress ? 10 : 0),
             decoration: const BoxDecoration(

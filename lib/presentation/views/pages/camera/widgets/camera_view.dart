@@ -22,15 +22,9 @@ class CameraView extends StatelessWidget {
                 previewSize == null) {
               return SizedBox();
             }
-            final aspectRatio = constraints.maxWidth / constraints.maxHeight;
-
-            final cameraAspectRatio = previewSize.height / previewSize.width;
-
-            return ClipRect(
-              child: Transform.scale(
-                scale: cameraAspectRatio / aspectRatio,
-                child: Center(child: CameraPreview(cameraController)),
-              ),
+            return AspectRatio(
+              aspectRatio: 1 / cameraController.value.aspectRatio,
+              child: CameraPreview(cameraController),
             );
           },
         );

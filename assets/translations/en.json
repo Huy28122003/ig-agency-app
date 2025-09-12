@@ -68,5 +68,24 @@
     "ago": "ago",
     "role_admin": "Admin",
     "role_member": "Member"
+  },
+  "dashboard": {
+    "dashboard": "Dashboard",
+    "total_member": "Total Members",
+    "details": "Details",
+    "all_violations": "All Violations",
+    "all devices": "All Devices",
+    "total_visits": "Total Visits",
+    "online": "Online",
+    "accept": "Accept",
+    "block": "Block"
+  },
+  "attachment": {
+    "title": "Media, files & links",
+    "media": "Media",
+    "file": "Files",
+    "link": "Links",
+    "all_media": "All media",
+    "link_no_title": ""
   }
 }

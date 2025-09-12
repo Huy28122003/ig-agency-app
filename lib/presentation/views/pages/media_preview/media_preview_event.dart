@@ -7,3 +7,5 @@ class LoadDataEvent extends MediaPreviewEvent {}
 class SendMediaEvent extends MediaPreviewEvent {}
 
 class SaveMediaEvent extends MediaPreviewEvent {}
+
+class EditMediaEvent extends MediaPreviewEvent {}

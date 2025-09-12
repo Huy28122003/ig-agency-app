@@ -11,7 +11,6 @@ import '../views/pages/edit_workspace_bio/edit_workspace_bio_page.dart';
 import '../views/pages/empty_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/authentication/reset_password/reset_password_page.dart';
-import '../views/pages/media_edit/media_edit_page.dart';
 import '../views/pages/media_preview/media_preview_page.dart';
 import '../views/pages/group_info/group_info_page.dart';
 import '../views/pages/members/members_page.dart';
@@ -28,6 +27,7 @@ import '../views/pages/shared_content/shared_content_page.dart';
 import '../views/pages/work_place/detail/workspace_detail_page.dart';
 import '../views/pages/work_place/list/workspace_list_page.dart';
 import '../views/pages/dashboard/home/dashboard_home_page.dart';
+import '../views/pages/workspace_attachment/workspace_attachment_page.dart';
 import 'auth_guard.dart';
 
 part 'app_router.gr.dart';
@@ -83,7 +83,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: EmptyRoute.page),
 
         /// Mobile
-        CustomRoute(page: SettingHomeRoute.page, transitionsBuilder: TransitionsBuilders.noTransition),
+        CustomRoute(
+          page: SettingHomeRoute.page,
+          transitionsBuilder: TransitionsBuilders.noTransition,
+        ),
       ],
     ),
 
@@ -98,9 +101,9 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SharedContentRoute.page),
     AutoRoute(page: CameraRoute.page),
     AutoRoute(page: MediaPreviewRoute.page),
-    AutoRoute(page: MediaEditRoute.page),
     AutoRoute(page: GroupInfoRoute.page),
     AutoRoute(page: EditWorkspaceBioRoute.page),
     AutoRoute(page: MembersRoute.page),
+    AutoRoute(page: WorkspaceAttachmentRoute.page),
   ];
 }
