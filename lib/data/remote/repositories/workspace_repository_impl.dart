@@ -1,3 +1,5 @@
+import 'package:ig_agency_app/domain/entities/file_entity.dart';
+import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/paged_result.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
@@ -69,6 +71,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       throw FailureConverter.convert(e);
     }
   }
+
   @override
   Future<bool> updateWorkspaceNotification({
     required int groupId,
@@ -82,13 +85,61 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<UserEntity>> getUserByWorkspaceId({
+  Future<PagedResult<UserEntity>> getUserInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
   }) {
     try {
       return MockData().getUsers();
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PagedResult<MediaEntity>> getMediasInGroup({
+    required int workspaceId,
+    required int offset,
+    required int limit,
+  }) async {
+    try {
+      return PagedResult(
+        data: MockData().mockMediaData.sublist(offset, offset + limit),
+        totalRecords: MockData().mockMediaData.length,
+      );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PagedResult<FileEntity>> getFileInGroup({
+    required int workspaceId,
+    required int offset,
+    required int limit,
+  }) async {
+    try {
+      return PagedResult(
+        data: MockData().mockFileEntities().sublist(offset, offset + limit),
+        totalRecords: MockData().mockFileEntities().length,
+      );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PagedResult<String>> getLinkInGroup({
+    required int workspaceId,
+    required int offset,
+    required int limit,
+  }) async {
+    try {
+      return PagedResult(
+        data: MockData().mockLinks,
+        totalRecords: MockData().mockLinks.length,
+      );
     } catch (e) {
       throw FailureConverter.convert(e);
     }

@@ -1,14 +1,97 @@
+import 'dart:math';
+
 import 'package:ig_agency_app/domain/entities/message.dart';
 import 'package:ig_agency_app/domain/entities/paged_result.dart';
 import 'package:ig_agency_app/domain/enums/filter_type.dart';
 
+import '../../domain/entities/file_entity.dart';
 import '../../domain/entities/group.dart';
+import '../../domain/entities/media_entity.dart';
 import '../../domain/entities/search.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/entities/workspace_entity.dart';
 
 class MockData {
+  final List<MediaEntity> mockMediaData = List.generate(50, (index) {
+    final isVideo = index % 3 == 0;
+    return MediaEntity(
+      id: index + 1,
+      isVideo: isVideo,
+      previewUrl: "https://picsum.photos/id/${index + 10}/200/200",
+      duration: isVideo
+          ? Duration(
+              minutes: Random().nextInt(59),
+              seconds: Random().nextInt(59),
+            )
+          : null,
+    );
+  });
+
+  List<FileEntity> mockFileEntities() {
+    final random = Random();
+    return List.generate(50, (index) {
+      return FileEntity(
+        id: index + 1,
+        name: "File_${index + 1}.pdf",
+        size: (random.nextDouble() * 100).clamp(0.1, 99.9),
+        url: "https://example.com/files/file_${index + 1}.pdf",
+      );
+    });
+  }
+
+  final List<String> mockLinks = [
+    "https://www.wikipedia.org",
+    "https://www.britannica.com",
+    "https://www.nationalgeographic.com",
+    "https://www.imdb.com",
+    "https://stackoverflow.com",
+    "https://medium.com",
+    "https://reddit.com",
+    "https://quora.com",
+    "https://khanacademy.org",
+    "https://codecademy.com",
+    "https://coursera.org",
+    "https://edx.org",
+    "https://udemy.com",
+    "https://ted.com",
+    "https://allrecipes.com",
+    "https://epicurious.com",
+    "https://foodnetwork.com",
+    "https://tripadvisor.com",
+    "https://lonelyplanet.com",
+    "https://booking.com",
+    "https://airbnb.com",
+    "https://expedia.com",
+    "https://zillow.com",
+    "https://realtor.com",
+    "https://cars.com",
+    "https://autotrader.com",
+    "https://nike.com",
+    "https://adidas.com",
+    "https://apple.com",
+    "https://samsung.com",
+    "https://microsoft.com",
+    "https://ibm.com",
+    "https://intel.com",
+    "https://nvidia.com",
+    "https://tesla.com",
+    "https://spacex.com",
+    "https://nasa.gov",
+    "https://who.int",
+    "https://unicef.org",
+    "https://un.org",
+    "https://worldbank.org",
+    "https://bloomberg.com",
+    "https://reuters.com",
+    "https://cnn.com",
+    "https://bbc.com",
+    "https://aljazeera.com",
+    "https://nytimes.com",
+    "https://theguardian.com",
+    "https://wired.com",
+  ];
+
   Future<PagedResult<SearchResult>> getSearchResult(FilterType type) async {
     await Future.delayed(Duration(seconds: 1));
     final list = listSearch

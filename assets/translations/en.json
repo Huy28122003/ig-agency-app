@@ -79,5 +79,13 @@
     "online": "Online",
     "accept": "Accept",
     "block": "Block"
+  },
+  "attachment": {
+    "title": "Media, files & links",
+    "media": "Media",
+    "file": "Files",
+    "link": "Links",
+    "all_media": "All media",
+    "link_no_title": ""
   }
 }
