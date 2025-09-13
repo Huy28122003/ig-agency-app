@@ -78,4 +78,33 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       UserEntity(id: "18", name: "Vu Van R", email: ''),
     ]);
   }
+
+  @override
+  Future<bool> addUserToGroups(UserEntity user, List<WorkspaceEntity> groups) {
+    return Future.value(true);
+  }
+
+  @override
+  Future<List<WorkspaceEntity>> getListGroup({
+    required Pagination pagination,
+    String? keySearch,
+  }) {
+    try {
+      final allData = MockData.getWorkspaces();
+
+      final filtered = keySearch != null && keySearch.isNotEmpty
+          ? allData
+                .where(
+                  (e) => e.workspaceName.toLowerCase().contains(
+                    keySearch.toLowerCase(),
+                  ),
+                )
+                .toList()
+          : allData;
+
+      return Future.value(filtered);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }

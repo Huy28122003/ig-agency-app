@@ -6,10 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../domain/entities/user_entity.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
-import '../../../../../../shared/commons/app_checkbox.dart';
+import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/app_text_field.dart';
+import '../../../../widgets/avatar_title_checkbox_row.dart';
 import '../../../../widgets/circle_network_avatar.dart';
 import '../create_group_bloc.dart';
 
@@ -22,9 +23,30 @@ class CreateGroupMobileLayout extends StatefulWidget {
 }
 
 class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
+  late final ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      final bloc = context.read<CreateGroupBloc>();
+      if (bloc.state.pageStatus != PageStatus.loading &&
+          bloc.state.pagination.hasMore) {
+        bloc.add(LoadMoreDataEvent());
+      }
+    }
   }
 
   @override
@@ -268,57 +290,22 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
           );
         }
         return ListView.builder(
+          controller: _scrollController,
           padding: EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 60),
           itemCount: listUser.$1.length,
           itemBuilder: (context, index) {
             final item = listUser.$1[index];
             final isSelected =
                 listUser.$2.firstOrNullWhere((e) => e.id == item.id) != null;
-            return InkWell(
+            return AvatarTitleCheckboxRow(
+              imageUrl: item.avatar,
+              title: item.name,
+              isSelected: isSelected,
               onTap: () {
                 context.read<CreateGroupBloc>().add(
                   SelectUserEvent(item, !isSelected),
                 );
               },
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        CircleNetworkAvatar(imageUrl: item.avatar, size: 48),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            item.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textDefaultTextDefault,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        AppCheckBox(
-                          value: isSelected,
-                          onChanged: (value) {
-                            context.read<CreateGroupBloc>().add(
-                              SelectUserEvent(item, !value),
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56),
-                    child: Divider(height: 1, color: Color(0xFFE5E7EB)),
-                  ),
-                ],
-              ),
             );
           },
         );
@@ -346,8 +333,8 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: listSelectedUser.isEmpty
-                    ? const Color(0xFFFEE2AD)
-                    : const Color(0xFFFCB732),
+                    ? AppColors.surfaceContainerPrimaryPrimaryDisabled
+                    : AppColors.outlinePrimaryDefault,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

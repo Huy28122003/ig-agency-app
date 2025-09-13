@@ -64,5 +64,21 @@
     "search_member": "Search Member",
     "no_user_found": "No user found",
     "create_group": "Create group"
+  },
+  "add_member": {
+    "add_to_group": "Add to group",
+    "create_new": "Create new",
+    "search_group": "Search Group",
+    "add_to": "Add to",
+    "add_to_group_with_number": "Add to {} group"
+  },
+  "profile_info": {
+    "title": "Profile Info",
+    "active_now": "Active now",
+    "search_group": "Search Group",
+    "add_to": "Add to",
+    "block": "Block",
+    "add_to_group": "Add to group",
+    "report": "Report"
   }
 }

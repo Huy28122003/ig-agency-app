@@ -11,4 +11,6 @@ abstract class UserRepository {
   Future updateUserName(String name);
 
   Future updateUserBio(String bio);
+
+  Future<UserEntity> getUserInfo(String userId);
 }

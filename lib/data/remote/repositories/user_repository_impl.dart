@@ -70,4 +70,17 @@ class UserRepositoryImpl implements UserRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<UserEntity> getUserInfo(String userId) async {
+    try {
+      final user = _ramCache.getLatestProfileInfo();
+      if (user == null) {
+        throw Exception('User not found');
+      }
+      return user;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }
