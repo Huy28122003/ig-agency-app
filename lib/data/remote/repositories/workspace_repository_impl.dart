@@ -50,6 +50,55 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
+  Future<WorkspaceEntity> getWorkspaceById({required int groupId}) async {
+    try {
+      final workspace = MockData.getWorkspaces().firstWhere(
+        (element) => element.id == groupId,
+      );
+      return workspace;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<bool> updateWorkspaceBio({
+    required int groupId,
+    required String bio,
+  }) async {
+    try {
+      return true;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<bool> updateWorkspaceNotification({
+    required int groupId,
+    required bool isMute,
+  }) async {
+    try {
+      return true;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<PagedResult<UserEntity>> getUserByWorkspaceId({
+    required int workspaceId,
+    required int offset,
+    required int limit,
+  }) {
+    try {
+      return MockData().getUsers();
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<bool> createGroup(String groupName, List<UserEntity> members) {
     return Future.value(true);
   }
@@ -79,6 +128,35 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       UserEntity(id: "17", name: "Hoang Thi Q", email: '', isAdmin: false),
       UserEntity(id: "18", name: "Vu Van R", email: '', isAdmin: false),
     ]);
+  }
+
+  @override
+  Future<bool> addUserToGroups(UserEntity user, List<WorkspaceEntity> groups) {
+    return Future.value(true);
+  }
+
+  @override
+  Future<List<WorkspaceEntity>> getListGroup({
+    required Pagination pagination,
+    String? keySearch,
+  }) {
+    try {
+      final allData = MockData.getWorkspaces();
+
+      final filtered = keySearch != null && keySearch.isNotEmpty
+          ? allData
+                .where(
+                  (e) => e.workspaceName.toLowerCase().contains(
+                    keySearch.toLowerCase(),
+                  ),
+                )
+                .toList()
+          : allData;
+
+      return Future.value(filtered);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
   }
 
   @override

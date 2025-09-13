@@ -203,7 +203,7 @@ class _DashboardHomeMobileLayoutState extends State<DashboardHomeMobileLayout> {
         ClipPath(
           clipper: NotchedClipper(),
           child: Container(
-            color: Color(0xFFFEE2AD),
+            color: AppColors.surfaceContainerPrimaryPrimaryDisabled,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

@@ -10,7 +10,7 @@ class UserEntity extends Equatable {
     this.updatedAt,
     this.bio,
     this.lastActiveAt,
-    required this.isAdmin,
+    this.isAdmin = false,
   });
 
   final String id;
