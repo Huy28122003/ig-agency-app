@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../../di/di.dart';
 import '../views/pages/authentication/forgot_password/forgot_password_page.dart';
@@ -40,75 +41,76 @@ class AppRouter extends RootStackRouter {
   RouteType get defaultRouteType => const RouteType.material();
 
   @override
-  List<AutoRoute> get routes => [
-    AutoRoute(page: LoginRoute.page),
-    AutoRoute(page: RegistrationRoute.page),
-    AutoRoute(page: ForgotPasswordRoute.page),
-    AutoRoute(page: OtpRoute.page),
-    AutoRoute(page: ResetPasswordRoute.page),
-    AutoRoute(
-      guards: [getIt<AuthGuard>()],
-      page: NavRoute.page,
-      initial: true,
-      children: [
-        CustomRoute(
-          page: WorkspaceListRoute.page,
-          // transitionsBuilder: TransitionsBuilders.noTransition,
-          children: [AutoRoute(page: CreateGroupRoute.page)],
-        ),
-        CustomRoute(
-          page: SearchRoute.page,
-          // transitionsBuilder: TransitionsBuilders.noTransition,
-        ),
-        CustomRoute(
-          page: DashboardHomeRoute.page,
-          // transitionsBuilder: TransitionsBuilders.noTransition,
-        ),
-        CustomRoute(
-          page: SettingRoute.page,
-          // transitionsBuilder: TransitionsBuilders.noTransition,
+  List<AutoRoute> get routes =>
+      [
+        AutoRoute(page: LoginRoute.page),
+        AutoRoute(page: RegistrationRoute.page),
+        AutoRoute(page: ForgotPasswordRoute.page),
+        AutoRoute(page: OtpRoute.page),
+        AutoRoute(page: ResetPasswordRoute.page),
+        AutoRoute(
+          guards: [getIt<AuthGuard>()],
+          page: NavRoute.page,
+          initial: true,
           children: [
+            CustomRoute(
+              page: WorkspaceListRoute.page,
+              // transitionsBuilder: TransitionsBuilders.noTransition,
+              children: [AutoRoute(page: CreateGroupRoute.page)],
+            ),
+            CustomRoute(
+              page: SearchRoute.page,
+              // transitionsBuilder: TransitionsBuilders.noTransition,
+            ),
+            CustomRoute(
+              page: DashboardHomeRoute.page,
+              // transitionsBuilder: TransitionsBuilders.noTransition,
+            ),
+            CustomRoute(
+              page: SettingRoute.page,
+              // transitionsBuilder: TransitionsBuilders.noTransition,
+              children: [
+                CustomRoute(
+                  page: SettingHomeRoute.page,
+                  transitionsBuilder: TransitionsBuilders.noTransition,
+                  initial: true,
+                ),
+                AutoRoute(page: PinnedMessageRoute.page),
+                AutoRoute(page: ProfileRoute.page),
+                AutoRoute(page: EditNameRoute.page),
+                AutoRoute(page: EditBioRoute.page),
+                AutoRoute(page: ChangePasswordRoute.page),
+              ],
+            ),
+            AutoRoute(page: WSDetailRoute.page),
+            AutoRoute(page: ChatInfoRoute.page),
+            AutoRoute(page: SharedContentRoute.page),
+            AutoRoute(page: EmptyRoute.page),
+
+            /// Mobile
             CustomRoute(
               page: SettingHomeRoute.page,
               transitionsBuilder: TransitionsBuilders.noTransition,
-              initial: true,
             ),
-            AutoRoute(page: PinnedMessageRoute.page),
-            AutoRoute(page: ProfileRoute.page),
-            AutoRoute(page: EditNameRoute.page),
-            AutoRoute(page: EditBioRoute.page),
-            AutoRoute(page: ChangePasswordRoute.page),
           ],
         ),
-        AutoRoute(page: WSDetailRoute.page),
-        AutoRoute(page: ChatInfoRoute.page),
-        AutoRoute(page: SharedContentRoute.page),
-        AutoRoute(page: EmptyRoute.page),
 
         /// Mobile
-        CustomRoute(
-          page: SettingHomeRoute.page,
-          transitionsBuilder: TransitionsBuilders.noTransition,
-        ),
-      ],
-    ),
-
-    /// Mobile
-    AutoRoute(page: WSDetailRoute.page),
-    AutoRoute(page: PinnedMessageRoute.page),
-    AutoRoute(page: ProfileRoute.page),
-    AutoRoute(page: EditNameRoute.page),
-    AutoRoute(page: EditBioRoute.page),
-    AutoRoute(page: ChangePasswordRoute.page),
-    AutoRoute(page: ChatInfoRoute.page),
-    AutoRoute(page: SharedContentRoute.page),
-    AutoRoute(page: CameraRoute.page),
-    AutoRoute(page: MediaPreviewRoute.page),
-    AutoRoute(page: CreateGroupRoute.page),
-    AutoRoute(page: GroupInfoRoute.page),
-    AutoRoute(page: EditWorkspaceBioRoute.page),
-    AutoRoute(page: MembersRoute.page),
-    AutoRoute(page: WorkspaceAttachmentRoute.page),
-    AutoRoute(page: MediaDetailRoute.page),
-  ];
+        AutoRoute(page: WSDetailRoute.page),
+        AutoRoute(page: PinnedMessageRoute.page),
+        AutoRoute(page: ProfileRoute.page),
+        AutoRoute(page: EditNameRoute.page),
+        AutoRoute(page: EditBioRoute.page),
+        AutoRoute(page: ChangePasswordRoute.page),
+        AutoRoute(page: ChatInfoRoute.page),
+        AutoRoute(page: SharedContentRoute.page),
+        AutoRoute(page: CameraRoute.page),
+        AutoRoute(page: MediaPreviewRoute.page),
+        AutoRoute(page: CreateGroupRoute.page),
+        AutoRoute(page: GroupInfoRoute.page),
+        AutoRoute(page: EditWorkspaceBioRoute.page),
+        AutoRoute(page: MembersRoute.page),
+        AutoRoute(page: WorkspaceAttachmentRoute.page),
+        AutoRoute(page: MediaDetailRoute.page),
+      ];
 }
