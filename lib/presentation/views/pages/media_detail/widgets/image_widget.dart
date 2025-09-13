@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/bloc/media_detail_bloc.dart';
-
 import '../../../../resources/colors.dart';
 
 class ImageWidget extends StatelessWidget {

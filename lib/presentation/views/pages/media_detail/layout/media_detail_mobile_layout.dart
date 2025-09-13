@@ -7,7 +7,6 @@ import 'package:ig_agency_app/presentation/views/pages/media_detail/bloc/media_d
 import 'package:ig_agency_app/presentation/views/pages/media_detail/widgets/image_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/widgets/video_widget.dart';
 import 'package:ig_agency_app/shared/commons/enums/menu_option.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
@@ -22,12 +21,17 @@ class MediaDetailMobileLayout extends StatefulWidget {
 
 class _MediaDetailMobileLayoutState extends State<MediaDetailMobileLayout> {
   late final MediaDetailBloc _mediaDetailBloc;
-  late final VideoPlayerController _videoPlayerController;
 
   @override
   void initState() {
     super.initState();
     _mediaDetailBloc = context.read<MediaDetailBloc>();
+  }
+
+  @override
+  void dispose() {
+    _mediaDetailBloc.videoPlayerController.dispose();
+    super.dispose();
   }
 
   @override
