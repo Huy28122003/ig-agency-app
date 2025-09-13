@@ -32,8 +32,8 @@ class ResetScrollToBottomEvent extends WSDetailEvent {
   const ResetScrollToBottomEvent();
 }
 
-class UpdateMessageEvent extends WSDetailEvent {
-  const UpdateMessageEvent({required this.message});
+class AddMessageEvent extends WSDetailEvent {
+  const AddMessageEvent({required this.message});
 
   final MessageEntity message;
 }
@@ -109,6 +109,6 @@ class ResetScrollToTopEvent extends WSDetailEvent {
   const ResetScrollToTopEvent();
 }
 
-class LoadMoreOldChatMessagesEvent extends WSDetailEvent {
-  const LoadMoreOldChatMessagesEvent();
+class LoadMoreChatMessagesEvent extends WSDetailEvent {
+  const LoadMoreChatMessagesEvent();
 }

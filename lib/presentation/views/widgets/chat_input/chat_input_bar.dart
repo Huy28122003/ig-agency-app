@@ -21,7 +21,7 @@ class ChatInputBar extends StatelessWidget {
     required this.onReplyClose,
     required this.onDocumentTap,
     required this.onCameraTap,
-    required this.onImageTap,
+    required this.onMediaTap,
     required this.onSendTap,
   });
 
@@ -31,7 +31,7 @@ class ChatInputBar extends StatelessWidget {
   final VoidCallback? onReplyClose;
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
-  final VoidCallback? onImageTap;
+  final VoidCallback? onMediaTap;
   final Function(String)? onSendTap;
 
   @override
@@ -42,7 +42,7 @@ class ChatInputBar extends StatelessWidget {
       onReplyClose: onReplyClose,
       onDocumentTap: onDocumentTap,
       onCameraTap: onCameraTap,
-      onImageTap: onImageTap,
+      onMediaTap: onMediaTap,
       onSendTap: onSendTap,
     );
   }
@@ -55,7 +55,7 @@ class _ChatInputBar extends StatefulWidget {
     this.onReplyClose,
     this.onDocumentTap,
     this.onCameraTap,
-    this.onImageTap,
+    this.onMediaTap,
     this.onSendTap,
   });
 
@@ -64,7 +64,7 @@ class _ChatInputBar extends StatefulWidget {
   final VoidCallback? onReplyClose;
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
-  final VoidCallback? onImageTap;
+  final VoidCallback? onMediaTap;
   final Function(String)? onSendTap;
 
   @override
@@ -85,14 +85,6 @@ class _ChatInputBarState extends State<_ChatInputBar> {
     super.initState();
     _bloc = context.read<WSDetailBloc>();
     _textEditingController = TagUserTextEditingController();
-
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        _bloc.add(UpdateHasOptionsEvent(hasOptions: false));
-      } else {
-        _bloc.add(UpdateHasOptionsEvent(hasOptions: true));
-      }
-    });
 
     _textEditingController.addListener(() {
       final input = _textEditingController.text;
@@ -236,7 +228,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                       hasOptions: state.hasOptions,
                       onDocumentTap: widget.onDocumentTap,
                       onCameraTap: widget.onCameraTap,
-                      onImageTap: widget.onImageTap,
+                      onMediaTap: widget.onMediaTap,
                     );
                   },
                 ),
@@ -244,9 +236,6 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                   child: ChatTextField(
                     textEditingController: _textEditingController,
                     focusNode: _focusNode,
-                    onTapOutside: () {
-                      _focusNode.unfocus();
-                    },
                   ),
                 ),
                 BlocBuilder<WSDetailBloc, WSDetailState>(

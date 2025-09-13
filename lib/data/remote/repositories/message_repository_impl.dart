@@ -107,12 +107,21 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<MessageEntity> sendMessage(MessageEntity message) async {
+  Future<void> sendMessage(
+    String userId,
+    int workspaceId,
+    String? replyMessageId,
+    dynamic content,
+  ) async {
     try {
       // Todo: hoannk: rehandle this
       // TODO: Sử dụng tạm mock tại repository
-      final sentMessage = await _messageMockService.addMessage(message);
-      return sentMessage;
+      await _messageMockService.addMessage(
+        userId,
+        workspaceId,
+        replyMessageId,
+        content,
+      );
     } catch (e) {
       throw FailureConverter.convert(e);
     }

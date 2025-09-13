@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 
 import '../../../../../../domain/entities/message/message.dart';
 import '../../../../../../gen/assets.gen.dart';
@@ -11,13 +13,58 @@ import '../../../../widgets/chat_input/chat_input_bar.dart';
 import '../widgets/chat_content.dart';
 import '../workspace_detail_bloc.dart';
 
-class WorkspaceDetailMobileLayout extends StatelessWidget {
+class WorkspaceDetailMobileLayout extends StatefulWidget {
   const WorkspaceDetailMobileLayout({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final bloc = context.read<WSDetailBloc>();
+  State<WorkspaceDetailMobileLayout> createState() =>
+      _WorkspaceDetailMobileLayoutState();
+}
 
+class _WorkspaceDetailMobileLayoutState
+    extends State<WorkspaceDetailMobileLayout> {
+  late final WSDetailBloc _bloc;
+  late final ImagePicker _picker;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = context.read<WSDetailBloc>();
+
+    _picker = ImagePicker();
+  }
+
+  void _pickMedia() async {
+    final XFile? picked = await _picker.pickMedia();
+    if (picked != null) {
+      final String? mine = lookupMimeType(picked.path);
+      if (mine != null) {
+        if (mine.startsWith('image/')) {
+          _bloc.add(
+            SendMessageEvent(
+              content: ImageMessageContent(
+                imageUrl: '', // Default empty when send
+                path: picked.path,
+              ),
+            ),
+          );
+        } else if (mine.startsWith('video/')) {
+          _bloc.add(
+            SendMessageEvent(
+              content: VideoMessageContent(
+                videoUrl: '', // Default empty when send
+                duration: Duration(seconds: 0), // Default 0 when send
+                path: picked.path,
+              ),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
@@ -128,11 +175,11 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
               },
               builder: (context, message) {
                 return ChatInputBar(
-                  workspaceId: bloc.workspaceId,
-                  userId: bloc.userId,
+                  workspaceId: _bloc.workspaceId,
+                  userId: _bloc.userId,
                   messageReply: message,
                   onReplyClose: () {
-                    bloc.add(CloseReplyMessageEvent());
+                    _bloc.add(CloseReplyMessageEvent());
                   },
                   onDocumentTap: () {
                     // TODO hoannk:
@@ -140,11 +187,9 @@ class WorkspaceDetailMobileLayout extends StatelessWidget {
                   onCameraTap: () {
                     // TODO hoannk:
                   },
-                  onImageTap: () {
-                    // TODO hoannk:
-                  },
+                  onMediaTap: _pickMedia,
                   onSendTap: (messageInput) {
-                    bloc.add(SendMessageEvent(content: messageInput));
+                    _bloc.add(SendMessageEvent(content: messageInput));
                   },
                 );
               },

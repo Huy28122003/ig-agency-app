@@ -13,11 +13,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.hasOptions = true,
     this.hasSendButton = false,
     this.users = const [],
-    this.isUnpinSuccess = false,
-    this.pinnedMessages = const [],
-    this.pinnedMessagesPagingStatus = PagingStatus.idle,
     this.chatMessagesPagingStatus = PagingStatus.idle,
-    this.hasMoreOldMessages = true,
     this.jumpToMessageIndex,
     this.scrollToTop = false,
     this.showTimeMessageId,
@@ -32,15 +28,16 @@ class WSDetailState extends BaseState<WSDetailState> {
   final bool hasOptions;
   final bool hasSendButton;
   final List<UserEntity> users;
-  final bool isUnpinSuccess;
-  final List<PinnedMessageUIModel> pinnedMessages;
-  final PagingStatus pinnedMessagesPagingStatus;
   final PagingStatus chatMessagesPagingStatus;
-  final bool hasMoreOldMessages;
   final int? jumpToMessageIndex;
   final bool scrollToTop;
   final String? showTimeMessageId;
   final bool forceCloseScrollToTop;
+
+  bool get needLoadMoreOldMessages =>
+      chatMessagesPagingStatus != PagingStatus.loading &&
+      chatMessagesPagingStatus != PagingStatus.empty &&
+      chatMessagesPagingStatus != PagingStatus.noMoreData;
 
   @override
   WSDetailState copyWith({
@@ -56,9 +53,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? hasOptions,
     bool? hasSendButton,
     List<UserEntity>? users,
-    bool? isUnpinSuccess,
-    List<PinnedMessageUIModel>? pinnedMessages,
-    PagingStatus? pinnedMessagesPagingStatus,
     PagingStatus? chatMessagesPagingStatus,
     bool? hasMoreOldMessages,
     int? jumpToMessageIndex,
@@ -82,13 +76,8 @@ class WSDetailState extends BaseState<WSDetailState> {
       hasOptions: hasOptions ?? this.hasOptions,
       hasSendButton: hasSendButton ?? this.hasSendButton,
       users: users ?? this.users,
-      isUnpinSuccess: isUnpinSuccess ?? this.isUnpinSuccess,
-      pinnedMessages: pinnedMessages ?? this.pinnedMessages,
-      pinnedMessagesPagingStatus:
-          pinnedMessagesPagingStatus ?? this.pinnedMessagesPagingStatus,
       chatMessagesPagingStatus:
           chatMessagesPagingStatus ?? this.chatMessagesPagingStatus,
-      hasMoreOldMessages: hasMoreOldMessages ?? this.hasMoreOldMessages,
       jumpToMessageIndex: forceCloseJumpToMessage
           ? null
           : jumpToMessageIndex ?? this.jumpToMessageIndex,
@@ -110,11 +99,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     hasOptions,
     hasSendButton,
     users,
-    isUnpinSuccess,
-    pinnedMessages,
-    pinnedMessagesPagingStatus,
     chatMessagesPagingStatus,
-    hasMoreOldMessages,
     jumpToMessageIndex,
     scrollToTop,
     showTimeMessageId,

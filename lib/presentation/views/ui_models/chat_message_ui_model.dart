@@ -5,6 +5,7 @@ import 'package:ig_agency_app/domain/enums/message_enums.dart';
 class ChatMessageUIModel extends Equatable {
   const ChatMessageUIModel({
     required this.message,
+    this.showTime = false,
     this.shouldShowTime = false,
     this.shouldShowAvatar = false,
     this.shouldShowUserName = false,
@@ -12,18 +13,26 @@ class ChatMessageUIModel extends Equatable {
   });
 
   final MessageEntity message;
+  final bool showTime;
   final bool shouldShowTime;
   final bool shouldShowAvatar;
   final bool shouldShowUserName;
   final bool isContinuation;
 
-  ChatMessageUIModel copyWith({bool? shouldShowTime}) {
+  ChatMessageUIModel copyWith({
+    MessageEntity? message,
+    bool? shouldShowTime,
+    bool? shouldShowAvatar,
+    bool? shouldShowUserName,
+    bool? isContinuation,
+  }) {
     return ChatMessageUIModel(
-      message: message,
+      message: message ?? this.message,
+      showTime: showTime,
       shouldShowTime: shouldShowTime ?? this.shouldShowTime,
-      shouldShowAvatar: shouldShowAvatar,
-      shouldShowUserName: shouldShowUserName,
-      isContinuation: isContinuation,
+      shouldShowAvatar: shouldShowAvatar ?? this.shouldShowAvatar,
+      shouldShowUserName: shouldShowUserName ?? this.shouldShowUserName,
+      isContinuation: isContinuation ?? this.isContinuation,
     );
   }
 
@@ -41,8 +50,8 @@ extension ChatMessageUIModelMapper on MessageEntity {
   ChatMessageUIModel toUIModel({
     MessageEntity? previousMessage,
     MessageEntity? nextMessage,
-    bool forceShowTime = false,
   }) {
+    bool showTime = false;
     bool shouldShowTime = false;
     bool isContinuation = false;
 
@@ -55,6 +64,7 @@ extension ChatMessageUIModelMapper on MessageEntity {
         createdAt.year == previousMessage?.createdAt.year;
 
     if (!isSameDayAsPrevious || previousMessage == null) {
+      showTime = true;
       shouldShowTime = true;
     }
 
@@ -136,14 +146,15 @@ extension ChatMessageUIModelMapper on MessageEntity {
       }
 
       // current message is the first message of the day
-      if (shouldShowTime) {
+      if (showTime || shouldShowTime) {
         shouldShowUserName = true;
       }
     }
 
     return ChatMessageUIModel(
       message: this,
-      shouldShowTime: forceShowTime ? true : shouldShowTime,
+      showTime: showTime,
+      shouldShowTime: shouldShowTime,
       shouldShowAvatar: shouldShowAvatar,
       shouldShowUserName: shouldShowUserName,
       isContinuation: isContinuation,

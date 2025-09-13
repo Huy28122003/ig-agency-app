@@ -16,6 +16,7 @@ sealed class MessageContent extends Equatable {
     required String imageUrl,
     double? width,
     double? height,
+    String? path,
   }) = ImageMessageContent;
 
   // Video message
@@ -25,6 +26,7 @@ sealed class MessageContent extends Equatable {
     String? thumbnailUrl,
     double? width,
     double? height,
+    String? path,
   }) = VideoMessageContent;
 
   // File message
@@ -34,6 +36,7 @@ sealed class MessageContent extends Equatable {
     required String fileExtension,
     required int fileSize,
     FileType? fileType,
+    String? path,
   }) = FileMessageContent;
 
   // System message
@@ -56,10 +59,16 @@ class ImageMessageContent extends MessageContent {
   final String imageUrl;
   final double? width;
   final double? height;
-  const ImageMessageContent({required this.imageUrl, this.width, this.height});
+  final String? path;
+  const ImageMessageContent({
+    required this.imageUrl,
+    this.width,
+    this.height,
+    this.path,
+  });
 
   @override
-  List<Object?> get props => [imageUrl, width, height];
+  List<Object?> get props => [imageUrl, width, height, path];
 }
 
 class VideoMessageContent extends MessageContent {
@@ -68,30 +77,25 @@ class VideoMessageContent extends MessageContent {
   final String? thumbnailUrl;
   final double? width;
   final double? height;
+  final String? path;
   const VideoMessageContent({
     required this.videoUrl,
     required this.duration,
     this.thumbnailUrl,
     this.width,
     this.height,
+    this.path,
   });
 
   @override
-  List<Object?> get props => [videoUrl, duration, thumbnailUrl, width, height];
-}
-
-class AudioMessageContent extends MessageContent {
-  final String audioUrl;
-  final Duration duration;
-  final int audioSize;
-  const AudioMessageContent({
-    required this.audioUrl,
-    required this.duration,
-    required this.audioSize,
-  });
-
-  @override
-  List<Object?> get props => [audioUrl, duration, audioSize];
+  List<Object?> get props => [
+    videoUrl,
+    duration,
+    thumbnailUrl,
+    width,
+    height,
+    path,
+  ];
 }
 
 class FileMessageContent extends MessageContent {
@@ -100,12 +104,14 @@ class FileMessageContent extends MessageContent {
   final String fileExtension;
   final int fileSize;
   final FileType? fileType;
+  final String? path;
   const FileMessageContent({
     required this.fileUrl,
     required this.fileName,
     required this.fileExtension,
     required this.fileSize,
     this.fileType,
+    this.path,
   });
 
   @override
@@ -115,6 +121,7 @@ class FileMessageContent extends MessageContent {
     fileExtension,
     fileSize,
     fileType,
+    path,
   ];
 }
 

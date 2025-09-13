@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:injectable/injectable.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
@@ -15,9 +15,11 @@ class MessageMockService {
 
   final Map<int, List<MessageEntity>> _messageMockData = {};
 
-  MessageMockService() {
+  MessageMockService(this._ramCache) {
     _initializeMockData();
   }
+
+  final RamCache _ramCache;
 
   void _initializeMockData() {
     if (_messageMockData.isEmpty) {
@@ -220,7 +222,6 @@ class MessageMockService {
   List<MessageEntity> _createMockMessages(int groupId, {int count = 50}) {
     DateTime current = DateTime.now();
     current = current.subtract(Duration(days: 365));
-    final uuid = const Uuid();
 
     final List<MessageEntity> messages = [];
 
@@ -235,7 +236,7 @@ class MessageMockService {
       if (messages.isNotEmpty && _random.nextDouble() < 0.3 && i != 0) {
         final message = messages[_random.nextInt(messages.length)];
         final messageId = message.id;
-        if (messageId != null && message.type != MessageType.system) {
+        if (message.type != MessageType.system) {
           final messageType = message.type;
 
           reply = MessageReply(
@@ -293,7 +294,6 @@ class MessageMockService {
             name: sender['name']!,
             avatarUrl: sender['avatarUrl']!,
           ),
-          tempId: uuid.v4(),
           createdAt: current,
           type: type,
           content: content,
@@ -520,24 +520,67 @@ class MessageMockService {
     return (messages.skip(offset).take(newLimit).toList(), messages.length);
   }
 
-  Future<MessageEntity> addMessage(MessageEntity message) async {
-    final messageId =
-        "msg_${message.workspaceId}_${DateTime.now().millisecondsSinceEpoch}";
+  UserEntity? getUserById(String userId) {
+    final userData = _mockUsers
+        .where((element) => element['id'] == userId)
+        .firstOrNull;
 
-    final sentMessage = message.copyWith(
+    if (userData == null) {
+      return null;
+    }
+
+    return UserEntity(
+      id: userData['id']!,
+      name: userData['name']!,
+      email: '',
+      avatar: userData['avatarUrl']!,
+    );
+  }
+
+  Future<void> addMessage(
+    String userId,
+    int workspaceId,
+    String? replyMessageId,
+    dynamic content,
+  ) async {
+    final messageId =
+        "msg_${workspaceId}_${DateTime.now().millisecondsSinceEpoch}";
+
+    final user = getUserById(userId);
+    if (user == null) {
+      throw Exception();
+    }
+
+    final type = switch (content) {
+      TextMessageContent _ => MessageType.text,
+      ImageMessageContent _ => MessageType.image,
+      VideoMessageContent _ => MessageType.video,
+      FileMessageContent _ => MessageType.file,
+      _ => throw UnimplementedError(),
+    };
+
+    final sentMessage = MessageEntity(
       id: messageId,
+      sender: MessageSender(
+        id: user.id,
+        name: user.name,
+        avatarUrl: user.avatar,
+      ),
       status: MessageStatus.sent,
+      createdAt: DateTime.now(),
+      type: type,
+      content: switch (content) {
+        TextMessageContent _ => content,
+        _ => _generateContent(type),
+      },
+      workspaceId: workspaceId,
     );
 
-    final groupId = message.workspaceId;
-    if (groupId != null) {
-      if (_messageMockData[groupId] == null) {
-        _messageMockData[groupId] = [];
-      }
-      _messageMockData[groupId]?.add(sentMessage);
+    if (_messageMockData[workspaceId] == null) {
+      _messageMockData[workspaceId] = [];
     }
-    RamCache().saveMessage(sentMessage);
-    return sentMessage;
+    _messageMockData[workspaceId]?.add(sentMessage);
+    _ramCache.saveMessage(sentMessage);
   }
 
   List<UserEntity> mockGetMemberInGroup(

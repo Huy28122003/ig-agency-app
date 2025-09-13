@@ -29,80 +29,82 @@ class PinnedMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      spacing: 12,
-      children: [
-        CircleNetworkAvatar(imageUrl: message.senderAvatarUrl, size: 24),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 12),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  spacing: 8,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        message.senderName,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        spacing: 12,
+        children: [
+          CircleNetworkAvatar(imageUrl: message.senderAvatarUrl, size: 24),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    spacing: 8,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          message.senderName,
+                          style: TextStyle(
+                            color: AppColors.textDefaultTextSub2,
+                            fontSize: 14,
+                            fontFamily: FontFamily.segoeUI,
+                            fontWeight: FontWeight.w700,
+                            height: 1.14,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        '•',
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,
                           fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w400,
                           height: 1.14,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Text(
-                      '•',
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextSub2,
-                        fontSize: 14,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w400,
-                        height: 1.14,
+                      Text(
+                        message.pinnedAt.toShortDateString(),
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextSub2,
+                          fontSize: 14,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w400,
+                          height: 1.14,
+                        ),
                       ),
-                    ),
-                    Text(
-                      message.pinnedAt.toShortDateString(),
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextSub2,
-                        fontSize: 14,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w400,
-                        height: 1.14,
-                      ),
+                    ],
+                  ),
+                ),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    _buildPinnedMessageContent(),
+                    Positioned(
+                      left: -10,
+                      top: -10,
+                      child: Assets.icons.icPinned.svg(width: 20, height: 20),
                     ),
                   ],
                 ),
-              ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  GestureDetector(
-                    onTap: onTap,
-                    onLongPress: onLongPress,
-                    child: _buildPinnedMessageContent(),
-                  ),
-                  Positioned(
-                    left: -10,
-                    top: -10,
-                    child: Assets.icons.icPinned.svg(width: 20, height: 20),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+          if (hasArrow) Assets.icons.icArrowRight.svg(width: 24, height: 24),
+        ],
+      ),
     );
   }
 

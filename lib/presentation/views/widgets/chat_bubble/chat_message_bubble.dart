@@ -130,7 +130,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     final bool shouldShowAvatar = _uiModel.shouldShowAvatar;
     final bool shouldShowUserName = _uiModel.shouldShowUserName;
     final bool isContinuation = _uiModel.isContinuation;
-    final bool shouldShowTime = _uiModel.shouldShowTime;
+    final bool shouldShowTime = _uiModel.showTime || _uiModel.shouldShowTime;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -182,12 +182,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                 )
               : GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onPanStart: _onPanStart,
                   onPanUpdate: _onPanUpdate,
                   onPanEnd: _onPanEnd,
-                  child: Container(
+                  child: SizedBox(
                     width: double.infinity,
-                    color: Colors.transparent,
                     child: ValueListenableBuilder(
                       valueListenable: _dragDistance,
                       builder: (context, value, child) {

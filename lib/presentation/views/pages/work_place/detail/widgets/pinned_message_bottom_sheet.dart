@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import '../../../../../../di/di.dart';
 import '../../../../../../domain/usecases/fetch_pinned_message_use_case.dart';
 import '../../../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../../../../gen/fonts.gen.dart';
+import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_pull_to_refresh.dart';
 import '../../../../widgets/pinned_message_bubble.dart';
@@ -45,7 +47,7 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
     super.dispose();
   }
 
-  Future<void> _showOptionSheet(String messageId) async {
+  Future<void> _showOptionSheet(BuildContext context, String messageId) async {
     final cubit = context.read<PinnedMessageBottomSheetCubit>();
     final result = await showCupertinoModalPopup<bool>(
       context: context,
@@ -128,6 +130,20 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
               }
             },
           ),
+          BlocListener<
+            PinnedMessageBottomSheetCubit,
+            PinnedMessageBottomSheetState
+          >(
+            listenWhen: (previous, current) =>
+                previous.pinnedMessages != current.pinnedMessages,
+            listener: (context, state) {
+              if (state.pinnedMessages.isEmpty) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  context.pop();
+                });
+              }
+            },
+          ),
         ],
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -160,7 +176,7 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
                 ),
               ),
             ),
-            Flexible(
+            Expanded(
               child: SafeArea(
                 top: false,
                 child:
@@ -169,8 +185,15 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
                       PinnedMessageBottomSheetState
                     >(
                       buildWhen: (previous, current) =>
+                          previous.pageStatus != current.pageStatus ||
                           previous.pinnedMessages != current.pinnedMessages,
                       builder: (context, state) {
+                        if (state.pageStatus == PageStatus.loading) {
+                          return const Center(
+                            child: CupertinoActivityIndicator(),
+                          );
+                        }
+
                         if (state.pinnedMessages.isEmpty) {
                           return const SizedBox.shrink();
                         }
@@ -204,7 +227,7 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
                                 onLongPress: () {
                                   final messageId = message.id;
                                   if (messageId == null) return;
-                                  _showOptionSheet(messageId);
+                                  _showOptionSheet(context, messageId);
                                 },
                               );
                             },

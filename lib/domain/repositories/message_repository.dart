@@ -24,5 +24,10 @@ abstract class MessageRepository {
     String? targetMessageId,
   );
 
-  Future<MessageEntity> sendMessage(MessageEntity message);
+  Future<void> sendMessage(
+    String userId,
+    int workspaceId,
+    String? replyMessageId,
+    dynamic content,
+  );
 }

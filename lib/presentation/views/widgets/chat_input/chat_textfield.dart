@@ -9,12 +9,10 @@ class ChatTextField extends StatelessWidget {
     super.key,
     required this.textEditingController,
     required this.focusNode,
-    this.onTapOutside,
   });
 
   final TagUserTextEditingController textEditingController;
   final FocusNode focusNode;
-  final VoidCallback? onTapOutside;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,6 @@ class ChatTextField extends StatelessWidget {
       child: TextFormField(
         controller: textEditingController,
         focusNode: focusNode,
-        onTapOutside: (event) => onTapOutside?.call(),
         maxLines: null,
         minLines: 1,
         style: TextStyle(
