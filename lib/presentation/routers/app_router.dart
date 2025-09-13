@@ -7,10 +7,13 @@ import '../views/pages/authentication/login/login_page.dart';
 import '../views/pages/authentication/otp/otp_page.dart';
 import '../views/pages/camera/camera_page.dart';
 import '../views/pages/chat_info/chat_info_page.dart';
+import '../views/pages/edit_workspace_bio/edit_workspace_bio_page.dart';
 import '../views/pages/empty_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/authentication/reset_password/reset_password_page.dart';
 import '../views/pages/media_preview/media_preview_page.dart';
+import '../views/pages/group_info/group_info_page.dart';
+import '../views/pages/members/members_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
 import '../views/pages/profile/profile_page.dart';
@@ -104,5 +107,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CreateGroupRoute.page),
     AutoRoute(page: UserProfileRoute.page),
     AutoRoute(page: AddToGroupRoute.page),
+    AutoRoute(page: GroupInfoRoute.page),
+    AutoRoute(page: EditWorkspaceBioRoute.page),
+    AutoRoute(page: MembersRoute.page),
   ];
 }

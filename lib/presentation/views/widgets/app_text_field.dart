@@ -29,6 +29,7 @@ class AppTextField extends StatefulWidget {
     ),
     this.style,
     this.showUnderlineBorder = true,
+    this.border,
   });
 
   final TextEditingController? controller;
@@ -48,9 +49,9 @@ class AppTextField extends StatefulWidget {
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final EdgeInsets? contentPadding;
-
   final TextStyle? style;
   final bool showUnderlineBorder;
+  final InputBorder? border;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -66,6 +67,9 @@ class _AppTextFieldState extends State<AppTextField> {
     _controller = widget.controller ?? TextEditingController();
     _controller.text = widget.value;
     _obscureText = widget.obscureText;
+    _controller.addListener(() {
+      setState(() {}); // update counter khi user nhập
+    });
   }
 
   @override
@@ -86,14 +90,16 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     final isError = widget.errorText != null;
 
-    final underlineBorder = UnderlineInputBorder(
-      borderSide: BorderSide(
-        color: isError
-            ? AppColors.outlineAlertError
-            : AppColors.outlineGrayStrong200,
-        width: 1,
-      ),
-    );
+    final underlineBorder =
+        widget.border ??
+        UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: isError
+                ? AppColors.outlineAlertError
+                : AppColors.outlineGrayStrong200,
+            width: 1,
+          ),
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,6 +117,21 @@ class _AppTextFieldState extends State<AppTextField> {
           onFieldSubmitted: widget.onFieldSubmitted,
           maxLines: widget.onEditingComplete != null ? 1 : widget.maxLines,
           maxLength: widget.maxLength,
+          buildCounter:
+              (_, {required currentLength, maxLength, required isFocused}) {
+                if (maxLength == null) return null;
+                return Text(
+                  "$currentLength/$maxLength",
+                  style: TextStyle(
+                    color: AppColors.textDefaultTextSub2,
+                    fontSize: 14,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w400,
+                    height: 20 / 14,
+                  ),
+                );
+              },
+
           style:
               widget.style ??
               TextStyle(

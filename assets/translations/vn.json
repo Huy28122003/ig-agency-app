@@ -15,13 +15,11 @@
     "unmute_time_24": "Trong 24 giờ",
     "unmute_time_life": "Cho đến khi tôi thay đổi",
     "hint_text_search": "Nhập tên nhóm"
-
   },
   "general": {
     "delete": "Xóa",
     "cancel": "Hủy"
   },
-
   "forgot_password": {
     "forgot_password": "Quên mật khẩu?",
     "hint_text_email": "Nhập email của bạn",
@@ -31,5 +29,28 @@
     "title": "Xác thực OTP",
     "description": "Vui lòng nhập OTP đã được gửi đến email\nđã đăng ký của bạn",
     "continue": "Tiếp tục"
+  },
+  "group_info": {
+    "title": "Thông tin nhóm",
+    "bio": "Tiểu sử",
+    "search_in_conversation": "Tìm kiếm trong cuộc trò chuyện",
+    "member": "Thành viên",
+    "media_file": "Xem phương tiện, tệp và liên kết",
+    "pin_message": "Tin nhắn được ghim",
+    "mute_notification": "Tắt tiếng thông báo",
+    "leave_group": "Rời khỏi nhóm"
+  },
+  "workspace_bio": {
+    "title": "Tiểu sử ",
+    "done": "Hoàn th"
+  },
+  "members": {
+    "title": "Thành viên",
+    "members": "Thành viên",
+    "online": "Trực tuyến",
+    "active": "Hoạt động",
+    "ago": "trước",
+    "role_admin": "Quản trị viên",
+    "role_member": "Thành viên"
   }
 }

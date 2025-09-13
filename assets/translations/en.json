@@ -80,5 +80,28 @@
     "block": "Block",
     "add_to_group": "Add to group",
     "report": "Report"
+  },
+  "group_info": {
+    "title": "Group Information",
+    "bio": "Bio",
+    "search_in_conversation": "Search in conversation",
+    "member": "Members",
+    "media_file": "View media, files and links",
+    "pin_message": "Pinned message",
+    "mute_notification": "Mute notifications",
+    "leave_group": "Leave Group"
+  },
+  "workspace_bio": {
+    "title": "Bio",
+    "done": "Done"
+  },
+  "members": {
+    "title": "Member",
+    "members": "Members",
+    "online": "Online",
+    "active": "Active",
+    "ago": "ago",
+    "role_admin": "Admin",
+    "role_member": "Member"
   }
 }
