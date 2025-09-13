@@ -86,19 +86,6 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<UserEntity>> getUserByWorkspaceId({
-    required int workspaceId,
-    required int offset,
-    required int limit,
-  }) {
-    try {
-      return MockData().getUsers();
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
   Future<bool> createGroup(String groupName, List<UserEntity> members) {
     return Future.value(true);
   }
@@ -154,42 +141,6 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
           : allData;
 
       return Future.value(filtered);
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<WorkspaceEntity> getWorkspaceById({required int groupId}) async {
-    try {
-      final workspace = MockData.getWorkspaces().firstWhere(
-        (element) => element.id == groupId,
-      );
-      return workspace;
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<bool> updateWorkspaceBio({
-    required int groupId,
-    required String bio,
-  }) async {
-    try {
-      return true;
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<bool> updateWorkspaceNotification({
-    required int groupId,
-    required bool isMute,
-  }) async {
-    try {
-      return true;
     } catch (e) {
       throw FailureConverter.convert(e);
     }

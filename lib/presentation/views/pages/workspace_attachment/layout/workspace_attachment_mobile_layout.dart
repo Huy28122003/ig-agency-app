@@ -146,12 +146,4 @@ class _WorkspaceAttachmentMobileLayoutState
       ),
     );
   }
-
-  Widget _buildFilesPage() {
-    return const Center(child: Text("Files content"));
-  }
-
-  Widget _buildLinksPage() {
-    return const Center(child: Text("Link content"));
-  }
 }

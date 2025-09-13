@@ -7,4 +7,5 @@ class LoadDataEvent extends WorkspaceAttachmentEvent {}
 class GetMediasEvent extends WorkspaceAttachmentEvent {}
 
 class GetFilesEvent extends WorkspaceAttachmentEvent {}
+
 class GetLinksEvent extends WorkspaceAttachmentEvent {}

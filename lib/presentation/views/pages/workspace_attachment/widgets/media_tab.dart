@@ -53,9 +53,9 @@ class _MediaTabState extends State<MediaTab> {
                   selector: (state) {
                     return state.totalMedia;
                   },
-                  builder: (context, state) {
+                  builder: (context, totalMedia) {
                     return Text(
-                      '${'attachment.all_media'.tr()} ($state)',
+                      '${'attachment.all_media'.tr()} ($totalMedia)',
                       style: TextStyle(
                         fontFamily: FontFamily.segoeUI,
                         fontWeight: FontWeight.w600,
