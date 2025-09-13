@@ -94,7 +94,10 @@
     "file": "Files",
     "link": "Links",
     "all_media": "All media",
-    "link_no_title": ""
+    "link_no_title": "Không có tiêu đề",
+    "no_content": "Không có nội dung",
+    "load_title_fail": "Không thể tải tiêu đề",
+    "load_content_fail": "Không thể tải nội dung"
   },
   "media_detail": {
     "forward": "Forward",

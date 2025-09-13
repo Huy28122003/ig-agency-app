@@ -58,7 +58,11 @@
     "media": "Phương tiện",
     "file": "Tập tin",
     "link": "Liên kết",
-    "all_media": "Tất cả"
+    "all_media": "Tất cả",
+    "link_no_title": "Untitled",
+    "no_content": "No content",
+    "load_title_fail": "Unable to load title",
+    "load_content_fail": "Unable to load content"
   },
   "media_detail": {
     "forward": "Chuyển tiếp",

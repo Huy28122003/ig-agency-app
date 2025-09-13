@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_data_in_group_params.dart';
@@ -112,14 +113,14 @@ class WorkspaceAttachmentBloc
         try {
           final meta = await MetadataFetch.extract(url);
           return MetaDataLink(
-            title: meta?.title ?? "Không có tiêu đề",
-            description: meta?.description ?? "Không có nội dung",
+            title: meta?.title ?? "link_no_title".tr(),
+            description: meta?.description ?? "no_content".tr(),
             url: meta?.url ?? url,
           );
         } catch (e) {
           return MetaDataLink(
-            title: "Không thể tải tiêu đề",
-            description: "Không thể tải nội dung",
+            title: "load_title_fail".tr(),
+            description: "load_content_fail".tr(),
             url: url,
           );
         }
