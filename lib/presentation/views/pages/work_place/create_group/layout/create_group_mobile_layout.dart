@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../domain/entities/user_entity.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
-import '../../../../../../shared/commons/app_checkbox.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../widgets/app_search_text_field.dart';
@@ -334,8 +333,8 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: listSelectedUser.isEmpty
-                    ? const Color(0xFFFEE2AD)
-                    : const Color(0xFFFCB732),
+                    ? AppColors.surfaceContainerPrimaryPrimaryDisabled
+                    : AppColors.outlinePrimaryDefault,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

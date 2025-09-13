@@ -95,7 +95,7 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
         children: [
           Center(
             child: Text(
-              'Add to group',
+              'add_member.add_to_group'.tr(),
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -113,8 +113,12 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
               },
               child: Center(
                 child: Text(
-                  'Create new',
-                  style: TextStyle(fontSize: 14, color: Color(0xFF00BBA7)),
+                  'add_member.create_new'.tr(),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF00BBA7),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -166,7 +170,7 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
               height: 20 / 14,
             ),
             fillColor: const Color(0xFFE5E7EB),
-            hintText: 'Search Group',
+            hintText: 'add_member.search_group'.tr(),
             contentPadding: const EdgeInsets.only(
               left: 16,
               right: 16,
@@ -251,8 +255,8 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: listSelectedGroup.isEmpty
-                    ? const Color(0xFFFEE2AD)
-                    : const Color(0xFFFCB732),
+                    ? AppColors.surfaceContainerPrimaryPrimaryDisabled
+                    : AppColors.outlinePrimaryDefault,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -261,8 +265,10 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
               ),
               child: Text(
                 listSelectedGroup.isEmpty
-                    ? "Add to group"
-                    : "Add to (${listSelectedGroup.length}) group",
+                    ? "add_member.add_to_group".tr()
+                    : "add_member.add_to_group_with_number".tr(
+                        args: ['${listSelectedGroup.length}'],
+                      ),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/shared/utils/widget_util.dart';
@@ -6,7 +7,6 @@ import 'package:ig_agency_app/shared/utils/widget_util.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
-import '../../../../../routers/app_router.dart';
 import '../../../../widgets/circle_network_avatar.dart';
 import '../user_profile_bloc.dart';
 
@@ -38,7 +38,7 @@ class _UserProfileMobileLayoutState extends State<UserProfileMobileLayout> {
         elevation: 0,
         toolbarHeight: 60,
         title: Text(
-          'Profile Info',
+          'profile_info.title'.tr(),
           style: TextStyle(
             color: AppColors.textDefaultTextInverted,
             fontSize: 22,
@@ -110,7 +110,7 @@ class _UserProfileMobileLayoutState extends State<UserProfileMobileLayout> {
             children: [
               const SizedBox(height: 12),
               Text(
-                'Active now',
+                'profile_info.active_now'.tr(),
                 style: TextStyle(
                   color: Color(0xFF6A7282),
                   fontSize: 14,
@@ -170,7 +170,7 @@ class _UserProfileMobileLayoutState extends State<UserProfileMobileLayout> {
       children: [
         Expanded(
           child: _buildBlock(
-            title: 'Block',
+            title: 'profile_info.block'.tr(),
             icon: Assets.icons.icUserRemove.svg(width: 24, height: 24),
             onTap: () {
               //TODO
@@ -180,7 +180,7 @@ class _UserProfileMobileLayoutState extends State<UserProfileMobileLayout> {
         //TODO: ẩn hiện theo role admin
         Expanded(
           child: _buildBlock(
-            title: 'Add to group',
+            title: 'profile_info.add_to_group'.tr(),
             icon: Assets.icons.icAddMembers.svg(width: 24, height: 24),
             onTap: () {
               //TODO: mở màn AddToGroupPage
@@ -189,7 +189,7 @@ class _UserProfileMobileLayoutState extends State<UserProfileMobileLayout> {
         ),
         Expanded(
           child: _buildBlock(
-            title: 'Report',
+            title: 'profile_info.report'.tr(),
             icon: Assets.icons.icFlag.svg(width: 24, height: 24),
             onTap: () {
               //TODO
