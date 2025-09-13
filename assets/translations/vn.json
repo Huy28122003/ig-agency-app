@@ -59,5 +59,9 @@
     "file": "Tập tin",
     "link": "Liên kết",
     "all_media": "Tất cả"
+  },
+  "media_detail": {
+    "forward": "Chuyển tiếp",
+    "copy": "Sao chép"
   }
 }

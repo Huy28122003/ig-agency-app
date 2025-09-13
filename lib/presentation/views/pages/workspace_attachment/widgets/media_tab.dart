@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
+import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace_attachment/bloc/workspace_attachment_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
 import 'package:ig_agency_app/shared/extensions/duration_ext.dart';
@@ -93,7 +95,17 @@ class _MediaTabState extends State<MediaTab> {
                           childAspectRatio: 1,
                         ),
                         itemBuilder: (context, index) {
-                          return MediaItem(mediaEntity: state[index]);
+                          return GestureDetector(
+                            child: MediaItem(mediaEntity: state[index]),
+                            onTap: () {
+                              context.router.push(
+                                MediaDetailRoute(
+                                  url: state[index].previewUrl,
+                                  isVideo: state[index].isVideo,
+                                ),
+                              );
+                            },
+                          );
                         },
                         itemCount: state.length,
                       ),
