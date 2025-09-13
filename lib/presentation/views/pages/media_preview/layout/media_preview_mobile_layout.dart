@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
-import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../widgets/app_video_player.dart';
@@ -36,21 +35,30 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            Positioned.fill(
+            Positioned(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                   ),
-                  child: (_bloc.path.isEmpty)
-                      ? Center(child: CircularProgressIndicator())
-                      : _bloc.isPhoto
-                      ? FittedBox(
-                    fit: BoxFit.cover,
-                    child: Image.file(File(_bloc.path)),
-                  )
-                      : AppVideoPlayer(path: _bloc.path, isAutoPlay: true),
+                  child:
+                      BlocSelector<MediaPreviewBloc, MediaPreviewState, String>(
+                        selector: (state) => state.path,
+                        builder: (context, path) {
+                          return (path.isEmpty)
+                              ? Center(child: CircularProgressIndicator())
+                              : AspectRatio(
+                                  aspectRatio: _bloc.aspectRatio,
+                                  child: _bloc.isPhoto
+                                      ? Image.file(File(path))
+                                      : AppVideoPlayer(
+                                          path: path,
+                                          isAutoPlay: true,
+                                        ),
+                                );
+                        },
+                      ),
                 ),
               ),
             ),
@@ -73,14 +81,13 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                         ),
                       ),
                       Spacer(),
-                      AppButton.icon(
-                        onPressed: () {
-                          context.router.push(
-                            MediaEditRoute(mediaPath: _bloc.path),
-                          );
-                        },
-                        icon: Assets.icons.icCrop.svg(width: 24, height: 24),
-                      ),
+                      if (_bloc.isPhoto)
+                        AppButton.icon(
+                          onPressed: () {
+                            _bloc.add(EditMediaEvent());
+                          },
+                          icon: Assets.icons.icCrop.svg(width: 24, height: 24),
+                        ),
                       AppButton.icon(
                         onPressed: () {
                           _bloc.add(SaveMediaEvent());
