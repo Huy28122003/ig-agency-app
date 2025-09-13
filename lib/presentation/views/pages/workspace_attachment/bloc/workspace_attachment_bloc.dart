@@ -113,14 +113,14 @@ class WorkspaceAttachmentBloc
         try {
           final meta = await MetadataFetch.extract(url);
           return MetaDataLink(
-            title: meta?.title ?? "link_no_title".tr(),
-            description: meta?.description ?? "no_content".tr(),
+            title: meta?.title ?? "attachment.link_no_title".tr(),
+            description: meta?.description ?? "attachment.no_content".tr(),
             url: meta?.url ?? url,
           );
         } catch (e) {
           return MetaDataLink(
-            title: "load_title_fail".tr(),
-            description: "load_content_fail".tr(),
+            title: "attachment.load_title_fail".tr(),
+            description: "attachment.load_content_fail".tr(),
             url: url,
           );
         }

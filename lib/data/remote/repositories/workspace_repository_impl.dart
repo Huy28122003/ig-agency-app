@@ -37,7 +37,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
           ? filtered.sublist(start, end)
           : <WorkspaceEntity>[];
 
-      return PagedResult<WorkspaceEntity>(data: pageData, totalRecords: total);
+      return PagedResult<WorkspaceEntity>(data: pageData, totalRecords: 30);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
