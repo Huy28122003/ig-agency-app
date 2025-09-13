@@ -220,16 +220,17 @@ class _ChatContentState extends State<ChatContent> {
                           barrierColor: Colors.black.withValues(alpha: 0.68),
                           isScrollControlled: true,
                           builder: (context) {
-                            return BlocProvider.value(
-                              value: _bloc..add(LoadPinnedMessagesEvent()),
-                              child: PinnedMessagesBottomSheet(
-                                onTap: (messageId) {
-                                  _bloc.add(
-                                    JumpToMessageEvent(messageId: messageId),
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              ),
+                            return PinnedMessagesBottomSheet(
+                              workspaceId: _bloc.workspaceId,
+                              onTap: (messageId) {
+                                _bloc.add(
+                                  JumpToMessageEvent(messageId: messageId),
+                                );
+                                Navigator.pop(context);
+                              },
+                              onUnpinSuccess: () {
+                                _bloc.add(GetPinnedMessageSummaryEvent());
+                              },
                             );
                           },
                         );

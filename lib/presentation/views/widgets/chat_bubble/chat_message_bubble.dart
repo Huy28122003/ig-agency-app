@@ -185,8 +185,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   onPanStart: _onPanStart,
                   onPanUpdate: _onPanUpdate,
                   onPanEnd: _onPanEnd,
-                  child: SizedBox(
+                  child: Container(
                     width: double.infinity,
+                    color: Colors.transparent,
                     child: ValueListenableBuilder(
                       valueListenable: _dragDistance,
                       builder: (context, value, child) {
