@@ -19,10 +19,12 @@ class WorkspaceDetailTabletLayout extends StatefulWidget {
   const WorkspaceDetailTabletLayout({super.key});
 
   @override
-  State<WorkspaceDetailTabletLayout> createState() => _WorkspaceDetailTabletLayoutState();
+  State<WorkspaceDetailTabletLayout> createState() =>
+      _WorkspaceDetailTabletLayoutState();
 }
 
-class _WorkspaceDetailTabletLayoutState extends State<WorkspaceDetailTabletLayout> {
+class _WorkspaceDetailTabletLayoutState
+    extends State<WorkspaceDetailTabletLayout> {
   late final WSDetailBloc _bloc;
   late final ImagePicker _picker;
 

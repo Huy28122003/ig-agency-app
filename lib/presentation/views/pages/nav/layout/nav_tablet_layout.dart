@@ -20,7 +20,7 @@ class NavTabletLayout extends StatelessWidget {
             children: [
               Container(
                 color: AppColors.surfaceContainerGrayStrong1,
-                width: boxConstraints.maxWidth * 2 / 2,
+                width: boxConstraints.maxWidth * 0.4,
                 constraints: BoxConstraints(minWidth: 64 + 240, maxWidth: 380),
                 child: BlocBuilder<NavBloc, NavState>(
                   buildWhen: (pre, cur) => pre.currentIndex != cur.currentIndex,
