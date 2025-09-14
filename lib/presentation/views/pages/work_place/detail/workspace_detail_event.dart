@@ -105,10 +105,6 @@ class GetPinnedMessageSummaryEvent extends WSDetailEvent {
   const GetPinnedMessageSummaryEvent();
 }
 
-class ResetScrollToTopEvent extends WSDetailEvent {
-  const ResetScrollToTopEvent();
-}
-
 class LoadMoreChatMessagesEvent extends WSDetailEvent {
   const LoadMoreChatMessagesEvent();
 }

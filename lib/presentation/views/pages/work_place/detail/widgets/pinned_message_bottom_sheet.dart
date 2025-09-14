@@ -97,155 +97,173 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PinnedMessageBottomSheetCubit(
-        workspaceId: widget.workspaceId,
-        fetchPinnedMessageUseCase: getIt<FetchPinnedMessageUseCase>(),
-        unpinMessageUseCase: getIt<UnpinMessageUseCase>(),
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerGrayStrong0,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
       ),
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<
-            PinnedMessageBottomSheetCubit,
-            PinnedMessageBottomSheetState
-          >(
-            listenWhen: (previous, current) =>
-                previous.pagingStatus != current.pagingStatus,
-            listener: (context, state) {
-              _refreshController.refresh(state.pagingStatus);
-            },
-          ),
-          BlocListener<
-            PinnedMessageBottomSheetCubit,
-            PinnedMessageBottomSheetState
-          >(
-            listenWhen: (previous, current) =>
-                previous.isUnpinSuccess != current.isUnpinSuccess,
-            listener: (context, state) {
-              if (state.isUnpinSuccess) {
-                widget.onUnpinSuccess?.call();
-                context
-                    .read<PinnedMessageBottomSheetCubit>()
-                    .resetUnpinSuccess();
-              }
-            },
-          ),
-          BlocListener<
-            PinnedMessageBottomSheetCubit,
-            PinnedMessageBottomSheetState
-          >(
-            listenWhen: (previous, current) =>
-                previous.pinnedMessages != current.pinnedMessages,
-            listener: (context, state) {
-              if (state.pinnedMessages.isEmpty) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  context.pop();
-                });
-              }
-            },
-          ),
-        ],
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 4),
-              width: 36,
-              height: 5,
-              decoration: ShapeDecoration(
-                color: AppColors.labelsTertiary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(2.50),
-                ),
-              ),
+      child: BlocProvider(
+        create: (context) => PinnedMessageBottomSheetCubit(
+          workspaceId: widget.workspaceId,
+          fetchPinnedMessageUseCase: getIt<FetchPinnedMessageUseCase>(),
+          unpinMessageUseCase: getIt<UnpinMessageUseCase>(),
+        ),
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<
+              PinnedMessageBottomSheetCubit,
+              PinnedMessageBottomSheetState
+            >(
+              listenWhen: (previous, current) =>
+                  previous.pagingStatus != current.pagingStatus,
+              listener: (context, state) {
+                _refreshController.refresh(state.pagingStatus);
+              },
             ),
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  'Pinned messages',
-                  style: TextStyle(
-                    color: AppColors.textDefaultTextDefault,
-                    fontSize: 16,
-                    fontFamily: FontFamily.segoeUI,
-                    fontWeight: FontWeight.w700,
-                    height: 1.50,
+            BlocListener<
+              PinnedMessageBottomSheetCubit,
+              PinnedMessageBottomSheetState
+            >(
+              listenWhen: (previous, current) =>
+                  previous.isUnpinSuccess != current.isUnpinSuccess,
+              listener: (context, state) {
+                if (state.isUnpinSuccess) {
+                  widget.onUnpinSuccess?.call();
+                  context
+                      .read<PinnedMessageBottomSheetCubit>()
+                      .resetUnpinSuccess();
+                }
+              },
+            ),
+            BlocListener<
+              PinnedMessageBottomSheetCubit,
+              PinnedMessageBottomSheetState
+            >(
+              listenWhen: (previous, current) =>
+                  previous.pinnedMessages != current.pinnedMessages,
+              listener: (context, state) {
+                if (state.pinnedMessages.isEmpty) {
+                  if (state.pagingStatus != PagingStatus.empty &&
+                      state.pagingStatus != PagingStatus.noMoreData) {
+                    context
+                        .read<PinnedMessageBottomSheetCubit>()
+                        .loadPinnedMessage();
+                  } else if (state.pagingStatus == PagingStatus.noMoreData) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      context.pop();
+                    });
+                  }
+                }
+              },
+            ),
+          ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 4),
+                width: 36,
+                height: 5,
+                decoration: ShapeDecoration(
+                  color: AppColors.labelsTertiary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(2.50),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: SafeArea(
-                top: false,
-                child:
-                    BlocBuilder<
-                      PinnedMessageBottomSheetCubit,
-                      PinnedMessageBottomSheetState
-                    >(
-                      buildWhen: (previous, current) =>
-                          previous.pageStatus != current.pageStatus ||
-                          previous.pinnedMessages != current.pinnedMessages,
-                      builder: (context, state) {
-                        if (state.pageStatus == PageStatus.loading) {
-                          return const Center(
-                            child: CupertinoActivityIndicator(),
-                          );
-                        }
-
-                        if (state.pinnedMessages.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-
-                        return AppPullToRefresh(
-                          refreshController: _refreshController,
-                          onRefresh: () {
-                            context
-                                .read<PinnedMessageBottomSheetCubit>()
-                                .refreshPinnedMessages();
-                          },
-                          onLoadMore: () {
-                            context
-                                .read<PinnedMessageBottomSheetCubit>()
-                                .loadMorePinnedMessages();
-                          },
-                          child: ListView.separated(
-                            padding: EdgeInsets.all(20),
-                            itemBuilder: (context, index) {
-                              final message = state.pinnedMessages[index];
-
-                              return PinnedMessageBubble(
-                                key: ValueKey(message.id),
-                                message: message,
-                                hasArrow: true,
-                                onTap: () {
-                                  final messageId = message.id;
-                                  if (messageId == null) return;
-                                  widget.onTap?.call(messageId);
-                                },
-                                onLongPress: () {
-                                  final messageId = message.id;
-                                  if (messageId == null) return;
-                                  _showOptionSheet(context, messageId);
-                                },
-                              );
-                            },
-                            separatorBuilder: (_, _) => Padding(
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                              child: Divider(
-                                color: AppColors.outlineGrayStrong200,
-                                height: 2,
-                              ),
-                            ),
-                            itemCount: state.pinnedMessages.length,
-                          ),
-                        );
-                      },
+              Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    'Pinned messages',
+                    style: TextStyle(
+                      color: AppColors.textDefaultTextDefault,
+                      fontSize: 16,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w700,
+                      height: 1.50,
                     ),
+                  ),
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  child:
+                      BlocBuilder<
+                        PinnedMessageBottomSheetCubit,
+                        PinnedMessageBottomSheetState
+                      >(
+                        buildWhen: (previous, current) =>
+                            previous.pageStatus != current.pageStatus ||
+                            previous.pinnedMessages != current.pinnedMessages,
+                        builder: (context, state) {
+                          if (state.pageStatus == PageStatus.loading) {
+                            return const Center(
+                              child: CupertinoActivityIndicator(),
+                            );
+                          }
+
+                          if (state.pinnedMessages.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          return AppPullToRefresh(
+                            refreshController: _refreshController,
+                            onRefresh: () {
+                              context
+                                  .read<PinnedMessageBottomSheetCubit>()
+                                  .refreshPinnedMessages();
+                            },
+                            onLoadMore: () {
+                              context
+                                  .read<PinnedMessageBottomSheetCubit>()
+                                  .loadMorePinnedMessages();
+                            },
+                            child: ListView.separated(
+                              padding: EdgeInsets.all(20),
+                              itemBuilder: (context, index) {
+                                final message = state.pinnedMessages[index];
+
+                                return PinnedMessageBubble(
+                                  key: ValueKey(message.id),
+                                  message: message,
+                                  hasArrow: true,
+                                  onTap: () {
+                                    final messageId = message.id;
+                                    if (messageId == null) return;
+                                    widget.onTap?.call(messageId);
+                                  },
+                                  onLongPress: () {
+                                    final messageId = message.id;
+                                    if (messageId == null) return;
+                                    _showOptionSheet(context, messageId);
+                                  },
+                                );
+                              },
+                              separatorBuilder: (_, _) => Padding(
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                child: Divider(
+                                  color: AppColors.outlineGrayStrong200,
+                                  height: 2,
+                                ),
+                              ),
+                              itemCount: state.pinnedMessages.length,
+                            ),
+                          );
+                        },
+                      ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

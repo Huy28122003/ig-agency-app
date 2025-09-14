@@ -40,7 +40,7 @@ class CircleNetworkAvatar extends StatelessWidget {
     return CircleAvatar(
       radius: size / 2,
       backgroundColor: AppColors.surfaceContainerGrayStrong05,
-      child: Center(child: CupertinoActivityIndicator()),
+      child: const Center(child: CupertinoActivityIndicator()),
     );
   }
 

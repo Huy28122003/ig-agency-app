@@ -8,9 +8,12 @@ import '../../../../../../domain/entities/message/message.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../ui_models/pinned_message_summary_ui_model.dart';
+import '../../../../widgets/chat/pinned_message_section.dart';
 import '../../../../widgets/circle_network_avatar.dart';
 import '../../../../widgets/chat_input/chat_input_bar.dart';
 import '../widgets/chat_content.dart';
+import '../widgets/pinned_message_bottom_sheet.dart';
 import '../workspace_detail_bloc.dart';
 
 class WorkspaceDetailMobileLayout extends StatefulWidget {
@@ -168,6 +171,49 @@ class _WorkspaceDetailMobileLayoutState
       body: SafeArea(
         child: Column(
           children: [
+            BlocSelector<
+              WSDetailBloc,
+              WSDetailState,
+              PinnedMessageSummaryUiModel?
+            >(
+              selector: (state) {
+                return state.pinnedMessageSummary;
+              },
+              builder: (context, pinnedMessageSummary) {
+                if (pinnedMessageSummary == null) {
+                  return const SizedBox.shrink();
+                }
+
+                return SizedBox(
+                  child: PinnedMessageSection(
+                    pinnedMessageSummary: pinnedMessageSummary,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        useSafeArea: true,
+                        elevation: 0,
+                        barrierColor: Colors.black.withValues(alpha: 0.68),
+                        isScrollControlled: true,
+                        builder: (context) {
+                          return PinnedMessagesBottomSheet(
+                            workspaceId: _bloc.workspaceId,
+                            onTap: (messageId) {
+                              _bloc.add(
+                                JumpToMessageEvent(messageId: messageId),
+                              );
+                              Navigator.pop(context);
+                            },
+                            onUnpinSuccess: () {
+                              _bloc.add(GetPinnedMessageSummaryEvent());
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
             Expanded(child: ChatContent()),
             BlocSelector<WSDetailBloc, WSDetailState, MessageEntity?>(
               selector: (state) {

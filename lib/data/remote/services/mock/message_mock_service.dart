@@ -511,6 +511,16 @@ class MessageMockService {
         throw Exception();
       } else {
         offset = max(0, targetMessageIndex);
+        if (targetMessageIndex >= messageIndex) {
+          throw Exception();
+        }
+        return (
+          messages
+              .skip(offset)
+              .take(messageIndex - targetMessageIndex)
+              .toList(),
+          messages.length,
+        );
       }
     }
 

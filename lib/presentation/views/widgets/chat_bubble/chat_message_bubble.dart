@@ -3,14 +3,13 @@ import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/fonts.gen.dart';
-import '../../../../shared/utils/text_message_display_util.dart';
 import '../../../resources/colors.dart';
 import '../circle_network_avatar.dart';
 import 'chat_bubble_animation_helper.dart';
 import '../../../../shared/commons/constants/chat_bubble_constants.dart';
 import 'chat_bubble_content.dart';
 import 'chat_bubble_sender_info.dart';
-import '../../ui_models/chat_message_ui_model.dart';
+import 'chat_buble_content_with_reply.dart';
 import 'reply_icon.dart';
 
 class ChatMessageBubble extends StatefulWidget {
@@ -20,7 +19,11 @@ class ChatMessageBubble extends StatefulWidget {
     required this.maxWidthReply,
     required this.horizontalPadding,
     required this.userId,
-    required this.uiModel,
+    required this.message,
+    required this.shouldShowTime,
+    required this.shouldShowAvatar,
+    required this.shouldShowUserName,
+    required this.isContinuation,
     this.onReply,
     this.onTap,
     this.onReplyTap,
@@ -28,18 +31,28 @@ class ChatMessageBubble extends StatefulWidget {
 
   final double maxWidth;
   final double maxWidthReply;
-  final ChatMessageUIModel uiModel;
+  final MessageEntity message;
   final double horizontalPadding;
   final String userId;
   final VoidCallback? onReply;
   final VoidCallback? onTap;
   final Function(String messageId)? onReplyTap;
+
+  final bool shouldShowTime;
+  final bool shouldShowAvatar;
+  final bool shouldShowUserName;
+  final bool isContinuation;
+
   @override
   State<ChatMessageBubble> createState() => _ChatMessageBubbleState();
 }
 
 class _ChatMessageBubbleState extends State<ChatMessageBubble> {
-  late ChatMessageUIModel _uiModel;
+  late MessageEntity _message;
+  late bool _shouldShowTime;
+  late bool _shouldShowAvatar;
+  late bool _shouldShowUserName;
+  late bool _isContinuation;
   late ChatBubbleAnimationHelper _animationHelper;
 
   final ValueNotifier<double> _dragDistance = ValueNotifier(0.0);
@@ -48,14 +61,32 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   @override
   void initState() {
     super.initState();
-    _uiModel = widget.uiModel;
+    _message = widget.message;
+    _shouldShowTime = widget.shouldShowTime;
+    _shouldShowAvatar = widget.shouldShowAvatar;
+    _shouldShowUserName = widget.shouldShowUserName;
+    _isContinuation = widget.isContinuation;
     _animationHelper = ChatBubbleAnimationHelper(
       isMe: isMe,
       horizontalPadding: widget.horizontalPadding,
     );
   }
 
-  bool get isMe => widget.userId == widget.uiModel.message.sender.id;
+  @override
+  void didUpdateWidget(covariant ChatMessageBubble oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.message != oldWidget.message) {
+      _message = widget.message;
+    }
+    if (widget.shouldShowTime != oldWidget.shouldShowTime) {
+      _shouldShowTime = widget.shouldShowTime;
+      _shouldShowAvatar = widget.shouldShowAvatar;
+      _shouldShowUserName = widget.shouldShowUserName;
+      _isContinuation = widget.isContinuation;
+    }
+  }
+
+  bool get isMe => widget.userId == widget.message.sender.id;
 
   void _onPanStart(DragStartDetails details) {
     _isDragging = true;
@@ -126,16 +157,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final MessageEntity message = _uiModel.message;
-    final bool shouldShowAvatar = _uiModel.shouldShowAvatar;
-    final bool shouldShowUserName = _uiModel.shouldShowUserName;
-    final bool isContinuation = _uiModel.isContinuation;
-    final bool shouldShowTime = _uiModel.showTime || _uiModel.shouldShowTime;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (shouldShowTime)
+        if (_shouldShowTime)
           Container(
             margin: const EdgeInsets.only(top: 16),
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -144,7 +169,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _uiModel.message.createdAt.toShortDateString().toUpperCase(),
+                  _message.createdAt.toShortDateString().toUpperCase(),
                   style: TextStyle(
                     color: AppColors.textDefaultTextDefault,
                     fontSize: 14,
@@ -158,19 +183,19 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
           ),
         Padding(
           padding: EdgeInsets.only(
-            top: isContinuation
-                ? message.type == MessageType.system
+            top: _isContinuation
+                ? _message.type == MessageType.system
                       ? ChatBubbleConstants.continuationSystemVerticalPadding
                       : ChatBubbleConstants.continuationVerticalPadding
                 : 16,
           ),
-          child: message.content is SystemMessageContent
+          child: _message.content is SystemMessageContent
               ? Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: widget.horizontalPadding,
                   ),
                   child: Text(
-                    (message.content as SystemMessageContent).message,
+                    (_message.content as SystemMessageContent).message,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textPrimaryTextDefault,
@@ -182,7 +207,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                 )
               : GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+                  // behavior: HitTestBehavior.opaque,
                   onPanStart: _onPanStart,
                   onPanUpdate: _onPanUpdate,
                   onPanEnd: _onPanEnd,
@@ -199,7 +224,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                 : Alignment.bottomLeft,
                             children: [
                               if (!isMe) ...[
-                                if (shouldShowAvatar) ...[
+                                if (_shouldShowAvatar) ...[
                                   Padding(
                                     padding: EdgeInsets.only(
                                       left: widget.horizontalPadding,
@@ -207,9 +232,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                     child: Opacity(
                                       opacity: _animationHelper
                                           .getAvatarOpacity(value),
-                                      child: CircleNetworkAvatar(
-                                        imageUrl: message.sender.avatarUrl,
-                                        size: ChatBubbleConstants.avatarSize,
+                                      child: ChatAvatar(
+                                        key: ValueKey(_message.sender.id),
+                                        imageUrl: _message.sender.avatarUrl,
                                       ),
                                     ),
                                   ),
@@ -241,18 +266,21 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                     children: [
                                       if ((!isMe ||
                                               (isMe &&
-                                                  message.reply != null)) &&
-                                          shouldShowUserName) ...[
+                                                  _message.reply != null)) &&
+                                          _shouldShowUserName) ...[
                                         ChatBubbleSenderInfo(
-                                          message: message,
+                                          message: _message,
                                           userId: widget.userId,
                                           isMe: isMe,
                                         ),
                                       ],
-                                      message.reply != null
-                                          ? _ChatContentWithReply(
-                                              message: message,
-                                              replyMessage: message.reply!,
+                                      _message.reply != null
+                                          ? ChatBubbleContentWithReply(
+                                              key: ValueKey(
+                                                '${_message.id}-reply',
+                                              ),
+                                              message: _message,
+                                              replyMessage: _message.reply!,
                                               maxWidth: widget.maxWidth,
                                               maxWidthReply:
                                                   widget.maxWidthReply,
@@ -260,7 +288,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                               onTap: widget.onReplyTap,
                                             )
                                           : ChatBubbleContent(
-                                              message: message,
+                                              key: ValueKey(
+                                                '${_message.id}-no-reply',
+                                              ),
+                                              message: _message,
                                               maxWidth: widget.maxWidth,
                                             ),
                                     ],
@@ -281,93 +312,15 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   }
 }
 
-class _ChatContentWithReply extends StatelessWidget {
-  const _ChatContentWithReply({
-    required this.message,
-    required this.replyMessage,
-    required this.maxWidth,
-    required this.maxWidthReply,
-    required this.isMe,
-    this.onTap,
-  });
-
-  final MessageEntity message;
-  final MessageReply replyMessage;
-  final double maxWidth;
-  final double maxWidthReply;
-  final bool isMe;
-  final Function(String messageId)? onTap;
+class ChatAvatar extends StatelessWidget {
+  final String imageUrl;
+  const ChatAvatar({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
-    final replyTextStyle = TextStyle(
-      color: AppColors.textDefaultTextSub2,
-      fontSize: 14,
-      fontFamily: FontFamily.segoeUI,
-      fontWeight: FontWeight.w400,
-      height: 1.43,
+    return CircleNetworkAvatar(
+      imageUrl: imageUrl,
+      size: ChatBubbleConstants.avatarSize,
     );
-    String text = getReplyText(replyMessage);
-    final textLines = TextMessageDisplayUtil.calculateTextLines(
-      text: text,
-      maxWidth: maxWidthReply,
-      style: replyTextStyle,
-      maxLines: 2,
-    );
-
-    return Stack(
-      alignment: isMe ? Alignment.topRight : Alignment.topLeft,
-      children: [
-        GestureDetector(
-          onTap: () => onTap?.call(replyMessage.messageId),
-          child: Container(
-            constraints: BoxConstraints(maxWidth: maxWidthReply, maxHeight: 60),
-            padding: const EdgeInsets.only(
-              top: 8,
-              left: 12,
-              right: 12,
-              bottom: 12,
-            ),
-            clipBehavior: Clip.antiAlias,
-            decoration: ShapeDecoration(
-              color: AppColors.surfaceContainerGrayStrong1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                  bottomLeft: isMe ? Radius.circular(12) : Radius.zero,
-                  bottomRight: isMe ? Radius.zero : Radius.circular(12),
-                ),
-              ),
-            ),
-            child: Text(
-              text,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: replyTextStyle,
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: textLines > 1 ? 48 : 30),
-          child: ChatBubbleContent(message: message, maxWidth: maxWidth),
-        ),
-      ],
-    );
-  }
-
-  String getReplyText(MessageReply replyMessage) {
-    switch (replyMessage.originalMessageType) {
-      case MessageType.text:
-        return replyMessage.previewText ?? '';
-      case MessageType.image:
-        return 'Image';
-      case MessageType.video:
-        return 'Video';
-      case MessageType.file:
-        return 'Attachment';
-      default:
-        return '';
-    }
   }
 }

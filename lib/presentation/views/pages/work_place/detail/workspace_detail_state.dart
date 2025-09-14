@@ -5,6 +5,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing,
+    this.isInitialized = false,
     this.chatMessages = const [],
     this.pinnedMessageSummary,
     this.messageReply,
@@ -17,9 +18,10 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.jumpToMessageIndex,
     this.scrollToTop = false,
     this.showTimeMessageId,
-    this.forceCloseScrollToTop = false,
+    this.initIndex = 0,
   });
 
+  final bool isInitialized;
   final List<ChatMessageUIModel> chatMessages;
   final PinnedMessageSummaryUiModel? pinnedMessageSummary;
   final MessageEntity? messageReply;
@@ -32,15 +34,15 @@ class WSDetailState extends BaseState<WSDetailState> {
   final int? jumpToMessageIndex;
   final bool scrollToTop;
   final String? showTimeMessageId;
-  final bool forceCloseScrollToTop;
+  final int initIndex;
 
   bool get needLoadMoreOldMessages =>
-      chatMessagesPagingStatus != PagingStatus.loading &&
       chatMessagesPagingStatus != PagingStatus.empty &&
       chatMessagesPagingStatus != PagingStatus.noMoreData;
 
   @override
   WSDetailState copyWith({
+    bool? isInitialized,
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
@@ -60,8 +62,10 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool forceCloseJumpToMessage = false,
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
+    int? initIndex,
   }) {
     return WSDetailState(
+      isInitialized: isInitialized ?? this.isInitialized,
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
@@ -85,12 +89,14 @@ class WSDetailState extends BaseState<WSDetailState> {
       showTimeMessageId: forceDisableShowTime
           ? null
           : showTimeMessageId ?? this.showTimeMessageId,
+      initIndex: initIndex ?? this.initIndex,
     );
   }
 
   @override
   List<Object?> get props => [
     ...super.props,
+    isInitialized,
     chatMessages,
     pinnedMessageSummary,
     messageReply,
@@ -103,5 +109,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     jumpToMessageIndex,
     scrollToTop,
     showTimeMessageId,
+    initIndex,
   ];
 }

@@ -51,8 +51,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   final int _workspaceId;
+
   int get workspaceId => _workspaceId;
   final String _userId;
+
   String get userId => _userId;
 
   final int _limit = 20;
@@ -78,7 +80,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<SendMessageEvent>(_onSendMessage);
     handleSubEvent<ResetScrollToBottomEvent>(_onDisableIsNeedScrollToBottom);
     handleSubEvent<AddMessageEvent>(
-      _onAddMessage, // Ensures that each event of the same type is processed before the next event of the same type begins.
+      _onAddMessage,
+      // Ensures that each event of the same type is processed before the next event of the same type begins.
       transformer: sequential(),
     );
     handleSubEvent<UpdateHasOptionsEvent>(_onUpdateHasOptions);
@@ -90,7 +93,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<ShowTimeEvent>(_onShowTime);
     handleSubEvent<DisableShowTimeEvent>(_onDisableShowTime);
     handleSubEvent<GetPinnedMessageSummaryEvent>(_onGetPinnedMessageSummary);
-    handleSubEvent<ResetScrollToTopEvent>(_onResetScrollToTop);
     handleSubEvent<LoadMoreChatMessagesEvent>(
       _onLoadMoreMessages,
       // droppable to ensure that only one load more request is processed at a time
@@ -144,10 +146,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     emit(
       state.copyWith(
+        isInitialized: true,
         pageStatus: PageStatus.loaded,
-        chatMessages: _mapMessagesToUIModels(messages),
+        chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
         chatMessagesPagingStatus: pagingStatus,
         pinnedMessageSummary: pinnedMessageSummary,
+        initIndex: messages.isEmpty ? 0 : messages.length - 1,
       ),
     );
   }
@@ -166,6 +170,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         oldestMessageId: state.chatMessages.first.message.id,
       ),
     );
+
+    await Future.delayed(const Duration(seconds: 2));
 
     final messages = result.data;
     final pagingStatus = messages.isEmpty || result.data.length == _limit
@@ -186,6 +192,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       state.copyWith(
         chatMessages: updatedMessages,
         chatMessagesPagingStatus: pagingStatus,
+        initIndex: newMessages.isEmpty ? 0 : newMessages.length - 1,
       ),
     );
   }
@@ -253,9 +260,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final messageIndex = chatMessages.length - 1;
     final updatedListUiModel = _updateUIModel(chatMessages, messageIndex);
 
-    emit(
-      state.copyWith(chatMessages: updatedListUiModel, scrollToBottom: true),
-    );
+    emit(state.copyWith(chatMessages: updatedListUiModel));
   }
 
   Future<void> _onUpdateHasOptions(
@@ -310,28 +315,58 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final messageIndex = state.chatMessages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
-    if (messageIndex == -1) {
-      emit(state.copyWith(scrollToTop: true));
-      final messageResult = await _fetchMessageUseCase.call(
+    if (messageIndex == -1 && state.needLoadMoreOldMessages) {
+      emit(state.copyWith(chatMessagesPagingStatus: PagingStatus.loading));
+
+      final result = await _fetchMessageUseCase.call(
         FetchMessagesWorkspaceParams(
           workspaceId: _workspaceId,
           limit: _limit,
           oldestMessageId: state.chatMessages.first.message.id,
+          targetMessageId: event.messageId,
         ),
       );
-      final messages = messageResult.data;
-      final messageIndex = messages.indexWhere(
-        (message) => message.id == event.messageId,
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      final messages = result.data;
+      final pagingStatus = messages.isEmpty || result.data.length == _limit
+          ? PagingStatus.noMoreData
+          : PagingStatus.loadCompleted;
+
+      // insert messages to the beginning of the list
+      final newMessages = _mapMessagesToUIModels(messages);
+      final newChatMessages = [...newMessages, ...state.chatMessages];
+
+      // update last ui models of new messages list to map to first state.chatMessages
+      final updatedMessages = _updateUIModel(
+        newChatMessages,
+        newMessages.length - 1,
       );
-      emit(
-        state.copyWith(
-          chatMessages: _mapMessagesToUIModels(messages),
-          jumpToMessageIndex: messageIndex,
-        ),
+
+      final jumpToMessageIndex = updatedMessages.indexWhere(
+        (uiModel) => uiModel.message.id == event.messageId,
       );
-      return;
+
+      if (jumpToMessageIndex != -1) {
+        emit(
+          state.copyWith(
+            chatMessages: updatedMessages,
+            chatMessagesPagingStatus: pagingStatus,
+            jumpToMessageIndex: jumpToMessageIndex,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            chatMessages: updatedMessages,
+            chatMessagesPagingStatus: pagingStatus,
+          ),
+        );
+      }
+    } else {
+      emit(state.copyWith(jumpToMessageIndex: messageIndex));
     }
-    emit(state.copyWith(jumpToMessageIndex: messageIndex));
   }
 
   Future<void> _onResetJumpToMessage(
@@ -394,13 +429,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     );
 
     emit(state.copyWith(pinnedMessageSummary: uiModel));
-  }
-
-  Future<void> _onResetScrollToTop(
-    ResetScrollToTopEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    emit(state.copyWith(scrollToTop: false));
   }
 
   // Functions

@@ -21,12 +21,9 @@ class PinnedMessageSection extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        clipBehavior: Clip.antiAlias,
-        decoration: ShapeDecoration(
+        decoration: BoxDecoration(
           color: AppColors.surfaceContainerGrayStrong1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          // borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
         child: Row(
           children: [
@@ -34,15 +31,14 @@ class PinnedMessageSection extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
-                spacing: 12,
                 children: [
                   Assets.icons.icPinned.svg(width: 20, height: 20),
+                  SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 2,
                       children: [
                         Text(
                           pinnedMessageSummary.latestSenderName ?? '',
@@ -56,6 +52,7 @@ class PinnedMessageSection extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        SizedBox(height: 2),
                         Text(
                           pinnedMessageSummary.latestPinnedMessageContent ?? '',
                           style: TextStyle(
@@ -80,7 +77,6 @@ class PinnedMessageSection extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 4,
                 children: [
                   Text(
                     '${pinnedMessageSummary.totalPinnedMessages - 1} more',
@@ -93,6 +89,7 @@ class PinnedMessageSection extends StatelessWidget {
                       height: 1.33,
                     ),
                   ),
+                  SizedBox(width: 4),
                   Assets.icons.icArrowDownFillSize12.svg(width: 12, height: 12),
                 ],
               ),
