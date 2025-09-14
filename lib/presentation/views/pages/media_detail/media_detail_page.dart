@@ -1,6 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/bloc/media_detail_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/layout/media_detail_mobile_layout.dart';
@@ -9,15 +10,19 @@ import 'package:ig_agency_app/presentation/views/pages/media_detail/layout/media
 @RoutePage()
 class MediaDetailPage
     extends BasePage<MediaDetailBloc, MediaDetailEvent, MediaDetailState> {
-  const MediaDetailPage({super.key, required this.url, required this.isVideo});
+  const MediaDetailPage({
+    super.key,
+    required this.medias,
+    required this.initialIndex,
+  });
 
-  final String url;
-  final bool isVideo;
+  final List<MediaEntity> medias;
+  final int initialIndex;
 
   @override
   MediaDetailBloc get buildBloc => super.buildBloc
-    ..url = url
-    ..isVideo = isVideo;
+    ..medias = medias
+    ..initialImageIndex = initialIndex;
 
   @override
   void onInitState(BuildContext context) {

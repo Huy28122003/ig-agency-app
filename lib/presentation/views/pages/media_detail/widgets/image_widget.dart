@@ -1,17 +1,34 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/bloc/media_detail_bloc.dart';
 import '../../../../resources/colors.dart';
 
-class ImageWidget extends StatelessWidget {
+class ImageWidget extends StatefulWidget {
   final bool isFullScreenMode;
+  final int imageIndex;
 
-  const ImageWidget({super.key, required this.isFullScreenMode});
+  const ImageWidget({
+    super.key,
+    required this.isFullScreenMode,
+    required this.imageIndex,
+  });
+
+  @override
+  State<ImageWidget> createState() => _ImageWidgetState();
+}
+
+class _ImageWidgetState extends State<ImageWidget> {
+  late final MediaDetailBloc _mediaDetailBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _mediaDetailBloc = context.read<MediaDetailBloc>();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return (isFullScreenMode)
+    return (widget.isFullScreenMode)
         ? _buildFullScreenMode(context)
         : _buildNormalMode(context);
   }
@@ -28,7 +45,7 @@ class ImageWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: Image.network(
               width: double.infinity,
-              context.read<MediaDetailBloc>().url,
+              _mediaDetailBloc.medias[widget.imageIndex].previewUrl,
               fit: BoxFit.fill,
               errorBuilder: (context, _, _) {
                 return SizedBox();
@@ -54,11 +71,11 @@ class ImageWidget extends StatelessWidget {
       child: Center(
         child: GestureDetector(
           onTap: () {
-            context.read<MediaDetailBloc>().add(ChangeImageViewModeEvent());
+            _mediaDetailBloc.add(ChangeImageViewModeEvent());
           },
           child: Image.network(
             width: double.infinity,
-            context.read<MediaDetailBloc>().url,
+            _mediaDetailBloc.medias[widget.imageIndex].previewUrl,
             fit: BoxFit.cover,
             errorBuilder: (context, _, _) {
               return SizedBox();

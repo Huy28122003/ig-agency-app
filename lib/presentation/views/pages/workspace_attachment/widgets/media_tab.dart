@@ -100,8 +100,8 @@ class _MediaTabState extends State<MediaTab> {
                             onTap: () {
                               context.router.push(
                                 MediaDetailRoute(
-                                  url: state[index].previewUrl,
-                                  isVideo: state[index].isVideo,
+                                  medias: state,
+                                  initialIndex: index,
                                 ),
                               );
                             },

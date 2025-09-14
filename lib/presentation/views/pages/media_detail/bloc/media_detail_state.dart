@@ -9,12 +9,14 @@ class MediaDetailState extends BaseState<MediaDetailState> {
     this.loadVideoStatus = PageStatus.initial,
     this.isPlaying = false,
     this.isFullScreenMode = false,
+    this.imageIndex = 0,
   });
 
   final bool isDownloadSuccess;
   final PageStatus loadVideoStatus;
   final bool isPlaying;
   final bool isFullScreenMode;
+  final int imageIndex;
 
   @override
   MediaDetailState copyWith({
@@ -25,6 +27,7 @@ class MediaDetailState extends BaseState<MediaDetailState> {
     bool? isPlaying,
     bool? isFullScreenMode,
     PageStatus? loadVideoStatus,
+    int? imageIndex,
   }) {
     return MediaDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -34,6 +37,7 @@ class MediaDetailState extends BaseState<MediaDetailState> {
       isPlaying: isPlaying ?? this.isPlaying,
       loadVideoStatus: loadVideoStatus ?? this.loadVideoStatus,
       isFullScreenMode: isFullScreenMode ?? this.isFullScreenMode,
+      imageIndex: imageIndex ?? this.imageIndex,
     );
   }
 
@@ -44,5 +48,6 @@ class MediaDetailState extends BaseState<MediaDetailState> {
     loadVideoStatus,
     isFullScreenMode,
     isPlaying,
+    imageIndex,
   ];
 }
