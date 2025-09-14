@@ -11,7 +11,6 @@ import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
 @Injectable(as: MediaManager)
@@ -78,8 +77,6 @@ class MediaPickerImpl extends MediaManager {
   @override
   Future<bool> saveVideoFromUrl(String url) async {
     try {
-      if (!await _requestPermission()) return false;
-
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final tempDir = await getTemporaryDirectory();
@@ -100,8 +97,5 @@ class MediaPickerImpl extends MediaManager {
     return false;
   }
 
-  static Future<bool> _requestPermission() async {
-    final status = await Permission.storage.request();
-    return status.isGranted;
-  }
+
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/dependencies/permission/permission_manager.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
@@ -20,8 +21,10 @@ class MediaDetailBloc extends BaseBloc<MediaDetailEvent, MediaDetailState> {
   late final PageController pageController;
   late final int initialImageIndex;
   final MediaManager mediaManager;
+  final PermissionManager permissionManager;
 
-  MediaDetailBloc({required this.mediaManager}) : super(MediaDetailState()) {
+  MediaDetailBloc({required this.mediaManager, required this.permissionManager})
+    : super(MediaDetailState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<ChangeMediaEvent>(_onChangeMedia);
     handleSubEvent<DownloadMediaEvent>(_onDownloadMedia);
@@ -68,6 +71,8 @@ class MediaDetailBloc extends BaseBloc<MediaDetailEvent, MediaDetailState> {
     Emitter<MediaDetailState> emit,
   ) async {
     bool result = false;
+    if (!await permissionManager.checkSavingMedia()) return;
+
     final currentMedia = medias[state.imageIndex];
     if (currentMedia.isVideo) {
       result = await mediaManager.saveVideoFromUrl(
