@@ -1,10 +1,9 @@
-import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
+import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/domain/entities/paged_result.dart';
 
 import '../../shared/commons/models/pagination.dart';
-import '../entities/user_entity.dart';
 
 import '../entities/file_entity.dart';
 
@@ -55,5 +54,13 @@ abstract class WorkspaceRepository {
     String? keySearch,
   });
 
+  // TODO: tương tự hàm getWorkspaces => quy về dùng chung 1 hàm
+  Future<List<WorkspaceEntity>> getListGroup({
+    required Pagination pagination,
+    String? keySearch,
+  });
+
   Future<bool> createGroup(String groupName, List<UserEntity> members);
+
+  Future<bool> addUserToGroups(UserEntity user, List<WorkspaceEntity> groups);
 }

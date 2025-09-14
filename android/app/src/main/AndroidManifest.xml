@@ -18,8 +18,6 @@
     <!-- Legacy storage (Android < 10) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"

@@ -29,6 +29,7 @@ class AppTextField extends StatefulWidget {
     ),
     this.style,
     this.showUnderlineBorder = true,
+    this.border,
   });
 
   final TextEditingController? controller;
@@ -50,6 +51,7 @@ class AppTextField extends StatefulWidget {
   final EdgeInsets? contentPadding;
   final TextStyle? style;
   final bool showUnderlineBorder;
+  final InputBorder? border;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -88,14 +90,16 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     final isError = widget.errorText != null;
 
-    final underlineBorder = UnderlineInputBorder(
-      borderSide: BorderSide(
-        color: isError
-            ? AppColors.outlineAlertError
-            : AppColors.outlineGrayStrong200,
-        width: 1,
-      ),
-    );
+    final underlineBorder =
+        widget.border ??
+        UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: isError
+                ? AppColors.outlineAlertError
+                : AppColors.outlineGrayStrong200,
+            width: 1,
+          ),
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

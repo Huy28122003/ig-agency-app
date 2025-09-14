@@ -39,21 +39,23 @@ class _VideoWidgetState extends State<VideoWidget> {
           return state.loadVideoStatus;
         },
         builder: (context, state) {
-          if (state.isLoaded) {
+          if (state.isLoaded &&
+              _mediaDetailBloc.videoPlayerController != null) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 AspectRatio(
                   aspectRatio:
-                      _mediaDetailBloc.videoPlayerController.value.aspectRatio,
-                  child: VideoPlayer(_mediaDetailBloc.videoPlayerController),
+                      _mediaDetailBloc.videoPlayerController!.value.aspectRatio,
+                  child: VideoPlayer(_mediaDetailBloc.videoPlayerController!),
                 ),
                 SizedBox(height: 20),
                 VideoProgressIndicator(
-                  _mediaDetailBloc.videoPlayerController,
+                  _mediaDetailBloc.videoPlayerController!,
                   allowScrubbing: true,
                   colors: VideoProgressColors(
-                    playedColor: AppColors.surfaceContainerPrimaryPrimaryDefault,
+                    playedColor:
+                        AppColors.surfaceContainerPrimaryPrimaryDefault,
                     bufferedColor:
                         AppColors.surfaceContainerPrimaryPrimaryDisabled,
                     backgroundColor: AppColors.surfaceContainerGrayStrong2,
@@ -64,7 +66,7 @@ class _VideoWidgetState extends State<VideoWidget> {
                   children: [
                     Spacer(),
                     ValueListenableBuilder<VideoPlayerValue>(
-                      valueListenable: _mediaDetailBloc.videoPlayerController,
+                      valueListenable: _mediaDetailBloc.videoPlayerController!,
                       builder: (context, value, child) {
                         final position = value.position;
                         final duration = value.duration;
@@ -94,7 +96,11 @@ class _VideoWidgetState extends State<VideoWidget> {
                         _mediaDetailBloc.add(ToggleVideoEvent());
                       },
                       icon: (state)
-                          ? Icon(Icons.pause, color: AppColors.primary, size: 40)
+                          ? Icon(
+                              Icons.pause,
+                              color: AppColors.primary,
+                              size: 40,
+                            )
                           : Icon(
                               Icons.play_arrow_rounded,
                               color: AppColors.primary,

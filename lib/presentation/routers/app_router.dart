@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../di/di.dart';
+import '../../domain/entities/media_entity.dart';
 import '../views/pages/authentication/forgot_password/forgot_password_page.dart';
 import '../views/pages/authentication/login/login_page.dart';
 import '../views/pages/authentication/otp/otp_page.dart';
@@ -26,10 +28,12 @@ import '../views/pages/search/search_page.dart';
 import '../views/pages/setting/home/setting_home_page.dart';
 import '../views/pages/setting/shell/setting_page.dart';
 import '../views/pages/shared_content/shared_content_page.dart';
+import '../views/pages/work_place/add_to_group/add_to_group_page.dart';
 import '../views/pages/work_place/detail/workspace_detail_page.dart';
 import '../views/pages/work_place/list/workspace_list_page.dart';
 import '../views/pages/dashboard/home/dashboard_home_page.dart';
 import '../views/pages/work_place/create_group/create_group_page.dart';
+import '../views/pages/work_place/user_profile/user_profile_page.dart';
 import '../views/pages/workspace_attachment/workspace_attachment_page.dart';
 import 'auth_guard.dart';
 
@@ -95,22 +99,24 @@ class AppRouter extends RootStackRouter {
           ],
         ),
 
-        /// Mobile
-        AutoRoute(page: WSDetailRoute.page),
-        AutoRoute(page: PinnedMessageRoute.page),
-        AutoRoute(page: ProfileRoute.page),
-        AutoRoute(page: EditNameRoute.page),
-        AutoRoute(page: EditBioRoute.page),
-        AutoRoute(page: ChangePasswordRoute.page),
-        AutoRoute(page: ChatInfoRoute.page),
-        AutoRoute(page: SharedContentRoute.page),
-        AutoRoute(page: CameraRoute.page),
-        AutoRoute(page: MediaPreviewRoute.page),
-        AutoRoute(page: CreateGroupRoute.page),
-        AutoRoute(page: GroupInfoRoute.page),
-        AutoRoute(page: EditWorkspaceBioRoute.page),
-        AutoRoute(page: MembersRoute.page),
-        AutoRoute(page: WorkspaceAttachmentRoute.page),
-        AutoRoute(page: MediaDetailRoute.page),
-      ];
+    /// Mobile
+    AutoRoute(page: WSDetailRoute.page),
+    AutoRoute(page: PinnedMessageRoute.page),
+    AutoRoute(page: ProfileRoute.page),
+    AutoRoute(page: EditNameRoute.page),
+    AutoRoute(page: EditBioRoute.page),
+    AutoRoute(page: ChangePasswordRoute.page),
+    AutoRoute(page: ChatInfoRoute.page),
+    AutoRoute(page: SharedContentRoute.page),
+    AutoRoute(page: CameraRoute.page),
+    AutoRoute(page: MediaPreviewRoute.page),
+    AutoRoute(page: CreateGroupRoute.page),
+    AutoRoute(page: UserProfileRoute.page),
+    AutoRoute(page: AddToGroupRoute.page),
+    AutoRoute(page: GroupInfoRoute.page),
+    AutoRoute(page: EditWorkspaceBioRoute.page),
+    AutoRoute(page: MembersRoute.page),
+    AutoRoute(page: WorkspaceAttachmentRoute.page),
+    AutoRoute(page: MediaDetailRoute.page),
+  ];
 }

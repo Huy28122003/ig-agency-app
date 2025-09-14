@@ -24,9 +24,9 @@ class WorkspaceAttachmentBloc
   final GetFilesInGroupUseCase getFilesInGroupUseCase;
   final GetLinksInGroupUseCase getLinksInGroupUseCase;
   late final int workspaceId;
-  final int _mediaLimit = 24;
-  final int _fileLimit = 20;
-  final int _linkLimit = 20;
+  final int _mediaLimit = 15;
+  final int _fileLimit = 15;
+  final int _linkLimit = 15;
   int _mediaOffset = 0;
   int _fileOffset = 0;
   int _linkOffset = 0;
