@@ -76,26 +76,6 @@ class MediaPickerImpl extends MediaManager {
   }
 
   @override
-  Future<bool> saveImageFromUrl(String url) async {
-    try {
-      if (!await _requestPermission()) return false;
-
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        await ImageGallerySaverPlus.saveImage(
-          Uint8List.fromList(response.bodyBytes),
-          quality: 100,
-          name: "agency_${DateTime.now().millisecondsSinceEpoch}",
-        );
-        return true;
-      }
-    } catch (e) {
-      return false;
-    }
-    return false;
-  }
-
-  @override
   Future<bool> saveVideoFromUrl(String url) async {
     try {
       if (!await _requestPermission()) return false;
