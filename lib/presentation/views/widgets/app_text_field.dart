@@ -28,6 +28,7 @@ class AppTextField extends StatefulWidget {
       horizontal: 20,
     ),
     this.style,
+    this.showUnderlineBorder = true,
     this.border,
   });
 
@@ -49,6 +50,7 @@ class AppTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final EdgeInsets? contentPadding;
   final TextStyle? style;
+  final bool showUnderlineBorder;
   final InputBorder? border;
 
   @override
@@ -184,10 +186,18 @@ class _AppTextFieldState extends State<AppTextField> {
                     child: widget.suffixIcon,
                   )
                 : null,
-            border: underlineBorder,
-            enabledBorder: underlineBorder,
-            focusedBorder: underlineBorder,
-            disabledBorder: underlineBorder,
+            border: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            enabledBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            focusedBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
+            disabledBorder: widget.showUnderlineBorder
+                ? underlineBorder
+                : InputBorder.none,
             contentPadding: widget.contentPadding,
           ),
         ),
