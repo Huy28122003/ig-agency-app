@@ -5,6 +5,7 @@ import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
 import '../circle_network_avatar.dart';
+import '../custom_context_menu.dart';
 import 'chat_bubble_animation_helper.dart';
 import '../../../../shared/commons/constants/chat_bubble_constants.dart';
 import 'chat_bubble_content.dart';
@@ -259,42 +260,77 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                               ChatBubbleConstants.avatarSize +
                                               8,
                                         ),
-                                  child: Column(
-                                    crossAxisAlignment: isMe
-                                        ? CrossAxisAlignment.end
-                                        : CrossAxisAlignment.start,
-                                    children: [
-                                      if ((!isMe ||
-                                              (isMe &&
-                                                  _message.reply != null)) &&
-                                          _shouldShowUserName) ...[
-                                        ChatBubbleSenderInfo(
-                                          message: _message,
-                                          userId: widget.userId,
-                                          isMe: isMe,
-                                        ),
-                                      ],
-                                      _message.reply != null
-                                          ? ChatBubbleContentWithReply(
-                                              key: ValueKey(
-                                                '${_message.id}-reply',
-                                              ),
-                                              message: _message,
-                                              replyMessage: _message.reply!,
-                                              maxWidth: widget.maxWidth,
-                                              maxWidthReply:
-                                                  widget.maxWidthReply,
-                                              isMe: isMe,
-                                              onTap: widget.onReplyTap,
-                                            )
-                                          : ChatBubbleContent(
-                                              key: ValueKey(
-                                                '${_message.id}-no-reply',
-                                              ),
-                                              message: _message,
-                                              maxWidth: widget.maxWidth,
-                                            ),
+                                  child: CustomContextMenu(
+                                    horizontalPadding: widget.horizontalPadding,
+                                    // menuAlignment: isMe
+                                    //     ? MenuAlignment.right
+                                    //     : MenuAlignment.left,
+                                    childAlignment: isMe
+                                        ? MenuAlignment.right
+                                        : MenuAlignment.left,
+                                    actions: [
+                                      CustomContextMenuAction(
+                                        text: 'Reply',
+                                        onTap: widget.onReply,
+                                      ),
+                                      CustomContextMenuAction(
+                                        text: 'Forward',
+                                        onTap: () {},
+                                      ),
+                                      CustomContextMenuAction(
+                                        text: _message.isPinned ? 'Unpin' : 'Pin',
+                                        onTap: () {},
+                                      ),
+                                      CustomContextMenuAction(
+                                        text: 'Copy Message',
+                                        onTap: () {},
+                                      ),
+                                      CustomContextMenuAction(
+                                        text: 'Copy Name',
+                                        onTap: () {},
+                                      ),
+                                      CustomContextMenuAction(
+                                        text: 'Delete',
+                                        onTap: () {},
+                                      ),
                                     ],
+                                    child: Column(
+                                      crossAxisAlignment: isMe
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                      children: [
+                                        if ((!isMe ||
+                                                (isMe &&
+                                                    _message.reply != null)) &&
+                                            _shouldShowUserName) ...[
+                                          ChatBubbleSenderInfo(
+                                            message: _message,
+                                            userId: widget.userId,
+                                            isMe: isMe,
+                                          ),
+                                        ],
+                                        _message.reply != null
+                                            ? ChatBubbleContentWithReply(
+                                                key: ValueKey(
+                                                  '${_message.id}-reply',
+                                                ),
+                                                message: _message,
+                                                replyMessage: _message.reply!,
+                                                maxWidth: widget.maxWidth,
+                                                maxWidthReply:
+                                                    widget.maxWidthReply,
+                                                isMe: isMe,
+                                                onTap: widget.onReplyTap,
+                                              )
+                                            : ChatBubbleContent(
+                                                key: ValueKey(
+                                                  '${_message.id}-no-reply',
+                                                ),
+                                                message: _message,
+                                                maxWidth: widget.maxWidth,
+                                              ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

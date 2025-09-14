@@ -235,7 +235,7 @@ class _WorkspaceDetailMobileLayoutState
                   },
                   onMediaTap: _pickMedia,
                   onSendTap: (messageInput) {
-                    _bloc.add(SendMessageEvent(content: messageInput));
+                    _bloc.add(SendMessageEvent(content: messageInput.trim()));
                   },
                 );
               },
