@@ -20,7 +20,7 @@ class _DashboardHomeTabletLayoutState extends State<DashboardHomeTabletLayout> {
         child: GestureDetector(
           child: Text('TODO'),
           onTap: () {
-            context.router.replaceAll([WSDetailRoute()]);
+            // context.router.replaceAll([WSDetailRoute()]);
           },
         ),
       ),

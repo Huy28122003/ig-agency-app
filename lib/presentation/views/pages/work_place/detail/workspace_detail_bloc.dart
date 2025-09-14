@@ -51,8 +51,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   final int _workspaceId;
+
   int get workspaceId => _workspaceId;
   final String _userId;
+
   String get userId => _userId;
 
   final int _limit = 20;
@@ -78,7 +80,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<SendMessageEvent>(_onSendMessage);
     handleSubEvent<ResetScrollToBottomEvent>(_onDisableIsNeedScrollToBottom);
     handleSubEvent<AddMessageEvent>(
-      _onAddMessage, // Ensures that each event of the same type is processed before the next event of the same type begins.
+      _onAddMessage,
+      // Ensures that each event of the same type is processed before the next event of the same type begins.
       transformer: sequential(),
     );
     handleSubEvent<UpdateHasOptionsEvent>(_onUpdateHasOptions);

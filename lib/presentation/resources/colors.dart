@@ -49,7 +49,6 @@ abstract class AppColors {
   static const Color surfaceContainerAlertErrorLight = Color(0xFFFEE1E1);
   static final Color surfaceContainerAlphaAlphaBlack37 = Colors.black
       .withValues(alpha: 0.37);
-  static const Color surfaceContainerGrayStrong1 = Color(0xFFF2F4F6);
   static final Color surfaceContainerAlphaAlphaWhite17 = Colors.white
       .withValues(alpha: 0.17);
 

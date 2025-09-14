@@ -244,6 +244,7 @@ class NavTabletLayout extends StatelessWidget {
                   },
                 ),
               ),
+              SizedBox(width: 12),
               Expanded(child: AutoRouter()),
             ],
           );

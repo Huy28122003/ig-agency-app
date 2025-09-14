@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../gen/assets.gen.dart';
-import '../../presentation/resources/colors.dart';
+import '../../../gen/assets.gen.dart';
+import '../../resources/colors.dart';
 
 class AppCheckBox extends StatelessWidget {
   const AppCheckBox({
