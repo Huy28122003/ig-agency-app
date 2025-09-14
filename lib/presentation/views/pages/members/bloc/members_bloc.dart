@@ -47,7 +47,7 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
     handleSubEvent<GetDataEvent>((event, emit) async {
       // emit(state.copyWith(pagingStatus: PagingStatus.loading));
       final result = await getUsersByWorkspaceIdUseCase.call(
-        GetUsersByWorkspaceIdParams(
+        GetDataInGroupParams(
           limit: _limit,
           offset: _offset,
           workspaceId: _workspaceId,
