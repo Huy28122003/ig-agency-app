@@ -103,5 +103,13 @@
     "ago": "ago",
     "role_admin": "Admin",
     "role_member": "Member"
+  },
+  "setting": {
+    "title": "Settings",
+    "dark_mode": "Dark Mode",
+    "pinned_message": "Pinned Messages",
+    "blocked_user": "Blocked Users",
+    "notification": "In App Alerts",
+    "logout": "Logout"
   }
 }

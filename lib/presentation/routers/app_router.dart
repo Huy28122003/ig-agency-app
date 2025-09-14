@@ -66,7 +66,7 @@ class AppRouter extends RootStackRouter {
         ),
         CustomRoute(
           page: SettingRoute.page,
-          // transitionsBuilder: TransitionsBuilders.noTransition,
+          transitionsBuilder: TransitionsBuilders.noTransition,
           children: [
             CustomRoute(
               page: SettingHomeRoute.page,

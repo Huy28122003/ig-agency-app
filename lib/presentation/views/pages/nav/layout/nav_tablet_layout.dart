@@ -21,7 +21,7 @@ class NavTabletLayout extends StatelessWidget {
               Container(
                 color: AppColors.surfaceContainerGrayStrong1,
                 width: boxConstraints.maxWidth * 2 / 2,
-                constraints: BoxConstraints(minWidth: 64 + 200, maxWidth: 350),
+                constraints: BoxConstraints(minWidth: 64 + 240, maxWidth: 380),
                 child: BlocBuilder<NavBloc, NavState>(
                   buildWhen: (pre, cur) => pre.currentIndex != cur.currentIndex,
                   builder: (context, state) {
@@ -133,7 +133,7 @@ class NavTabletLayout extends StatelessWidget {
                                                 BlendMode.srcIn,
                                               ),
                                               width: 24,
-                                              height: 24
+                                              height: 24,
                                             ),
                                           ),
                                         ],
@@ -217,7 +217,7 @@ class NavTabletLayout extends StatelessWidget {
                                                 BlendMode.srcIn,
                                               ),
                                               width: 24,
-                                              height: 24
+                                              height: 24,
                                             ),
                                           ),
                                         ],

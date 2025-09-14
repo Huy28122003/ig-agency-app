@@ -147,7 +147,8 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
       case DeviceScreenType.tablet:
         builder = widget.tabletBuilder(context);
       default:
-        builder = widget.desktopBuilder(context);
+        builder = widget.tabletBuilder(context);
+        // builder = widget.desktopBuilder(context);
     }
     if (sizingInformation.isMobile || sizingInformation.isTablet) {
       return GestureDetector(
