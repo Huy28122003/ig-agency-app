@@ -90,7 +90,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     required int limit,
   }) {
     try {
-      return MockData().getUsers();
+      return MockData().getUsers(limit: limit, offset: offset);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

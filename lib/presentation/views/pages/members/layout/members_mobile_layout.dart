@@ -90,7 +90,7 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
         },
         builder: (context, state) {
           return AppListView<UserEntity>(
-            padding: EdgeInsets.only(bottom: 30),
+            padding: EdgeInsets.only(bottom: 10),
             separatorBuilder: (context, index) {
               return SizedBox();
             },
@@ -98,7 +98,9 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
             onLoadMore: () {
               context.read<MembersBloc>().add(GetDataEvent());
             },
-            enablePullDown: false,
+            onRefresh: () {
+              context.read<MembersBloc>().add(RefreshDataEvent());
+            },
             data: state.members,
             numCardLoading: 10,
             cardLoading: _buildLoading(),

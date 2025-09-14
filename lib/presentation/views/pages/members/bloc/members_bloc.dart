@@ -24,7 +24,8 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
       add(GetDataEvent());
     });
 
-    handleSubEvent<GetDataEvent>((event, emit) async {
+    handleLoadData<RefreshDataEvent>((event, emit) async {
+      _offset = 0;
       final result = await getUsersByWorkspaceIdUseCase.call(
         GetUsersByWorkspaceIdParams(
           limit: _limit,
@@ -32,8 +33,30 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
           workspaceId: _workspaceId,
         ),
       );
+      _offset += result.data.length;
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.loaded,
+          members: result.data,
+          pagingStatus: PagingStatus.refreshCompleted,
+        ),
+      );
+    });
 
-      final users = result.data;
+    handleSubEvent<GetDataEvent>((event, emit) async {
+      // emit(state.copyWith(pagingStatus: PagingStatus.loading));
+      final result = await getUsersByWorkspaceIdUseCase.call(
+        GetUsersByWorkspaceIdParams(
+          limit: _limit,
+          offset: _offset,
+          workspaceId: _workspaceId,
+        ),
+      );
+      _offset += _limit;
+
+      List<UserEntity> currentList = List.from(state.members);
+      currentList.addAll(result.data);
+
       final pagingStatus = _offset >= result.totalRecords
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
@@ -41,12 +64,10 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
       emit(
         state.copyWith(
           pageStatus: PageStatus.loaded,
-          members: users,
+          members: currentList,
           pagingStatus: pagingStatus,
         ),
       );
-
-      _offset += users.length;
     });
   }
 }
