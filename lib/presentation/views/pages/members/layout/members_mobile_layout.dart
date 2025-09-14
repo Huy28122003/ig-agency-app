@@ -99,7 +99,9 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
               onLoadMore: () {
                 context.read<MembersBloc>().add(GetDataEvent());
               },
-              enablePullDown: false,
+              onRefresh: () {
+                context.read<MembersBloc>().add(RefreshDataEvent());
+              },
               data: state.members,
               numCardLoading: 10,
               cardLoading: _buildLoading(),
