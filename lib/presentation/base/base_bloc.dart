@@ -25,8 +25,9 @@ abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
   }
 
   void handleSubEvent<T extends E>(
-    Future<void> Function(T event, Emitter<S> emit) handler,
-  ) {
+    Future<void> Function(T event, Emitter<S> emit) handler, {
+    EventTransformer<T>? transformer,
+  }) {
     on<T>((event, emit) async {
       try {
         await handler(event, emit);
@@ -34,6 +35,6 @@ abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
         emit(state.copyWith(processing: false));
         AppErrorHandler.handle(e);
       }
-    });
+    }, transformer: transformer);
   }
 }

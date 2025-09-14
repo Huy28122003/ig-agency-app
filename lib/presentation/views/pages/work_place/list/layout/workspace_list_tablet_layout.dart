@@ -224,6 +224,9 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                 _workspaceBloc.add(
                                   SelectWorkspaceEvent(id: workspace.id),
                                 );
+                                context.router.replaceAll([
+                                  WSDetailRoute(workspaceId: 1, userId: '1'),
+                                ]);
                               },
                               isMute: workspace.isMute,
                               isPin: workspace.isPin,

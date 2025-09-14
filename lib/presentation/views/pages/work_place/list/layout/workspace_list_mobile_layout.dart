@@ -138,7 +138,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                         },
                         child: WorkspaceTileMobileWidget(
                           onTap: () {
-                            context.router.push(GroupInfoRoute());
+                            context.router.push(
+                              WSDetailRoute(workspaceId: 1, userId: '1'),
+                            );
                           },
                           isMute: workspace.isMute,
                           isPin: workspace.isPin,
