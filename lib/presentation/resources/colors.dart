@@ -51,7 +51,6 @@ abstract class AppColors {
       .withValues(alpha: 0.37);
   static final Color surfaceContainerAlphaAlphaWhite17 = Colors.white
       .withValues(alpha: 0.17);
-  static const Color surfaceContainerGrayStrong1 = Color(0xFFF2F4F6);
 
   /// Others
   static const Color colorsBlue = Color(0xFF007AFF);

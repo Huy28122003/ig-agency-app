@@ -6,6 +6,7 @@ import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../data/cache/ram_cache.dart';
+import '../../../../../dependencies/media/media_manager.dart';
 import '../../../../../domain/entities/message/message.dart';
 import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/usecases/fetch_member_in_workspace_use_case.dart';
@@ -27,8 +28,6 @@ part 'workspace_detail_state.dart';
 @injectable
 class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   WSDetailBloc({
-    required String userId,
-    required int workspaceId,
     required FetchMessagesWorkspaceUseCase fetchMessageUseCase,
     required GetPinnedMessageSummaryWorkspaceUseCase
     getPinnedMessageSummaryWorkspaceUseCase,
@@ -36,24 +35,23 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     required FetchMemberInWorkspaceUseCase fetchMemberInWorkspaceUseCase,
     required SearchMemberInWorkspaceUseCase searchMemberInWorkspaceUseCase,
     required RamCache ramCache,
-  }) : _workspaceId = workspaceId,
-       _userId = userId,
-       _fetchMessageUseCase = fetchMessageUseCase,
+    required MediaManager mediaManager,
+  }) : _fetchMessageUseCase = fetchMessageUseCase,
        _getPinnedMessageSummaryWorkspaceUseCase =
            getPinnedMessageSummaryWorkspaceUseCase,
        _sendMessageUseCase = sendMessageUseCase,
        _fetchMemberInWorkspaceUseCase = fetchMemberInWorkspaceUseCase,
        _searchMemberInWorkspaceUseCase = searchMemberInWorkspaceUseCase,
        _ramCache = ramCache,
+       _mediaManager = mediaManager,
        super(WSDetailState()) {
     _registerHandlers();
     _initializeMessageListener();
   }
 
-  final int _workspaceId;
+  late final int workspaceId;
 
-  int get workspaceId => _workspaceId;
-  final String _userId;
+  final String _userId = '1';
 
   String get userId => _userId;
 
@@ -65,6 +63,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   final SendMessageUseCase _sendMessageUseCase;
   final FetchMemberInWorkspaceUseCase _fetchMemberInWorkspaceUseCase;
   final SearchMemberInWorkspaceUseCase _searchMemberInWorkspaceUseCase;
+
+  final MediaManager _mediaManager;
   final RamCache _ramCache;
 
   StreamSubscription<MessageEntity>? _messageSubscription;
@@ -125,12 +125,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(state.copyWith(pageStatus: PageStatus.loading));
 
     final result = await _fetchMessageUseCase.call(
-      FetchMessagesWorkspaceParams(workspaceId: _workspaceId, limit: _limit),
+      FetchMessagesWorkspaceParams(workspaceId: workspaceId, limit: _limit),
     );
 
     final pinnedMessageSummaryResult =
         await _getPinnedMessageSummaryWorkspaceUseCase.call(
-          GetPinnedMessageSummaryWorkspaceParams(workspaceId: _workspaceId),
+          GetPinnedMessageSummaryWorkspaceParams(workspaceId: workspaceId),
         );
 
     final pinnedMessageSummary = PinnedMessageSummaryMapper.fromMessageEntity(
@@ -165,7 +165,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     final result = await _fetchMessageUseCase.call(
       FetchMessagesWorkspaceParams(
-        workspaceId: _workspaceId,
+        workspaceId: workspaceId,
         limit: _limit,
         oldestMessageId: state.chatMessages.first.message.id,
       ),
@@ -231,7 +231,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     _sendMessageUseCase.call(
       SendMessageParams(
         userId: userId,
-        workspaceId: _workspaceId,
+        workspaceId: workspaceId,
         replyMessageId: reply?.id,
         content: event.content,
       ),
@@ -283,7 +283,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   ) async {
     final users = await _fetchMemberInWorkspaceUseCase.call(
       FetchMemberInWorkspaceParams(
-        workspaceId: _workspaceId,
+        workspaceId: workspaceId,
         limit: _limit,
         offset: 0,
       ),
@@ -301,7 +301,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     }
     final users = await _searchMemberInWorkspaceUseCase.call(
       SearchMemberInWorkspaceParams(
-        workspaceId: _workspaceId,
+        workspaceId: workspaceId,
         query: event.query,
       ),
     );
@@ -320,7 +320,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
       final result = await _fetchMessageUseCase.call(
         FetchMessagesWorkspaceParams(
-          workspaceId: _workspaceId,
+          workspaceId: workspaceId,
           limit: _limit,
           oldestMessageId: state.chatMessages.first.message.id,
           targetMessageId: event.messageId,
@@ -420,9 +420,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     final pinnedMessageSummary = await _getPinnedMessageSummaryWorkspaceUseCase
-        .call(
-          GetPinnedMessageSummaryWorkspaceParams(workspaceId: _workspaceId),
-        );
+        .call(GetPinnedMessageSummaryWorkspaceParams(workspaceId: workspaceId));
 
     final uiModel = PinnedMessageSummaryMapper.fromMessageEntity(
       pinnedMessageSummary,

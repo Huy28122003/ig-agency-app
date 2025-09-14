@@ -6,7 +6,8 @@ class DashboardHomeTabletLayout extends StatefulWidget {
   const DashboardHomeTabletLayout({super.key});
 
   @override
-  State<DashboardHomeTabletLayout> createState() => _DashboardHomeTabletLayoutState();
+  State<DashboardHomeTabletLayout> createState() =>
+      _DashboardHomeTabletLayoutState();
 }
 
 class _DashboardHomeTabletLayoutState extends State<DashboardHomeTabletLayout> {
@@ -20,7 +21,9 @@ class _DashboardHomeTabletLayoutState extends State<DashboardHomeTabletLayout> {
         child: GestureDetector(
           child: Text('TODO'),
           onTap: () {
-            context.router.replaceAll([WSDetailRoute()]);
+            context.router.replaceAll([
+              WSDetailRoute(workspaceId: 1),
+            ]);
           },
         ),
       ),

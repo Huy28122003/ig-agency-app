@@ -6,7 +6,8 @@ class CreateGroupTabletLayout extends StatefulWidget {
   const CreateGroupTabletLayout({super.key});
 
   @override
-  State<CreateGroupTabletLayout> createState() => _CreateGroupTabletLayoutState();
+  State<CreateGroupTabletLayout> createState() =>
+      _CreateGroupTabletLayoutState();
 }
 
 class _CreateGroupTabletLayoutState extends State<CreateGroupTabletLayout> {
@@ -20,7 +21,9 @@ class _CreateGroupTabletLayoutState extends State<CreateGroupTabletLayout> {
         child: GestureDetector(
           child: Text('TODO'),
           onTap: () {
-            context.router.replaceAll([WSDetailRoute()]);
+            context.router.replaceAll([
+              WSDetailRoute(workspaceId: 1),
+            ]);
           },
         ),
       ),
