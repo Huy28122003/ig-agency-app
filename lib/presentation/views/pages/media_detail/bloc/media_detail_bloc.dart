@@ -75,7 +75,7 @@ class MediaDetailBloc extends BaseBloc<MediaDetailEvent, MediaDetailState> {
       );
       // result = await DownloadUtils.saveVideoFromUrl(currentMedia.previewUrl);
     } else {
-      result = await mediaManager.saveImageFromUrl(currentMedia.previewUrl);
+      result = await mediaManager.saveNetworkImage(currentMedia.previewUrl);
     }
 
     emit(state.copyWith(isDownloadSuccess: result));
