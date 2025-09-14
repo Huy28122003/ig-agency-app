@@ -143,14 +143,14 @@ class MockData {
   );
 
   Future<PagedResult<UserEntity>> getUsers({
-    int page = 1,
-    int pageSize = 15,
+    int limit = 15,
+    int offset = 0,
   }) async {
     await Future.delayed(const Duration(milliseconds: 500));
-
-    final start = (page - 1) * pageSize;
-    final end = start + pageSize;
-    final slice = users.sublist(start, end > users.length ? users.length : end);
+    final slice = users.sublist(
+      offset,
+      limit + offset > users.length ? users.length : limit + offset,
+    );
 
     return PagedResult<UserEntity>(data: slice, totalRecords: users.length);
   }

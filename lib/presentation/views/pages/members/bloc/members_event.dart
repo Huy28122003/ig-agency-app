@@ -9,3 +9,5 @@ class LoadDataEvent extends MembersEvent {
 }
 
 class GetDataEvent extends MembersEvent {}
+
+class RefreshDataEvent extends MembersEvent{}

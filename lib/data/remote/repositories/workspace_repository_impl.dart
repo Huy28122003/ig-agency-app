@@ -86,6 +86,19 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
+  Future<PagedResult<UserEntity>> getUserByWorkspaceId({
+    required int workspaceId,
+    required int offset,
+    required int limit,
+  }) {
+    try {
+      return MockData().getUsers(limit: limit, offset: offset);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<bool> createGroup(String groupName, List<UserEntity> members) {
     return Future.value(true);
   }
