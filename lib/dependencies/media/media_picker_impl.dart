@@ -11,7 +11,6 @@ import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 
 @Injectable(as: MediaManager)
 class MediaPickerImpl extends MediaManager {
@@ -77,14 +76,18 @@ class MediaPickerImpl extends MediaManager {
   @override
   Future<bool> saveVideoFromUrl(String url) async {
     try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final tempDir = await getTemporaryDirectory();
-        final tempPath =
-            "${tempDir.path}/video_${DateTime.now().millisecondsSinceEpoch}.mp4";
-        final file = File(tempPath);
-        await file.writeAsBytes(response.bodyBytes);
+      final tempDir = await getTemporaryDirectory();
+      final tempPath =
+          "${tempDir.path}/video_${DateTime.now().millisecondsSinceEpoch}.mp4";
+      final file = File(tempPath);
 
+      final response = await Dio().download(
+        url,
+        file.path,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      if (response.statusCode == 200) {
         await ImageGallerySaverPlus.saveFile(
           file.path,
           name: "agency_${DateTime.now().millisecondsSinceEpoch}.mp4",
@@ -96,6 +99,4 @@ class MediaPickerImpl extends MediaManager {
     }
     return false;
   }
-
-
 }

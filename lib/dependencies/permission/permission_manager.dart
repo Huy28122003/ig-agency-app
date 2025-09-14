@@ -9,5 +9,5 @@ abstract class PermissionManager {
 
   Future<AppPermissionStatus> getMicroPermission();
 
-  Future checkSavingMedia();
+  Future<AppPermissionStatus> checkSavingMedia();
 }

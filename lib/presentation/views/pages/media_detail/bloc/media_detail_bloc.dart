@@ -4,6 +4,7 @@ import 'package:ig_agency_app/dependencies/permission/permission_manager.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
+import 'package:ig_agency_app/shared/commons/enums/permission.dart';
 import 'package:injectable/injectable.dart';
 import 'package:video_player/video_player.dart';
 
@@ -71,7 +72,10 @@ class MediaDetailBloc extends BaseBloc<MediaDetailEvent, MediaDetailState> {
     Emitter<MediaDetailState> emit,
   ) async {
     bool result = false;
-    if (!await permissionManager.checkSavingMedia()) return;
+    if ((await permissionManager.checkSavingMedia()) !=
+        AppPermissionStatus.granted) {
+      return;
+    }
 
     final currentMedia = medias[state.imageIndex];
     if (currentMedia.isVideo) {
