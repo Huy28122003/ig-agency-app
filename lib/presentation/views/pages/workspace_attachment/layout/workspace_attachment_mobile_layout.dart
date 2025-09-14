@@ -45,104 +45,102 @@ class _WorkspaceAttachmentMobileLayoutState
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          leadingWidth: 52,
-          leading: Container(
-            padding: const EdgeInsets.only(left: 12),
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              padding: const EdgeInsets.all(8),
-              onPressed: () {
-                context.router.pop();
-              },
-              icon: Assets.icons.icArrowLeft.svg(
-                height: 24,
-                width: 24,
-                colorFilter: ColorFilter.mode(
-                  AppColors.iconDefaultDefaultSub2,
-                  BlendMode.srcIn,
-                ),
+    return Scaffold(
+      backgroundColor: AppColors.surfaceBackgroundBackground,
+      appBar: AppBar(
+        leadingWidth: 52,
+        leading: Container(
+          padding: const EdgeInsets.only(left: 12),
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            padding: const EdgeInsets.all(8),
+            onPressed: () {
+              context.router.pop();
+            },
+            icon: Assets.icons.icArrowLeft.svg(
+              height: 24,
+              width: 24,
+              colorFilter: ColorFilter.mode(
+                AppColors.iconDefaultDefaultSub2,
+                BlendMode.srcIn,
               ),
             ),
           ),
-          scrolledUnderElevation: 0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          title: Text(
-            'attachment.title'.tr(),
-            style: TextStyle(
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w700,
-              fontSize: 22,
-              height: 28 / 22,
-              color: AppColors.textDefaultTextDefault,
-            ),
+        ),
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: Text(
+          'attachment.title'.tr(),
+          style: TextStyle(
+            fontFamily: FontFamily.segoeUI,
+            fontWeight: FontWeight.w700,
+            fontSize: 22,
+            height: 28 / 22,
+            color: AppColors.textDefaultTextDefault,
           ),
         ),
-        body: Column(
-          children: [
-            const SizedBox(height: 16),
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(tabs.length, (index) {
-                  final isSelected = _tabController.index == index;
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _tabController.index = index;
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(tabs.length, (index) {
+                final isSelected = _tabController.index == index;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _tabController.index = index;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.surfaceContainerPrimaryPrimaryDefault
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(1000),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        tabs[index],
+                        style: TextStyle(
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w600,
+                          fontSize: 14,
                           color: isSelected
-                              ? AppColors.surfaceContainerPrimaryPrimaryDefault
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          tabs[index],
-                          style: TextStyle(
-                            fontFamily: FontFamily.segoeUI,
-                            fontWeight: isSelected
-                                ? FontWeight.w700
-                                : FontWeight.w600,
-                            fontSize: 14,
-                            color: isSelected
-                                ? AppColors.textDefaultTextInverted
-                                : AppColors.textDefaultTextDefault,
-                            height: 20 / 14,
-                          ),
+                              ? AppColors.textDefaultTextInverted
+                              : AppColors.textDefaultTextDefault,
+                          height: 20 / 14,
                         ),
                       ),
                     ),
-                  );
-                }),
-              ),
+                  ),
+                );
+              }),
             ),
+          ),
 
-            const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [MediaTab(), FileTab(), LinkTab()],
-              ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [MediaTab(), FileTab(), LinkTab()],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

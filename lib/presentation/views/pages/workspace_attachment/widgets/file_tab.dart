@@ -32,10 +32,10 @@ class _FileTabState extends State<FileTab> {
   Widget build(BuildContext context) {
     return BlocListener<WorkspaceAttachmentBloc, WorkspaceAttachmentState>(
       listener: (context, state) {
-        _refreshController.refresh(state.mediaPagingStatus);
+        _refreshController.refresh(state.filePagingStatus);
       },
       listenWhen: (prev, curr) =>
-          prev.mediaPagingStatus != curr.mediaPagingStatus,
+          prev.filePagingStatus != curr.filePagingStatus,
       child:
           BlocSelector<
             WorkspaceAttachmentBloc,

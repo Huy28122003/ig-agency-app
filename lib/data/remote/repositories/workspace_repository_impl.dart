@@ -167,7 +167,12 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }) async {
     try {
       return PagedResult(
-        data: MockData().mockMediaData.sublist(offset, offset + limit),
+        data: MockData().mockMediaData.sublist(
+          offset,
+          offset + limit > MockData().mockMediaData.length
+              ? MockData().mockMediaData.length
+              : offset + limit,
+        ),
         totalRecords: MockData().mockMediaData.length,
       );
     } catch (e) {
@@ -183,7 +188,12 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }) async {
     try {
       return PagedResult(
-        data: MockData().mockFileEntities().sublist(offset, offset + limit),
+        data: MockData().mockFileEntities().sublist(
+          offset,
+          offset + limit > MockData().mockFileEntities().length
+              ? MockData().mockFileEntities().length
+              : offset + limit,
+        ),
         totalRecords: MockData().mockFileEntities().length,
       );
     } catch (e) {
@@ -199,7 +209,12 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }) async {
     try {
       return PagedResult(
-        data: MockData().mockLinks,
+        data: MockData().mockLinks.sublist(
+          offset,
+          offset + limit > MockData().mockLinks.length
+              ? MockData().mockLinks.length
+              : offset + limit,
+        ),
         totalRecords: MockData().mockLinks.length,
       );
     } catch (e) {
