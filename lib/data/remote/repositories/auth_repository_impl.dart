@@ -46,6 +46,8 @@ class AuthRepositoryImpl implements AuthRepository {
           avatar: 'https://placehold.co/44x44',
           createdAt: DateTime.now(),
           updatedAt: null,
+          isAdmin: false,
+          lastActiveAt: DateTime.now().subtract(const Duration(hours: 5)),
         ),
       );
     } catch (e) {
@@ -88,6 +90,8 @@ class AuthRepositoryImpl implements AuthRepository {
           avatar: 'https://placehold.co/44x44',
           createdAt: DateTime.now(),
           updatedAt: null,
+          lastActiveAt: DateTime.now().subtract(const Duration(hours: 5)),
+          isAdmin: false,
         ),
       );
       return;

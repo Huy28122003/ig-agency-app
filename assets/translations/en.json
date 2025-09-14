@@ -11,5 +11,97 @@
     "search": "Search",
     "group": "Group",
     "message": "Message"
+  },
+  "workspace": {
+    "workspace": "Workspace",
+    "mark_as_read": "Mark as read",
+    "mark_as_unread": "Mark as unread",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "delete": "Delete",
+    "unmute_title": "Mute this chat?",
+    "unmute_time_15": "For 15 minutes",
+    "unmute_time_1": "For 1 hour",
+    "unmute_time_8": "For 8 hours",
+    "unmute_time_24": "For 24 hours",
+    "unmute_time_life": "Until I change it",
+    "hint_text_search": "Enter workspace name"
+  },
+  "general": {
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "forgot_password": {
+    "forgot_password": "Forgot Password?",
+    "hint_text_email": "Enter your email",
+    "send_code": "Send code"
+  },
+  "otp": {
+    "title": "OTP Verification",
+    "description": "Please enter the OTP sent on your\nregistered email address",
+    "continue": "Continue"
+  },
+  "camera": {
+    "send": "Send"
+  },
+  "dashboard": {
+    "dashboard": "Dashboard",
+    "total_member": "Total Members",
+    "details": "Details",
+    "all_violations": "All Violations",
+    "all devices": "All Devices",
+    "total_visits": "Total Visits",
+    "online": "Online",
+    "accept": "Accept",
+    "block": "Block"
+  },
+  "create_group": {
+    "title": "New group",
+    "cancel": "Cancel",
+    "hint_group_name": "Group name (optional)",
+    "search_member": "Search Member",
+    "no_user_found": "No user found",
+    "create_group": "Create group"
+  },
+  "add_member": {
+    "add_to_group": "Add to group",
+    "create_new": "Create new",
+    "search_group": "Search Group",
+    "add_to": "Add to",
+    "add_to_group_with_number": "Add to {} group"
+  },
+  "profile_info": {
+    "title": "Profile Info",
+    "active_now": "Active now",
+    "search_group": "Search Group",
+    "add_to": "Add to",
+    "block": "Block",
+    "add_to_group": "Add to group",
+    "report": "Report"
+  },
+  "group_info": {
+    "title": "Group Information",
+    "bio": "Bio",
+    "search_in_conversation": "Search in conversation",
+    "member": "Members",
+    "media_file": "View media, files and links",
+    "pin_message": "Pinned message",
+    "mute_notification": "Mute notifications",
+    "leave_group": "Leave Group"
+  },
+  "workspace_bio": {
+    "title": "Bio",
+    "done": "Done"
+  },
+  "members": {
+    "title": "Member",
+    "members": "Members",
+    "online": "Online",
+    "active": "Active",
+    "ago": "ago",
+    "role_admin": "Admin",
+    "role_member": "Member"
   }
 }

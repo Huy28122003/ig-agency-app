@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
@@ -84,7 +85,7 @@ class _ForgotPasswordMobileLayoutState
             ),
             SizedBox(height: 20),
             Text(
-              'Forget Password?',
+              'forgot_password.forgot_password'.tr(),
               style: TextStyle(
                 color: AppColors.textDefaultTextInverted,
                 fontSize: 32,
@@ -116,9 +117,9 @@ class _ForgotPasswordMobileLayoutState
             child: Column(
               children: [
                 BlocSelector<
-                  ForgotPasswordBloc,
-                  ForgotPasswordState,
-                  (String?, String)
+                    ForgotPasswordBloc,
+                    ForgotPasswordState,
+                    (String?, String)
                 >(
                   selector: (state) => (state.errorMessage, state.email),
                   builder: (context, data) {
@@ -126,7 +127,7 @@ class _ForgotPasswordMobileLayoutState
                       value: data.$2,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      hintText: "Enter your email",
+                      hintText: "forgot_password.hint_text_email".tr(),
                       onChanged: (value) {
                         _forgotPasswordBloc.add(EmailChangeEvent(email: value));
                       },
@@ -147,7 +148,7 @@ class _ForgotPasswordMobileLayoutState
                         _forgotPasswordBloc.add(SendOtpEvent());
                       },
                       child: Text(
-                        'Send code',
+                        'forgot_password.send_code'.tr(),
                         style: TextStyle(
                           color: isEnableSendCode
                               ? AppColors.textDefaultTextInverted

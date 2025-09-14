@@ -195,9 +195,15 @@ class AppButton extends StatelessWidget {
           ),
         );
       case AppButtonType.icon:
+        final constraints = BoxConstraints(
+          minHeight: fixedSize?.height ?? 44,
+          minWidth: fixedSize?.width ?? 44,
+        );
+
         return IconButton(
           onPressed: onPressed,
           icon: child,
+          constraints: constraints,
           padding: EdgeInsets.zero,
         );
     }

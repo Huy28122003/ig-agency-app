@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../gen/assets.gen.dart';
@@ -84,7 +85,7 @@ class _ForgotPasswordTabletLayoutState
                           Assets.images.appLogo.image(height: 120, width: 120),
                           const SizedBox(height: 40),
                           Text(
-                            'Forget Password?',
+                            'forgot_password.forgot_password'.tr(),
                             style: TextStyle(
                               color: AppColors.textDefaultTextInverted,
                               fontSize: 32,
@@ -95,18 +96,19 @@ class _ForgotPasswordTabletLayoutState
                           ),
                           const SizedBox(height: 20),
                           BlocSelector<
-                            ForgotPasswordBloc,
-                            ForgotPasswordState,
-                            (String?, String)
+                              ForgotPasswordBloc,
+                              ForgotPasswordState,
+                              (String?, String)
                           >(
                             selector: (state) =>
-                                (state.errorMessage, state.email),
+                            (state.errorMessage, state.email),
                             builder: (context, data) {
                               return AppTextField(
                                 value: data.$2,
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
-                                hintText: "Enter your email",
+                                hintText: "forgot_password.hint_text_email"
+                                    .tr(),
                                 onChanged: (value) {
                                   _forgotPasswordBloc.add(
                                     EmailChangeEvent(email: value),
@@ -118,28 +120,28 @@ class _ForgotPasswordTabletLayoutState
                           ),
                           SizedBox(height: 40),
                           BlocSelector<
-                            ForgotPasswordBloc,
-                            ForgotPasswordState,
-                            bool
+                              ForgotPasswordBloc,
+                              ForgotPasswordState,
+                              bool
                           >(
                             selector: (state) => state.isEnableSendCode,
                             builder: (context, isEnableSendCode) {
                               return AppButton.primary(
                                 backgroundColor: isEnableSendCode
                                     ? AppColors
-                                          .surfaceContainerPrimaryPrimaryDefault
+                                    .surfaceContainerPrimaryPrimaryDefault
                                     : AppColors
-                                          .surfaceContainerPrimaryPrimaryDisabled,
+                                    .surfaceContainerPrimaryPrimaryDisabled,
                                 onPressed: () {
                                   _forgotPasswordBloc.add(SendOtpEvent());
                                 },
                                 child: Text(
-                                  'Send code',
+                                  'forgot_password.send_code'.tr(),
                                   style: TextStyle(
                                     color: isEnableSendCode
                                         ? AppColors.textDefaultTextInverted
                                         : AppColors
-                                              .textDefaultTextInvertedDisabled,
+                                        .textDefaultTextInvertedDisabled,
                                     fontSize: 16,
                                     fontFamily: FontFamily.segoeUI,
                                     fontWeight: FontWeight.w700,

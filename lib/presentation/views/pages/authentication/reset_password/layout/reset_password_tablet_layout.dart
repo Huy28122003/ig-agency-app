@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
@@ -70,7 +71,7 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                       Assets.images.appLogo.image(height: 120, width: 120),
                       const SizedBox(height: 40),
                       Text(
-                        'Forget Password?',
+                        'reset_password.title'.tr(),
                         style: TextStyle(
                           color: AppColors.textDefaultTextDefault,
                           fontSize: 32,
@@ -81,16 +82,17 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                       ),
                       const SizedBox(height: 20),
                       BlocSelector<
-                        ResetPasswordBloc,
-                        ResetPasswordState,
-                        String
+                          ResetPasswordBloc,
+                          ResetPasswordState,
+                          String
                       >(
                         selector: (state) => state.newPassword,
                         builder: (context, isObscure) {
                           return AppTextField(
                             keyboardType: TextInputType.none,
                             textInputAction: TextInputAction.done,
-                            hintText: "New password",
+                            hintText: "reset_password.hint_text_new_password"
+                                .tr(),
                             onChanged: (value) {
                               _resetPasswordBloc.add(
                                 NewPasswordChangedEvent(newPassword: value),
@@ -102,21 +104,23 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
 
                       SizedBox(height: 20),
                       BlocSelector<
-                        ResetPasswordBloc,
-                        ResetPasswordState,
-                        (String?, String)
+                          ResetPasswordBloc,
+                          ResetPasswordState,
+                          (String?, String)
                       >(
                         selector: (state) =>
-                            (state.errorMessage, state.confirmPassword),
+                        (state.errorMessage, state.confirmPassword),
                         builder: (context, isObscure) {
                           return AppTextField(
                             errorText: context.select(
-                              (ResetPasswordBloc bloc) =>
-                                  bloc.state.errorMessage,
+                                  (ResetPasswordBloc bloc) =>
+                              bloc.state.errorMessage,
                             ),
                             keyboardType: TextInputType.none,
                             textInputAction: TextInputAction.done,
-                            hintText: "Confirm New Password",
+                            hintText:
+                            "reset_password.hint_text_confirm_password"
+                                .tr(),
                             onChanged: (value) {
                               _resetPasswordBloc.add(
                                 ConfirmPasswordChangedEvent(
@@ -131,12 +135,12 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                       SizedBox(height: 40),
                       AppButton.primary(
                         backgroundColor:
-                            AppColors.surfaceContainerPrimaryPrimaryDefault,
+                        AppColors.surfaceContainerPrimaryPrimaryDefault,
                         onPressed: () {
                           _resetPasswordBloc.add(ConfirmResetPasswordEvent());
                         },
                         child: Text(
-                          'Reset Password',
+                          'reset_password.reset_password'.tr(),
                           style: TextStyle(
                             color: AppColors.textDefaultTextInvertedDisabled,
                             fontSize: 16,

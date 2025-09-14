@@ -62,3 +62,15 @@ extension PagingStatusExtension on PagingStatus {
 }
 
 enum VerifyStatus { initial, valid, invalid }
+
+enum CameraStatus { initial, ready, notAvailable, dispose }
+
+extension CameraStatusExtension on CameraStatus {
+  bool get isInitial => this == CameraStatus.initial;
+
+  bool get isReady => this == CameraStatus.ready;
+
+  bool get isDispose => this == CameraStatus.dispose;
+
+  bool get isNotAvailable => this == CameraStatus.notAvailable;
+}
