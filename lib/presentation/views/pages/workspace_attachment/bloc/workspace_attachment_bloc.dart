@@ -53,18 +53,17 @@ class WorkspaceAttachmentBloc
           workspaceId: workspaceId,
         ),
       );
-      _mediaOffset += result.data.length;
-      final pagingStatus = _mediaOffset >= result.totalRecords
+      _mediaOffset += result.length;
+      final pagingStatus = _mediaLimit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
       List<MediaEntity> currentList = List.from(state.medias);
-      currentList.addAll(result.data);
+      currentList.addAll(result);
       emit(
         state.copyWith(
-          pageStatus: PageStatus.loaded,
           medias: currentList,
           mediaPagingStatus: pagingStatus,
-          totalMedia: result.totalRecords,
+          totalMedia: currentList.length, // todo
         ),
       );
     });
@@ -79,19 +78,13 @@ class WorkspaceAttachmentBloc
           workspaceId: workspaceId,
         ),
       );
-      _fileOffset += result.data.length;
-      final pagingStatus = _fileOffset >= result.totalRecords
+      _fileOffset += result.length;
+      final pagingStatus = _fileLimit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
       List<FileEntity> currentList = List.from(state.files);
-      currentList.addAll(result.data);
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.loaded,
-          files: currentList,
-          filePagingStatus: pagingStatus,
-        ),
-      );
+      currentList.addAll(result);
+      emit(state.copyWith(files: currentList, filePagingStatus: pagingStatus));
     });
     handleSubEvent<GetLinksEvent>((event, emit) async {
       emit(state.copyWith(linkPagingStatus: PagingStatus.loading));
@@ -103,13 +96,13 @@ class WorkspaceAttachmentBloc
           workspaceId: workspaceId,
         ),
       );
-      _linkOffset += result.data.length;
-      final pagingStatus = _linkOffset >= result.totalRecords
+      _linkOffset += result.length;
+      final pagingStatus = _linkLimit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
       List<MetaDataLink> currentList = List.from(state.links);
-      final futures = result.data.map((url) async {
+      final futures = result.map((url) async {
         try {
           final meta = await MetadataFetch.extract(url);
           return MetaDataLink(

@@ -1,6 +1,5 @@
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
-import 'package:ig_agency_app/domain/entities/paged_result.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/shared/commons/models/pagination.dart';
@@ -163,20 +162,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<MediaEntity>> getMediasInGroup({
+  Future<List<MediaEntity>> getMediasInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
   }) async {
     try {
-      return PagedResult(
-        data: MockData().mockMediaData.sublist(
-          offset,
-          offset + limit > MockData().mockMediaData.length
-              ? MockData().mockMediaData.length
-              : offset + limit,
-        ),
-        totalRecords: MockData().mockMediaData.length,
+      return MockData().mockMediaData.sublist(
+        offset,
+        offset + limit > MockData().mockMediaData.length
+            ? MockData().mockMediaData.length
+            : offset + limit,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -184,20 +180,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<FileEntity>> getFileInGroup({
+  Future<List<FileEntity>> getFileInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
   }) async {
     try {
-      return PagedResult(
-        data: MockData().mockFileEntities().sublist(
-          offset,
-          offset + limit > MockData().mockFileEntities().length
-              ? MockData().mockFileEntities().length
-              : offset + limit,
-        ),
-        totalRecords: MockData().mockFileEntities().length,
+      return MockData().mockFileEntities().sublist(
+        offset,
+        offset + limit > MockData().mockFileEntities().length
+            ? MockData().mockFileEntities().length
+            : offset + limit,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -205,20 +198,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<String>> getLinkInGroup({
+  Future<List<String>> getLinkInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
   }) async {
     try {
-      return PagedResult(
-        data: MockData().mockLinks.sublist(
-          offset,
-          offset + limit > MockData().mockLinks.length
-              ? MockData().mockLinks.length
-              : offset + limit,
-        ),
-        totalRecords: MockData().mockLinks.length,
+      return MockData().mockLinks.sublist(
+        offset,
+        offset + limit > MockData().mockLinks.length
+            ? MockData().mockLinks.length
+            : offset + limit,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
