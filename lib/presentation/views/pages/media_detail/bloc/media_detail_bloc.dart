@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/dependencies/permission/permission_manager.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
-import 'package:ig_agency_app/shared/utils/download_utils.dart';
+import 'package:ig_agency_app/shared/commons/enums/permission.dart';
 import 'package:injectable/injectable.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../../../dependencies/media/media_manager.dart';
 import '../../../../../shared/commons/enums/status.dart';
 
 part 'media_detail_event.dart';
@@ -19,8 +21,11 @@ class MediaDetailBloc extends BaseBloc<MediaDetailEvent, MediaDetailState> {
   VideoPlayerController? videoPlayerController;
   late final PageController pageController;
   late final int initialImageIndex;
+  final MediaManager mediaManager;
+  final PermissionManager permissionManager;
 
-  MediaDetailBloc() : super(MediaDetailState()) {
+  MediaDetailBloc({required this.mediaManager, required this.permissionManager})
+    : super(MediaDetailState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<ChangeMediaEvent>(_onChangeMedia);
     handleSubEvent<DownloadMediaEvent>(_onDownloadMedia);
@@ -67,12 +72,19 @@ class MediaDetailBloc extends BaseBloc<MediaDetailEvent, MediaDetailState> {
     Emitter<MediaDetailState> emit,
   ) async {
     bool result = false;
+    if ((await permissionManager.checkSavingMedia()) !=
+        AppPermissionStatus.granted) {
+      return;
+    }
+
     final currentMedia = medias[state.imageIndex];
     if (currentMedia.isVideo) {
-      result = await DownloadUtils.saveVideoFromUrl("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+      result = await mediaManager.saveVideoFromUrl(
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      );
       // result = await DownloadUtils.saveVideoFromUrl(currentMedia.previewUrl);
     } else {
-      result = await DownloadUtils.saveImageFromUrl(currentMedia.previewUrl);
+      result = await mediaManager.saveNetworkImage(currentMedia.previewUrl);
     }
 
     emit(state.copyWith(isDownloadSuccess: result));
