@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/enums/message_enums.dart';
+import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
 import '../circle_network_avatar.dart';
@@ -28,6 +30,9 @@ class ChatMessageBubble extends StatefulWidget {
     this.onReply,
     this.onTap,
     this.onReplyTap,
+    this.onForward,
+    this.onPin,
+    this.onDelete,
   });
 
   final double maxWidth;
@@ -43,6 +48,10 @@ class ChatMessageBubble extends StatefulWidget {
   final bool shouldShowAvatar;
   final bool shouldShowUserName;
   final bool isContinuation;
+
+  final VoidCallback? onForward;
+  final Function(bool isPinned)? onPin;
+  final VoidCallback? onDelete;
 
   @override
   State<ChatMessageBubble> createState() => _ChatMessageBubbleState();
@@ -217,133 +226,188 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                     child: ValueListenableBuilder(
                       valueListenable: _dragDistance,
                       builder: (context, value, child) {
-                        return GestureDetector(
-                          onTap: widget.onTap,
-                          child: Stack(
-                            alignment: isMe
-                                ? Alignment.bottomRight
-                                : Alignment.bottomLeft,
-                            children: [
-                              if (!isMe) ...[
-                                if (_shouldShowAvatar) ...[
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: widget.horizontalPadding,
-                                    ),
-                                    child: Opacity(
-                                      opacity: _animationHelper
-                                          .getAvatarOpacity(value),
-                                      child: ChatAvatar(
-                                        key: ValueKey(_message.sender.id),
-                                        imageUrl: _message.sender.avatarUrl,
-                                      ),
-                                    ),
-                                  ),
-                                ] else ...[
-                                  SizedBox(
-                                    height: ChatBubbleConstants.avatarSize,
-                                    width: ChatBubbleConstants.avatarSize,
-                                  ),
-                                ],
-                                const SizedBox(width: 8),
-                              ],
-                              Transform.translate(
-                                offset: Offset(value, 0),
-                                child: Padding(
-                                  padding: isMe
-                                      ? EdgeInsets.only(
-                                          right: widget.horizontalPadding,
-                                        )
-                                      : EdgeInsets.only(
-                                          left:
-                                              widget.horizontalPadding +
-                                              ChatBubbleConstants.avatarSize +
-                                              8,
-                                        ),
-                                  child: CustomContextMenu(
-                                    horizontalPadding: widget.horizontalPadding,
-                                    // menuAlignment: isMe
-                                    //     ? MenuAlignment.right
-                                    //     : MenuAlignment.left,
-                                    childAlignment: isMe
-                                        ? MenuAlignment.right
-                                        : MenuAlignment.left,
-                                    actions: [
-                                      CustomContextMenuAction(
-                                        text: 'Reply',
-                                        onTap: widget.onReply,
-                                      ),
-                                      CustomContextMenuAction(
-                                        text: 'Forward',
-                                        onTap: () {},
-                                      ),
-                                      CustomContextMenuAction(
-                                        text: _message.isPinned ? 'Unpin' : 'Pin',
-                                        onTap: () {},
-                                      ),
-                                      CustomContextMenuAction(
-                                        text: 'Copy Message',
-                                        onTap: () {},
-                                      ),
-                                      CustomContextMenuAction(
-                                        text: 'Copy Name',
-                                        onTap: () {},
-                                      ),
-                                      CustomContextMenuAction(
-                                        text: 'Delete',
-                                        onTap: () {},
-                                      ),
-                                    ],
-                                    child: Column(
-                                      crossAxisAlignment: isMe
-                                          ? CrossAxisAlignment.end
-                                          : CrossAxisAlignment.start,
-                                      children: [
-                                        if ((!isMe ||
-                                                (isMe &&
-                                                    _message.reply != null)) &&
-                                            _shouldShowUserName) ...[
-                                          ChatBubbleSenderInfo(
-                                            message: _message,
-                                            userId: widget.userId,
-                                            isMe: isMe,
-                                          ),
-                                        ],
-                                        _message.reply != null
-                                            ? ChatBubbleContentWithReply(
-                                                key: ValueKey(
-                                                  '${_message.id}-reply',
-                                                ),
-                                                message: _message,
-                                                replyMessage: _message.reply!,
-                                                maxWidth: widget.maxWidth,
-                                                maxWidthReply:
-                                                    widget.maxWidthReply,
-                                                isMe: isMe,
-                                                onTap: widget.onReplyTap,
-                                              )
-                                            : ChatBubbleContent(
-                                                key: ValueKey(
-                                                  '${_message.id}-no-reply',
-                                                ),
-                                                message: _message,
-                                                maxWidth: widget.maxWidth,
-                                              ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              _buildReplyIcon(value),
-                            ],
-                          ),
-                        );
+                        return _buildMainChatBubble(value);
                       },
                     ),
                   ),
                 ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMainChatBubble(double value) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Stack(
+        alignment: isMe ? Alignment.bottomRight : Alignment.bottomLeft,
+        children: [
+          if (!isMe) ...[
+            if (_shouldShowAvatar) ...[
+              Padding(
+                padding: EdgeInsets.only(left: widget.horizontalPadding),
+                child: Opacity(
+                  opacity: _animationHelper.getAvatarOpacity(value),
+                  child: ChatAvatar(
+                    key: ValueKey(_message.sender.id),
+                    imageUrl: _message.sender.avatarUrl,
+                  ),
+                ),
+              ),
+            ] else ...[
+              SizedBox(
+                height: ChatBubbleConstants.avatarSize,
+                width: ChatBubbleConstants.avatarSize,
+              ),
+            ],
+            const SizedBox(width: 8),
+          ],
+          Transform.translate(
+            offset: Offset(value, 0),
+            child: Padding(
+              padding: isMe
+                  ? EdgeInsets.only(right: widget.horizontalPadding)
+                  : EdgeInsets.only(
+                      left:
+                          widget.horizontalPadding +
+                          ChatBubbleConstants.avatarSize +
+                          8,
+                    ),
+              child: CustomContextMenu(
+                horizontalPadding: widget.horizontalPadding,
+                menuAlignment: isMe ? MenuAlignment.right : MenuAlignment.left,
+                childAlignment: isMe ? MenuAlignment.right : MenuAlignment.left,
+                actions: [
+                  CustomContextMenuAction(
+                    text: 'Reply',
+                    onTap: widget.onReply,
+                    trailingIcon: Assets.icons.icReply.svg(
+                      height: 20,
+                      width: 20,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.iconDefaultDefault,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  CustomContextMenuAction(
+                    text: 'Forward',
+                    onTap: widget.onForward,
+                    trailingIcon: Transform.flip(
+                      flipX: true,
+                      child: Assets.icons.icReply.svg(
+                        height: 20,
+                        width: 20,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.iconDefaultDefault,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  ),
+                  CustomContextMenuAction(
+                    text: _message.isPinned ? 'Unpin' : 'Pin',
+                    onTap: () => widget.onPin?.call(_message.isPinned),
+                    trailingIcon: _message.isPinned
+                        ? Assets.icons.icUnpin.svg(
+                            height: 20,
+                            width: 20,
+                            colorFilter: ColorFilter.mode(
+                              AppColors.iconDefaultDefault,
+                              BlendMode.srcIn,
+                            ),
+                          )
+                        : Assets.icons.icPin.svg(
+                            height: 20,
+                            width: 20,
+                            colorFilter: ColorFilter.mode(
+                              AppColors.iconDefaultDefault,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                  ),
+                  CustomContextMenuAction(
+                    text: 'Copy Message',
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(text: _message.content.toString()),
+                      );
+                    },
+                    trailingIcon: Assets.icons.icCopy.svg(
+                      height: 20,
+                      width: 20,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.iconDefaultDefault,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  CustomContextMenuAction(
+                    text: 'Copy Name',
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(text: _message.sender.name),
+                      );
+                    },
+                    trailingIcon: Assets.icons.icCopyName.svg(
+                      height: 20,
+                      width: 20,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.iconDefaultDefault,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  CustomContextMenuAction(
+                    text: 'Delete',
+                    textColor: AppColors.colorsRed,
+                    onTap: widget.onDelete,
+                    trailingIcon: Assets.icons.icTrash.svg(
+                      height: 20,
+                      width: 20,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.iconAlertError,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                ],
+                child: Column(
+                  crossAxisAlignment: isMe
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    if ((!isMe || (isMe && _message.reply != null)) &&
+                        _shouldShowUserName) ...[
+                      ChatBubbleSenderInfo(
+                        message: _message,
+                        userId: widget.userId,
+                        isMe: isMe,
+                      ),
+                    ],
+                    _message.reply != null
+                        ? ChatBubbleContentWithReply(
+                            key: ValueKey('${_message.id}-reply'),
+                            message: _message,
+                            replyMessage: _message.reply!,
+                            maxWidth: widget.maxWidth,
+                            maxWidthReply: widget.maxWidthReply,
+                            isMe: isMe,
+                            onTap: widget.onReplyTap,
+                          )
+                        : ChatBubbleContent(
+                            key: ValueKey('${_message.id}-no-reply'),
+                            message: _message,
+                            maxWidth: widget.maxWidth,
+                          ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          _buildReplyIcon(value),
+        ],
+      ),
     );
   }
 }

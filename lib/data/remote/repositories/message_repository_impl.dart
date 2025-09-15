@@ -45,6 +45,17 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
+  Future pinMessage(String messageId) async {
+    try {
+      // Todo: hoannk: rehandle this
+      // TODO: Sử dụng tạm mock tại repository
+      return await _messageMockService.mockPinMessage(messageId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<PagedResult<MessageEntity>> fetchPinnedMessagesByWorkspaceId(
     int workspaceId,
     int limit,

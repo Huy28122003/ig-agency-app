@@ -238,6 +238,21 @@ class _ChatContentState extends State<ChatContent> {
                           onReplyTap: (messageId) {
                             _bloc.add(JumpToMessageEvent(messageId: messageId));
                           },
+                          onPin: (isPinned) {
+                            if (isPinned) {
+                              _bloc.add(
+                                UnpinMessageFromDetailEvent(
+                                  messageId: uiModel.message.id,
+                                ),
+                              );
+                            } else {
+                              _bloc.add(
+                                PinMessageFromDetailEvent(
+                                  messageId: uiModel.message.id,
+                                ),
+                              );
+                            }
+                          },
                         ),
                       );
                     },

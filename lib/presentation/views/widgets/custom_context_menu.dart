@@ -5,23 +5,137 @@ import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
+// Menu
 const _kDividerHeight = 0.5;
 const _kMenuWidth = 250.0;
 const _kActionHeight = 44.0;
 const _kBorderRadius = 12.0;
 const _kDefaultGapBetweenChildAndMenu = 12.0;
 
+// Animation
+const _kAnimationDuration = Duration(milliseconds: 200);
+const _kMenuInitialScale = 0.5;
+const _kMenuFinalScale = 1.0;
+const _kMenuInitialOpacity = 0.0;
+const _kMenuFinalOpacity = 1.0;
+const _kMenuInitialTranslate = 0.0;
+
+// Bottom padding when menu touches screen bottom
+const _kBottomPaddingWhenTouchingEdge = 10.0;
+
 enum MenuAlignment { left, center, right }
+
+/// Calculate menu and child positions
+class _PositionCalculator {
+  static double calculateMenuLeft({
+    required MenuAlignment alignment,
+    required double screenWidth,
+    required double menuWidth,
+    required double childOffsetX,
+    required double childWidth,
+    required double horizontalPadding,
+    required double safeAreaLeft,
+    required double safeAreaRight,
+  }) {
+    double calculatedLeft;
+    switch (alignment) {
+      case MenuAlignment.left:
+        calculatedLeft = horizontalPadding > 0
+            ? horizontalPadding
+            : childOffsetX;
+        break;
+      case MenuAlignment.center:
+        calculatedLeft = screenWidth / 2 - (menuWidth / 2);
+        break;
+      case MenuAlignment.right:
+        calculatedLeft = horizontalPadding > 0
+            ? (screenWidth - horizontalPadding - menuWidth)
+            : (childOffsetX + childWidth - menuWidth);
+        break;
+    }
+
+    return calculatedLeft.clamp(
+      safeAreaLeft,
+      screenWidth - menuWidth - horizontalPadding - safeAreaRight,
+    );
+  }
+
+  static double calculateChildLeft({
+    required MenuAlignment alignment,
+    required double screenWidth,
+    required double childWidth,
+    required double childOffsetX,
+    required double horizontalPadding,
+    required double safeAreaLeft,
+    required double safeAreaRight,
+  }) {
+    double calculatedLeft;
+    switch (alignment) {
+      case MenuAlignment.left:
+        calculatedLeft = horizontalPadding > 0
+            ? horizontalPadding
+            : childOffsetX;
+        break;
+      case MenuAlignment.center:
+        calculatedLeft = screenWidth / 2 - (childWidth / 2);
+        break;
+      case MenuAlignment.right:
+        calculatedLeft = horizontalPadding > 0
+            ? (screenWidth - horizontalPadding - childWidth)
+            : childOffsetX;
+        break;
+    }
+
+    return calculatedLeft.clamp(
+      safeAreaLeft,
+      screenWidth - childWidth - horizontalPadding - safeAreaRight,
+    );
+  }
+
+  static double calculateDeltaY(
+    double childOffsetDy,
+    double screenHeight,
+    EdgeInsets safeAreaPadding,
+    EdgeInsets viewInsets,
+    double totalCombinedHeight,
+  ) {
+    final double idealCombinedContentTop = childOffsetDy;
+    double finalCombinedContentTop = idealCombinedContentTop;
+
+    final double bottomBoundary =
+        screenHeight - safeAreaPadding.bottom - viewInsets.bottom;
+    final double menuBottomPosition =
+        finalCombinedContentTop + totalCombinedHeight;
+
+    final bool menuTouchesBottom = menuBottomPosition >= bottomBoundary;
+    final double bottomPadding = menuTouchesBottom
+        ? _kBottomPaddingWhenTouchingEdge
+        : 0;
+
+    if (menuBottomPosition > bottomBoundary - bottomPadding) {
+      finalCombinedContentTop =
+          bottomBoundary - bottomPadding - totalCombinedHeight;
+    }
+
+    if (finalCombinedContentTop < safeAreaPadding.top + viewInsets.top) {
+      finalCombinedContentTop = safeAreaPadding.top + viewInsets.top;
+    }
+
+    return finalCombinedContentTop - idealCombinedContentTop;
+  }
+}
 
 class CustomContextMenuAction {
   const CustomContextMenuAction({
     this.text,
+    this.textColor,
     this.textStyle,
     this.trailingIcon,
     this.onTap,
   });
 
   final String? text;
+  final Color? textColor;
   final TextStyle? textStyle;
   final Widget? trailingIcon;
   final VoidCallback? onTap;
@@ -38,7 +152,7 @@ class CustomContextMenuAction {
               style:
                   textStyle ??
                   TextStyle(
-                    color: AppColors.textDefaultTextDefault,
+                    color: textColor ?? AppColors.textDefaultTextDefault,
                     fontSize: 16,
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w400,
@@ -90,7 +204,7 @@ class _CustomContextMenuState extends State<CustomContextMenu>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100),
+      duration: _kAnimationDuration,
     );
   }
 
@@ -117,22 +231,15 @@ class _CustomContextMenuState extends State<CustomContextMenu>
           color: Colors.transparent,
           child: Stack(
             children: [
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (context, child) {
-                  final double opacity = _animationController.value;
-                  return Positioned.fill(
-                    child: GestureDetector(
-                      onTap: _hideContextMenu,
-                      child: Opacity(opacity: opacity, child: child),
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: _hideContextMenu,
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                    child: ColoredBox(
+                      color: Colors.black.withValues(alpha: 0.17),
+                      child: SizedBox.expand(),
                     ),
-                  );
-                },
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-                  child: ColoredBox(
-                    color: Colors.black.withValues(alpha: 0.17),
-                    child: SizedBox.expand(),
                   ),
                 ),
               ),
@@ -147,7 +254,7 @@ class _CustomContextMenuState extends State<CustomContextMenu>
                 menuAlignment: widget.menuAlignment,
                 childAlignment: widget.childAlignment,
                 horizontalPadding: widget.horizontalPadding,
-                onActionTapped: _hideContextMenu,
+                onHideMenu: _hideContextMenu,
                 child: widget.child,
               ),
             ],
@@ -191,7 +298,7 @@ class _ContextMenuContent extends StatelessWidget {
     required this.menuWidth,
     required this.actionHeight,
     required this.borderRadius,
-    required this.onActionTapped,
+    required this.onHideMenu,
     required this.child,
     this.menuAlignment = MenuAlignment.center,
     this.childAlignment = MenuAlignment.left,
@@ -205,7 +312,7 @@ class _ContextMenuContent extends StatelessWidget {
   final double menuWidth;
   final double actionHeight;
   final BorderRadius borderRadius;
-  final VoidCallback onActionTapped;
+  final VoidCallback onHideMenu;
   final Widget child;
   final MenuAlignment menuAlignment;
   final MenuAlignment childAlignment;
@@ -223,50 +330,25 @@ class _ContextMenuContent extends StatelessWidget {
         actions.length * actionHeight +
         (actions.length > 1 ? (actions.length - 1) * _kDividerHeight : 0);
 
-    double menuCalculatedLeft;
-    switch (menuAlignment) {
-      case MenuAlignment.left:
-        menuCalculatedLeft = horizontalPadding ?? childOffset.dx;
-        break;
-      case MenuAlignment.center:
-        menuCalculatedLeft = screenWidth / 2 - (menuWidth / 2);
-        break;
-      case MenuAlignment.right:
-        menuCalculatedLeft = horizontalPadding != null
-            ? (screenWidth - horizontalPadding! - menuWidth)
-            : (childOffset.dx + childSize.width - menuWidth);
-        break;
-    }
-
-    menuCalculatedLeft = menuCalculatedLeft.clamp(
-      safeAreaPadding.left,
-      screenWidth -
-          menuWidth -
-          (horizontalPadding ?? 0) -
-          safeAreaPadding.right,
+    final double menuCalculatedLeft = _PositionCalculator.calculateMenuLeft(
+      alignment: menuAlignment,
+      screenWidth: screenWidth,
+      menuWidth: menuWidth,
+      childOffsetX: childOffset.dx,
+      childWidth: childSize.width,
+      horizontalPadding: horizontalPadding ?? 0,
+      safeAreaLeft: safeAreaPadding.left,
+      safeAreaRight: safeAreaPadding.right,
     );
 
-    double childCalculatedLeft;
-    switch (childAlignment) {
-      case MenuAlignment.left:
-        childCalculatedLeft = horizontalPadding ?? childOffset.dx;
-        break;
-      case MenuAlignment.center:
-        childCalculatedLeft = screenWidth / 2 - (childSize.width / 2);
-        break;
-      case MenuAlignment.right:
-        childCalculatedLeft = horizontalPadding != null
-            ? (screenWidth - horizontalPadding! - childSize.width)
-            : childOffset.dx;
-        break;
-    }
-
-    childCalculatedLeft = childCalculatedLeft.clamp(
-      safeAreaPadding.left,
-      screenWidth -
-          childSize.width -
-          (horizontalPadding ?? 0) -
-          safeAreaPadding.right,
+    final double childCalculatedLeft = _PositionCalculator.calculateChildLeft(
+      alignment: childAlignment,
+      screenWidth: screenWidth,
+      childWidth: childSize.width,
+      childOffsetX: childOffset.dx,
+      horizontalPadding: horizontalPadding ?? 0,
+      safeAreaLeft: safeAreaPadding.left,
+      safeAreaRight: safeAreaPadding.right,
     );
 
     final double deltaX = childCalculatedLeft - childOffset.dx;
@@ -302,7 +384,7 @@ class _ContextMenuContent extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   action.onTap?.call();
-                  onActionTapped.call();
+                  onHideMenu.call();
                 },
                 child: action.child(context),
               ),
@@ -324,46 +406,31 @@ class _ContextMenuContent extends StatelessWidget {
     final double availableVerticalSpace =
         screenHeight -
         safeAreaPadding.top -
-        (safeAreaPadding.bottom == 0 ? 10 : safeAreaPadding.bottom) -
+        safeAreaPadding.bottom -
         viewInsets.top -
         viewInsets.bottom;
     final bool needsScrolling = totalCombinedHeight > availableVerticalSpace;
 
     if (needsScrolling) {
-      // TODO hoannk: Hadnle this case
-      return SizedBox(
-        height: screenHeight,
-        width: screenWidth,
-        child: SingleChildScrollView(
-          reverse: true,
-          child: GestureDetector(
-            onTap: () {
-              print('onTap');
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              spacing: _kDefaultGapBetweenChildAndMenu,
-              children: [child, menuWidgetContent],
-            ),
-          ),
-        ),
+      return _ScrollAnimation(
+        animation: animation,
+        deltaX: deltaX,
+        childOffset: childOffset,
+        childSize: childSize,
+        menuCalculatedLeft: menuCalculatedLeft,
+        menuWidgetContent: menuWidgetContent,
+        screenWidth: screenWidth,
+        screenHeight: screenHeight,
+        child: child,
       );
     } else {
-      final double idealCombinedContentTop = childOffset.dy;
-      double finalCombinedContentTop = idealCombinedContentTop;
-      if (finalCombinedContentTop + totalCombinedHeight >
-          screenHeight - safeAreaPadding.bottom - viewInsets.bottom) {
-        finalCombinedContentTop =
-            screenHeight -
-            safeAreaPadding.bottom -
-            viewInsets.bottom -
-            totalCombinedHeight;
-      }
-      if (finalCombinedContentTop < safeAreaPadding.top + viewInsets.top) {
-        finalCombinedContentTop = safeAreaPadding.top + viewInsets.top;
-      }
-      final double deltaY = finalCombinedContentTop - idealCombinedContentTop;
+      final double deltaY = _PositionCalculator.calculateDeltaY(
+        childOffset.dy,
+        screenHeight,
+        safeAreaPadding,
+        viewInsets,
+        totalCombinedHeight,
+      );
 
       return _Animation(
         animation: animation,
@@ -376,6 +443,124 @@ class _ContextMenuContent extends StatelessWidget {
         child: child,
       );
     }
+  }
+}
+
+class _ScrollAnimation extends StatefulWidget {
+  const _ScrollAnimation({
+    required this.child,
+    required this.animation,
+    required this.deltaX,
+    required this.childOffset,
+    required this.childSize,
+    required this.menuCalculatedLeft,
+    required this.menuWidgetContent,
+    required this.screenWidth,
+    required this.screenHeight,
+  });
+
+  final Widget child;
+  final AnimationController animation;
+  final double deltaX;
+  final Offset childOffset;
+  final Size childSize;
+  final double menuCalculatedLeft;
+  final Widget menuWidgetContent;
+  final double screenWidth;
+  final double screenHeight;
+
+  @override
+  State<_ScrollAnimation> createState() => _ScrollAnimationState();
+}
+
+class _ScrollAnimationState extends State<_ScrollAnimation> {
+  late final Animatable<double> _translateXTween;
+  late final Animatable<double> _menuScaleTween;
+  late final Animatable<double> _menuOpacityTween;
+
+  @override
+  void initState() {
+    super.initState();
+    _translateXTween = Tween<double>(
+      begin: _kMenuInitialTranslate,
+      end: widget.deltaX,
+    ).chain(CurveTween(curve: Curves.easeOutCubic));
+
+    _menuScaleTween = Tween<double>(
+      begin: _kMenuInitialScale,
+      end: _kMenuFinalScale,
+    ).chain(CurveTween(curve: Curves.easeOutBack));
+
+    _menuOpacityTween = Tween<double>(
+      begin: _kMenuInitialOpacity,
+      end: _kMenuFinalOpacity,
+    ).chain(CurveTween(curve: Curves.easeOutCubic));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: widget.animation,
+      builder: (context, childWidget) {
+        final currentChildTranslateX = _translateXTween.evaluate(
+          widget.animation,
+        );
+        final currentMenuScale = _menuScaleTween.evaluate(widget.animation);
+        final currentMenuOpacity = _menuOpacityTween.evaluate(widget.animation);
+
+        final safeAreaBottom = MediaQuery.of(context).padding.bottom;
+        final viewInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+
+        final bottomPadding = safeAreaBottom + viewInsetsBottom == 0
+            ? _kBottomPaddingWhenTouchingEdge
+            : 0.0;
+
+        return SizedBox(
+          width: widget.screenWidth,
+          height: widget.screenHeight,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: bottomPadding),
+            reverse: true,
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left:
+                          widget.childOffset.dx +
+                          (widget.deltaX > 0
+                              ? -currentChildTranslateX
+                              : currentChildTranslateX),
+                    ),
+                    child: SizedBox(
+                      width: widget.childSize.width,
+                      height: widget.childSize.height,
+                      child: widget.child,
+                    ),
+                  ),
+
+                  const SizedBox(height: _kDefaultGapBetweenChildAndMenu),
+
+                  Padding(
+                    padding: EdgeInsets.only(left: widget.menuCalculatedLeft),
+                    child: Transform.scale(
+                      scale: currentMenuScale,
+                      alignment: Alignment.topCenter,
+                      child: Opacity(
+                        opacity: currentMenuOpacity,
+                        child: widget.menuWidgetContent,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -414,20 +599,20 @@ class _AnimationState extends State<_Animation> {
   void initState() {
     super.initState();
     _translateXTween = Tween<double>(
-      begin: 0.0,
+      begin: _kMenuInitialTranslate,
       end: widget.deltaX,
     ).chain(CurveTween(curve: Curves.easeOutCubic));
     _translateYTween = Tween<double>(
-      begin: 0.0,
+      begin: _kMenuInitialTranslate,
       end: widget.deltaY,
     ).chain(CurveTween(curve: Curves.easeOutCubic));
     _menuScaleTween = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
+      begin: _kMenuInitialScale,
+      end: _kMenuFinalScale,
     ).chain(CurveTween(curve: Curves.easeOutBack));
     _menuOpacityTween = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: _kMenuInitialOpacity,
+      end: _kMenuFinalOpacity,
     ).chain(CurveTween(curve: Curves.easeOutCubic));
   }
 

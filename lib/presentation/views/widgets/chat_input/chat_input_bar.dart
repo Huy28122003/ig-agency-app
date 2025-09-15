@@ -4,7 +4,6 @@ import 'package:ig_agency_app/domain/entities/message/message.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/chat_input/tag_user_list_view.dart';
 
-import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/utils/tag_user_text_editing_controller.dart';
 import '../../../resources/colors.dart';
@@ -32,7 +31,7 @@ class ChatInputBar extends StatelessWidget {
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
   final VoidCallback? onMediaTap;
-  final Function(String)? onSendTap;
+  final VoidCallback? onSendTap;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,7 @@ class _ChatInputBar extends StatefulWidget {
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
   final VoidCallback? onMediaTap;
-  final Function(String)? onSendTap;
+  final VoidCallback? onSendTap;
 
   @override
   State<_ChatInputBar> createState() => _ChatInputBarState();
@@ -84,27 +83,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
   void initState() {
     super.initState();
     _bloc = context.read<WSDetailBloc>();
-    _textEditingController = TagUserTextEditingController();
-
-    _textEditingController.addListener(() {
-      final input = _textEditingController.text;
-
-      if (_bloc.state.hasSendButton && input.isEmpty) {
-        _bloc.add(UpdateHasSendButtonEvent(hasSendButton: false));
-      } else if (!_bloc.state.hasSendButton && input.isNotEmpty) {
-        _bloc.add(UpdateHasSendButtonEvent(hasSendButton: true));
-      }
-    });
-
-    _textEditingController.showTagOverlay.listen((show) {
-      if (show) {
-        _showOverlay();
-      } else {
-        _hideOverlay();
-      }
-    });
-
-    _bloc.listenTagQuery(_textEditingController.tagQuery);
+    _textEditingController = _bloc.textEditingController;
   }
 
   void _showOverlay() {
@@ -129,17 +108,9 @@ class _ChatInputBarState extends State<_ChatInputBar> {
             color: Colors.transparent,
             child: BlocProvider.value(
               value: _bloc,
-              child: BlocConsumer<WSDetailBloc, WSDetailState>(
-                listenWhen: (previous, current) =>
-                    previous.users != current.users,
-                listener: (context, state) {
-                  if (state.users.isEmpty) {
-                    _hideOverlay();
-                  }
-                },
+              child: BlocBuilder<WSDetailBloc, WSDetailState>(
                 buildWhen: (previous, current) =>
                     previous.users != current.users,
-
                 builder: (context, state) {
                   if (state.users.isEmpty) {
                     return const SizedBox.shrink();
@@ -172,7 +143,6 @@ class _ChatInputBarState extends State<_ChatInputBar> {
 
   @override
   void dispose() {
-    _textEditingController.dispose();
     _focusNode.dispose();
     _overlayEntry?.remove();
     super.dispose();
@@ -184,8 +154,16 @@ class _ChatInputBarState extends State<_ChatInputBar> {
     final bool hasReplyMessage = messageReply != null;
 
     return BlocListener<WSDetailBloc, WSDetailState>(
-      listenWhen: (previous, current) => previous.users != current.users,
-      listener: (context, state) {},
+      listenWhen: (previous, current) =>
+          previous.users != current.users ||
+          previous.showTagOverlay != current.showTagOverlay,
+      listener: (context, state) {
+        if (state.showTagOverlay) {
+          _showOverlay();
+        } else if (!state.showTagOverlay) {
+          _hideOverlay();
+        }
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -248,23 +226,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                         child: IconButton(
                           padding: EdgeInsets.all(10),
                           onPressed: () {
-                            final text = _textEditingController.text;
-                            final linkTextSegments = detechLinkTextSegment(
-                              text,
-                            );
-                            final tagTextSegments =
-                                _textEditingController.tagTextSegments;
-                            _bloc.add(
-                              SendMessageEvent(
-                                content: TextMessageContent(
-                                  text: text,
-                                  textSegments: [
-                                    ...tagTextSegments,
-                                    ...linkTextSegments,
-                                  ],
-                                ),
-                              ),
-                            );
+                            widget.onSendTap?.call();
                             _textEditingController.clear();
                           },
                           icon: Assets.icons.icSend.svg(width: 24, height: 24),
@@ -280,24 +242,5 @@ class _ChatInputBarState extends State<_ChatInputBar> {
         ],
       ),
     );
-  }
-
-  List<TextSegment> detechLinkTextSegment(String text) {
-    final regex = RegExp(r'https?://\S+');
-    final match = regex.allMatches(text);
-    if (match.isEmpty) {
-      return [];
-    }
-
-    return match
-        .map(
-          (e) => TextSegment(
-            type: TextSegmentType.link,
-            start: e.start,
-            end: e.end,
-            extra: e.group(0)!,
-          ),
-        )
-        .toList();
   }
 }

@@ -19,6 +19,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.scrollToTop = false,
     this.showTimeMessageId,
     this.initIndex = 0,
+    this.isPinStatusSuccess = false,
+    this.showTagOverlay = false,
   });
 
   final bool isInitialized;
@@ -35,6 +37,8 @@ class WSDetailState extends BaseState<WSDetailState> {
   final bool scrollToTop;
   final String? showTimeMessageId;
   final int initIndex;
+  final bool isPinStatusSuccess;
+  final bool showTagOverlay;
 
   bool get needLoadMoreOldMessages =>
       chatMessagesPagingStatus != PagingStatus.empty &&
@@ -63,6 +67,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
     int? initIndex,
+    bool? isPinStatusSuccess,
+    bool? showTagOverlay,
   }) {
     return WSDetailState(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -90,6 +96,8 @@ class WSDetailState extends BaseState<WSDetailState> {
           ? null
           : showTimeMessageId ?? this.showTimeMessageId,
       initIndex: initIndex ?? this.initIndex,
+      isPinStatusSuccess: isPinStatusSuccess ?? this.isPinStatusSuccess,
+      showTagOverlay: showTagOverlay ?? this.showTagOverlay,
     );
   }
 
@@ -110,5 +118,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     scrollToTop,
     showTimeMessageId,
     initIndex,
+    isPinStatusSuccess,
+    showTagOverlay,
   ];
 }

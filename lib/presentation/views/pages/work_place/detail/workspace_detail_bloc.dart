@@ -1,21 +1,29 @@
 import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../data/cache/ram_cache.dart';
 import '../../../../../dependencies/media/media_manager.dart';
+import '../../../../../dependencies/file/file_manager.dart';
 import '../../../../../domain/entities/message/message.dart';
+import '../../../../../domain/enums/message_enums.dart';
 import '../../../../../domain/entities/user_entity.dart';
+import '../../../../../domain/enums/send_message_type.dart';
 import '../../../../../domain/usecases/fetch_member_in_workspace_use_case.dart';
 import '../../../../../domain/usecases/get_pinned_message_summary_workspace_use_case.dart';
 import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case.dart';
 import '../../../../../domain/usecases/message/send_message_use_case.dart';
+import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
+import '../../../../../domain/usecases/message/pin_message_use_case.dart';
 import '../../../../../domain/usecases/search_member_in_workspace_use_case.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../../shared/helpers/chat_message_helper.dart';
+import '../../../../../shared/utils/tag_user_text_editing_controller.dart';
 import '../../../../base/base_state.dart';
 import '../../../mappers/pinned_message_summary_mapper.dart';
 import '../../../ui_models/pinned_message_summary_ui_model.dart';
@@ -34,41 +42,72 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     required SendMessageUseCase sendMessageUseCase,
     required FetchMemberInWorkspaceUseCase fetchMemberInWorkspaceUseCase,
     required SearchMemberInWorkspaceUseCase searchMemberInWorkspaceUseCase,
+    required UnpinMessageUseCase unpinMessageUseCase,
+    required PinMessageUseCase pinMessageUseCase,
     required RamCache ramCache,
     required MediaManager mediaManager,
+    required FileManager fileManager,
   }) : _fetchMessageUseCase = fetchMessageUseCase,
        _getPinnedMessageSummaryWorkspaceUseCase =
            getPinnedMessageSummaryWorkspaceUseCase,
        _sendMessageUseCase = sendMessageUseCase,
        _fetchMemberInWorkspaceUseCase = fetchMemberInWorkspaceUseCase,
        _searchMemberInWorkspaceUseCase = searchMemberInWorkspaceUseCase,
+       _unpinMessageUseCase = unpinMessageUseCase,
+       _pinMessageUseCase = pinMessageUseCase,
        _ramCache = ramCache,
        _mediaManager = mediaManager,
+       _fileManager = fileManager,
        super(WSDetailState()) {
     _registerHandlers();
-    _initializeMessageListener();
+    _initializeListener();
   }
 
   late final int workspaceId;
-
-  final String _userId = '1';
-
-  String get userId => _userId;
-
-  final int _limit = 20;
-
   final FetchMessagesWorkspaceUseCase _fetchMessageUseCase;
   final GetPinnedMessageSummaryWorkspaceUseCase
   _getPinnedMessageSummaryWorkspaceUseCase;
   final SendMessageUseCase _sendMessageUseCase;
   final FetchMemberInWorkspaceUseCase _fetchMemberInWorkspaceUseCase;
   final SearchMemberInWorkspaceUseCase _searchMemberInWorkspaceUseCase;
+  final UnpinMessageUseCase _unpinMessageUseCase;
+  final PinMessageUseCase _pinMessageUseCase;
 
   final MediaManager _mediaManager;
+  final FileManager _fileManager;
   final RamCache _ramCache;
 
   StreamSubscription<MessageEntity>? _messageSubscription;
   StreamSubscription<String>? _tagQuerySubscription;
+  StreamSubscription<bool>? _showTagOverlaySubscription;
+
+  final String _userId = '1';
+  final int _limit = 20;
+  final TagUserTextEditingController _textEditingController =
+      TagUserTextEditingController();
+
+  String get userId => _userId;
+  TagUserTextEditingController get textEditingController =>
+      _textEditingController;
+
+  List<TextSegment> detectLinkTextSegment(String text) {
+    final regex = RegExp(r'https?://\S+');
+    final match = regex.allMatches(text);
+    if (match.isEmpty) {
+      return [];
+    }
+
+    return match
+        .map(
+          (e) => TextSegment(
+            type: TextSegmentType.link,
+            start: e.start,
+            end: e.end,
+            extra: e.group(0)!,
+          ),
+        )
+        .toList();
+  }
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -98,24 +137,50 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       // droppable to ensure that only one load more request is processed at a time
       transformer: droppable(),
     );
+    handleSubEvent<UnpinMessageFromDetailEvent>(_onUnpinMessage);
+    handleSubEvent<PinMessageFromDetailEvent>(_onPinMessage);
+    handleSubEvent<ResetPinStatusSuccessEvent>(_onResetPinStatusSuccess);
+    handleSubEvent<UpdateShowTagOverlayEvent>(_onUpdateShowTagOverlay);
   }
 
-  void _initializeMessageListener() {
+  void _initializeListener() {
+    // Listen to message stream
     _messageSubscription = _ramCache.getMessageStream().listen(
       (message) {
+        if (message.workspaceId != workspaceId) return;
         add(AddMessageEvent(message: message));
+        if (message.sender.id == userId) {
+          add(JumpToMessageEvent(messageId: message.id));
+        }
       },
       onError: (_) {
         // TODO hoank: Handle this case.
       },
     );
-  }
 
-  void listenTagQuery(Stream<String> tagQueryStream) {
-    _tagQuerySubscription?.cancel();
-    _tagQuerySubscription = tagQueryStream.listen((query) {
+    // Listen to text editing controller streams
+    _showTagOverlaySubscription = _textEditingController.showTagOverlay.listen((
+      show,
+    ) {
+      add(UpdateShowTagOverlayEvent(showTagOverlay: show));
+    });
+
+    _tagQuerySubscription = _textEditingController.tagQuery.listen((query) {
       add(SearchMembersEvent(query: query));
     });
+
+    // Listen to text changes for send button
+    _textEditingController.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    final input = _textEditingController.text;
+
+    if (state.hasSendButton && input.isEmpty) {
+      add(UpdateHasSendButtonEvent(hasSendButton: false));
+    } else if (!state.hasSendButton && input.isNotEmpty) {
+      add(UpdateHasSendButtonEvent(hasSendButton: true));
+    }
   }
 
   Future<void> _onLoadData(
@@ -128,6 +193,13 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       FetchMessagesWorkspaceParams(workspaceId: workspaceId, limit: _limit),
     );
 
+    final messages = result.data;
+    final pagingStatus = messages.isEmpty
+        ? PagingStatus.empty
+        : (result.totalRecords <= _limit
+              ? PagingStatus.noMoreData
+              : PagingStatus.loadCompleted);
+
     final pinnedMessageSummaryResult =
         await _getPinnedMessageSummaryWorkspaceUseCase.call(
           GetPinnedMessageSummaryWorkspaceParams(workspaceId: workspaceId),
@@ -136,13 +208,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final pinnedMessageSummary = PinnedMessageSummaryMapper.fromMessageEntity(
       pinnedMessageSummaryResult,
     );
-
-    final messages = result.data;
-    final pagingStatus = messages.isEmpty
-        ? PagingStatus.empty
-        : (result.totalRecords == _limit
-              ? PagingStatus.noMoreData
-              : PagingStatus.loadCompleted);
 
     emit(
       state.copyWith(
@@ -171,28 +236,23 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       ),
     );
 
+    // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
     final messages = result.data;
-    final pagingStatus = messages.isEmpty || result.data.length == _limit
+    final pagingStatus = messages.isEmpty
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
 
-    // insert messages to the beginning of the list
-    final newMessages = _mapMessagesToUIModels(messages);
-    final newChatMessages = [...newMessages, ...state.chatMessages];
-
-    // update last ui models of new messages list to map to first state.chatMessages
-    final updatedMessages = _updateUIModel(
-      newChatMessages,
-      newMessages.length - 1,
-    );
+    final updatedMessages = _addMessageList(leadingMessageList: messages);
 
     emit(
       state.copyWith(
         chatMessages: updatedMessages,
         chatMessagesPagingStatus: pagingStatus,
-        initIndex: newMessages.isEmpty ? 0 : newMessages.length - 1,
+        // Giữ vị trí là ví trị của message cuối cùng của list vừa được thêm để
+        // tạo thêm cảm giác được scroll tiếp cho load more kế tiếp
+        initIndex: messages.isEmpty ? 0 : messages.length - 1,
       ),
     );
   }
@@ -228,12 +288,55 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     add(CloseReplyMessageEvent());
 
-    _sendMessageUseCase.call(
+    dynamic content;
+    if (event.type == SendMessageType.text) {
+      final tagTextSegments = _textEditingController.tagTextSegments;
+      final linkTextSegments = detectLinkTextSegment(
+        _textEditingController.text,
+      );
+      final textSegments = [...tagTextSegments, ...linkTextSegments];
+      content = TextMessageContent(
+        text: _textEditingController.text,
+        textSegments: textSegments,
+      );
+    } else if (event.type == SendMessageType.file) {
+      final result = await _fileManager.pickFiles();
+      if (result == null) return;
+      final file = result.first;
+
+      content = FileMessageContent(
+        fileUrl: '',
+        fileName: file.name,
+        fileExtension: file.extension ?? '',
+        fileSize: file.size,
+        path: file.path,
+      );
+    } else if (event.type == SendMessageType.media) {
+      final result = await _mediaManager.pickMedia();
+      if (result == null) return;
+      bool? isPhoto;
+
+      if (result.path.isImage()) isPhoto = true;
+      if (result.path.isVideo()) isPhoto = false;
+      if (isPhoto == null) return;
+
+      if (isPhoto) {
+        content = ImageMessageContent(imageUrl: '', path: result.path);
+      } else {
+        content = VideoMessageContent(
+          videoUrl: '',
+          duration: Duration(seconds: 0),
+          path: result.path,
+        );
+      }
+    }
+
+    await _sendMessageUseCase.call(
       SendMessageParams(
         userId: userId,
         workspaceId: workspaceId,
         replyMessageId: reply?.id,
-        content: event.content,
+        content: content,
       ),
     );
   }
@@ -327,6 +430,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         ),
       );
 
+      // TODO hoannk: Remove delay
       await Future.delayed(const Duration(seconds: 2));
 
       final messages = result.data;
@@ -334,15 +438,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
-      // insert messages to the beginning of the list
-      final newMessages = _mapMessagesToUIModels(messages);
-      final newChatMessages = [...newMessages, ...state.chatMessages];
-
-      // update last ui models of new messages list to map to first state.chatMessages
-      final updatedMessages = _updateUIModel(
-        newChatMessages,
-        newMessages.length - 1,
-      );
+      final updatedMessages = _addMessageList(leadingMessageList: messages);
 
       final jumpToMessageIndex = updatedMessages.indexWhere(
         (uiModel) => uiModel.message.id == event.messageId,
@@ -413,6 +509,80 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(
       state.copyWith(chatMessages: updatedMessages, forceDisableShowTime: true),
     );
+  }
+
+  Future<void> _onUnpinMessage(
+    UnpinMessageFromDetailEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+    final messageIndex = state.chatMessages.indexWhere(
+      (uiModel) => uiModel.message.id == event.messageId,
+    );
+    if (messageIndex == -1) return;
+
+    await _unpinMessageUseCase.call(
+      UnpinMessageParams(messageId: event.messageId),
+    );
+    // TODO hoannk: Remove delay
+    await Future.delayed(const Duration(seconds: 2));
+
+    final messages = List<ChatMessageUIModel>.from(state.chatMessages);
+    final currentMessage = messages[messageIndex];
+    messages[messageIndex] = currentMessage.copyWith(
+      message: currentMessage.message.copyWith(isPinned: false),
+    );
+
+    emit(
+      state.copyWith(
+        chatMessages: messages,
+        isPinStatusSuccess: true,
+        processing: false,
+      ),
+    );
+  }
+
+  Future<void> _onResetPinStatusSuccess(
+    ResetPinStatusSuccessEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(isPinStatusSuccess: false));
+  }
+
+  Future<void> _onPinMessage(
+    PinMessageFromDetailEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+    final messageIndex = state.chatMessages.indexWhere(
+      (uiModel) => uiModel.message.id == event.messageId,
+    );
+    if (messageIndex == -1) return;
+
+    await _pinMessageUseCase.call(PinMessageParams(messageId: event.messageId));
+    // TODO hoannk: Remove delay
+    await Future.delayed(const Duration(seconds: 2));
+
+    final messages = List<ChatMessageUIModel>.from(state.chatMessages);
+    final currentMessage = messages[messageIndex];
+    messages[messageIndex] = currentMessage.copyWith(
+      message: currentMessage.message.copyWith(isPinned: true),
+    );
+
+    emit(
+      state.copyWith(
+        chatMessages: messages,
+        isPinStatusSuccess: true,
+        processing: false,
+      ),
+    );
+  }
+
+  Future<void> _onUpdateShowTagOverlay(
+    UpdateShowTagOverlayEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(showTagOverlay: event.showTagOverlay));
   }
 
   Future<void> _onGetPinnedMessageSummary(
@@ -518,10 +688,46 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     return updatedMessages;
   }
 
+  List<ChatMessageUIModel> _addMessageList({
+    List<MessageEntity>? leadingMessageList,
+    List<MessageEntity>? trailingMessageList,
+  }) {
+    var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
+    // Mỗi khi thêm list mới sẽ update list vào list cũ và cập nhật phần từ nối
+    // giữa 2 mảng
+    // ví dụ: leading - current - trailing
+    // Thêm mảng vào trước current (leading) => cập nhật message cuối cùng của leading
+    // Thêm mảng vào sau current (trailing) => cập nhật message cuối cùng của current
+    if (leadingMessageList != null) {
+      final newMessages = _mapMessagesToUIModels(leadingMessageList);
+      updatedMessages = [...newMessages, ...updatedMessages];
+      final lastLeadingMessageIndex = newMessages.length - 1;
+      updatedMessages = _updateUIModel(
+        updatedMessages,
+        lastLeadingMessageIndex,
+      );
+    }
+
+    if (trailingMessageList != null) {
+      final newMessages = _mapMessagesToUIModels(trailingMessageList);
+      updatedMessages = [...updatedMessages, ...newMessages];
+      final lastCurrentMessageIndex =
+          updatedMessages.length - newMessages.length - 1;
+      updatedMessages = _updateUIModel(
+        updatedMessages,
+        lastCurrentMessageIndex,
+      );
+    }
+
+    return updatedMessages;
+  }
+
   @override
   Future<void> close() {
     _messageSubscription?.cancel();
     _tagQuerySubscription?.cancel();
+    _showTagOverlaySubscription?.cancel();
+    _textEditingController.removeListener(_onTextChanged);
     return super.close();
   }
 }

@@ -23,9 +23,9 @@ class ReplyToMessageEvent extends WSDetailEvent {
 }
 
 class SendMessageEvent extends WSDetailEvent {
-  const SendMessageEvent({required this.content});
+  const SendMessageEvent({required this.type});
 
-  final dynamic content;
+  final SendMessageType type;
 }
 
 class ResetScrollToBottomEvent extends WSDetailEvent {
@@ -77,8 +77,14 @@ class UnpinMessageFromDetailEvent extends WSDetailEvent {
   final String messageId;
 }
 
-class ResetUnpinSuccessEvent extends WSDetailEvent {
-  const ResetUnpinSuccessEvent();
+class PinMessageFromDetailEvent extends WSDetailEvent {
+  const PinMessageFromDetailEvent({required this.messageId});
+
+  final String messageId;
+}
+
+class ResetPinStatusSuccessEvent extends WSDetailEvent {
+  const ResetPinStatusSuccessEvent();
 }
 
 class JumpToMessageEvent extends WSDetailEvent {
@@ -107,4 +113,10 @@ class GetPinnedMessageSummaryEvent extends WSDetailEvent {
 
 class LoadMoreChatMessagesEvent extends WSDetailEvent {
   const LoadMoreChatMessagesEvent();
+}
+
+class UpdateShowTagOverlayEvent extends WSDetailEvent {
+  const UpdateShowTagOverlayEvent({required this.showTagOverlay});
+
+  final bool showTagOverlay;
 }
