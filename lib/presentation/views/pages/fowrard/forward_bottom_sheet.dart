@@ -5,6 +5,7 @@ import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/pages/fowrard/widgets/forward_tile.dart';
+import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
@@ -83,34 +84,21 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
   }
 
   Widget _buildNormalMode() {
-    return BlocListener<ForwardBloc, ForwardState>(
-      listener: (context, state) {
-        _refreshController.refresh(state.pagingStatus);
+    return BlocBuilder<ForwardBloc, ForwardState>(
+      buildWhen: (prev, curr) => prev.workspaces != curr.workspaces,
+      builder: (context, state) {
+        return AppListView(
+          fetchStatus: state.pagingStatus,
+          enablePullDown: false,
+          onLoadMore: () {
+            _forwardBloc.add(GetDataEvent());
+          },
+          data: state.workspaces,
+          builder: (context, index) {
+            return ForwardTile(workspaceEntity: state.workspaces[index]);
+          },
+        );
       },
-      listenWhen: (prev, curr) => prev.pagingStatus != curr.pagingStatus,
-      child: BlocSelector<ForwardBloc, ForwardState, List<WorkspaceEntity>>(
-        selector: (state) {
-          return state.workspaces;
-        },
-        builder: (context, state) {
-          return AppPullToRefresh(
-            enablePullDown: false,
-            onLoadMore: () {
-              _forwardBloc.add(GetDataEvent());
-            },
-            refreshController: _refreshController,
-            child: ListView.separated(
-              separatorBuilder: (context, index) {
-                return SizedBox();
-              },
-              itemBuilder: (context, index) {
-                return ForwardTile(workspaceEntity: state[index]);
-              },
-              itemCount: state.length,
-            ),
-          );
-        },
-      ),
     );
   }
 
@@ -129,7 +117,9 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
           return AppPullToRefresh(
             enablePullDown: false,
             onLoadMore: () {
-              _forwardBloc.add(GetSearchDataEvent());
+              _forwardBloc.add(
+                SearchDebouncedEvent(_forwardBloc.state.searchKeyWord),
+              );
             },
             refreshController: _searchRefreshController,
             child: ListView.builder(

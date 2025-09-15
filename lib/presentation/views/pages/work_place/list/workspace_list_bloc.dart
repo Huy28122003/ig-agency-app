@@ -20,6 +20,10 @@ class WorkspaceListBloc
   Timer? _timer;
   StreamSubscription<WorkspaceEntity>? _streamSubscription;
 
+  final int _limit = 15;
+  int _offset = 0;
+  int _searchOffet = 0;
+
   WorkspaceListBloc({
     required this.getWorkspacesUseCase,
     required this.listenWorkspaceLastMessageUseCase,
@@ -144,14 +148,22 @@ class WorkspaceListBloc
     emit(state.copyWith(searchStatus: PageStatus.loading));
 
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(keyWord: event.value, limit: 15, offset: 1),
+      GetWorkspacesParams(
+        keyWord: event.value,
+        limit: _limit,
+        offset: _searchOffet,
+      ),
     );
 
+    _searchOffet += result.data.length;
+    final pagingStatus = _offset >= result.totalRecords
+        ? PagingStatus.noMoreData
+        : PagingStatus.loadCompleted;
     emit(
       state.copyWith(
+        pagingStatusSearch: pagingStatus,
         searchStatus: PageStatus.loaded,
         workspacesSearch: result.data,
-        indexPageSearch: 1,
       ),
     );
   }
@@ -172,22 +184,21 @@ class WorkspaceListBloc
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(
-        limit: 15,
-        offset: state.indexPageSearch + 1,
+        limit: _limit,
+        offset: _searchOffet,
         keyWord: state.searchKeyWord,
       ),
     );
+    _searchOffet += result.data.length;
+
+    final pagingStatus = _offset >= result.totalRecords
+        ? PagingStatus.noMoreData
+        : PagingStatus.loadCompleted;
+
     final next = List<WorkspaceEntity>.from(state.workspacesSearch)
       ..addAll(result.data);
-    final reachedEnd = next.length >= result.totalRecords;
     emit(
-      state.copyWith(
-        pagingStatusSearch: reachedEnd
-            ? PagingStatus.noMoreData
-            : PagingStatus.loadCompleted,
-        workspacesSearch: next,
-        indexPageSearch: state.indexPageSearch + 1,
-      ),
+      state.copyWith(pagingStatusSearch: pagingStatus, workspacesSearch: next),
     );
   }
 
@@ -198,12 +209,24 @@ class WorkspaceListBloc
     emit(state.copyWith(pageStatus: PageStatus.loaded));
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(limit: 15, offset: state.indexPage),
+      GetWorkspacesParams(limit: 15, offset: _offset),
     );
+
+    _offset += result.data.length;
+
+    final pagingStatus = _offset >= result.totalRecords
+        ? PagingStatus.noMoreData
+        : PagingStatus.loadCompleted;
 
     List<WorkspaceEntity>? workspaces = result.data;
     _sort(workspaces);
-    emit(state.copyWith(pageStatus: PageStatus.loaded, workspaces: workspaces));
+    emit(
+      state.copyWith(
+        pageStatus: PageStatus.loaded,
+        workspaces: workspaces,
+        pagingStatus: pagingStatus,
+      ),
+    );
   }
 
   Future<void> _onRefreshData(
@@ -212,10 +235,13 @@ class WorkspaceListBloc
   ) async {
     emit(state.copyWith(pagingStatus: PagingStatus.refreshing));
 
+    _offset = 0;
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(limit: 15, offset: 1),
+      GetWorkspacesParams(limit: _limit, offset: _offset),
     );
+
+    _offset += result.data.length;
 
     List<WorkspaceEntity>? workspaces = result.data;
     _sort(workspaces);
@@ -223,7 +249,6 @@ class WorkspaceListBloc
       state.copyWith(
         pagingStatus: PagingStatus.refreshCompleted,
         workspaces: workspaces,
-        indexPage: 1,
       ),
     );
   }
@@ -236,20 +261,16 @@ class WorkspaceListBloc
 
     await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
-      GetWorkspacesParams(limit: 15, offset: state.indexPage + 1),
+      GetWorkspacesParams(limit: _limit, offset: _offset),
     );
+
+    _offset += result.data.length;
+    final pagingStatus = _offset >= result.totalRecords
+        ? PagingStatus.noMoreData
+        : PagingStatus.loadCompleted;
     final next = List<WorkspaceEntity>.from(state.workspaces)
       ..addAll(result.data);
-    final reachedEnd = next.length >= result.totalRecords;
-    emit(
-      state.copyWith(
-        pagingStatus: reachedEnd
-            ? PagingStatus.noMoreData
-            : PagingStatus.loadCompleted,
-        workspaces: next,
-        indexPage: state.indexPage + 1,
-      ),
-    );
+    emit(state.copyWith(pagingStatus: pagingStatus, workspaces: next));
   }
 
   Future<void> _onDeleteWorkspace(

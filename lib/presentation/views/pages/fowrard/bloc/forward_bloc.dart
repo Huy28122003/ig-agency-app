@@ -30,10 +30,12 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     handleSubEvent<GetDataEvent>(_onGetData);
 
     handleSubEvent<ChangeKeyWordEvent>((event, emit) async {
-      emit(state.copyWith(searchKeyWord: event.value));
+      _searchOffset = 0;
+      emit(state.copyWith(searchKeyWord: event.value, workspacesSearch: []));
     });
 
     handleSubEvent<SearchDebouncedEvent>(_onSearchDebounced);
+
     handleSubEvent<SearchEvent>(_onSearch);
   }
 
@@ -51,7 +53,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
       ),
     );
 
-    _searchOffset += _limit;
+    _searchOffset += result.data.length;
 
     final pagingStatus = _searchOffset >= result.totalRecords
         ? PagingStatus.noMoreData
@@ -82,7 +84,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(limit: _limit, offset: _offset),
     );
-    _offset += _limit;
+    _offset += result.data.length;
 
     final pagingStatus = _offset >= result.totalRecords
         ? PagingStatus.noMoreData

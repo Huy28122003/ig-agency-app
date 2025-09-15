@@ -6,8 +6,6 @@ class LoadDataEvent extends ForwardEvent{}
 
 class GetDataEvent extends ForwardEvent{}
 
-class GetSearchDataEvent extends ForwardEvent{}
-
 class ChangeKeyWordEvent extends ForwardEvent{
   final String value;
 
