@@ -145,13 +145,18 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<UserEntity>> getUserInGroup({
+  Future<List<UserEntity>> getUserInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
-  }) {
+  }) async {
     try {
-      return MockData().getUsers();
+      return MockData().users.sublist(
+        offset,
+        offset + limit > MockData().users.length
+            ? MockData().users.length
+            : offset + limit,
+      );
     } catch (e) {
       throw FailureConverter.convert(e);
     }
