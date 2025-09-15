@@ -8,7 +8,6 @@ import 'package:retrofit/retrofit.dart';
 import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
 import '../models/response/login_response_model.dart';
-import '../models/response/registration_reponse_model.dart';
 import '../models/response/change_password_response_model.dart';
 
 part 'api_services.g.dart';
@@ -21,9 +20,7 @@ abstract class ApiService {
   Future<LoginResponseModel> login(@Body() LoginRequestModel loginRequestModel);
 
   @POST('/register')
-  Future<RegistrationResponseModel> register(
-    @Body() RegistrationRequestModel requestModel,
-  );
+  Future register(@Body() RegistrationRequestModel requestModel);
 
   @POST('/change-password')
   Future<ChangePasswordResponseModel> changePassword(

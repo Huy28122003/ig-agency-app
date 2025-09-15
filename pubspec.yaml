@@ -38,7 +38,7 @@ dependencies:
 
   # Notification
   flutter_local_notifications: ^19.4.0
-#  firebase_messaging: ^16.0.0
+  #  firebase_messaging: ^16.0.0
 
   # Code generator
   json_annotation: ^4.9.0
@@ -77,10 +77,13 @@ dependencies:
   path: ^1.9.1
   dartx: ^1.2.0
   rxdart: ^0.28.0
+  metadata_fetch: ^0.4.2
+  collection: ^1.19.1
   any_link_preview: ^3.0.3
   uuid: ^4.5.1
   scrollable_positioned_list: ^0.3.8
   bloc_concurrency: ^0.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

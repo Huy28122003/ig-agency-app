@@ -1,4 +1,10 @@
-enum LocalStorageKeys { userName, password, isDarkMode, isInAppAlerts }
+enum LocalStorageKeys {
+  userName,
+  password,
+  isDarkMode,
+  isInAppAlerts,
+  accessToken,
+}
 
 abstract class LocalStorageManager {
   Future<bool> keyExists(LocalStorageKeys key, {bool isSecure = false});

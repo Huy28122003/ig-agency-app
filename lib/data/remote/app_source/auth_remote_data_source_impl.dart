@@ -1,3 +1,5 @@
+import 'package:ig_agency_app/data/local/app/auth_local_data_source.dart';
+import 'package:ig_agency_app/data/remote/models/response/login_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
 import 'package:injectable/injectable.dart';
@@ -10,15 +12,15 @@ import '../models/requests/delete_account_request_model.dart';
 
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl(this._apiService);
+  AuthRemoteDataSourceImpl(this._apiService, this._authLocalDataSource);
 
   final ApiService _apiService;
+  final AuthLocalDataSource _authLocalDataSource;
 
   @override
-  Future<String?> getAccessToken() {
+  Future<String?> getAccessToken() async {
     try {
-      // Simulate fetching access token
-      return Future.value("mock_access_token");
+      return await _authLocalDataSource.getAccessToken();
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -35,14 +37,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> login(String email, String password) async {
+  Future<LoginResponseModel> login(LoginRequestModel request) async {
     try {
-      final loginRequestModel = LoginRequestModel(
-        email: email,
-        password: password,
-      );
-      await Future.delayed(Duration(seconds: 1));
-      // return _apiService.login(loginRequestModel);
+      return await _apiService.login(request);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -56,7 +53,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
-      // return _apiService.register(registerRequestModel);
+      await _apiService.register(registerRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

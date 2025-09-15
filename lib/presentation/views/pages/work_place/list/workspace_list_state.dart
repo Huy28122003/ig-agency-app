@@ -2,7 +2,7 @@ part of 'workspace_list_bloc.dart';
 
 class WorkspaceListState extends BaseState<WorkspaceListState> {
   const WorkspaceListState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage = '',
     super.processing = false,
     this.pagingStatus = PagingStatus.idle,
