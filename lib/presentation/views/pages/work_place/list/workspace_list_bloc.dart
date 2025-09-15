@@ -216,7 +216,7 @@ class WorkspaceListBloc
 
     _offset += result.length;
 
-    final pagingStatus = _limit >= result.length
+    final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
 
@@ -267,7 +267,7 @@ class WorkspaceListBloc
     );
 
     _offset += result.length;
-    final pagingStatus = _limit >= result.length
+    final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
     final next = List<WorkspaceEntity>.from(state.workspaces)..addAll(result);

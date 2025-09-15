@@ -30,12 +30,10 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
                 .toList()
           : allData;
 
-      final total = filtered.length;
-      final start = ((offset - 1) * limit).clamp(0, total);
-      final end = (start + limit).clamp(0, total);
-      final pageData = start < end
-          ? filtered.sublist(start, end)
-          : <WorkspaceEntity>[];
+      final pageData = filtered.sublist(
+        offset,
+        offset + limit > filtered.length ? filtered.length : offset + limit,
+      );
 
       return pageData;
     } catch (e) {
@@ -80,19 +78,6 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }) async {
     try {
       return true;
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<PagedResult<UserEntity>> getUserByWorkspaceId({
-    required int workspaceId,
-    required int offset,
-    required int limit,
-  }) {
-    try {
-      return MockData().getUsers(limit: limit, offset: offset);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
