@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/workspace_list_bloc.dart';
+import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
@@ -27,7 +28,7 @@ class WorkspaceListMobileLayout extends StatefulWidget {
 }
 
 class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
-  late RefreshController _refreshController;
+  // late RefreshController _refreshController;
   late RefreshController _searchRefreshController;
 
   late WorkspaceListBloc _workspaceBloc;
@@ -35,7 +36,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   @override
   void initState() {
     super.initState();
-    _refreshController = RefreshController();
+    // _refreshController = RefreshController();
     _searchRefreshController = RefreshController();
 
     _workspaceBloc = context.read<WorkspaceListBloc>();
@@ -45,24 +46,18 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   Widget build(BuildContext context) {
     return BlocListener<WorkspaceListBloc, WorkspaceListState>(
       listener: (context, state) {
-        _refreshController.refresh(state.pagingStatus);
+        if (state.pageStatus == PageStatus.failure) {
+          // todo
+        }
       },
-      listenWhen: (prev, curr) => prev.pagingStatus != curr.pagingStatus,
-      child: BlocListener<WorkspaceListBloc, WorkspaceListState>(
-        listener: (context, state) {
-          if (state.pageStatus == PageStatus.failure) {
-            // todo
-          }
-        },
-        listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
-        child: Container(
-          color: AppColors.surfaceContainerGrayStrong0,
-          child: Column(
-            children: [
-              _buildHeader(),
-              Expanded(child: _buildBody()),
-            ],
-          ),
+      listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
+      child: Container(
+        color: AppColors.surfaceContainerGrayStrong0,
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(child: _buildBody()),
+          ],
         ),
       ),
     );
@@ -76,83 +71,84 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
       builder: (context, searchModeState) {
         return Stack(
           children: [
-            BlocSelector<
-              WorkspaceListBloc,
-              WorkspaceListState,
-              List<WorkspaceEntity>
-            >(
-              selector: (state) {
-                return state.workspaces;
+            BlocBuilder<WorkspaceListBloc, WorkspaceListState>(
+              buildWhen: (pre, cur) {
+                return pre.pagingStatus != cur.pagingStatus ||
+                    pre.workspaces != cur.workspaces;
               },
               builder: (context, state) {
-                return AppPullToRefresh(
+                return AppListView(
+                  fetchStatus: state.pagingStatus,
                   onLoadMore: () {
                     _workspaceBloc.add(LoadMoreDataEvent());
                   },
                   onRefresh: () {
                     _workspaceBloc.add(RefreshDataEvent());
                   },
-                  refreshController: _refreshController,
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 4.5);
-                    },
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final workspace = state[index];
-                      return SuperMenuPopupMobileWidget(
-                        isMute: workspace.isMute,
-                        isPin: workspace.isPin,
-                        isSeen: workspace.isSeen,
-                        onTapDelete: () async {},
-                        onTapMask: () {
-                          _workspaceBloc.add(
-                            SeenWorkspaceEvent(workspaceId: workspace.id),
-                          );
-                        },
-                        onTapMute: () async {
-                          if (workspace.isMute) {
-                            final result =
-                                await MenuDialog.show<UnMuteTimeEnum>(
-                                  onTap: (value) {},
-                                  context: context,
-                                  title: "workspace.mute_title".tr(),
-                                  items: UnMuteTimeEnum.values
-                                      .map(
-                                        (e) => MenuItem(
-                                          content: 'workspace.${e.title}'.tr(),
-                                          value: e,
-                                        ),
-                                      )
-                                      .toList(),
-                                );
-                          }
-                          _workspaceBloc.add(
-                            MuteWorkspaceEvent(workspaceId: workspace.id),
-                          );
-                        },
-                        onTapPin: () {
-                          _workspaceBloc.add(
-                            PinWorkspaceEvent(workspaceId: workspace.id),
-                          );
-                        },
-                        child: WorkspaceTileMobileWidget(
-                          onTap: () {
-                            context.router.push(GroupInfoRoute());
-                          },
+                  data: state.workspaces,
+                  builder: (_, index) {
+                    return ListView.separated(
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 4.5);
+                      },
+                      physics: ClampingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final workspace = state.workspaces[index];
+                        return SuperMenuPopupMobileWidget(
                           isMute: workspace.isMute,
                           isPin: workspace.isPin,
-                          workspaceAvatar: workspace.workspaceAvatar,
-                          workspaceName: workspace.workspaceName,
-                          lastMessage: workspace.lastMessage,
-                          lastMessageTime: workspace.lastMessageTime,
                           isSeen: workspace.isSeen,
-                          countNewMessage: workspace.countNewMessage,
-                        ),
-                      );
-                    },
-                    itemCount: state.length,
-                  ),
+                          onTapDelete: () async {},
+                          onTapMask: () {
+                            _workspaceBloc.add(
+                              SeenWorkspaceEvent(workspaceId: workspace.id),
+                            );
+                          },
+                          onTapMute: () async {
+                            if (workspace.isMute) {
+                              final result =
+                                  await MenuDialog.show<UnMuteTimeEnum>(
+                                    onTap: (value) {},
+                                    context: context,
+                                    title: "workspace.mute_title".tr(),
+                                    items: UnMuteTimeEnum.values
+                                        .map(
+                                          (e) => MenuItem(
+                                            content: 'workspace.${e.title}'
+                                                .tr(),
+                                            value: e,
+                                          ),
+                                        )
+                                        .toList(),
+                                  );
+                            }
+                            _workspaceBloc.add(
+                              MuteWorkspaceEvent(workspaceId: workspace.id),
+                            );
+                          },
+                          onTapPin: () {
+                            _workspaceBloc.add(
+                              PinWorkspaceEvent(workspaceId: workspace.id),
+                            );
+                          },
+                          child: WorkspaceTileMobileWidget(
+                            onTap: () {
+                              context.router.push(GroupInfoRoute());
+                            },
+                            isMute: workspace.isMute,
+                            isPin: workspace.isPin,
+                            workspaceAvatar: workspace.workspaceAvatar,
+                            workspaceName: workspace.workspaceName,
+                            lastMessage: workspace.lastMessage,
+                            lastMessageTime: workspace.lastMessageTime,
+                            isSeen: workspace.isSeen,
+                            countNewMessage: workspace.countNewMessage,
+                          ),
+                        );
+                      },
+                      itemCount: state.workspaces.length,
+                    );
+                  },
                 );
               },
             ),

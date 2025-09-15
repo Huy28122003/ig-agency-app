@@ -12,7 +12,7 @@ import '../../../shared/utils/mock_data.dart';
 @Injectable(as: WorkspaceRepository)
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
   @override
-  Future<PagedResult<WorkspaceEntity>> getWorkspaces({
+  Future<List<WorkspaceEntity>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,
@@ -37,7 +37,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
           ? filtered.sublist(start, end)
           : <WorkspaceEntity>[];
 
-      return PagedResult<WorkspaceEntity>(data: pageData, totalRecords: 30);
+      return pageData;
     } catch (e) {
       throw FailureConverter.convert(e);
     }

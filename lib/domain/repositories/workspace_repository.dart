@@ -8,7 +8,7 @@ import '../../shared/commons/models/pagination.dart';
 import '../entities/file_entity.dart';
 
 abstract class WorkspaceRepository {
-  Future<PagedResult<WorkspaceEntity>> getWorkspaces({
+  Future<List<WorkspaceEntity>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,

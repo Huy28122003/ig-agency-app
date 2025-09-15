@@ -53,13 +53,13 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
       ),
     );
 
-    _searchOffset += result.data.length;
+    _searchOffset += result.length;
 
-    final pagingStatus = _searchOffset >= result.totalRecords
+    final pagingStatus = _limit >= result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
     List<WorkspaceEntity> currentList = List.from(state.workspacesSearch);
-    currentList.addAll(result.data);
+    currentList.addAll(result);
     emit(
       state.copyWith(
         searchPagingStatus: pagingStatus,
@@ -84,13 +84,13 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(limit: _limit, offset: _offset),
     );
-    _offset += result.data.length;
+    _offset += result.length;
 
-    final pagingStatus = _offset >= result.totalRecords
+    final pagingStatus = _limit >= result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
     List<WorkspaceEntity> currentList = List.from(state.workspaces);
-    currentList.addAll(result.data);
+    currentList.addAll(result);
     emit(state.copyWith(pagingStatus: pagingStatus, workspaces: currentList));
   }
 }
