@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +97,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
       },
       builder: (context, state) {
         return AppListView(
+          padding: EdgeInsets.zero,
+          cardLoading: _buildLoading(),
+          numCardLoading: 6,
           fetchStatus: state.pagingStatus,
           onLoadMore: () {
             _workspaceBloc.add(LoadMoreDataEvent());
@@ -186,6 +190,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
             height: double.infinity,
             color: Colors.white,
             child: AppListView(
+              padding: EdgeInsets.zero,
+              cardLoading: _buildLoading(),
+              numCardLoading: 6,
               fetchStatus: pagingStatus,
               enablePullDown: false,
               onLoadMore: () {
@@ -248,6 +255,65 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CardLoading(
+                height: 48,
+                borderRadius: BorderRadius.all(Radius.circular(1000)),
+                width: 48,
+                margin: EdgeInsets.only(bottom: 10),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CardLoading(
+                                height: 25,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                width: double.infinity,
+                                margin: EdgeInsets.only(bottom: 10),
+                              ),
+                              const SizedBox(height: 6),
+                              CardLoading(
+                                height: 20,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                width: 150,
+                                margin: EdgeInsets.only(bottom: 10),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

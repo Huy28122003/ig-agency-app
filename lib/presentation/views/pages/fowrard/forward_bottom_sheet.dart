@@ -1,15 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:card_loading/card_loading.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/pages/fowrard/widgets/forward_tile.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
-import 'package:ig_agency_app/presentation/views/widgets/app_pull_to_refresh.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.dart';
-import 'package:ig_agency_app/shared/extensions/widget.dart';
-import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import '../../../../di/di.dart';
 import 'bloc/forward_bloc.dart';
@@ -34,15 +32,11 @@ class ForwardBottomSheet extends StatefulWidget {
 }
 
 class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
-  late final RefreshController _refreshController;
-  late final RefreshController _searchRefreshController;
   late final ForwardBloc _forwardBloc;
 
   @override
   void initState() {
     super.initState();
-    _refreshController = RefreshController();
-    _searchRefreshController = RefreshController();
     _forwardBloc = context.read<ForwardBloc>();
   }
 
@@ -84,50 +78,61 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
   }
 
   Widget _buildNormalMode() {
-    return BlocBuilder<ForwardBloc, ForwardState>(
-      buildWhen: (prev, curr) => prev.workspaces != curr.workspaces,
-      builder: (context, state) {
-        return AppListView(
-          fetchStatus: state.pagingStatus,
-          enablePullDown: false,
-          onLoadMore: () {
-            _forwardBloc.add(GetDataEvent());
-          },
-          data: state.workspaces,
-          builder: (context, index) {
-            return ForwardTile(workspaceEntity: state.workspaces[index]);
-          },
-        );
-      },
+    return Container(
+      child: BlocBuilder<ForwardBloc, ForwardState>(
+        buildWhen: (prev, curr) =>
+            prev.workspaces != curr.workspaces ||
+            prev.pagingStatus != curr.pagingStatus,
+        builder: (context, state) {
+          return AppListView(
+            padding: EdgeInsets.zero,
+            fetchStatus: state.pagingStatus,
+            enablePullDown: false,
+            onLoadMore: () {
+              _forwardBloc.add(GetDataEvent());
+            },
+            data: state.workspaces,
+            builder: (context, index) {
+              return ForwardTile(workspaceEntity: state.workspaces[index]);
+            },
+            cardLoading: _buildLoading(),
+            separatorBuilder: (_, index) {
+              return SizedBox();
+            },
+            numCardLoading: 6,
+          );
+        },
+      ),
     );
   }
 
   Widget _buildSearchMode() {
-    return BlocListener<ForwardBloc, ForwardState>(
-      listener: (context, state) {
-        _searchRefreshController.refresh(state.searchPagingStatus);
-      },
-      listenWhen: (prev, curr) =>
-          prev.searchPagingStatus != curr.searchPagingStatus,
-      child: BlocSelector<ForwardBloc, ForwardState, List<WorkspaceEntity>>(
-        selector: (state) {
-          return state.workspacesSearch;
-        },
+    return Container(
+      color: AppColors.surfaceBackgroundBackground,
+      child: BlocBuilder<ForwardBloc, ForwardState>(
+        buildWhen: (prev, curr) =>
+            prev.searchPagingStatus != curr.searchPagingStatus ||
+            prev.workspacesSearch != curr.workspacesSearch,
         builder: (context, state) {
-          return AppPullToRefresh(
+          return AppListView(
+            padding: EdgeInsets.zero,
+            fetchStatus: state.searchPagingStatus,
             enablePullDown: false,
             onLoadMore: () {
               _forwardBloc.add(
                 SearchDebouncedEvent(_forwardBloc.state.searchKeyWord),
               );
             },
-            refreshController: _searchRefreshController,
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return ForwardTile(workspaceEntity: state[index]);
-              },
-              itemCount: state.length,
-            ),
+            data: state.workspacesSearch,
+            builder: (data, int index) {
+              return ForwardTile(
+                workspaceEntity: state.workspacesSearch[index],
+              );
+            },
+            cardLoading: _buildLoading(),
+            separatorBuilder: (_, index) {
+              return SizedBox();
+            },
           );
         },
       ),
@@ -140,7 +145,7 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
         Expanded(child: SizedBox()),
         Center(
           child: Text(
-            "Send to",
+            "general.send_to".tr(),
             style: TextStyle(
               fontSize: 16,
               height: 24 / 16,
@@ -160,7 +165,7 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
               child: Text(
-                "Done",
+                "general.done".tr(),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontFamily: FontFamily.segoeUI,
@@ -190,7 +195,7 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
               _forwardBloc.add(SearchEvent(value: value));
             },
             value: state,
-            hintText: "Tìm kiếm",
+            hintText: "general.search".tr(),
             fillColor: AppColors.surfaceContainerGrayStrong1,
             hintStyle: TextStyle(
               color: AppColors.textDefaultTextSub,
@@ -202,6 +207,72 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLoading() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CardLoading(
+                height: 48,
+                borderRadius: BorderRadius.all(Radius.circular(1000)),
+                width: 48,
+                margin: EdgeInsets.only(bottom: 10),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CardLoading(
+                                height: 25,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                width: double.infinity,
+                                margin: EdgeInsets.only(bottom: 10),
+                              ),
+                              const SizedBox(height: 6),
+                              CardLoading(
+                                height: 20,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                width: 150,
+                                margin: EdgeInsets.only(bottom: 10),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        CardLoading(
+                          height: 20,
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          width: 80,
+                          margin: EdgeInsets.only(bottom: 10),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

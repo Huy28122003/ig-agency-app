@@ -55,7 +55,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
 
     _searchOffset += result.length;
 
-    final pagingStatus = _limit >= result.length
+    final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
     List<WorkspaceEntity> currentList = List.from(state.workspacesSearch);
@@ -86,7 +86,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     );
     _offset += result.length;
 
-    final pagingStatus = _limit >= result.length
+    final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
     List<WorkspaceEntity> currentList = List.from(state.workspaces);
