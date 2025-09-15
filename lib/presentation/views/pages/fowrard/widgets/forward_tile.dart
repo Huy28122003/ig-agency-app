@@ -15,6 +15,7 @@ class ForwardTile extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(left: 20, top: 8, bottom: 12, right: 20),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,20 +40,17 @@ class ForwardTile extends StatelessWidget {
               ),
               SizedBox(width: 8),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    workspaceEntity.workspaceName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      height: 24 / 16,
-                      color: AppColors.textDefaultTextDefault,
-                      fontFamily: FontFamily.segoeUI,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                child: Text(
+                  workspaceEntity.workspaceName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    height: 24 / 16,
+                    color: AppColors.textDefaultTextDefault,
+                    fontFamily: FontFamily.segoeUI,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               SizedBox(width: 8),
@@ -91,7 +89,6 @@ class ForwardTile extends StatelessWidget {
                   color: AppColors.outlineGrayStrong200,
                 ),
               ),
-              SizedBox(width: 16),
             ],
           ),
         ],
