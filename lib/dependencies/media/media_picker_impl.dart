@@ -10,7 +10,9 @@ import 'package:ig_agency_app/shared/utils/logger.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @Injectable(as: MediaManager)
 class MediaPickerImpl extends MediaManager {
@@ -98,5 +100,41 @@ class MediaPickerImpl extends MediaManager {
       return false;
     }
     return false;
+  }
+
+  @override
+  Future<bool> openFileFromUrl(String url) async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final name = url.split('/').last;
+      final savePath = "${tempDir.path}/$name";
+
+      final response = await Dio().download(url, savePath);
+      if (response.statusCode == 200) {
+        final result = await OpenFilex.open(savePath);
+        return result.type == ResultType.done;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> openWebFromUrl(String url) async {
+    try {
+      final path = Uri.parse(url);
+      if (await canLaunchUrl(path)) {
+        final result = await launchUrl(
+          path,
+          mode: LaunchMode.externalApplication,
+        );
+        return result;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }

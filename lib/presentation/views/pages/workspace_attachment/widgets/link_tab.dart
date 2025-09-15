@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/models/meta_data_link.dart';
@@ -54,7 +53,14 @@ class _LinkTabState extends State<LinkTab> {
                   physics: AlwaysScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   itemBuilder: (context, index) {
-                    return LinkItem(metaDataLink: state[index]);
+                    return LinkItem(
+                      metaDataLink: state[index],
+                      onTap: () {
+                        _workspaceAttachmentBloc.mediaManager.openWebFromUrl(
+                          state[index].url,
+                        );
+                      },
+                    );
                   },
                   itemCount: state.length,
                   separatorBuilder: (context, index) {
@@ -70,41 +76,45 @@ class _LinkTabState extends State<LinkTab> {
 
 class LinkItem extends StatelessWidget {
   final MetaDataLink metaDataLink;
+  final VoidCallback onTap;
 
-  const LinkItem({super.key, required this.metaDataLink});
+  const LinkItem({super.key, required this.metaDataLink, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            metaDataLink.title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-              height: 20 / 14,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              metaDataLink.title,
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                height: 20 / 14,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            "${metaDataLink.url} - ${metaDataLink.description}",
-            style: const TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 12,
-              height: 16 / 12,
-              color: Colors.black54,
+            const SizedBox(height: 2),
+            Text(
+              "${metaDataLink.url} - ${metaDataLink.description}",
+              style: const TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+                height: 16 / 12,
+                color: Colors.black54,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

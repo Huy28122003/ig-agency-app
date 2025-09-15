@@ -11,4 +11,8 @@ abstract class MediaManager {
   Future<bool> saveNetworkImage(String path);
 
   Future<bool> saveVideoFromUrl(String url);
+
+  Future<bool> openFileFromUrl(String url);
+
+  Future<bool> openWebFromUrl(String url);
 }

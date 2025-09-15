@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ig_agency_app/dependencies/media/media_manager.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_data_in_group_params.dart';
@@ -23,6 +24,7 @@ class WorkspaceAttachmentBloc
   final GetMediasInGroupUseCase getMediasByWorkspaceIdUseCase;
   final GetFilesInGroupUseCase getFilesInGroupUseCase;
   final GetLinksInGroupUseCase getLinksInGroupUseCase;
+  final MediaManager mediaManager;
   late final int workspaceId;
   final int _mediaLimit = 15;
   final int _fileLimit = 15;
@@ -35,6 +37,7 @@ class WorkspaceAttachmentBloc
     required this.getMediasByWorkspaceIdUseCase,
     required this.getFilesInGroupUseCase,
     required this.getLinksInGroupUseCase,
+    required this.mediaManager,
   }) : super(WorkspaceAttachmentState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       add(GetMediasEvent());
