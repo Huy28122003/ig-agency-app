@@ -53,6 +53,12 @@ class _AppVideoPlayerState extends State<AppVideoPlayer> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (!_controller.value.isInitialized) {
       return Center(child: CircularProgressIndicator());
