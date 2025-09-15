@@ -310,6 +310,12 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   title: "group_info.media_file".tr(),
+                  onTap: () {
+                    if (state == null) return;
+                    context.router.push(
+                      WorkspaceAttachmentRoute(workspaceId: state.id),
+                    );
+                  },
                 ),
                 GroupInfoItem(
                   icon: Assets.icons.icPin.svg(

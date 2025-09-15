@@ -103,5 +103,20 @@
     "ago": "ago",
     "role_admin": "Admin",
     "role_member": "Member"
+  },
+  "attachment": {
+    "title": "Media, files & links",
+    "media": "Media",
+    "file": "Files",
+    "link": "Links",
+    "all_media": "All media",
+    "link_no_title": "Untitled",
+    "no_content": "No content",
+    "load_title_fail": "Unable to load title",
+    "load_content_fail": "Unable to load content"
+  },
+  "media_detail": {
+    "forward": "Forward",
+    "copy": "Copy"
   }
 }

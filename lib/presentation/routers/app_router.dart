@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../di/di.dart';
+import '../../domain/entities/media_entity.dart';
 import '../views/pages/authentication/forgot_password/forgot_password_page.dart';
 import '../views/pages/authentication/login/login_page.dart';
 import '../views/pages/authentication/otp/otp_page.dart';
@@ -11,6 +13,7 @@ import '../views/pages/edit_workspace_bio/edit_workspace_bio_page.dart';
 import '../views/pages/empty_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/authentication/reset_password/reset_password_page.dart';
+import '../views/pages/media_detail/media_detail_page.dart';
 import '../views/pages/media_preview/media_preview_page.dart';
 import '../views/pages/group_info/group_info_page.dart';
 import '../views/pages/members/members_page.dart';
@@ -30,6 +33,7 @@ import '../views/pages/work_place/list/workspace_list_page.dart';
 import '../views/pages/dashboard/home/dashboard_home_page.dart';
 import '../views/pages/work_place/create_group/create_group_page.dart';
 import '../views/pages/work_place/user_profile/user_profile_page.dart';
+import '../views/pages/workspace_attachment/workspace_attachment_page.dart';
 import 'auth_guard.dart';
 
 part 'app_router.gr.dart';
@@ -110,5 +114,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: GroupInfoRoute.page),
     AutoRoute(page: EditWorkspaceBioRoute.page),
     AutoRoute(page: MembersRoute.page),
+    AutoRoute(page: WorkspaceAttachmentRoute.page),
+    AutoRoute(page: MediaDetailRoute.page),
   ];
 }

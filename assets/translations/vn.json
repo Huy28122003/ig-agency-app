@@ -52,5 +52,20 @@
     "ago": "trước",
     "role_admin": "Quản trị viên",
     "role_member": "Thành viên"
+  },
+  "attachment": {
+    "title": "Phương tiện, tập tin & liên kết",
+    "media": "Phương tiện",
+    "file": "Tập tin",
+    "link": "Liên kết",
+    "all_media": "Tất cả",
+    "link_no_title": "Không có tiêu đề",
+    "no_content": "Không có nội dung",
+    "load_title_fail": "Không thể tải tiêu đề",
+    "load_content_fail": "Không thể tải nội dung"
+  },
+  "media_detail": {
+    "forward": "Chuyển tiếp",
+    "copy": "Sao chép"
   }
 }

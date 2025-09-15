@@ -133,7 +133,7 @@ class _EditWorkspaceBioMobileLayoutState
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       maxLength: 150,
-                      border: InputBorder.none,
+                      showUnderlineBorder: false,
                       style: TextStyle(
                         color: AppColors.textDefaultTextDefault,
                         fontSize: 16,
