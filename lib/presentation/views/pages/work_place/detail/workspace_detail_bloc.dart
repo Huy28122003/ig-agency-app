@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
@@ -35,35 +34,22 @@ part 'workspace_detail_state.dart';
 
 @injectable
 class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
-  WSDetailBloc({
-    required FetchMessagesWorkspaceUseCase fetchMessageUseCase,
-    required GetPinnedMessageSummaryWorkspaceUseCase
-    getPinnedMessageSummaryWorkspaceUseCase,
-    required SendMessageUseCase sendMessageUseCase,
-    required FetchMemberInWorkspaceUseCase fetchMemberInWorkspaceUseCase,
-    required SearchMemberInWorkspaceUseCase searchMemberInWorkspaceUseCase,
-    required UnpinMessageUseCase unpinMessageUseCase,
-    required PinMessageUseCase pinMessageUseCase,
-    required RamCache ramCache,
-    required MediaManager mediaManager,
-    required FileManager fileManager,
-  }) : _fetchMessageUseCase = fetchMessageUseCase,
-       _getPinnedMessageSummaryWorkspaceUseCase =
-           getPinnedMessageSummaryWorkspaceUseCase,
-       _sendMessageUseCase = sendMessageUseCase,
-       _fetchMemberInWorkspaceUseCase = fetchMemberInWorkspaceUseCase,
-       _searchMemberInWorkspaceUseCase = searchMemberInWorkspaceUseCase,
-       _unpinMessageUseCase = unpinMessageUseCase,
-       _pinMessageUseCase = pinMessageUseCase,
-       _ramCache = ramCache,
-       _mediaManager = mediaManager,
-       _fileManager = fileManager,
-       super(WSDetailState()) {
+  WSDetailBloc(
+    this._fetchMessageUseCase,
+    this._getPinnedMessageSummaryWorkspaceUseCase,
+    this._sendMessageUseCase,
+    this._fetchMemberInWorkspaceUseCase,
+    this._searchMemberInWorkspaceUseCase,
+    this._unpinMessageUseCase,
+    this._pinMessageUseCase,
+    this._mediaManager,
+    this._fileManager,
+    this._ramCache,
+  ) : super(WSDetailState()) {
     _registerHandlers();
     _initializeListener();
   }
 
-  late final int workspaceId;
   final FetchMessagesWorkspaceUseCase _fetchMessageUseCase;
   final GetPinnedMessageSummaryWorkspaceUseCase
   _getPinnedMessageSummaryWorkspaceUseCase;
@@ -72,14 +58,14 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   final SearchMemberInWorkspaceUseCase _searchMemberInWorkspaceUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
   final PinMessageUseCase _pinMessageUseCase;
-
   final MediaManager _mediaManager;
   final FileManager _fileManager;
   final RamCache _ramCache;
-
   StreamSubscription<MessageEntity>? _messageSubscription;
   StreamSubscription<String>? _tagQuerySubscription;
   StreamSubscription<bool>? _showTagOverlaySubscription;
+
+  late int workspaceId;
 
   final String _userId = '1';
   final int _limit = 20;

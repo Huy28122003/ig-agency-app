@@ -65,6 +65,14 @@ class GeneralSettingHomeSection extends StatelessWidget {
               },
             ),
             SettingItem(
+              icon: Assets.icons.icLinkedDevice.svg(width: 32, height: 32),
+              title: 'Linked Devices',
+              isShowArrow: true,
+              onTap: () {
+                context.router.push(const LinkedDeviceRoute());
+              },
+            ),
+            SettingItem(
               icon: Assets.icons.icInAppAlerts.svg(width: 32, height: 32),
               title: 'setting.notification'.tr(),
               trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
