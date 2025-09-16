@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../di/di.dart';
+import '../../domain/entities/linked_device/linked_device_entity.dart';
 import '../../domain/entities/media_entity.dart';
 import '../views/pages/authentication/forgot_password/forgot_password_page.dart';
 import '../views/pages/authentication/login/login_page.dart';
@@ -24,7 +25,10 @@ import '../views/pages/edit_name/edit_name_page.dart';
 import '../views/pages/edit_bio/edit_bio_page.dart';
 import '../views/pages/change_password/change_password_page.dart';
 import '../views/pages/search/search_page.dart';
+import '../views/pages/setting/device_detail/device_detail_page.dart';
 import '../views/pages/setting/home/setting_home_page.dart';
+import '../views/pages/setting/linked_device/linked_device_page.dart';
+import '../views/pages/setting/login_history/login_history_page.dart';
 import '../views/pages/setting/shell/setting_page.dart';
 import '../views/pages/shared_content/shared_content_page.dart';
 import '../views/pages/work_place/add_to_group/add_to_group_page.dart';
@@ -82,6 +86,7 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: EditNameRoute.page),
             AutoRoute(page: EditBioRoute.page),
             AutoRoute(page: ChangePasswordRoute.page),
+            AutoRoute(page: LinkedDeviceRoute.page),
           ],
         ),
         AutoRoute(page: WSDetailRoute.page),
@@ -116,5 +121,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: MembersRoute.page),
     AutoRoute(page: WorkspaceAttachmentRoute.page),
     AutoRoute(page: MediaDetailRoute.page),
+    AutoRoute(page: LinkedDeviceRoute.page),
+    AutoRoute(page: DeviceDetailRoute.page),
+    AutoRoute(page: LoginHistoryRoute.page),
   ];
 }
