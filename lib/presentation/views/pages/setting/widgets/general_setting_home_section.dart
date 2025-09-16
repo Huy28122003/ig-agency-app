@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +23,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
           items: [
             SettingItem(
               icon: Assets.icons.icDarkMode.svg(width: 32, height: 32),
-              title: 'Dark Mode',
+              title: 'setting.dark_mode'.tr(),
               trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
                 selector: (state) => state.isDarkMode,
                 builder: (context, isDarkMode) {
@@ -44,7 +45,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
             ),
             SettingItem(
               icon: Assets.icons.icPinMessages.svg(width: 32, height: 32),
-              title: 'Pinned Messages',
+              title: 'setting.pinned_message'.tr(),
               isShowArrow: true,
               onTap: () {
                 context.router.push(const PinnedMessageRoute());
@@ -56,7 +57,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
           items: [
             SettingItem(
               icon: Assets.icons.icBlockUsers.svg(width: 32, height: 32),
-              title: 'Blocked Users',
+              title: 'setting.blocked_user'.tr(),
               isShowArrow: true,
               onTap: () {
                 // TODO route
@@ -73,7 +74,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
             ),
             SettingItem(
               icon: Assets.icons.icInAppAlerts.svg(width: 32, height: 32),
-              title: 'In App Alerts',
+              title: 'setting.notification'.tr(),
               trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
                 selector: (state) => state.isInAppAlerts,
                 builder: (context, isInAppAlerts) {

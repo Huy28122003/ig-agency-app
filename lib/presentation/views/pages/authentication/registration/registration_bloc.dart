@@ -3,7 +3,6 @@ import 'package:ig_agency_app/domain/usecases/register_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../../shared/commons/constants/string.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
 
@@ -73,7 +72,6 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
         confirmPassword: state.confirmPassword,
       ),
     );
-    kTesting = true;
     emit(state.copyWith(processing: false, isSuccess: true));
   }
 }

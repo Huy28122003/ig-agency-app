@@ -79,7 +79,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
 
     final darkModeResult = await _getDarkModeUseCase.call(null);
     final inAppAlertsResult = await _getInAppAlertsUseCase.call(null);
-    final userResult = await _fetchCurrentUserUseCase(NoParam());
+    final userResult = await _fetchCurrentUserUseCase.call(null);
 
     emit(
       state.copyWith(

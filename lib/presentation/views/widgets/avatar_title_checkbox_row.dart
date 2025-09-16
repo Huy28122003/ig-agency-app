@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../shared/commons/app_checkbox.dart';
+import 'app_checkbox.dart';
 import '../../resources/colors.dart';
 import 'circle_network_avatar.dart';
 

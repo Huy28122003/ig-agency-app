@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../data/remote/models/response/error_response_mode.dart';
 import 'exceptions.dart';
 
 class ExceptionConverter {
@@ -14,10 +15,10 @@ class ExceptionConverter {
         case DioExceptionType.connectionError:
           return NoInternetException();
         default:
-          // if (e.error != null && e.error is ErrorResponseModel) {
-          //   final error = e.error! as ErrorResponseModel;
-          //   return ApiException(error.httpCode, error.code, error.message);
-          // }
+          if (e.error != null && e.error is ErrorResponseModel) {
+            final error = e.error! as ErrorResponseModel;
+            return ApiException(error.httpCode, error.code, error.message);
+          }
           return ApiException(e.response?.statusCode, null, null);
       }
     } else if (e is ApiException) {
