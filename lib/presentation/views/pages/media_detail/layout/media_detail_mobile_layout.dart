@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
+import 'package:ig_agency_app/presentation/views/pages/fowrard/forward_bottom_sheet.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/bloc/media_detail_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/widgets/image_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/media_detail/widgets/video_widget.dart';
@@ -81,7 +82,11 @@ class _MediaDetailMobileLayoutState extends State<MediaDetailMobileLayout> {
                     ),
                   ),
                   PopupMenuButton(
-                    onSelected: (option) {},
+                    onSelected: (option) {
+                      if (option == MenuOption.forward) {
+                        ForwardBottomSheet.show(context, messageId: "1");
+                      }
+                    },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

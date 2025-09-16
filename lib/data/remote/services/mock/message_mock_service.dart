@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:injectable/injectable.dart';
 
+import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
+import '../../../../domain/entities/pinned_message_summary.dart';
+import '../../../../domain/entities/user_entity.dart';
 import '../../../../domain/enums/message_enums.dart';
 
 @singleton
@@ -11,9 +15,11 @@ class MessageMockService {
 
   final Map<int, List<MessageEntity>> _messageMockData = {};
 
-  MessageMockService() {
+  MessageMockService(this._ramCache) {
     _initializeMockData();
   }
+
+  final RamCache _ramCache;
 
   void _initializeMockData() {
     if (_messageMockData.isEmpty) {
@@ -94,6 +100,7 @@ class MessageMockService {
     'The deadline has been extended',
     'New features are now available',
     'Please update your software',
+    ('Hoannk alabama kamekameha\n' * 30),
   ];
 
   final List<String> _mockImages = [
@@ -184,7 +191,7 @@ class MessageMockService {
           TextSegmentType.normal,
         );
         final user = _mockUsers[_random.nextInt(_mockUsers.length)];
-        addSegment("@${user['name']}", TextSegmentType.mention);
+        addSegment("@${user['name']}", TextSegmentType.tag);
         break;
 
       case 2:
@@ -200,7 +207,7 @@ class MessageMockService {
       case 3:
         // Mention + text + link
         final user = _mockUsers[_random.nextInt(_mockUsers.length)];
-        addSegment("@${user['name']} ", TextSegmentType.mention);
+        addSegment("@${user['name']} ", TextSegmentType.tag);
         addSegment(
           "${_mockTexts[_random.nextInt(_mockTexts.length)]} ",
           TextSegmentType.normal,
@@ -215,27 +222,27 @@ class MessageMockService {
 
   List<MessageEntity> _createMockMessages(int groupId, {int count = 50}) {
     DateTime current = DateTime.now();
+    current = current.subtract(Duration(days: 365));
 
     final List<MessageEntity> messages = [];
 
     for (int i = 0; i < count; i++) {
-      current = current.subtract(
-        _timeSteps[_random.nextInt(_timeSteps.length)],
-      );
+      current = current.add(_timeSteps[_random.nextInt(_timeSteps.length)]);
 
       final type =
           MessageType.values[_random.nextInt(MessageType.values.length)];
       final content = _generateContent(type);
 
       MessageReply? reply;
-      if (messages.isNotEmpty && _random.nextDouble() < 0.3) {
+      if (messages.isNotEmpty && _random.nextDouble() < 0.3 && i != 0) {
         final message = messages[_random.nextInt(messages.length)];
         final messageId = message.id;
-        if (messageId != null && message.type != MessageType.system) {
+        if (message.type != MessageType.system) {
           final messageType = message.type;
 
           reply = MessageReply(
             messageId: messageId,
+            senderId: message.sender.id,
             senderName: message.sender.name,
             originalMessageType: messageType,
           );
@@ -248,11 +255,19 @@ class MessageMockService {
               break;
             case MessageType.image:
               final image = message.content as ImageMessageContent;
-              reply = reply.copyWith(previewImageUrl: image.imageUrl);
+              reply = reply.copyWith(
+                previewImageUrl: image.imageUrl,
+                previewWidth: image.width,
+                previewHeight: image.height,
+              );
               break;
             case MessageType.video:
               final video = message.content as VideoMessageContent;
-              reply = reply.copyWith(previewThumbnailUrl: video.thumbnailUrl);
+              reply = reply.copyWith(
+                previewThumbnailUrl: video.thumbnailUrl,
+                previewWidth: video.width,
+                previewHeight: video.height,
+              );
               break;
             case MessageType.file:
               final file = message.content as FileMessageContent;
@@ -274,7 +289,7 @@ class MessageMockService {
 
       messages.add(
         MessageEntity(
-          id: "msg_${groupId}_$i",
+          id: "msg_${groupId}_${current.millisecondsSinceEpoch}",
           sender: MessageSender(
             id: sender['id']!,
             name: sender['name']!,
@@ -284,7 +299,7 @@ class MessageMockService {
           type: type,
           content: content,
           status: MessageStatus.sent,
-          groupId: groupId,
+          workspaceId: groupId,
           groupName: groupName,
           reply: reply,
           isPinned: type == MessageType.system ? false : _random.nextBool(),
@@ -446,5 +461,209 @@ class MessageMockService {
     final messages = _messageMockData[targetGroupId]!;
     messages[targetMessageIndex] = updatedMessage;
     _messageMockData[targetGroupId] = messages;
+  }
+
+  Future<void> mockPinMessage(String messageId) async {
+    MessageEntity? targetMessage;
+    int? targetGroupId;
+    int? targetMessageIndex;
+
+    for (final entry in _messageMockData.entries) {
+      final groupId = entry.key;
+      final messages = entry.value;
+
+      final messageIndex = messages.indexWhere(
+        (message) => message.id == messageId,
+      );
+      if (messageIndex != -1) {
+        targetMessage = messages[messageIndex];
+        targetGroupId = groupId;
+        targetMessageIndex = messageIndex;
+        break;
+      }
+    }
+
+    if (targetMessage == null ||
+        targetMessageIndex == null ||
+        targetGroupId == null) {
+      throw Exception('Message not found');
+    }
+
+    if (targetMessage.isPinned) {
+      throw Exception('Message is already pinned');
+    }
+
+    final updatedMessage = targetMessage.copyWith(
+      isPinned: true,
+      pinnedAt: DateTime.now(),
+    );
+
+    final messages = _messageMockData[targetGroupId]!;
+    messages[targetMessageIndex] = updatedMessage;
+    _messageMockData[targetGroupId] = messages;
+  }
+
+  PinnedMessageSummary mockGetPinnedMessageSummary(int groupId) {
+    final pinnedMessages = (_messageMockData[groupId] ?? [])
+        .where((element) => element.isPinned)
+        .toList();
+
+    if (pinnedMessages.isEmpty) {
+      return PinnedMessageSummary(totalPinnedMessages: 0);
+    }
+
+    return PinnedMessageSummary(
+      latestMessage: pinnedMessages.lastOrNull,
+      totalPinnedMessages: pinnedMessages.length,
+    );
+  }
+
+  (List<MessageEntity>, int) mockFetchMessagesByGroupId({
+    required int groupId,
+    int limit = 10,
+    String? oldestMessageId,
+    String? targetMessageId,
+  }) {
+    final messages = _messageMockData[groupId];
+    if (messages == null || messages.isEmpty) {
+      return ([], 0);
+    }
+
+    var messageIndex = 0;
+
+    if (oldestMessageId == null) {
+      messageIndex = messages.length - 1;
+    } else {
+      messageIndex = messages.indexWhere(
+        (message) => message.id == oldestMessageId,
+      );
+      if (messageIndex == -1) {
+        throw Exception();
+      }
+    }
+
+    var offset = 0;
+
+    if (targetMessageId != null) {
+      final targetMessageIndex = messages.indexWhere(
+        (message) => message.id == targetMessageId,
+      );
+      if (targetMessageIndex == -1) {
+        throw Exception();
+      } else {
+        offset = max(0, targetMessageIndex);
+        if (targetMessageIndex >= messageIndex) {
+          throw Exception();
+        }
+        return (
+          messages
+              .skip(offset)
+              .take(messageIndex - targetMessageIndex)
+              .toList(),
+          messages.length,
+        );
+      }
+    }
+
+    offset = max(0, messageIndex + 1 - limit);
+    final newLimit = limit >= messageIndex ? limit : (messageIndex + 1);
+
+    return (messages.skip(offset).take(newLimit).toList(), messages.length);
+  }
+
+  UserEntity? getUserById(String userId) {
+    final userData = _mockUsers
+        .where((element) => element['id'] == userId)
+        .firstOrNull;
+
+    if (userData == null) {
+      return null;
+    }
+
+    return UserEntity(
+      id: userData['id']!,
+      name: userData['name']!,
+      email: '',
+      avatar: userData['avatarUrl']!,
+    );
+  }
+
+  Future<void> addMessage(
+    String userId,
+    int workspaceId,
+    String? replyMessageId,
+    dynamic content,
+  ) async {
+    final messageId =
+        "msg_${workspaceId}_${DateTime.now().millisecondsSinceEpoch}";
+
+    final user = getUserById(userId);
+    if (user == null) {
+      throw Exception();
+    }
+
+    final type = switch (content) {
+      TextMessageContent _ => MessageType.text,
+      ImageMessageContent _ => MessageType.image,
+      VideoMessageContent _ => MessageType.video,
+      FileMessageContent _ => MessageType.file,
+      _ => throw UnimplementedError(),
+    };
+
+    final sentMessage = MessageEntity(
+      id: messageId,
+      sender: MessageSender(
+        id: user.id,
+        name: user.name,
+        avatarUrl: user.avatar,
+      ),
+      status: MessageStatus.sent,
+      createdAt: DateTime.now(),
+      type: type,
+      content: switch (content) {
+        TextMessageContent _ => content,
+        _ => _generateContent(type),
+      },
+      workspaceId: workspaceId,
+    );
+
+    if (_messageMockData[workspaceId] == null) {
+      _messageMockData[workspaceId] = [];
+    }
+    _messageMockData[workspaceId]?.add(sentMessage);
+    _ramCache.saveMessage(sentMessage);
+  }
+
+  List<UserEntity> mockGetMemberInGroup(
+    int groupId, {
+    int limit = 10,
+    int offset = 0,
+  }) {
+    return _mockUsers
+        .map(
+          (e) => UserEntity(
+            id: e['id']!,
+            name: e['name']!,
+            email: '',
+            avatar: e['avatarUrl']!,
+          ),
+        )
+        .skip(offset)
+        .take(limit)
+        .toList();
+  }
+
+  List<UserEntity> mockSearchMemberInGroup(int groupId, String query) {
+    return _mockUsers
+        .map(
+          (e) => UserEntity(
+            id: e['id']!,
+            name: e['name']!,
+            email: '',
+            avatar: e['avatarUrl']!,
+          ),
+        )
+        .where((e) => e.name.contains(query))
+        .toList();
   }
 }

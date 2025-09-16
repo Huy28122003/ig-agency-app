@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/models/meta_data_link.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
+import '../../../ui_models/meta_data_link.dart';
 import '../../../widgets/app_pull_to_refresh.dart';
 import '../bloc/workspace_attachment_bloc.dart';
 
@@ -56,8 +56,8 @@ class _LinkTabState extends State<LinkTab> {
                     return LinkItem(
                       metaDataLink: state[index],
                       onTap: () {
-                        _workspaceAttachmentBloc.mediaManager.openWebFromUrl(
-                          state[index].url,
+                        _workspaceAttachmentBloc.add(
+                          OpenLinkEvent(index: index),
                         );
                       },
                     );

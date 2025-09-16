@@ -7,12 +7,12 @@ import 'package:ig_agency_app/domain/usecases/workspace/get_files_in_group_use_c
 import 'package:ig_agency_app/domain/usecases/workspace/get_links_in_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_medias_in_group_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
-import 'package:ig_agency_app/presentation/views/models/meta_data_link.dart';
 import 'package:injectable/injectable.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
+import '../../../ui_models/meta_data_link.dart';
 
 part 'workspace_attachment_event.dart';
 
@@ -56,18 +56,17 @@ class WorkspaceAttachmentBloc
           workspaceId: workspaceId,
         ),
       );
-      _mediaOffset += result.data.length;
-      final pagingStatus = _mediaOffset >= result.totalRecords
+      _mediaOffset += result.length;
+      final pagingStatus = _mediaLimit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
       List<MediaEntity> currentList = List.from(state.medias);
-      currentList.addAll(result.data);
+      currentList.addAll(result);
       emit(
         state.copyWith(
-          pageStatus: PageStatus.loaded,
           medias: currentList,
           mediaPagingStatus: pagingStatus,
-          totalMedia: result.totalRecords,
+          totalMedia: currentList.length, // todo
         ),
       );
     });
@@ -82,19 +81,13 @@ class WorkspaceAttachmentBloc
           workspaceId: workspaceId,
         ),
       );
-      _fileOffset += result.data.length;
-      final pagingStatus = _fileOffset >= result.totalRecords
+      _fileOffset += result.length;
+      final pagingStatus = _fileLimit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
       List<FileEntity> currentList = List.from(state.files);
-      currentList.addAll(result.data);
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.loaded,
-          files: currentList,
-          filePagingStatus: pagingStatus,
-        ),
-      );
+      currentList.addAll(result);
+      emit(state.copyWith(files: currentList, filePagingStatus: pagingStatus));
     });
     handleSubEvent<GetLinksEvent>((event, emit) async {
       emit(state.copyWith(linkPagingStatus: PagingStatus.loading));
@@ -106,13 +99,13 @@ class WorkspaceAttachmentBloc
           workspaceId: workspaceId,
         ),
       );
-      _linkOffset += result.data.length;
-      final pagingStatus = _linkOffset >= result.totalRecords
+      _linkOffset += result.length;
+      final pagingStatus = _linkLimit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
       List<MetaDataLink> currentList = List.from(state.links);
-      final futures = result.data.map((url) async {
+      final futures = result.map((url) async {
         try {
           final meta = await MetadataFetch.extract(url);
           return MetaDataLink(
@@ -133,6 +126,18 @@ class WorkspaceAttachmentBloc
       currentList.addAll(converted);
 
       emit(state.copyWith(linkPagingStatus: pagingStatus, links: currentList));
+    });
+
+    handleSubEvent<OpenLinkEvent>((event, emit) async {
+      mediaManager.openWebFromUrl(state.links[event.index].url);
+    });
+
+    handleSubEvent<OpenFileEvent>((event, emit) async {
+      mediaManager.openFileFromUrl(
+        //todo
+        // state.files[event.index].url,
+        "https://pdfobject.com/pdf/sample.pdf",
+      );
     });
   }
 }

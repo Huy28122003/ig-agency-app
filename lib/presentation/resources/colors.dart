@@ -19,10 +19,13 @@ abstract class AppColors {
   );
   static final Color textNeutralWhite = Colors.white;
   static final Color textSecondaryTextSub = Color(0xFF009689);
+  static final Color textAlertTextInfo = Color(0xFF2B7FFF);
 
   /// Icon
   static const Color iconDefaultDefault = Color(0xFF08090A);
   static const Color iconDefaultDefaultInverted = Color(0xFFFFFFFF);
+  static const Color iconAlertInfo = Color(0xFF2B7FFF);
+  static const Color iconAlertError = Color(0xFFFB2C36);
 
   /// Outline
   static const Color outlineGrayStrong200 = Color(0xFFE5E7EB);
@@ -52,6 +55,9 @@ abstract class AppColors {
 
   /// Others
   static const Color colorsBlue = Color(0xFF007AFF);
+  static const Color colorsRed = Color(0xFFFF3B30);
+
+  static Color? labelsTertiary = Color(0x4C3C3C43);
 
   /// Icon
   static const Color iconDefaultDefaultSub = Color(0xFF6A7282);

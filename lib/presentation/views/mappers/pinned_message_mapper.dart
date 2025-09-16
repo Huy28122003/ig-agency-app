@@ -1,7 +1,7 @@
 import '../../../domain/entities/message/message.dart';
 import '../../../domain/enums/message_enums.dart';
 import '../../../shared/commons/enums/pinned_message_type.dart';
-import '../models/pinned_message_ui_model.dart';
+import '../ui_models/pinned_message_ui_model.dart';
 
 class PinnedMessageMapper {
   static PinnedMessageUIModel fromMessageEntity(MessageEntity entity) {

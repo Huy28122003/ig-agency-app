@@ -18,7 +18,10 @@
   },
   "general": {
     "delete": "Xóa",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "done": "Hoàn thành",
+    "send_to": "Gửi đến",
+    "search": "Tìm kiếm"
   },
   "forgot_password": {
     "forgot_password": "Quên mật khẩu?",

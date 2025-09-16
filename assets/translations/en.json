@@ -31,7 +31,10 @@
   },
   "general": {
     "delete": "Delete",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "done": "Done",
+    "send_to": "Send to",
+    "search": "Search"
   },
   "forgot_password": {
     "forgot_password": "Forgot Password?",

@@ -8,43 +8,36 @@ import '../../../domain/entities/message/message.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../gen/fonts.gen.dart';
 import '../../../shared/utils/text_message_display_util.dart';
-import '../models/pinned_message_ui_model.dart';
+import '../ui_models/pinned_message_ui_model.dart';
 
 import 'circle_network_avatar.dart';
 import 'network_image.dart';
 
-class PinnedMessageBubble extends StatefulWidget {
+class PinnedMessageBubble extends StatelessWidget {
   const PinnedMessageBubble({
     super.key,
     required this.message,
-    required this.onTap,
+    this.onTap,
+    this.onLongPress,
+    this.hasArrow = false,
   });
 
   final PinnedMessageUIModel message;
-  final VoidCallback onTap;
-
-  @override
-  State<PinnedMessageBubble> createState() => _PinnedMessageBubbleState();
-}
-
-class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
-  late PinnedMessageUIModel _message;
-
-  @override
-  void initState() {
-    super.initState();
-    _message = widget.message;
-  }
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final bool hasArrow;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      onLongPress: onLongPress,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 12,
         children: [
-          CircleNetworkAvatar(imageUrl: _message.senderAvatarUrl, size: 24),
+          CircleNetworkAvatar(imageUrl: message.senderAvatarUrl, size: 24),
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -60,7 +53,7 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
                     children: [
                       Flexible(
                         child: Text(
-                          _message.senderName,
+                          message.senderName,
                           style: TextStyle(
                             color: AppColors.textDefaultTextSub2,
                             fontSize: 14,
@@ -83,7 +76,7 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
                         ),
                       ),
                       Text(
-                        _message.pinnedAt.toShortDateString(),
+                        message.pinnedAt.toShortDateString(),
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,
@@ -98,10 +91,7 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    GestureDetector(
-                      onTap: widget.onTap,
-                      child: _buildPinnedMessageContent(),
-                    ),
+                    _buildPinnedMessageContent(),
                     Positioned(
                       left: -10,
                       top: -10,
@@ -112,13 +102,14 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
               ],
             ),
           ),
+          if (hasArrow) Assets.icons.icArrowRight.svg(width: 24, height: 24),
         ],
       ),
     );
   }
 
   Widget _buildPinnedMessageContent() {
-    if (_message.isText) {
+    if (message.isText) {
       final textStyle = const TextStyle(
         color: AppColors.textDefaultTextDefault,
         fontSize: 16,
@@ -127,15 +118,15 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
         height: 1.50,
       );
 
-      final (textSpans, hostName) = TextMessageDisplayUtil.parseTextContent(
-        _message.content,
+      final (textSpans, hostName, _) = TextMessageDisplayUtil.parseTextContent(
+        message.content,
         textStyle,
       );
       return _PinnedMessageText(textSpans: textSpans, hostName: hostName);
     }
 
-    if (_message.isImage) {
-      final imageContent = _message.content as ImageMessageContent;
+    if (message.isImage) {
+      final imageContent = message.content as ImageMessageContent;
       return _PinnedMessageImage(
         imageUrl: imageContent.imageUrl,
         width: imageContent.width,
@@ -143,8 +134,8 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
       );
     }
 
-    if (_message.isVideo) {
-      final videoContent = _message.content as VideoMessageContent;
+    if (message.isVideo) {
+      final videoContent = message.content as VideoMessageContent;
       return _PinnedMessageVideo(
         imageUrl: videoContent.thumbnailUrl ?? '',
         width: videoContent.width,
@@ -153,8 +144,8 @@ class _PinnedMessageBubbleState extends State<PinnedMessageBubble> {
       );
     }
 
-    if (_message.isFile) {
-      final fileContent = _message.content as FileMessageContent;
+    if (message.isFile) {
+      final fileContent = message.content as FileMessageContent;
 
       return _PinnedMessageFile(
         fileFullName: '${fileContent.fileName}.${fileContent.fileExtension}',
@@ -227,8 +218,8 @@ class _PinnedMessageImage extends StatelessWidget {
 class _PinnedMessageVideo extends StatelessWidget {
   const _PinnedMessageVideo({
     required this.imageUrl,
-    this.width,
-    this.height,
+    required this.width,
+    required this.height,
     required this.duration,
   });
 
@@ -250,11 +241,15 @@ class _PinnedMessageVideo extends StatelessWidget {
             fit: BoxFit.contain,
             child: Image(image: imageProvider),
           ),
-          Positioned(right: 7, bottom: 4, child: _buidlDurationChip()),
+          Positioned(right: 8, bottom: 8, child: _buildDurationChip(duration)),
           Align(
-            child: Icon(
-              Icons.play_circle_filled,
-              color: AppColors.textNeutralWhite,
+            child: Container(
+              padding: const EdgeInsets.all(9),
+              decoration: ShapeDecoration(
+                color: AppColors.surfaceContainerAlphaAlphaBlack37,
+                shape: const CircleBorder(),
+              ),
+              child: Assets.icons.icPlaySize30.svg(width: 30, height: 30),
             ),
           ),
         ],
@@ -263,33 +258,25 @@ class _PinnedMessageVideo extends StatelessWidget {
     );
   }
 
-  Widget _buidlDurationChip() {
+  Widget _buildDurationChip(Duration duration) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerAlphaAlphaBlack37,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(9999),
+          borderRadius: BorderRadius.all(Radius.circular(9999)),
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 10,
-        children: [
-          Text(
-            duration.toVideoDurationString(),
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              color: AppColors.textNeutralWhite,
-              fontSize: 12,
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w600,
-              height: 1.33,
-            ),
-          ),
-        ],
+      child: Text(
+        duration.toVideoDurationString(),
+        textAlign: TextAlign.right,
+        style: TextStyle(
+          color: AppColors.textNeutralWhite,
+          fontSize: 12,
+          fontFamily: FontFamily.segoeUI,
+          fontWeight: FontWeight.w600,
+          height: 1.33,
+        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
-import 'package:ig_agency_app/domain/entities/paged_result.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/shared/commons/models/pagination.dart';
@@ -12,7 +11,7 @@ import '../../../shared/utils/mock_data.dart';
 @Injectable(as: WorkspaceRepository)
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
   @override
-  Future<PagedResult<WorkspaceEntity>> getWorkspaces({
+  Future<List<WorkspaceEntity>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,
@@ -30,14 +29,12 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
                 .toList()
           : allData;
 
-      final total = filtered.length;
-      final start = ((offset - 1) * limit).clamp(0, total);
-      final end = (start + limit).clamp(0, total);
-      final pageData = start < end
-          ? filtered.sublist(start, end)
-          : <WorkspaceEntity>[];
+      final pageData = filtered.sublist(
+        offset,
+        offset + limit > filtered.length ? filtered.length : offset + limit,
+      );
 
-      return PagedResult<WorkspaceEntity>(data: pageData, totalRecords: 30);
+      return pageData;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -80,19 +77,6 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }) async {
     try {
       return true;
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<PagedResult<UserEntity>> getUserByWorkspaceId({
-    required int workspaceId,
-    required int offset,
-    required int limit,
-  }) {
-    try {
-      return MockData().getUsers(limit: limit, offset: offset);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -160,33 +144,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<UserEntity>> getUserInGroup({
-    required int workspaceId,
-    required int offset,
-    required int limit,
-  }) {
-    try {
-      return MockData().getUsers();
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<PagedResult<MediaEntity>> getMediasInGroup({
+  Future<List<UserEntity>> getUserInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
   }) async {
     try {
-      return PagedResult(
-        data: MockData().mockMediaData.sublist(
-          offset,
-          offset + limit > MockData().mockMediaData.length
-              ? MockData().mockMediaData.length
-              : offset + limit,
-        ),
-        totalRecords: MockData().mockMediaData.length,
+      return MockData().users.sublist(
+        offset,
+        offset + limit > MockData().users.length
+            ? MockData().users.length
+            : offset + limit,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -194,20 +162,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<FileEntity>> getFileInGroup({
+  Future<List<MediaEntity>> getMediasInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
   }) async {
     try {
-      return PagedResult(
-        data: MockData().mockFileEntities().sublist(
-          offset,
-          offset + limit > MockData().mockFileEntities().length
-              ? MockData().mockFileEntities().length
-              : offset + limit,
-        ),
-        totalRecords: MockData().mockFileEntities().length,
+      return MockData().mockMediaData.sublist(
+        offset,
+        offset + limit > MockData().mockMediaData.length
+            ? MockData().mockMediaData.length
+            : offset + limit,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -215,20 +180,35 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<PagedResult<String>> getLinkInGroup({
+  Future<List<FileEntity>> getFileInGroup({
     required int workspaceId,
     required int offset,
     required int limit,
   }) async {
     try {
-      return PagedResult(
-        data: MockData().mockLinks.sublist(
-          offset,
-          offset + limit > MockData().mockLinks.length
-              ? MockData().mockLinks.length
-              : offset + limit,
-        ),
-        totalRecords: MockData().mockLinks.length,
+      return MockData().mockFileEntities().sublist(
+        offset,
+        offset + limit > MockData().mockFileEntities().length
+            ? MockData().mockFileEntities().length
+            : offset + limit,
+      );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<List<String>> getLinkInGroup({
+    required int workspaceId,
+    required int offset,
+    required int limit,
+  }) async {
+    try {
+      return MockData().mockLinks.sublist(
+        offset,
+        offset + limit > MockData().mockLinks.length
+            ? MockData().mockLinks.length
+            : offset + limit,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
