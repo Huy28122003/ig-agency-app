@@ -16,6 +16,14 @@ class FetchPinnedMessageUseCase
   Future<PagedResult<MessageEntity>> call(
     FetchPinnedMessageParams params,
   ) async {
+    final workspaceId = params.workspaceId;
+    if (workspaceId != null) {
+      return await _messageRepository.fetchPinnedMessagesByWorkspaceId(
+        workspaceId,
+        params.limit,
+        params.offset,
+      );
+    }
     return await _messageRepository.fetchPinnedMessages(
       params.limit,
       params.offset,
@@ -24,8 +32,13 @@ class FetchPinnedMessageUseCase
 }
 
 class FetchPinnedMessageParams {
+  final int? workspaceId;
   final int limit;
   final int offset;
 
-  FetchPinnedMessageParams({required this.limit, required this.offset});
+  FetchPinnedMessageParams({
+    required this.limit,
+    required this.offset,
+    this.workspaceId,
+  });
 }

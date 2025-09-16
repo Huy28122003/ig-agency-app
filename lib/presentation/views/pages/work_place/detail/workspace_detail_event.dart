@@ -7,3 +7,116 @@ sealed class WSDetailEvent {
 class LoadDataEvent extends WSDetailEvent {
   const LoadDataEvent();
 }
+
+class CloseReplyMessageEvent extends WSDetailEvent {
+  const CloseReplyMessageEvent();
+}
+
+class ToggleShowScrollToBottomIcon extends WSDetailEvent {
+  const ToggleShowScrollToBottomIcon();
+}
+
+class ReplyToMessageEvent extends WSDetailEvent {
+  const ReplyToMessageEvent({required this.message});
+
+  final MessageEntity message;
+}
+
+class SendMessageEvent extends WSDetailEvent {
+  const SendMessageEvent({required this.type});
+
+  final SendMessageType type;
+}
+
+class ResetScrollToBottomEvent extends WSDetailEvent {
+  const ResetScrollToBottomEvent();
+}
+
+class AddMessageEvent extends WSDetailEvent {
+  const AddMessageEvent({required this.message});
+
+  final MessageEntity message;
+}
+
+class UpdateHasOptionsEvent extends WSDetailEvent {
+  const UpdateHasOptionsEvent({required this.hasOptions});
+  final bool hasOptions;
+}
+
+class UpdateHasSendButtonEvent extends WSDetailEvent {
+  const UpdateHasSendButtonEvent({required this.hasSendButton});
+
+  final bool hasSendButton;
+}
+
+class FetchMembersEvent extends WSDetailEvent {
+  const FetchMembersEvent();
+}
+
+class SearchMembersEvent extends WSDetailEvent {
+  const SearchMembersEvent({required this.query});
+
+  final String query;
+}
+
+class LoadPinnedMessagesEvent extends WSDetailEvent {
+  const LoadPinnedMessagesEvent();
+}
+
+class RefreshPinnedMessagesEvent extends WSDetailEvent {
+  const RefreshPinnedMessagesEvent();
+}
+
+class LoadMorePinnedMessagesEvent extends WSDetailEvent {
+  const LoadMorePinnedMessagesEvent();
+}
+
+class UnpinMessageFromDetailEvent extends WSDetailEvent {
+  const UnpinMessageFromDetailEvent({required this.messageId});
+
+  final String messageId;
+}
+
+class PinMessageFromDetailEvent extends WSDetailEvent {
+  const PinMessageFromDetailEvent({required this.messageId});
+
+  final String messageId;
+}
+
+class ResetPinStatusSuccessEvent extends WSDetailEvent {
+  const ResetPinStatusSuccessEvent();
+}
+
+class JumpToMessageEvent extends WSDetailEvent {
+  const JumpToMessageEvent({required this.messageId});
+
+  final String messageId;
+}
+
+class ResetJumpToMessageEvent extends WSDetailEvent {
+  const ResetJumpToMessageEvent();
+}
+
+class ShowTimeEvent extends WSDetailEvent {
+  const ShowTimeEvent({required this.messageId});
+
+  final String messageId;
+}
+
+class DisableShowTimeEvent extends WSDetailEvent {
+  const DisableShowTimeEvent();
+}
+
+class GetPinnedMessageSummaryEvent extends WSDetailEvent {
+  const GetPinnedMessageSummaryEvent();
+}
+
+class LoadMoreChatMessagesEvent extends WSDetailEvent {
+  const LoadMoreChatMessagesEvent();
+}
+
+class UpdateShowTagOverlayEvent extends WSDetailEvent {
+  const UpdateShowTagOverlayEvent({required this.showTagOverlay});
+
+  final bool showTagOverlay;
+}
