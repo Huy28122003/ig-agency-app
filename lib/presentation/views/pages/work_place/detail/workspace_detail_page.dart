@@ -15,6 +15,9 @@ class WSDetailPage
   final int workspaceId;
 
   @override
+  WSDetailBloc get buildBloc => super.buildBloc..workspaceId = workspaceId;
+
+  @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
     context.read<WSDetailBloc>().add(LoadDataEvent());
@@ -29,7 +32,4 @@ class WSDetailPage
   Widget? tabletBuilder(BuildContext context) {
     return WorkspaceDetailTabletLayout();
   }
-
-  @override
-  WSDetailBloc get buildBloc => super.buildBloc..workspaceId = workspaceId;
 }

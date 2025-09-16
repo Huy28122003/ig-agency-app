@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import 'file_manager.dart';
 
-@injectable
+@Injectable(as: FileManager)
 class FileManagerImpl implements FileManager {
   @override
   Future<List<PlatformFile>?> pickFiles({
