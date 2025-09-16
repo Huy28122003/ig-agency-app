@@ -78,31 +78,37 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
   }
 
   Widget _buildNormalMode() {
-    return Container(
-      child: BlocBuilder<ForwardBloc, ForwardState>(
-        buildWhen: (prev, curr) =>
-            prev.workspaces != curr.workspaces ||
-            prev.pagingStatus != curr.pagingStatus,
-        builder: (context, state) {
-          return AppListView(
-            padding: EdgeInsets.zero,
-            fetchStatus: state.pagingStatus,
-            enablePullDown: false,
-            onLoadMore: () {
-              _forwardBloc.add(GetDataEvent());
-            },
-            data: state.workspaces,
-            builder: (context, index) {
-              return ForwardTile(workspaceEntity: state.workspaces[index]);
-            },
-            cardLoading: _buildLoading(),
-            separatorBuilder: (_, index) {
-              return SizedBox();
-            },
-            numCardLoading: 6,
-          );
-        },
-      ),
+    return BlocBuilder<ForwardBloc, ForwardState>(
+      buildWhen: (prev, curr) =>
+          prev.workspaces != curr.workspaces ||
+          prev.pagingStatus != curr.pagingStatus ||
+          prev.sentGroups != curr.sentGroups,
+      builder: (context, state) {
+        return AppListView(
+          padding: EdgeInsets.zero,
+          fetchStatus: state.pagingStatus,
+          enablePullDown: false,
+          onLoadMore: () {
+            _forwardBloc.add(GetDataEvent());
+          },
+          data: state.workspaces,
+          builder: (context, index) {
+            final groupId = state.workspaces[index].id;
+            return ForwardTile(
+              onTap: () {
+                _forwardBloc.add(SendMessageToGroupEvent(groupId: groupId));
+              },
+              workspaceEntity: state.workspaces[index],
+              isSent: state.sentGroups.contains(groupId),
+            );
+          },
+          cardLoading: _buildLoading(),
+          separatorBuilder: (_, index) {
+            return SizedBox();
+          },
+          numCardLoading: 6,
+        );
+      },
     );
   }
 
@@ -125,8 +131,13 @@ class _ForwardBottomSheetState extends State<ForwardBottomSheet> {
             },
             data: state.workspacesSearch,
             builder: (data, int index) {
+              final groupId = state.workspacesSearch[index].id;
               return ForwardTile(
                 workspaceEntity: state.workspacesSearch[index],
+                isSent: state.sentGroups.contains(groupId),
+                onTap: () {
+                  _forwardBloc.add(SendMessageToGroupEvent(groupId: groupId));
+                },
               );
             },
             cardLoading: _buildLoading(),

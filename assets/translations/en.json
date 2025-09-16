@@ -35,7 +35,8 @@
     "cancel": "Cancel",
     "done": "Done",
     "send_to": "Send to",
-    "search": "Search"
+    "search": "Search",
+    "send": "Send"
   },
   "forgot_password": {
     "forgot_password": "Forgot Password?",

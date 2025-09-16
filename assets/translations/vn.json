@@ -22,7 +22,8 @@
     "cancel": "Hủy",
     "done": "Hoàn thành",
     "send_to": "Gửi đến",
-    "search": "Tìm kiếm"
+    "search": "Tìm kiếm",
+    "send": "Gửi"
   },
   "forgot_password": {
     "forgot_password": "Quên mật khẩu?",
