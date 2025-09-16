@@ -55,7 +55,16 @@ class _FileTabState extends State<FileTab> {
                 child: ListView.separated(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   itemBuilder: (context, index) {
-                    return FileItem(fileEntity: state[index]);
+                    return FileItem(
+                      fileEntity: state[index],
+                      onTap: () {
+                        _workspaceAttachmentBloc.mediaManager.openFileFromUrl(
+                          //todo
+                          // state[index].url,
+                          "https://pdfobject.com/pdf/sample.pdf",
+                        );
+                      },
+                    );
                   },
                   itemCount: state.length,
                   separatorBuilder: (context, index) {
@@ -70,50 +79,54 @@ class _FileTabState extends State<FileTab> {
 }
 
 class FileItem extends StatelessWidget {
-  const FileItem({super.key, required this.fileEntity});
+  const FileItem({super.key, required this.fileEntity, required this.onTap});
 
   final FileEntity fileEntity;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerGrayStrong1,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Assets.icons.icCircleDocumentPrimary.svg(width: 24, height: 24),
-          SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  fileEntity.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    height: 20 / 14,
-                    fontFamily: FontFamily.segoeUI,
-                    color: AppColors.textDefaultTextDefault,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerGrayStrong1,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Assets.icons.icCircleDocumentPrimary.svg(width: 24, height: 24),
+            SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fileEntity.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      height: 20 / 14,
+                      fontFamily: FontFamily.segoeUI,
+                      color: AppColors.textDefaultTextDefault,
+                    ),
                   ),
-                ),
-                Text(
-                  "${fileEntity.size.toStringAsFixed(2)} MB",
-                  style: TextStyle(
-                    fontFamily: FontFamily.segoeUI,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                    height: 16 / 12,
-                    color: AppColors.textDefaultTextSub2,
+                  Text(
+                    "${fileEntity.size.toStringAsFixed(2)} MB",
+                    style: TextStyle(
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      height: 16 / 12,
+                      color: AppColors.textDefaultTextSub2,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
