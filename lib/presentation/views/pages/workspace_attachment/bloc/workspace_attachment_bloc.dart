@@ -7,12 +7,12 @@ import 'package:ig_agency_app/domain/usecases/workspace/get_files_in_group_use_c
 import 'package:ig_agency_app/domain/usecases/workspace/get_links_in_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_medias_in_group_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
-import 'package:ig_agency_app/presentation/views/models/meta_data_link.dart';
 import 'package:injectable/injectable.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
+import '../../../ui_models/meta_data_link.dart';
 
 part 'workspace_attachment_event.dart';
 
