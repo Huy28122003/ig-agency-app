@@ -56,8 +56,8 @@ class _LinkTabState extends State<LinkTab> {
                     return LinkItem(
                       metaDataLink: state[index],
                       onTap: () {
-                        _workspaceAttachmentBloc.mediaManager.openWebFromUrl(
-                          state[index].url,
+                        _workspaceAttachmentBloc.add(
+                          OpenLinkEvent(index: index),
                         );
                       },
                     );
