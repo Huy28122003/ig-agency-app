@@ -58,10 +58,8 @@ class _FileTabState extends State<FileTab> {
                     return FileItem(
                       fileEntity: state[index],
                       onTap: () {
-                        _workspaceAttachmentBloc.mediaManager.openFileFromUrl(
-                          //todo
-                          // state[index].url,
-                          "https://pdfobject.com/pdf/sample.pdf",
+                        _workspaceAttachmentBloc.add(
+                          OpenFileEvent(index: index),
                         );
                       },
                     );
