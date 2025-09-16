@@ -128,7 +128,7 @@ class MockData {
   );
 
   final users = List.generate(
-    30,
+    50,
     (index) => UserEntity(
       id: 'user_$index',
       name: 'User ${index + 1}',
@@ -141,19 +141,6 @@ class MockData {
       isAdmin: index % 10 == 0,
     ),
   );
-
-  Future<PagedResult<UserEntity>> getUsers({
-    int limit = 15,
-    int offset = 0,
-  }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    final slice = users.sublist(
-      offset,
-      limit + offset > users.length ? users.length : limit + offset,
-    );
-
-    return PagedResult<UserEntity>(data: slice, totalRecords: users.length);
-  }
 
   static List<WorkspaceEntity> getWorkspaces() {
     return [
