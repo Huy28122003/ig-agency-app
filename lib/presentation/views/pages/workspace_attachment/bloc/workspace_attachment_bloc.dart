@@ -134,5 +134,17 @@ class WorkspaceAttachmentBloc
 
       emit(state.copyWith(linkPagingStatus: pagingStatus, links: currentList));
     });
+
+    handleSubEvent<OpenLinkEvent>((event, emit) async {
+      mediaManager.openWebFromUrl(state.links[event.index].url);
+    });
+
+    handleSubEvent<OpenFileEvent>((event, emit) async {
+      mediaManager.openFileFromUrl(
+        //todo
+        // state.files[event.index].url,
+        "https://pdfobject.com/pdf/sample.pdf",
+      );
+    });
   }
 }
