@@ -19,6 +19,7 @@ abstract class AppColors {
   );
   static final Color textNeutralWhite = Colors.white;
   static final Color textSecondaryTextSub = Color(0xFF009689);
+  static final Color textAlertTextInfo = Color(0xFF2B7FFF);
   static const Color textAlertTextInfo = Color(0xFF2B7FFF);
 
   /// Icon

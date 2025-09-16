@@ -57,21 +57,35 @@ class PermissionHandler extends PermissionManager {
   }
 
   @override
-  Future checkSavingMedia() async {
+  Future<AppPermissionStatus> checkSavingMedia() async {
     if (Platform.isAndroid) {
-      final storage = await Permission.storage.status;
-      if (storage.isDenied) {
-        await Permission.storage.request();
+      final permissions = [Permission.storage, Permission.photos];
+
+      for (final permission in permissions) {
+        var status = await permission.status;
+
+        if (status.isGranted) {
+          return _fromPermissionHandlerType(status);
+        }
+
+        if (status.isDenied) {
+          status = await permission.request();
+          if (status.isGranted) {
+            return _fromPermissionHandlerType(status);
+          }
+        }
       }
-      final photos = await Permission.photos.status;
-      if (photos.isDenied) {
-        await Permission.photos.request();
-      }
+
+      final lastStatus = await permissions.last.status;
+      return _fromPermissionHandlerType(lastStatus);
     } else if (Platform.isIOS) {
-      final status = await Permission.photosAddOnly.status;
-      if (status.isGranted) {
-        await Permission.photosAddOnly.request();
+      var status = await Permission.photosAddOnly.status;
+      if (status.isDenied) {
+        status = await Permission.photosAddOnly.request();
       }
+      return _fromPermissionHandlerType(status);
     }
+
+    return AppPermissionStatus.denied;
   }
 }

@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 
 import '../../../gen/assets.gen.dart';
@@ -40,7 +40,12 @@ class CircleNetworkAvatar extends StatelessWidget {
     return CircleAvatar(
       radius: size / 2,
       backgroundColor: AppColors.surfaceContainerGrayStrong05,
-      child: const Center(child: CupertinoActivityIndicator()),
+      child: Center(
+        child: CardLoading(
+          borderRadius: BorderRadius.all(Radius.circular(size / 2)),
+          height: size,
+        ),
+      ),
     );
   }
 
