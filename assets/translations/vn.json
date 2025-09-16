@@ -14,14 +14,16 @@
     "unmute_time_8": "Trong 8 giờ",
     "unmute_time_24": "Trong 24 giờ",
     "unmute_time_life": "Cho đến khi tôi thay đổi",
-    "hint_text_search": "Nhập tên nhóm"
+    "hint_text_search": "Nhập tên nhóm",
+    "new_message": "Tin nhắn mới"
   },
   "general": {
     "delete": "Xóa",
     "cancel": "Hủy",
     "done": "Hoàn thành",
     "send_to": "Gửi đến",
-    "search": "Tìm kiếm"
+    "search": "Tìm kiếm",
+    "send": "Gửi"
   },
   "forgot_password": {
     "forgot_password": "Quên mật khẩu?",

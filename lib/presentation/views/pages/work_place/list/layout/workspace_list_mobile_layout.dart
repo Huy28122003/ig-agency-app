@@ -193,6 +193,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
             height: double.infinity,
             color: Colors.white,
             child: AppListView(
+              separatorBuilder: (_, index) {
+                return SizedBox();
+              },
               padding: EdgeInsets.zero,
               cardLoading: _buildLoading(),
               numCardLoading: 6,
