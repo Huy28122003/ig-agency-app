@@ -119,6 +119,8 @@ class _CreateGroupMobileLayoutState extends State<CreateGroupMobileLayout> {
                   onTap: () {
                     Navigator.of(context).pop();
                   },
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
                   child: Center(
                     child: Text(
                       'create_group.cancel'.tr(),

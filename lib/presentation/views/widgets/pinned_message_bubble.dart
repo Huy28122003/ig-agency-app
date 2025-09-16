@@ -102,7 +102,7 @@ class PinnedMessageBubble extends StatelessWidget {
               ],
             ),
           ),
-          if (hasArrow) Assets.icons.icArrowRight.svg(width: 24, height: 24),
+          if (hasArrow) Assets.icons.icArrowRightThin.svg(width: 24, height: 24),
         ],
       ),
     );

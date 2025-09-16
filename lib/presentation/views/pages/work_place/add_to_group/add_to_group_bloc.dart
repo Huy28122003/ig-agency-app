@@ -123,15 +123,13 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
     SubmitAddToGroupEvent event,
     Emitter<AddToGroupState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loading));
+    emit(state.copyWith(processing: true));
 
     final value = await _repo.addUserToGroups(
       state.user,
       state.listSelectedGroup,
     );
 
-    emit(
-      state.copyWith(addToGroupSuccess: value, pageStatus: PageStatus.loaded),
-    );
+    emit(state.copyWith(addToGroupSuccess: value, processing: false));
   }
 }
