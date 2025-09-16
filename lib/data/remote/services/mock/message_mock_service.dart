@@ -634,11 +634,7 @@ class MessageMockService {
     _ramCache.saveMessage(sentMessage);
   }
 
-  List<UserEntity> mockGetMemberInGroup(
-    int groupId, {
-    int limit = 10,
-    int offset = 0,
-  }) {
+  List<UserEntity> mockGetMemberInGroup(int groupId) {
     return _mockUsers
         .map(
           (e) => UserEntity(
@@ -646,10 +642,9 @@ class MessageMockService {
             name: e['name']!,
             email: '',
             avatar: e['avatarUrl']!,
+            isOnline: _random.nextBool(),
           ),
         )
-        .skip(offset)
-        .take(limit)
         .toList();
   }
 
@@ -665,5 +660,17 @@ class MessageMockService {
         )
         .where((e) => e.name.contains(query))
         .toList();
+  }
+
+  Future<void> mockDeleteMessageForEveryone(String messageId) async {
+    for (final workspaceId in _messageMockData.keys) {
+      _messageMockData[workspaceId]?.removeWhere(
+        (message) => message.id == messageId,
+      );
+    }
+  }
+
+  Future<void> mockDeleteMessageForYou(String messageId) async {
+    mockDeleteMessageForEveryone(messageId);
   }
 }

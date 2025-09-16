@@ -14,15 +14,21 @@ class ChatBubbleContent extends StatelessWidget {
     super.key,
     required this.message,
     required this.maxWidth,
+    this.searchText,
   });
 
   final MessageEntity message;
   final double maxWidth;
+  final String? searchText;
 
   @override
   Widget build(BuildContext context) {
     if (message.isText) {
-      return _TextMessageContent(message: message, maxWidth: maxWidth);
+      return _TextMessageContent(
+        message: message,
+        maxWidth: maxWidth,
+        searchText: searchText,
+      );
     }
 
     if (message.isImage) {
@@ -42,10 +48,15 @@ class ChatBubbleContent extends StatelessWidget {
 }
 
 class _TextMessageContent extends StatelessWidget {
-  const _TextMessageContent({required this.message, required this.maxWidth});
+  const _TextMessageContent({
+    required this.message,
+    required this.maxWidth,
+    this.searchText,
+  });
 
   final MessageEntity message;
   final double maxWidth;
+  final String? searchText;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +71,7 @@ class _TextMessageContent extends StatelessWidget {
     final (textSpans, _, link) = TextMessageDisplayUtil.parseTextContent(
       message.content,
       textStyle,
+      searchText: searchText,
     );
 
     return Container(

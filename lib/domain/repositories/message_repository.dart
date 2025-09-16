@@ -29,4 +29,8 @@ abstract class MessageRepository {
     String? replyMessageId,
     dynamic content,
   );
+
+  Future<void> deleteMessageForEveryone(String messageId);
+
+  Future<void> deleteMessageForYou(String messageId);
 }

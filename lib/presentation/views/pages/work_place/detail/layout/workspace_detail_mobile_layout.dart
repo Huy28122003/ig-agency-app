@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../domain/entities/message/message.dart';
+import '../../../../../../domain/entities/user_entity.dart';
 import '../../../../../../domain/enums/send_message_type.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
+import '../../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../ui_models/pinned_message_summary_ui_model.dart';
 import '../../../../widgets/chat/pinned_message_section.dart';
@@ -132,15 +134,25 @@ class _WorkspaceDetailMobileLayoutState
                         height: 1.50,
                       ),
                     ),
-                    Text(
-                      '99 Members, 29 Online',
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextSub2,
-                        fontSize: 14,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w400,
-                        height: 1.14,
-                      ),
+                    BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
+                      selector: (state) {
+                        return state.users;
+                      },
+                      builder: (context, users) {
+                        final onlineUsers = users
+                            .where((user) => user.isOnline)
+                            .length;
+                        return Text(
+                          '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                          style: TextStyle(
+                            color: AppColors.textDefaultTextSub2,
+                            fontSize: 14,
+                            fontFamily: FontFamily.segoeUI,
+                            fontWeight: FontWeight.w400,
+                            height: 1.14,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -149,101 +161,130 @@ class _WorkspaceDetailMobileLayoutState
           ),
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              BlocSelector<
-                WSDetailBloc,
-                WSDetailState,
-                PinnedMessageSummaryUiModel?
-              >(
+          child:
+              BlocSelector<WSDetailBloc, WSDetailState, GroupMembershipStatus>(
                 selector: (state) {
-                  return state.pinnedMessageSummary;
+                  return state.groupMembershipStatus;
                 },
-                builder: (context, pinnedMessageSummary) {
-                  if (pinnedMessageSummary == null) {
-                    return const SizedBox.shrink();
-                  }
-
-                  return SizedBox(
-                    child: PinnedMessageSection(
-                      pinnedMessageSummary: pinnedMessageSummary,
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          useSafeArea: true,
-                          elevation: 0,
-                          barrierColor: Colors.black.withValues(alpha: 0.68),
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return Stack(
-                              children: [
-                                // Tap to close bottom sheet
-                                Positioned.fill(
-                                  top: 0,
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(color: Colors.transparent),
-                                  ),
-                                ),
-                                PinnedMessagesBottomSheet(
-                                  workspaceId: _bloc.workspaceId,
-                                  onTap: (messageId) {
-                                    _bloc.add(
-                                      JumpToMessageEvent(messageId: messageId),
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                                  onUnpinSuccess: () {
-                                    _bloc.add(GetPinnedMessageSummaryEvent());
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  );
+                builder: (context, state) {
+                  return state == GroupMembershipStatus.active
+                      ? _ChatListMainView(bloc: _bloc)
+                      : _KickedView(bloc: _bloc);
                 },
               ),
-              Expanded(child: ChatContent()),
-              BlocSelector<WSDetailBloc, WSDetailState, MessageEntity?>(
-                selector: (state) {
-                  return state.messageReply;
-                },
-                builder: (context, message) {
-                  return ChatInputBar(
-                    workspaceId: _bloc.workspaceId,
-                    userId: _bloc.userId,
-                    messageReply: message,
-                    onReplyClose: () {
-                      _bloc.add(CloseReplyMessageEvent());
-                    },
-                    onDocumentTap: () {
-                      // TODO hoannk:
-                    },
-                    onCameraTap: () {
-                      // TODO hoannk:
-                    },
-                    onMediaTap: () {
-                      _bloc.add(SendMessageEvent(type: SendMessageType.media));
-                    },
-                    onSendTap: () {
-                      _bloc.add(SendMessageEvent(type: SendMessageType.text));
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
         ),
       ),
     );
+  }
+}
+
+class _ChatListMainView extends StatelessWidget {
+  const _ChatListMainView({required WSDetailBloc bloc}) : _bloc = bloc;
+
+  final WSDetailBloc _bloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        BlocSelector<WSDetailBloc, WSDetailState, PinnedMessageSummaryUiModel?>(
+          selector: (state) {
+            return state.pinnedMessageSummary;
+          },
+          builder: (context, pinnedMessageSummary) {
+            if (pinnedMessageSummary == null) {
+              return const SizedBox.shrink();
+            }
+
+            return SizedBox(
+              child: PinnedMessageSection(
+                pinnedMessageSummary: pinnedMessageSummary,
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    useSafeArea: true,
+                    elevation: 0,
+                    barrierColor: Colors.black.withValues(alpha: 0.68),
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Stack(
+                        children: [
+                          // Tap to close bottom sheet
+                          Positioned.fill(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(color: Colors.transparent),
+                            ),
+                          ),
+                          PinnedMessagesBottomSheet(
+                            workspaceId: _bloc.workspaceId,
+                            onTap: (messageId) {
+                              _bloc.add(
+                                JumpToMessageEvent(messageId: messageId),
+                              );
+                              Navigator.pop(context);
+                            },
+                            onUnpinSuccess: () {
+                              _bloc.add(GetPinnedMessageSummaryEvent());
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        Expanded(child: ChatContent()),
+        BlocSelector<WSDetailBloc, WSDetailState, MessageEntity?>(
+          selector: (state) {
+            return state.messageReply;
+          },
+          builder: (context, message) {
+            return ChatInputBar(
+              workspaceId: _bloc.workspaceId,
+              userId: _bloc.userId,
+              messageReply: message,
+              onReplyClose: () {
+                _bloc.add(CloseReplyMessageEvent());
+              },
+              onDocumentTap: () {
+                _bloc.add(SendMessageEvent(type: SendMessageType.file));
+              },
+              onCameraTap: () {
+                // TODO hoannk:
+              },
+              onMediaTap: () {
+                _bloc.add(SendMessageEvent(type: SendMessageType.media));
+              },
+              onSendTap: () {
+                _bloc.add(SendMessageEvent(type: SendMessageType.text));
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _KickedView extends StatelessWidget {
+  const _KickedView({required WSDetailBloc bloc}) : _bloc = bloc;
+
+  final WSDetailBloc _bloc;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO hoannk:
+    return const SizedBox();
   }
 }

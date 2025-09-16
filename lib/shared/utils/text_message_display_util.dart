@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../domain/entities/message/message.dart';
 import '../../domain/enums/message_enums.dart';
+import '../../presentation/resources/colors.dart';
 
 class TextMessageDisplayUtil {
   static (List<TextSpan>, String?, String?) parseTextContent(
@@ -9,6 +10,9 @@ class TextMessageDisplayUtil {
     TextStyle? textStyle, {
     TextStyle? linkStyle,
     TextStyle? mentionStyle,
+    TextStyle? searchStyle,
+    String? searchText,
+    bool caseSensitive = true,
   }) {
     final textContent = content as TextMessageContent;
 
@@ -20,6 +24,9 @@ class TextMessageDisplayUtil {
         textStyle: textStyle,
         linkStyle: linkStyle,
         mentionStyle: mentionStyle,
+        searchStyle: searchStyle,
+        searchText: searchText,
+        caseSensitive: caseSensitive,
       );
     } else {
       return ([TextSpan(text: textContent.text, style: textStyle)], null, null);
@@ -32,8 +39,24 @@ class TextMessageDisplayUtil {
     TextStyle? textStyle,
     TextStyle? linkStyle,
     TextStyle? mentionStyle,
+    TextStyle? searchStyle,
+    String? searchText,
+    bool caseSensitive = true,
   }) {
-    textSegments.sort((a, b) => a.start.compareTo(b.start));
+    List<TextSegment> allSegments = List.from(textSegments);
+
+    if (searchText != null && searchText.isNotEmpty) {
+      final searchSegments = _createSearchSegments(
+        text,
+        searchText,
+        caseSensitive,
+      );
+      allSegments.addAll(searchSegments);
+    }
+
+    allSegments = _handleSegments(allSegments)
+      ..sort((a, b) => a.start.compareTo(b.start));
+
     final spans = <TextSpan>[];
     String? hostName;
     String? link;
@@ -42,8 +65,12 @@ class TextMessageDisplayUtil {
 
     linkStyle ??= textStyle?.copyWith(decoration: TextDecoration.underline);
     mentionStyle ??= textStyle?.copyWith(fontWeight: FontWeight.w700);
+    searchStyle ??= textStyle?.copyWith(
+      backgroundColor: AppColors.surfaceContainerGrayStrong95,
+      color: AppColors.textDefaultTextInverted,
+    );
 
-    for (final ann in textSegments) {
+    for (final ann in allSegments) {
       if (ann.start > lastIndex) {
         spans.add(
           TextSpan(
@@ -64,6 +91,9 @@ class TextMessageDisplayUtil {
         case TextSegmentType.tag:
           spans.add(TextSpan(text: textPart, style: mentionStyle));
           break;
+        case TextSegmentType.search:
+          spans.add(TextSpan(text: textPart, style: searchStyle));
+          break;
         default:
           spans.add(TextSpan(text: textPart, style: textStyle));
       }
@@ -76,6 +106,32 @@ class TextMessageDisplayUtil {
     }
 
     return (spans, hostName, link);
+  }
+
+  static List<TextSegment> _createSearchSegments(
+    String text,
+    String searchText,
+    bool caseSensitive,
+  ) {
+    final segments = <TextSegment>[];
+    final escapedSearchText = RegExp.escape(searchText);
+    final pattern = RegExp(escapedSearchText, caseSensitive: caseSensitive);
+    for (final match in pattern.allMatches(text)) {
+      segments.add(
+        TextSegment(
+          type: TextSegmentType.search,
+          start: match.start,
+          end: match.end,
+        ),
+      );
+    }
+
+    return segments;
+  }
+
+  static List<TextSegment> _handleSegments(List<TextSegment> segments) {
+    // TODO: Handle segments
+    return segments;
   }
 
   static int calculateTextLines({

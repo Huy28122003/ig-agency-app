@@ -19,7 +19,10 @@ import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case
 import '../../../../../domain/usecases/message/send_message_use_case.dart';
 import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../../../domain/usecases/message/pin_message_use_case.dart';
+import '../../../../../domain/usecases/message/delete_message_for_everyone_use_case.dart';
+import '../../../../../domain/usecases/message/delete_message_for_you_use_case.dart';
 import '../../../../../domain/usecases/member/search_member_in_group_use_case.dart';
+import '../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../ui_models/chat_message/chat_message_ui_model_helper.dart';
 import '../../../../../shared/utils/tag_user_text_editing_controller.dart';
@@ -42,6 +45,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     required SearchMemberInGroupUseCase searchMemberInGroupUseCase,
     required UnpinMessageUseCase unpinMessageUseCase,
     required PinMessageUseCase pinMessageUseCase,
+    required DeleteMessageForEveryoneUseCase deleteMessageForEveryoneUseCase,
+    required DeleteMessageForYouUseCase deleteMessageForYouUseCase,
     required RamCache ramCache,
     required MediaManager mediaManager,
     required FileManager fileManager,
@@ -53,6 +58,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
        _searchMemberInGroupUseCase = searchMemberInGroupUseCase,
        _unpinMessageUseCase = unpinMessageUseCase,
        _pinMessageUseCase = pinMessageUseCase,
+       _deleteMessageForEveryoneUseCase = deleteMessageForEveryoneUseCase,
+       _deleteMessageForYouUseCase = deleteMessageForYouUseCase,
        _ramCache = ramCache,
        _mediaManager = mediaManager,
        _fileManager = fileManager,
@@ -70,6 +77,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   final SearchMemberInGroupUseCase _searchMemberInGroupUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
   final PinMessageUseCase _pinMessageUseCase;
+  final DeleteMessageForEveryoneUseCase _deleteMessageForEveryoneUseCase;
+  final DeleteMessageForYouUseCase _deleteMessageForYouUseCase;
 
   final MediaManager _mediaManager;
   final FileManager _fileManager;
@@ -137,6 +146,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<PinMessageFromDetailEvent>(_onPinMessage);
     handleSubEvent<ResetPinStatusSuccessEvent>(_onResetPinStatusSuccess);
     handleSubEvent<UpdateShowTagOverlayEvent>(_onUpdateShowTagOverlay);
+    handleSubEvent<DeleteMessageForEveryoneEvent>(_onDeleteMessageForEveryone);
+    handleSubEvent<DeleteMessageForYouEvent>(_onDeleteMessageForYou);
   }
 
   void _initializeListener() {
@@ -575,6 +586,76 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final uiModel = pinnedMessageSummary.toUIModel();
 
     emit(state.copyWith(pinnedMessageSummary: uiModel));
+  }
+
+  Future<void> _onDeleteMessageForEveryone(
+    DeleteMessageForEveryoneEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+
+    try {
+      await _deleteMessageForEveryoneUseCase.call(
+        DeleteMessageForEveryoneParams(messageId: event.messageId),
+      );
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      final messageIndex = state.chatMessages.indexWhere(
+        (uiModel) => uiModel.message.id == event.messageId,
+      );
+      var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
+      if (messageIndex != -1) {
+        updatedMessages.removeAt(messageIndex);
+        // Cập nhật message trước của message vừa xoá
+        if (messageIndex > 0) {
+          updatedMessages = _updateUIModel(updatedMessages, messageIndex - 1);
+        }
+        // Cập nhật message sau của message vừa xoá
+        if (messageIndex < updatedMessages.length - 1) {
+          updatedMessages = _updateUIModel(updatedMessages, messageIndex + 1);
+        }
+      }
+
+      emit(state.copyWith(chatMessages: updatedMessages, processing: false));
+    } catch (e) {
+      emit(state.copyWith(processing: false));
+    }
+  }
+
+  Future<void> _onDeleteMessageForYou(
+    DeleteMessageForYouEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+
+    try {
+      await _deleteMessageForYouUseCase.call(
+        DeleteMessageForYouParams(messageId: event.messageId),
+      );
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      final messageIndex = state.chatMessages.indexWhere(
+        (uiModel) => uiModel.message.id == event.messageId,
+      );
+      var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
+      if (messageIndex != -1) {
+        updatedMessages.removeAt(messageIndex);
+        // Cập nhật message trước của message vừa xoá
+        if (messageIndex > 0) {
+          updatedMessages = _updateUIModel(updatedMessages, messageIndex - 1);
+        }
+        // Cập nhật message sau của message vừa xoá
+        if (messageIndex < updatedMessages.length - 1) {
+          updatedMessages = _updateUIModel(updatedMessages, messageIndex + 1);
+        }
+      }
+
+      emit(state.copyWith(chatMessages: updatedMessages, processing: false));
+    } catch (e) {
+      emit(state.copyWith(processing: false));
+    }
   }
 
   // Functions

@@ -33,6 +33,7 @@ class ChatMessageBubble extends StatefulWidget {
     this.onForward,
     this.onPin,
     this.onDelete,
+    this.searchText,
   });
 
   final double maxWidth;
@@ -52,6 +53,7 @@ class ChatMessageBubble extends StatefulWidget {
   final VoidCallback? onForward;
   final Function(bool isPinned)? onPin;
   final VoidCallback? onDelete;
+  final String? searchText;
 
   @override
   State<ChatMessageBubble> createState() => _ChatMessageBubbleState();
@@ -63,6 +65,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   late bool _shouldShowAvatar;
   late bool _shouldShowUserName;
   late bool _isContinuation;
+  late String? _searchText;
   late ChatBubbleAnimationHelper _animationHelper;
 
   final ValueNotifier<double> _dragDistance = ValueNotifier(0.0);
@@ -76,6 +79,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     _shouldShowAvatar = widget.shouldShowAvatar;
     _shouldShowUserName = widget.shouldShowUserName;
     _isContinuation = widget.isContinuation;
+    _searchText = widget.searchText;
     _animationHelper = ChatBubbleAnimationHelper(
       isMe: isMe,
       horizontalPadding: widget.horizontalPadding,
@@ -93,6 +97,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
       _shouldShowAvatar = widget.shouldShowAvatar;
       _shouldShowUserName = widget.shouldShowUserName;
       _isContinuation = widget.isContinuation;
+    }
+    if (widget.searchText != oldWidget.searchText) {
+      _searchText = widget.searchText;
     }
   }
 
@@ -402,6 +409,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                             key: ValueKey('${_message.id}-no-reply'),
                             message: _message,
                             maxWidth: widget.maxWidth,
+                            searchText: _searchText,
                           ),
                   ],
                 ),

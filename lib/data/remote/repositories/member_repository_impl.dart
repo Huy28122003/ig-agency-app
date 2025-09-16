@@ -12,14 +12,8 @@ class MemberRepositoryImpl implements MemberRepository {
   @override
   Future<List<UserEntity>> fetchMembersInGroup({
     required int workspaceId,
-    required int limit,
-    required int offset,
   }) async {
-    return _messageMockService.mockGetMemberInGroup(
-      workspaceId,
-      limit: limit,
-      offset: offset,
-    );
+    return _messageMockService.mockGetMemberInGroup(workspaceId);
   }
 
   @override

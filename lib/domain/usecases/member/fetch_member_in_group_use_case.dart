@@ -14,20 +14,12 @@ class FetchMemberInGroupUseCase
   Future<List<UserEntity>> call(FetchMemberInGroupParams params) async {
     return _memberRepository.fetchMembersInGroup(
       workspaceId: params.workspaceId,
-      limit: params.limit,
-      offset: params.offset,
     );
   }
 }
 
 class FetchMemberInGroupParams {
   final int workspaceId;
-  final int limit;
-  final int offset;
 
-  FetchMemberInGroupParams({
-    required this.workspaceId,
-    required this.limit,
-    required this.offset,
-  });
+  FetchMemberInGroupParams({required this.workspaceId});
 }

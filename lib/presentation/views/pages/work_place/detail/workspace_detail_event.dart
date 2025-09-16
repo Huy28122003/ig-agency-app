@@ -120,3 +120,15 @@ class UpdateShowTagOverlayEvent extends WSDetailEvent {
 
   final bool showTagOverlay;
 }
+
+class DeleteMessageForEveryoneEvent extends WSDetailEvent {
+  const DeleteMessageForEveryoneEvent({required this.messageId});
+
+  final String messageId;
+}
+
+class DeleteMessageForYouEvent extends WSDetailEvent {
+  const DeleteMessageForYouEvent({required this.messageId});
+
+  final String messageId;
+}

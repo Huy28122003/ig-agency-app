@@ -9,6 +9,7 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import '../../../../../../domain/enums/message_enums.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
+import '../../../../../resources/colors.dart';
 import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
 import '../../../../ui_models/chat_message/chat_message_ui_model.dart';
 import '../workspace_detail_bloc.dart';
@@ -90,6 +91,70 @@ class _ChatContentState extends State<ChatContent> {
       refreshController.requestRefresh();
       _bloc.add(LoadMoreChatMessagesEvent());
     }
+  }
+
+  Future<void> _showDeleteOptionSheet(
+    BuildContext context,
+    String messageId,
+  ) async {
+    await showCupertinoModalPopup(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.68),
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _bloc.add(DeleteMessageForEveryoneEvent(messageId: messageId));
+            },
+            child: Text(
+              'Delete for everyone',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.colorsRed,
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                height: 1.29,
+                letterSpacing: -0.43,
+              ),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _bloc.add(DeleteMessageForYouEvent(messageId: messageId));
+            },
+            child: Text(
+              'Delete for you',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.colorsRed,
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                height: 1.29,
+                letterSpacing: -0.43,
+              ),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'Cancel',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.colorsBlue,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              height: 1.29,
+              letterSpacing: -0.43,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -218,6 +283,7 @@ class _ChatContentState extends State<ChatContent> {
                           shouldShowAvatar: shouldShowAvatar,
                           shouldShowUserName: shouldShowUserName,
                           isContinuation: isContinuation,
+                          searchText: 'alabama',
                           userId: _bloc.userId,
                           onTap: () {
                             final messageId = uiModel.message.id;
@@ -252,6 +318,9 @@ class _ChatContentState extends State<ChatContent> {
                                 ),
                               );
                             }
+                          },
+                          onDelete: () {
+                            _showDeleteOptionSheet(context, uiModel.message.id);
                           },
                         ),
                       );

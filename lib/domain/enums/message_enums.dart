@@ -6,4 +6,4 @@ enum SystemMessageType { userJoined, userLeft }
 
 enum FileType { document, archive, other }
 
-enum TextSegmentType { tag, link, normal }
+enum TextSegmentType { tag, link, search, normal }

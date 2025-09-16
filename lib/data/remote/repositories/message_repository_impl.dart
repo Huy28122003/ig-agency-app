@@ -133,4 +133,26 @@ class MessageRepositoryImpl implements MessageRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> deleteMessageForEveryone(String messageId) async {
+    try {
+      // Todo: hoannk: rehandle this
+      // TODO: Sử dụng tạm mock tại repository
+      await _messageMockService.mockDeleteMessageForEveryone(messageId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteMessageForYou(String messageId) async {
+    try {
+      // Todo: hoannk: rehandle this
+      // TODO: Sử dụng tạm mock tại repository
+      await _messageMockService.mockDeleteMessageForYou(messageId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }

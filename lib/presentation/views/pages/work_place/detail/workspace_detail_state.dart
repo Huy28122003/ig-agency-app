@@ -21,6 +21,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.initIndex = 0,
     this.isPinStatusSuccess = false,
     this.showTagOverlay = false,
+    this.groupMembershipStatus = GroupMembershipStatus.active,
+    this.groupSearchStatus = GroupSearchStatus.idle,
   });
 
   final bool isInitialized;
@@ -39,6 +41,8 @@ class WSDetailState extends BaseState<WSDetailState> {
   final int initIndex;
   final bool isPinStatusSuccess;
   final bool showTagOverlay;
+  final GroupMembershipStatus groupMembershipStatus;
+  final GroupSearchStatus groupSearchStatus;
 
   bool get needLoadMoreOldMessages =>
       chatMessagesPagingStatus != PagingStatus.empty &&
@@ -69,6 +73,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     int? initIndex,
     bool? isPinStatusSuccess,
     bool? showTagOverlay,
+    GroupMembershipStatus? groupMembershipStatus,
+    GroupSearchStatus? groupSearchStatus,
   }) {
     return WSDetailState(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -98,6 +104,8 @@ class WSDetailState extends BaseState<WSDetailState> {
       initIndex: initIndex ?? this.initIndex,
       isPinStatusSuccess: isPinStatusSuccess ?? this.isPinStatusSuccess,
       showTagOverlay: showTagOverlay ?? this.showTagOverlay,
+      groupMembershipStatus:
+          groupMembershipStatus ?? this.groupMembershipStatus,
     );
   }
 
@@ -120,5 +128,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     initIndex,
     isPinStatusSuccess,
     showTagOverlay,
+    groupMembershipStatus,
   ];
 }
