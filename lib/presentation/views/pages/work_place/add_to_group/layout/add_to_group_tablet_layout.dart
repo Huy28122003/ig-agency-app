@@ -20,7 +20,7 @@ class _AddToGroupTabletLayoutState extends State<AddToGroupTabletLayout> {
         child: GestureDetector(
           child: Text('TODO'),
           onTap: () {
-            // context.router.replaceAll([WSDetailRoute()]);
+            context.router.replaceAll([WSDetailRoute(workspaceId: 1,)]);
           },
         ),
       ),

@@ -7,9 +7,9 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
     super.processing = false,
     this.pagingStatus = PagingStatus.idle,
     this.workspaces = const [],
-    this.indexPage = 1,
+    // this.indexPage = 1,
     this.workspacesSearch = const [],
-    this.indexPageSearch = 1,
+    // this.indexPageSearch = 1,
     this.pagingStatusSearch = PagingStatus.idle,
     this.searchKeyWord = "",
     this.searchStatus = PageStatus.initial,
@@ -21,8 +21,8 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
   final PagingStatus pagingStatusSearch;
   final List<WorkspaceEntity> workspaces;
   final List<WorkspaceEntity> workspacesSearch;
-  final int indexPage;
-  final int indexPageSearch;
+  // final int indexPage;
+  // final int indexPageSearch;
   final String searchKeyWord;
   final PageStatus searchStatus;
   final bool isSearchMode;
@@ -51,8 +51,8 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
       processing: processing ?? this.processing,
       pagingStatus: pagingStatus ?? this.pagingStatus,
       pagingStatusSearch: pagingStatusSearch ?? this.pagingStatusSearch,
-      indexPage: indexPage ?? this.indexPage,
-      indexPageSearch: indexPageSearch ?? this.indexPageSearch,
+      // indexPage: indexPage ?? this.indexPage,
+      // indexPageSearch: indexPageSearch ?? this.indexPageSearch,
       workspaces: workspaces ?? this.workspaces,
       workspacesSearch: workspacesSearch ?? this.workspacesSearch,
       searchKeyWord: searchKeyWord ?? this.searchKeyWord,
@@ -65,10 +65,10 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
   List<Object?> get props => [
     super.props,
     pagingStatus,
-    indexPage,
+    // indexPage,
     workspaces,
     workspacesSearch,
-    indexPageSearch,
+    // indexPageSearch,
     pagingStatusSearch,
     searchKeyWord,
     searchStatus,

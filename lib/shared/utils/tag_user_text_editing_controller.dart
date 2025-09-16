@@ -106,7 +106,9 @@ class TagUserTextEditingController extends TextEditingController {
       }
     }
 
-    if (shouldShowOverlay && currentQuery != null) {
+    if (shouldShowOverlay &&
+        currentQuery != null &&
+        currentQuery.trim().isNotEmpty) {
       _debounceTimer?.cancel();
       _debounceTimer = Timer(const Duration(milliseconds: 300), () {
         _tagQueryController.add(currentQuery!);

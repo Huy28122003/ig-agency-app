@@ -7,6 +7,8 @@ abstract class MessageRepository {
 
   Future unpinMessage(String messageId);
 
+  Future pinMessage(String messageId);
+
   Future<PinnedMessageSummary> getPinnedMessageSummaryByWorkspaceId(
     int workspaceId,
   );

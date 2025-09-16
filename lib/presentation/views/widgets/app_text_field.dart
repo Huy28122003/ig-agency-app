@@ -68,7 +68,7 @@ class _AppTextFieldState extends State<AppTextField> {
     _controller.text = widget.value;
     _obscureText = widget.obscureText;
     _controller.addListener(() {
-      setState(() {}); // update counter khi user nhập
+      setState(() {});
     });
   }
 

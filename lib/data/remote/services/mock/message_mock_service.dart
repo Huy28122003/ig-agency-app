@@ -100,6 +100,7 @@ class MessageMockService {
     'The deadline has been extended',
     'New features are now available',
     'Please update your software',
+    ('Hoannk alabama kamekameha\n' * 30),
   ];
 
   final List<String> _mockImages = [
@@ -462,6 +463,46 @@ class MessageMockService {
     _messageMockData[targetGroupId] = messages;
   }
 
+  Future<void> mockPinMessage(String messageId) async {
+    MessageEntity? targetMessage;
+    int? targetGroupId;
+    int? targetMessageIndex;
+
+    for (final entry in _messageMockData.entries) {
+      final groupId = entry.key;
+      final messages = entry.value;
+
+      final messageIndex = messages.indexWhere(
+        (message) => message.id == messageId,
+      );
+      if (messageIndex != -1) {
+        targetMessage = messages[messageIndex];
+        targetGroupId = groupId;
+        targetMessageIndex = messageIndex;
+        break;
+      }
+    }
+
+    if (targetMessage == null ||
+        targetMessageIndex == null ||
+        targetGroupId == null) {
+      throw Exception('Message not found');
+    }
+
+    if (targetMessage.isPinned) {
+      throw Exception('Message is already pinned');
+    }
+
+    final updatedMessage = targetMessage.copyWith(
+      isPinned: true,
+      pinnedAt: DateTime.now(),
+    );
+
+    final messages = _messageMockData[targetGroupId]!;
+    messages[targetMessageIndex] = updatedMessage;
+    _messageMockData[targetGroupId] = messages;
+  }
+
   PinnedMessageSummary mockGetPinnedMessageSummary(int groupId) {
     final pinnedMessages = (_messageMockData[groupId] ?? [])
         .where((element) => element.isPinned)
@@ -511,6 +552,16 @@ class MessageMockService {
         throw Exception();
       } else {
         offset = max(0, targetMessageIndex);
+        if (targetMessageIndex >= messageIndex) {
+          throw Exception();
+        }
+        return (
+          messages
+              .skip(offset)
+              .take(messageIndex - targetMessageIndex)
+              .toList(),
+          messages.length,
+        );
       }
     }
 

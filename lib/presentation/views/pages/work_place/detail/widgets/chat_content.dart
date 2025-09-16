@@ -1,20 +1,17 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:flutter_list_view/flutter_list_view.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import '../../../../../../domain/enums/message_enums.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
-import '../../../../../resources/colors.dart';
 import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
-import '../../../../widgets/chat/pinned_message_section.dart';
 import '../../../../ui_models/chat_message_ui_model.dart';
 import '../workspace_detail_bloc.dart';
-import 'pinned_message_bottom_sheet.dart';
 
 const double _kMaxWidthChatBubbleContentRatio = 277 / 390;
 const double _kMaxWidthChatReplyContentRatio = 174 / 277;
@@ -31,11 +28,9 @@ class ChatContent extends StatefulWidget {
 class _ChatContentState extends State<ChatContent> {
   late final WSDetailBloc _bloc;
 
-  final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener =
-      ItemPositionsListener.create();
-
-  Timer? _debounce;
+  final listViewController = FlutterListViewController();
+  final refreshController = RefreshController(initialRefresh: false);
+  double prevScrollOffset = 0;
 
   @override
   void initState() {
@@ -43,36 +38,33 @@ class _ChatContentState extends State<ChatContent> {
 
     _bloc = context.read<WSDetailBloc>();
 
-    _itemPositionsListener.itemPositions.addListener(_onScrollListener);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _scrollToBottom();
+    listViewController.addListener(() {
+      _onRefreshListener();
+      _onScrollListener();
     });
+  }
+
+  void _onRefreshListener() {
+    const torrentDistance = 56;
+    var offset = listViewController.offset;
+    if (offset <= torrentDistance && prevScrollOffset > torrentDistance) {
+      if (!refreshController.isRefresh) {
+        refreshController.requestRefresh();
+      }
+    }
+    prevScrollOffset = offset;
   }
 
   void _onScrollListener() {
     final state = _bloc.state;
-    final positions = _itemPositionsListener.itemPositions.value;
-
-    if (positions.isNotEmpty && state.chatMessages.isNotEmpty) {
-      final lastVisibleItem = positions.last;
-      final needLoadMore =
-          lastVisibleItem.index == 0 &&
-          lastVisibleItem.itemLeadingEdge < 0 &&
-          state.needLoadMoreOldMessages;
-      if (needLoadMore) {
-        // load more messages
-        _debounce?.cancel();
-        _debounce = Timer(const Duration(milliseconds: 300), () {
-          _bloc.add(LoadMoreChatMessagesEvent());
-        });
-      }
-
-      final firstVisibleItem = positions.first;
-      if (firstVisibleItem.index < state.chatMessages.length - 1 &&
-          !state.showScrollToBottomIcon) {
-        _bloc.add(ToggleShowScrollToBottomIcon());
-      } else if (firstVisibleItem.index == state.chatMessages.length - 1 &&
+    if (state.isInitialized) {
+      if ((listViewController.offset >=
+              listViewController.position.maxScrollExtent - 100) &&
           state.showScrollToBottomIcon) {
+        _bloc.add(ToggleShowScrollToBottomIcon());
+      } else if ((listViewController.offset <
+              listViewController.position.maxScrollExtent - 100) &&
+          !state.showScrollToBottomIcon) {
         _bloc.add(ToggleShowScrollToBottomIcon());
       }
     }
@@ -81,19 +73,22 @@ class _ChatContentState extends State<ChatContent> {
   void _scrollToBottom() {
     if (_bloc.state.chatMessages.isNotEmpty) {
       final position = _bloc.state.chatMessages.length - 1;
-      _itemScrollController.jumpTo(index: position);
-    }
-  }
-
-  void _scrollToTop() {
-    if (_bloc.state.chatMessages.isNotEmpty) {
-      _itemScrollController.jumpTo(index: 0);
+      listViewController.sliverController.jumpToIndex(position);
+      _bloc.add(ToggleShowScrollToBottomIcon());
     }
   }
 
   void _jumpToMessage(int index) {
     if (index >= 0 && index < _bloc.state.chatMessages.length) {
-      _itemScrollController.jumpTo(index: index, alignment: 0.5);
+      listViewController.sliverController.jumpToIndex(index, offset: 0.5);
+    }
+  }
+
+  void _onRefresh() async {
+    final state = _bloc.state;
+    if (state.needLoadMoreOldMessages) {
+      refreshController.requestRefresh();
+      _bloc.add(LoadMoreChatMessagesEvent());
     }
   }
 
@@ -110,7 +105,7 @@ class _ChatContentState extends State<ChatContent> {
               previous.scrollToBottom != current.scrollToBottom,
           listener: (context, state) {
             if (state.scrollToBottom) {
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 _scrollToBottom();
                 _bloc.add(ResetScrollToBottomEvent());
               });
@@ -131,265 +126,222 @@ class _ChatContentState extends State<ChatContent> {
         ),
         BlocListener<WSDetailBloc, WSDetailState>(
           listenWhen: (previous, current) =>
-              previous.scrollToTop != current.scrollToTop,
+              previous.chatMessagesPagingStatus !=
+              current.chatMessagesPagingStatus,
           listener: (context, state) {
-            if (state.scrollToTop) {
-              _scrollToTop();
-              _bloc.add(ResetScrollToTopEvent());
+            if (state.chatMessagesPagingStatus == PagingStatus.loading) return;
+            switch (state.chatMessagesPagingStatus) {
+              case PagingStatus.loadCompleted:
+                refreshController.refreshCompleted();
+                break;
+              default:
+                refreshController.refreshToIdle();
+                break;
             }
           },
         ),
       ],
-      child: BlocBuilder<WSDetailBloc, WSDetailState>(
-        buildWhen: (previous, current) =>
-            previous.pinnedMessageSummary != current.pinnedMessageSummary,
-        builder: (context, state) {
-          final pinnedMessageSummary = state.pinnedMessageSummary;
-          final hasPinnedMessages =
-              pinnedMessageSummary?.hasPinnedMessages ?? false;
+      child: Stack(
+        children: [
+          BlocSelector<
+            WSDetailBloc,
+            WSDetailState,
+            (List<ChatMessageUIModel>, bool, bool, int)
+          >(
+            selector: (state) {
+              return (
+                state.chatMessages,
+                state.needLoadMoreOldMessages,
+                state.chatMessagesPagingStatus == PagingStatus.loading,
+                state.initIndex,
+              );
+            },
+            builder: (context, state) {
+              final (
+                chatMessages,
+                needLoadMoreOldMessages,
+                isLoading,
+                initIndex,
+              ) = state;
+              if (chatMessages.isEmpty) {
+                return const SizedBox.shrink();
+              }
 
-          return Stack(
-            children: [
-              BlocSelector<
-                WSDetailBloc,
-                WSDetailState,
-                (List<ChatMessageUIModel>, PagingStatus)
-              >(
-                selector: (state) {
-                  return (state.chatMessages, state.chatMessagesPagingStatus);
-                },
-                builder: (context, state) {
-                  final (chatMessages, pagingStatus) = state;
-
-                  return Padding(
-                    padding: EdgeInsets.only(top: hasPinnedMessages ? 56 : 0),
-                    child: Column(
-                      children: [
-                        if (pagingStatus == PagingStatus.loading)
-                          SizedBox(
-                            height: 56,
-                            child: const Center(
-                              child: CupertinoActivityIndicator(),
-                            ),
-                          ),
-                        Expanded(
-                          child: ScrollablePositionedList.builder(
-                            itemScrollController: _itemScrollController,
-                            itemPositionsListener: _itemPositionsListener,
-                            physics: const ClampingScrollPhysics(),
-                            padding: EdgeInsets.only(bottom: 20),
-                            itemBuilder: (_, index) {
-                              final uiModel = chatMessages[index];
-
-                              return ChatMessageBubble(
-                                key: ValueKey(
-                                  '${uiModel.message.id} - ${uiModel.shouldShowTime}',
-                                ),
-                                maxWidth: maxWidth,
-                                maxWidthReply: maxWidthReply,
-                                horizontalPadding: widget.horizontalPadding,
-                                uiModel: uiModel,
-                                userId: _bloc.userId,
-                                onTap: () {
-                                  final messageId = uiModel.message.id;
-                                  if (uiModel.message.type ==
-                                          MessageType.text &&
-                                      !uiModel.showTime) {
-                                    if (!uiModel.shouldShowTime) {
-                                      _bloc.add(
-                                        ShowTimeEvent(messageId: messageId),
-                                      );
-                                    } else if (uiModel.shouldShowTime) {
-                                      _bloc.add(DisableShowTimeEvent());
-                                    }
-                                  }
-                                },
-                                onReply: () {
-                                  _bloc.add(
-                                    ReplyToMessageEvent(
-                                      message: uiModel.message,
-                                    ),
-                                  );
-                                },
-                                onReplyTap: (messageId) {
-                                  _bloc.add(
-                                    JumpToMessageEvent(messageId: messageId),
-                                  );
-                                },
-                              );
-                            },
-                            itemCount: chatMessages.length,
-                          ),
+              return SmartRefresher(
+                enablePullDown: needLoadMoreOldMessages,
+                enablePullUp: false,
+                header: CustomHeader(
+                  completeDuration: const Duration(milliseconds: 0),
+                  builder: (context, mode) {
+                    if (mode == RefreshStatus.refreshing) {
+                      return SizedBox(
+                        height: 56,
+                        child: Center(
+                          child: const CupertinoActivityIndicator(),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
+                controller: refreshController,
+                onRefresh: _onRefresh,
+                child: FlutterListView(
+                  controller: listViewController,
+                  physics: const ClampingScrollPhysics(),
+                  // cacheExtent: chatMessages.length * 100,
+                  delegate: FlutterListViewDelegate(
+                    (BuildContext context, int index) {
+                      final uiModel = chatMessages[index];
+                      final bool shouldShowAvatar = uiModel.shouldShowAvatar;
+                      final bool shouldShowUserName =
+                          uiModel.shouldShowUserName;
+                      final bool isContinuation = uiModel.isContinuation;
+                      final bool shouldShowTime =
+                          uiModel.showTime || uiModel.shouldShowTime;
 
-              if (hasPinnedMessages)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 56,
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    child: PinnedMessageSection(
-                      pinnedMessageSummary: pinnedMessageSummary!,
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          useSafeArea: true,
-                          elevation: 0,
-                          backgroundColor:
-                              AppColors.surfaceContainerGrayStrong0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12),
-                            ),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          barrierColor: Colors.black.withValues(alpha: 0.68),
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return PinnedMessagesBottomSheet(
-                              workspaceId: _bloc.workspaceId,
-                              onTap: (messageId) {
-                                _bloc.add(
-                                  JumpToMessageEvent(messageId: messageId),
-                                );
-                                Navigator.pop(context);
-                              },
-                              onUnpinSuccess: () {
-                                _bloc.add(GetPinnedMessageSummaryEvent());
-                              },
+                      final double bottomPadding =
+                          chatMessages.isNotEmpty &&
+                              index == chatMessages.length - 1
+                          ? 20
+                          : 0;
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: bottomPadding),
+                        child: ChatMessageBubble(
+                          key: ValueKey(uiModel.message.id),
+                          maxWidth: maxWidth,
+                          maxWidthReply: maxWidthReply,
+                          horizontalPadding: widget.horizontalPadding,
+                          message: uiModel.message,
+                          shouldShowTime: shouldShowTime,
+                          shouldShowAvatar: shouldShowAvatar,
+                          shouldShowUserName: shouldShowUserName,
+                          isContinuation: isContinuation,
+                          userId: _bloc.userId,
+                          onTap: () {
+                            final messageId = uiModel.message.id;
+                            if (uiModel.message.type == MessageType.text &&
+                                !uiModel.showTime) {
+                              if (!uiModel.shouldShowTime) {
+                                _bloc.add(ShowTimeEvent(messageId: messageId));
+                              } else if (uiModel.shouldShowTime) {
+                                _bloc.add(DisableShowTimeEvent());
+                              }
+                            }
+                          },
+                          onReply: () {
+                            _bloc.add(
+                              ReplyToMessageEvent(message: uiModel.message),
                             );
                           },
-                        );
-                      },
-                    ),
+                          onReplyTap: (messageId) {
+                            _bloc.add(JumpToMessageEvent(messageId: messageId));
+                          },
+                          onPin: (isPinned) {
+                            if (isPinned) {
+                              _bloc.add(
+                                UnpinMessageFromDetailEvent(
+                                  messageId: uiModel.message.id,
+                                ),
+                              );
+                            } else {
+                              _bloc.add(
+                                PinMessageFromDetailEvent(
+                                  messageId: uiModel.message.id,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      );
+                    },
+                    childCount: chatMessages.length,
+                    onItemKey: (index) => chatMessages[index].message.id,
+                    keepPosition: true,
+                    keepPositionOffset: 56,
+                    initIndex: initIndex,
+                    firstItemAlign: FirstItemAlign.end,
                   ),
                 ),
+              );
+            },
+          ),
 
-              Positioned(
-                top: hasPinnedMessages ? 76 : 20,
-                right: widget.horizontalPadding,
-                child: GestureDetector(
-                  child: Container(
-                    height: 44,
-                    width: 44,
-                    decoration: ShapeDecoration(
-                      color: Colors.white,
-                      shape: CircleBorder(),
-                      shadows: [
-                        BoxShadow(
-                          color: Color(0x1E000000),
-                          blurRadius: 10,
-                          offset: Offset(0, 0),
-                          spreadRadius: 0,
-                        ),
-                      ],
+          Positioned(
+            top: 20,
+            right: widget.horizontalPadding,
+            child: GestureDetector(
+              child: Container(
+                height: 44,
+                width: 44,
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: CircleBorder(),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x1E000000),
+                      blurRadius: 10,
+                      offset: Offset(0, 0),
+                      spreadRadius: 0,
                     ),
-                    alignment: Alignment.center,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned.fill(
-                          child: ImageFiltered(
-                            imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                          ),
-                        ),
-                        Assets.icons.icTranslate.svg(width: 24, height: 24),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
-              ),
-
-              BlocSelector<WSDetailBloc, WSDetailState, bool>(
-                selector: (state) => state.showScrollToBottomIcon,
-                builder: (context, showScrollToTopButton) {
-                  return AnimatedPositioned(
-                    bottom: showScrollToTopButton ? 10 : -44,
-                    right: 0,
-                    left: 0,
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.easeInOut,
-                    child: Container(
-                      height: 44,
-                      width: 44,
-                      decoration: BoxDecoration(shape: BoxShape.circle),
-                      child: GestureDetector(
-                        onTap: () {
-                          _scrollToBottom();
-                        },
-                        child: SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: Assets.icons.icArrowCircleSize32.svg(
-                            width: 32,
-                            height: 32,
-                          ),
-                        ),
+                alignment: Alignment.center,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned.fill(
+                      child: ImageFiltered(
+                        imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                       ),
                     ),
-                  );
-                },
+                    Assets.icons.icTranslate.svg(width: 24, height: 24),
+                  ],
+                ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+
+          BlocSelector<WSDetailBloc, WSDetailState, bool>(
+            selector: (state) => state.showScrollToBottomIcon,
+            builder: (context, showScrollToTopButton) {
+              return AnimatedPositioned(
+                bottom: showScrollToTopButton ? 10 : -44,
+                right: 0,
+                left: 0,
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeInOut,
+                child: Container(
+                  height: 44,
+                  width: 44,
+                  decoration: BoxDecoration(shape: BoxShape.circle),
+                  child: GestureDetector(
+                    onTap: () {
+                      _scrollToBottom();
+                    },
+                    child: SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: Assets.icons.icArrowCircleSize32.svg(
+                        width: 32,
+                        height: 32,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 
   @override
   void dispose() {
-    _debounce?.cancel();
-    _itemPositionsListener.itemPositions.removeListener(_onScrollListener);
+    listViewController.dispose();
+    refreshController.dispose();
     super.dispose();
   }
 }
-
-// /// A custom ScrollPhysics that maintains the user's scroll position
-// /// when new items are added at the top of a ListView.
-// class KeepScrollPositionPhysics extends ScrollPhysics {
-//   const KeepScrollPositionPhysics({super.parent});
-
-//   @override
-//   KeepScrollPositionPhysics applyTo(ScrollPhysics? ancestor) {
-//     return KeepScrollPositionPhysics(parent: buildParent(ancestor));
-//   }
-
-//   @override
-//   double adjustPositionForNewDimensions({
-//     required ScrollMetrics oldPosition,
-//     required ScrollMetrics newPosition,
-//     required bool isScrolling,
-//     required double velocity,
-//   }) {
-//     final basePosition = super.adjustPositionForNewDimensions(
-//       oldPosition: oldPosition,
-//       newPosition: newPosition,
-//       isScrolling: isScrolling,
-//       velocity: velocity,
-//     );
-
-//     double beforeMaxScrollExtent = oldPosition.maxScrollExtent;
-//     double afterMaxScrollExtent = newPosition.maxScrollExtent;
-//     double scrollOffsetDifference =
-//         afterMaxScrollExtent - beforeMaxScrollExtent;
-
-//     if (scrollOffsetDifference > 0) {
-//       return oldPosition.pixels + scrollOffsetDifference;
-//     }
-
-//     if (oldPosition.pixels >= beforeMaxScrollExtent - 50.0) {
-//       return newPosition.maxScrollExtent;
-//     }
-
-//     return basePosition;
-//   }
-// }

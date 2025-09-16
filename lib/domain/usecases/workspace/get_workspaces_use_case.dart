@@ -6,13 +6,13 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class GetWorkspacesUseCase
-    extends UseCase<PagedResult<WorkspaceEntity>, GetWorkspacesParams> {
+    extends UseCase<List<WorkspaceEntity>, GetWorkspacesParams> {
   GetWorkspacesUseCase(this._workspaceRepository);
 
   final WorkspaceRepository _workspaceRepository;
 
   @override
-  Future<PagedResult<WorkspaceEntity>> call(GetWorkspacesParams param) async {
+  Future<List<WorkspaceEntity>> call(GetWorkspacesParams param) async {
     return await _workspaceRepository.getWorkspaces(
       limit: param.limit,
       offset: param.offset,

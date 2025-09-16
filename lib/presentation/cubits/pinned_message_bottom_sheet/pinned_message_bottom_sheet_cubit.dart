@@ -23,7 +23,7 @@ class PinnedMessageBottomSheetCubit
        _fetchPinnedMessageUseCase = fetchPinnedMessageUseCase,
        _unpinMessageUseCase = unpinMessageUseCase,
        super(PinnedMessageBottomSheetState()) {
-    _initialize();
+    loadPinnedMessage();
   }
 
   final int _limit = 10;
@@ -67,7 +67,7 @@ class PinnedMessageBottomSheetCubit
     return (messages, fetchStatus);
   }
 
-  Future<void> _initialize() async {
+  Future<void> loadPinnedMessage() async {
     try {
       emit(state.copyWith(pageStatus: PageStatus.loading));
       _offset = 0;

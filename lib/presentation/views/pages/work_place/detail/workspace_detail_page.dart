@@ -3,13 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
 
-import '../../../../../data/cache/ram_cache.dart';
-import '../../../../../di/di.dart';
-import '../../../../../domain/usecases/get_pinned_message_summary_workspace_use_case.dart';
-import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case.dart';
-import '../../../../../domain/usecases/message/send_message_use_case.dart';
-import '../../../../../domain/usecases/fetch_member_in_workspace_use_case.dart';
-import '../../../../../domain/usecases/search_member_in_workspace_use_case.dart';
 import 'layout/workspace_detail_tablet_layout.dart';
 import 'layout/workspace_detail_mobile_layout.dart';
 import 'workspace_detail_bloc.dart';
@@ -17,14 +10,9 @@ import 'workspace_detail_bloc.dart';
 @RoutePage()
 class WSDetailPage
     extends BasePage<WSDetailBloc, WSDetailEvent, WSDetailState> {
-  const WSDetailPage({
-    super.key,
-    required this.workspaceId,
-    required this.userId,
-  });
+  const WSDetailPage({super.key, required this.workspaceId});
 
   final int workspaceId;
-  final String userId;
 
   @override
   void onInitState(BuildContext context) {
@@ -43,20 +31,5 @@ class WSDetailPage
   }
 
   @override
-  Widget wrappedRoute(BuildContext context) {
-    return BlocProvider<WSDetailBloc>(
-      create: (_) => WSDetailBloc(
-        userId: userId,
-        workspaceId: workspaceId,
-        fetchMessageUseCase: getIt<FetchMessagesWorkspaceUseCase>(),
-        getPinnedMessageSummaryWorkspaceUseCase:
-            getIt<GetPinnedMessageSummaryWorkspaceUseCase>(),
-        sendMessageUseCase: getIt<SendMessageUseCase>(),
-        fetchMemberInWorkspaceUseCase: getIt<FetchMemberInWorkspaceUseCase>(),
-        searchMemberInWorkspaceUseCase: getIt<SearchMemberInWorkspaceUseCase>(),
-        ramCache: getIt<RamCache>(),
-      ),
-      child: this,
-    );
-  }
+  WSDetailBloc get buildBloc => super.buildBloc..workspaceId = workspaceId;
 }
