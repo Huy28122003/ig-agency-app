@@ -7,7 +7,6 @@ import 'package:ig_agency_app/domain/usecases/set_dark_mode_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_in_app_alerts_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/set_in_app_alerts_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/stream_user_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/update_user_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -22,23 +21,15 @@ part 'setting_home_state.dart';
 
 @injectable
 class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
-  SettingHomeBloc({
-    required LogoutUseCase logoutUseCase,
-    required GetDarkModeUseCase getDarkModeUseCase,
-    required SetDarkModeUseCase setDarkModeUseCase,
-    required GetInAppAlertsUseCase getInAppAlertsUseCase,
-    required SetInAppAlertsUseCase setInAppAlertsUseCase,
-    required StreamUserUseCase streamUserUseCase,
-    required UpdateUserUseCase updateUserUseCase,
-    required FetchCurrentUserUseCase fetchCurrentUserUseCase,
-  }) : _logoutUseCase = logoutUseCase,
-       _getDarkModeUseCase = getDarkModeUseCase,
-       _setDarkModeUseCase = setDarkModeUseCase,
-       _getInAppAlertsUseCase = getInAppAlertsUseCase,
-       _setInAppAlertsUseCase = setInAppAlertsUseCase,
-       _streamUserUseCase = streamUserUseCase,
-       _fetchCurrentUserUseCase = fetchCurrentUserUseCase,
-       super(SettingHomeState()) {
+  SettingHomeBloc(
+    this._logoutUseCase,
+    this._getDarkModeUseCase,
+    this._setDarkModeUseCase,
+    this._getInAppAlertsUseCase,
+    this._setInAppAlertsUseCase,
+    this._fetchCurrentUserUseCase,
+    this._streamUserUseCase,
+  ) : super(SettingHomeState()) {
     _registerHandlers();
     _initializeUserListener();
   }

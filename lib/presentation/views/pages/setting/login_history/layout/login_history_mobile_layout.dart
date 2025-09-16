@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/linked_device/linked_device_entity.dart';
 import 'package:ig_agency_app/domain/entities/linked_device/linked_device_type.dart';
-import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/setting/login_history/login_history_bloc.dart';
-import 'package:ig_agency_app/shared/commons/app_checkbox.dart';
 import 'package:ig_agency_app/shared/utils/widget_util.dart';
 
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../widgets/app_checkbox.dart';
 
 class LoginHistoryMobileLayout extends StatefulWidget {
   const LoginHistoryMobileLayout({super.key});
