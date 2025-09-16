@@ -111,7 +111,7 @@ class WorkspaceAttachmentBloc
           return MetaDataLink(
             title: meta?.title ?? "attachment.link_no_title".tr(),
             description: meta?.description ?? "attachment.no_content".tr(),
-            url: meta?.url ?? url,
+            url: url,
           );
         } catch (e) {
           return MetaDataLink(
