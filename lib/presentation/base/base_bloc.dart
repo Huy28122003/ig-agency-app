@@ -7,6 +7,12 @@ import 'base_state.dart';
 abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
   BaseBloc(super.initialState);
 
+  void safeEmit(Emitter<S> emit, S state) {
+    if (!isClosed) {
+      emit(state);
+    }
+  }
+
   void handleLoadData<T extends E>(
     Future<void> Function(T event, Emitter<S> emit) handler,
   ) {
@@ -14,7 +20,8 @@ abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
       try {
         await handler(event, emit);
       } catch (e) {
-        emit(
+        safeEmit(
+          emit,
           state.copyWith(
             pageStatus: PageStatus.failure,
             pageErrorMessage: e.toString(),
@@ -31,7 +38,7 @@ abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
       try {
         await handler(event, emit);
       } catch (e) {
-        emit(state.copyWith(processing: false));
+        safeEmit(emit, state.copyWith(processing: false));
         AppErrorHandler.handle(e);
       }
     });
