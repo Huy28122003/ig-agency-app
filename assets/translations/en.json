@@ -27,7 +27,8 @@
     "unmute_time_8": "For 8 hours",
     "unmute_time_24": "For 24 hours",
     "unmute_time_life": "Until I change it",
-    "hint_text_search": "Enter workspace name"
+    "hint_text_search": "Enter workspace name",
+    "new_message": "new messages"
   },
   "general": {
     "delete": "Delete",

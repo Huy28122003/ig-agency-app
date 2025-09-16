@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
+import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 
-import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
 
 class ForwardTile extends StatelessWidget {
@@ -20,23 +20,9 @@ class ForwardTile extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Image.network(
-                  workspaceEntity.workspaceAvatar,
-                  fit: BoxFit.cover,
-                  width: 48,
-                  height: 48,
-                  errorBuilder: (context, error, stackTrace) {
-                    return ClipOval(
-                      child: Assets.icons.icDefaultAvatar.svg(
-                        fit: BoxFit.cover,
-                        width: 48,
-                        height: 48,
-                      ),
-                    );
-                  },
-                ),
+              CircleNetworkAvatar(
+                imageUrl: workspaceEntity.workspaceAvatar,
+                isGroupAvt: true,
               ),
               SizedBox(width: 8),
               Expanded(

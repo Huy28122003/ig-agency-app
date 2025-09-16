@@ -2,9 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
+import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 
-import '../../../../../gen/assets.gen.dart';
 
 class MemberTileWidget extends StatelessWidget {
   const MemberTileWidget({
@@ -30,18 +30,7 @@ class MemberTileWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.network(
-                avatar,
-                width: 48,
-                height: 48,
-                fit: BoxFit.cover,
-                errorBuilder: (context, _, _) {
-                  return Assets.icons.icDefaultAvatar.svg(
-                    width: 48,
-                    height: 48,
-                  );
-                },
-              ),
+              CircleNetworkAvatar(imageUrl: avatar),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
