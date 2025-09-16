@@ -10,7 +10,7 @@ class MemberRepositoryImpl implements MemberRepository {
   MemberRepositoryImpl(this._messageMockService);
 
   @override
-  Future<List<UserEntity>> fetchMembersInWorkspace({
+  Future<List<UserEntity>> fetchMembersInGroup({
     required int workspaceId,
     required int limit,
     required int offset,
@@ -23,7 +23,7 @@ class MemberRepositoryImpl implements MemberRepository {
   }
 
   @override
-  Future<List<UserEntity>> searchMembersInWorkspace({
+  Future<List<UserEntity>> searchMembersInGroup({
     required int workspaceId,
     required String query,
   }) async {

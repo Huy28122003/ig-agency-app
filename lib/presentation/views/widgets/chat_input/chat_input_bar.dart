@@ -227,7 +227,6 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                           padding: EdgeInsets.all(10),
                           onPressed: () {
                             widget.onSendTap?.call();
-                            _textEditingController.clear();
                           },
                           icon: Assets.icons.icSend.svg(width: 24, height: 24),
                         ),

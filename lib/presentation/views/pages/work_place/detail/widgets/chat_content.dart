@@ -10,7 +10,7 @@ import '../../../../../../domain/enums/message_enums.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
-import '../../../../ui_models/chat_message_ui_model.dart';
+import '../../../../ui_models/chat_message/chat_message_ui_model.dart';
 import '../workspace_detail_bloc.dart';
 
 const double _kMaxWidthChatBubbleContentRatio = 277 / 390;

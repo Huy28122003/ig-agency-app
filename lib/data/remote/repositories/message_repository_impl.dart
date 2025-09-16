@@ -1,7 +1,6 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/message/message.dart';
-import '../../../domain/entities/paged_result.dart';
 import '../../../domain/entities/pinned_message_summary.dart';
 import '../../../domain/repositories/message_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
@@ -19,17 +18,14 @@ class MessageRepositoryImpl implements MessageRepository {
   final MessageMockService _messageMockService;
 
   @override
-  Future<PagedResult<MessageEntity>> fetchPinnedMessages(
-    int limit,
-    int offset,
-  ) async {
+  Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
       final (pinnedMessages, totalRecords) = _messageMockService
           .mockFetchPinnedMessages(limit: limit, offset: offset);
 
-      return PagedResult(data: pinnedMessages, totalRecords: totalRecords);
+      return pinnedMessages;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -56,7 +52,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByWorkspaceId(
+  Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
     int workspaceId,
     int limit,
     int offset,
@@ -71,14 +67,14 @@ class MessageRepositoryImpl implements MessageRepository {
             offset: offset,
           );
 
-      return PagedResult(data: pinnedMessages, totalRecords: totalRecords);
+      return pinnedMessages;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<PinnedMessageSummary> getPinnedMessageSummaryByWorkspaceId(
+  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(
     int workspaceId,
   ) async {
     // Todo: hoannk: rehandle this
@@ -94,7 +90,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<PagedResult<MessageEntity>> fetchMessagesByWorkspaceId(
+  Future<List<MessageEntity>> fetchMessagesInGroup(
     int workspaceId,
     int limit,
     String? oldestMessageId,
@@ -111,7 +107,7 @@ class MessageRepositoryImpl implements MessageRepository {
             targetMessageId: targetMessageId,
           );
 
-      return PagedResult(data: messages, totalRecords: totalRecords);
+      return messages;
     } catch (e) {
       throw FailureConverter.convert(e);
     }

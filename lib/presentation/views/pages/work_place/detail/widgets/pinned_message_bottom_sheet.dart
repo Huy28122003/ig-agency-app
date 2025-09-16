@@ -6,7 +6,7 @@ import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import '../../../../../../di/di.dart';
-import '../../../../../../domain/usecases/fetch_pinned_message_use_case.dart';
+import '../../../../../../domain/usecases/message/fetch_pinned_message_in_group_use_case.dart';
 import '../../../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
@@ -101,6 +101,7 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
       initialChildSize: 0.5,
       minChildSize: 0.5,
       maxChildSize: 1,
+      expand: true,
       builder: (context, scrollController) {
         return Container(
           clipBehavior: Clip.antiAlias,
@@ -115,7 +116,8 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
           child: BlocProvider(
             create: (context) => PinnedMessageBottomSheetCubit(
               workspaceId: widget.workspaceId,
-              fetchPinnedMessageUseCase: getIt<FetchPinnedMessageUseCase>(),
+              fetchPinnedMessageUseCase:
+                  getIt<FetchPinnedMessageInGroupUseCase>(),
               unpinMessageUseCase: getIt<UnpinMessageUseCase>(),
             ),
             child: MultiBlocListener(

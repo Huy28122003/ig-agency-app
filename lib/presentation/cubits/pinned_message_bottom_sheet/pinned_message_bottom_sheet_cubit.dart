@@ -4,10 +4,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../domain/usecases/fetch_pinned_message_use_case.dart';
+import '../../../domain/usecases/message/fetch_pinned_message_in_group_use_case.dart';
 import '../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../shared/commons/enums/status.dart';
-import '../../views/mappers/pinned_message_mapper.dart';
 import '../../views/ui_models/pinned_message_ui_model.dart';
 
 part 'pinned_message_bottom_sheet_state.dart';
@@ -17,7 +16,7 @@ class PinnedMessageBottomSheetCubit
     extends Cubit<PinnedMessageBottomSheetState> {
   PinnedMessageBottomSheetCubit({
     required int workspaceId,
-    required FetchPinnedMessageUseCase fetchPinnedMessageUseCase,
+    required FetchPinnedMessageInGroupUseCase fetchPinnedMessageUseCase,
     required UnpinMessageUseCase unpinMessageUseCase,
   }) : _workspaceId = workspaceId,
        _fetchPinnedMessageUseCase = fetchPinnedMessageUseCase,
@@ -31,7 +30,7 @@ class PinnedMessageBottomSheetCubit
 
   final int _workspaceId;
 
-  final FetchPinnedMessageUseCase _fetchPinnedMessageUseCase;
+  final FetchPinnedMessageInGroupUseCase _fetchPinnedMessageUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
 
   Future<(List<PinnedMessageUIModel>, PagingStatus)?> _getPinnedMessages(
@@ -39,26 +38,19 @@ class PinnedMessageBottomSheetCubit
     bool isRefresh = false,
   }) async {
     final result = await _fetchPinnedMessageUseCase.call(
-      FetchPinnedMessageParams(
+      FetchPinnedMessageInGroupParams(
         workspaceId: _workspaceId,
         limit: _limit,
         offset: offset,
       ),
     );
 
-    final pagedResult = result.data;
-    final messages = pagedResult
-        .map((e) => PinnedMessageMapper.fromMessageEntity(e))
-        .toList();
-
-    final currentPage = (offset / _limit).floor() + 1;
-    final totalRecords = result.totalRecords;
-    final totalPages = (totalRecords / _limit).ceil();
-    final isLastPage = currentPage >= totalPages;
+    final pagedResult = result;
+    final messages = pagedResult.map((e) => e.toUIModel()).toList();
 
     final fetchStatus = messages.isEmpty
         ? PagingStatus.empty
-        : (isLastPage
+        : (messages.length < _limit
               ? PagingStatus.noMoreData
               : (isRefresh
                     ? PagingStatus.refreshCompleted

@@ -232,14 +232,11 @@ class _CustomContextMenuState extends State<CustomContextMenu>
           child: Stack(
             children: [
               Positioned.fill(
-                child: GestureDetector(
-                  onTap: _hideContextMenu,
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-                    child: ColoredBox(
-                      color: Colors.black.withValues(alpha: 0.17),
-                      child: SizedBox.expand(),
-                    ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                  child: ColoredBox(
+                    color: Colors.black.withValues(alpha: 0.17),
+                    child: SizedBox.expand(),
                   ),
                 ),
               ),
@@ -421,6 +418,7 @@ class _ContextMenuContent extends StatelessWidget {
         menuWidgetContent: menuWidgetContent,
         screenWidth: screenWidth,
         screenHeight: screenHeight,
+        onHideMenu: onHideMenu,
         child: child,
       );
     } else {
@@ -440,6 +438,7 @@ class _ContextMenuContent extends StatelessWidget {
         childSize: childSize,
         menuCalculatedLeft: menuCalculatedLeft,
         menuWidgetContent: menuWidgetContent,
+        onHideMenu: onHideMenu,
         child: child,
       );
     }
@@ -457,6 +456,7 @@ class _ScrollAnimation extends StatefulWidget {
     required this.menuWidgetContent,
     required this.screenWidth,
     required this.screenHeight,
+    required this.onHideMenu,
   });
 
   final Widget child;
@@ -468,6 +468,7 @@ class _ScrollAnimation extends StatefulWidget {
   final Widget menuWidgetContent;
   final double screenWidth;
   final double screenHeight;
+  final VoidCallback onHideMenu;
 
   @override
   State<_ScrollAnimation> createState() => _ScrollAnimationState();
@@ -518,43 +519,46 @@ class _ScrollAnimationState extends State<_ScrollAnimation> {
         return SizedBox(
           width: widget.screenWidth,
           height: widget.screenHeight,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: bottomPadding),
-            reverse: true,
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left:
-                          widget.childOffset.dx +
-                          (widget.deltaX > 0
-                              ? -currentChildTranslateX
-                              : currentChildTranslateX),
-                    ),
-                    child: SizedBox(
-                      width: widget.childSize.width,
-                      height: widget.childSize.height,
-                      child: widget.child,
-                    ),
-                  ),
-
-                  const SizedBox(height: _kDefaultGapBetweenChildAndMenu),
-
-                  Padding(
-                    padding: EdgeInsets.only(left: widget.menuCalculatedLeft),
-                    child: Transform.scale(
-                      scale: currentMenuScale,
-                      alignment: Alignment.topCenter,
-                      child: Opacity(
-                        opacity: currentMenuOpacity,
-                        child: widget.menuWidgetContent,
+          child: GestureDetector(
+            onTap: widget.onHideMenu,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: bottomPadding),
+              reverse: true,
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left:
+                            widget.childOffset.dx +
+                            (widget.deltaX > 0
+                                ? -currentChildTranslateX
+                                : currentChildTranslateX),
+                      ),
+                      child: SizedBox(
+                        width: widget.childSize.width,
+                        height: widget.childSize.height,
+                        child: widget.child,
                       ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: _kDefaultGapBetweenChildAndMenu),
+
+                    Padding(
+                      padding: EdgeInsets.only(left: widget.menuCalculatedLeft),
+                      child: Transform.scale(
+                        scale: currentMenuScale,
+                        alignment: Alignment.topCenter,
+                        child: Opacity(
+                          opacity: currentMenuOpacity,
+                          child: widget.menuWidgetContent,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -574,6 +578,7 @@ class _Animation extends StatefulWidget {
     required this.childSize,
     required this.menuCalculatedLeft,
     required this.menuWidgetContent,
+    required this.onHideMenu,
   });
 
   final Widget child;
@@ -584,6 +589,7 @@ class _Animation extends StatefulWidget {
   final Size childSize;
   final double menuCalculatedLeft;
   final Widget menuWidgetContent;
+  final VoidCallback onHideMenu;
 
   @override
   State<_Animation> createState() => _AnimationState();
@@ -632,6 +638,15 @@ class _AnimationState extends State<_Animation> {
 
         return Stack(
           children: [
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: widget.onHideMenu,
+                child: ColoredBox(
+                  color: Colors.transparent,
+                  child: SizedBox.expand(),
+                ),
+              ),
+            ),
             Positioned(
               left:
                   widget.childOffset.dx +

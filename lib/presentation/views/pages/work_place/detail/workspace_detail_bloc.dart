@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
@@ -14,20 +13,19 @@ import '../../../../../domain/entities/message/message.dart';
 import '../../../../../domain/enums/message_enums.dart';
 import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/enums/send_message_type.dart';
-import '../../../../../domain/usecases/fetch_member_in_workspace_use_case.dart';
-import '../../../../../domain/usecases/get_pinned_message_summary_workspace_use_case.dart';
+import '../../../../../domain/usecases/member/fetch_member_in_group_use_case.dart';
+import '../../../../../domain/usecases/message/get_pinned_message_summary_group_use_case.dart';
 import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case.dart';
 import '../../../../../domain/usecases/message/send_message_use_case.dart';
 import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../../../domain/usecases/message/pin_message_use_case.dart';
-import '../../../../../domain/usecases/search_member_in_workspace_use_case.dart';
+import '../../../../../domain/usecases/member/search_member_in_group_use_case.dart';
 import '../../../../../shared/commons/enums/status.dart';
-import '../../../../../shared/helpers/chat_message_helper.dart';
+import '../../../ui_models/chat_message/chat_message_ui_model_helper.dart';
 import '../../../../../shared/utils/tag_user_text_editing_controller.dart';
 import '../../../../base/base_state.dart';
-import '../../../mappers/pinned_message_summary_mapper.dart';
 import '../../../ui_models/pinned_message_summary_ui_model.dart';
-import '../../../ui_models/chat_message_ui_model.dart';
+import '../../../ui_models/chat_message/chat_message_ui_model.dart';
 
 part 'workspace_detail_event.dart';
 
@@ -37,22 +35,22 @@ part 'workspace_detail_state.dart';
 class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   WSDetailBloc({
     required FetchMessagesWorkspaceUseCase fetchMessageUseCase,
-    required GetPinnedMessageSummaryWorkspaceUseCase
-    getPinnedMessageSummaryWorkspaceUseCase,
+    required GetPinnedMessageSummaryGroupUseCase
+    getPinnedMessageSummaryGroupUseCase,
     required SendMessageUseCase sendMessageUseCase,
-    required FetchMemberInWorkspaceUseCase fetchMemberInWorkspaceUseCase,
-    required SearchMemberInWorkspaceUseCase searchMemberInWorkspaceUseCase,
+    required FetchMemberInGroupUseCase fetchMemberInGroupUseCase,
+    required SearchMemberInGroupUseCase searchMemberInGroupUseCase,
     required UnpinMessageUseCase unpinMessageUseCase,
     required PinMessageUseCase pinMessageUseCase,
     required RamCache ramCache,
     required MediaManager mediaManager,
     required FileManager fileManager,
   }) : _fetchMessageUseCase = fetchMessageUseCase,
-       _getPinnedMessageSummaryWorkspaceUseCase =
-           getPinnedMessageSummaryWorkspaceUseCase,
+       _getPinnedMessageSummaryGroupUseCase =
+           getPinnedMessageSummaryGroupUseCase,
        _sendMessageUseCase = sendMessageUseCase,
-       _fetchMemberInWorkspaceUseCase = fetchMemberInWorkspaceUseCase,
-       _searchMemberInWorkspaceUseCase = searchMemberInWorkspaceUseCase,
+       _fetchMemberInGroupUseCase = fetchMemberInGroupUseCase,
+       _searchMemberInGroupUseCase = searchMemberInGroupUseCase,
        _unpinMessageUseCase = unpinMessageUseCase,
        _pinMessageUseCase = pinMessageUseCase,
        _ramCache = ramCache,
@@ -65,11 +63,11 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
   late final int workspaceId;
   final FetchMessagesWorkspaceUseCase _fetchMessageUseCase;
-  final GetPinnedMessageSummaryWorkspaceUseCase
-  _getPinnedMessageSummaryWorkspaceUseCase;
+  final GetPinnedMessageSummaryGroupUseCase
+  _getPinnedMessageSummaryGroupUseCase;
   final SendMessageUseCase _sendMessageUseCase;
-  final FetchMemberInWorkspaceUseCase _fetchMemberInWorkspaceUseCase;
-  final SearchMemberInWorkspaceUseCase _searchMemberInWorkspaceUseCase;
+  final FetchMemberInGroupUseCase _fetchMemberInGroupUseCase;
+  final SearchMemberInGroupUseCase _searchMemberInGroupUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
   final PinMessageUseCase _pinMessageUseCase;
 
@@ -103,7 +101,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
             type: TextSegmentType.link,
             start: e.start,
             end: e.end,
-            extra: e.group(0)!,
           ),
         )
         .toList();
@@ -125,7 +122,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     );
     handleSubEvent<UpdateHasOptionsEvent>(_onUpdateHasOptions);
     handleSubEvent<UpdateHasSendButtonEvent>(_onUpdateHasSendButton);
-    handleSubEvent<FetchMembersEvent>(_onFetchMembers);
     handleSubEvent<SearchMembersEvent>(_onSearchMembers);
     handleSubEvent<JumpToMessageEvent>(_onJumpToMessage);
     handleSubEvent<ResetJumpToMessageEvent>(_onResetJumpToMessage);
@@ -193,20 +189,22 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       FetchMessagesWorkspaceParams(workspaceId: workspaceId, limit: _limit),
     );
 
-    final messages = result.data;
+    final messages = result;
     final pagingStatus = messages.isEmpty
         ? PagingStatus.empty
-        : (result.totalRecords <= _limit
+        : (messages.length < _limit
               ? PagingStatus.noMoreData
               : PagingStatus.loadCompleted);
 
     final pinnedMessageSummaryResult =
-        await _getPinnedMessageSummaryWorkspaceUseCase.call(
-          GetPinnedMessageSummaryWorkspaceParams(workspaceId: workspaceId),
+        await _getPinnedMessageSummaryGroupUseCase.call(
+          GetPinnedMessageSummaryGroupParams(workspaceId: workspaceId),
         );
 
-    final pinnedMessageSummary = PinnedMessageSummaryMapper.fromMessageEntity(
-      pinnedMessageSummaryResult,
+    final pinnedMessageSummary = pinnedMessageSummaryResult.toUIModel();
+
+    final users = await _fetchMemberInGroupUseCase.call(
+      FetchMemberInGroupParams(workspaceId: workspaceId),
     );
 
     emit(
@@ -217,6 +215,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         chatMessagesPagingStatus: pagingStatus,
         pinnedMessageSummary: pinnedMessageSummary,
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
+        users: users,
       ),
     );
   }
@@ -239,8 +238,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    final messages = result.data;
-    final pagingStatus = messages.isEmpty
+    final messages = result;
+    final pagingStatus = messages.isEmpty || messages.length < _limit
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
 
@@ -290,19 +289,17 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     dynamic content;
     if (event.type == SendMessageType.text) {
+      final text = _textEditingController.text;
       final tagTextSegments = _textEditingController.tagTextSegments;
-      final linkTextSegments = detectLinkTextSegment(
-        _textEditingController.text,
-      );
+      final linkTextSegments = detectLinkTextSegment(text);
       final textSegments = [...tagTextSegments, ...linkTextSegments];
-      content = TextMessageContent(
-        text: _textEditingController.text,
-        textSegments: textSegments,
-      );
+      content = TextMessageContent(text: text, textSegments: textSegments);
+      // Clear text editing controller
+      _textEditingController.clear();
     } else if (event.type == SendMessageType.file) {
-      final result = await _fileManager.pickFiles();
+      final result = await _fileManager.pickFile();
       if (result == null) return;
-      final file = result.first;
+      final file = result;
 
       content = FileMessageContent(
         fileUrl: '',
@@ -380,20 +377,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(state.copyWith(hasSendButton: event.hasSendButton));
   }
 
-  Future<void> _onFetchMembers(
-    FetchMembersEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    final users = await _fetchMemberInWorkspaceUseCase.call(
-      FetchMemberInWorkspaceParams(
-        workspaceId: workspaceId,
-        limit: _limit,
-        offset: 0,
-      ),
-    );
-    emit(state.copyWith(users: users));
-  }
-
   Future<void> _onSearchMembers(
     SearchMembersEvent event,
     Emitter<WSDetailState> emit,
@@ -402,11 +385,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       emit(state.copyWith(users: []));
       return;
     }
-    final users = await _searchMemberInWorkspaceUseCase.call(
-      SearchMemberInWorkspaceParams(
-        workspaceId: workspaceId,
-        query: event.query,
-      ),
+    final users = await _searchMemberInGroupUseCase.call(
+      SearchMemberInGroupParams(workspaceId: workspaceId, query: event.query),
     );
     emit(state.copyWith(users: users));
   }
@@ -433,8 +413,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       // TODO hoannk: Remove delay
       await Future.delayed(const Duration(seconds: 2));
 
-      final messages = result.data;
-      final pagingStatus = messages.isEmpty || result.data.length == _limit
+      final messages = result;
+      final pagingStatus = messages.isEmpty || messages.length < _limit
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
@@ -589,12 +569,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     GetPinnedMessageSummaryEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    final pinnedMessageSummary = await _getPinnedMessageSummaryWorkspaceUseCase
-        .call(GetPinnedMessageSummaryWorkspaceParams(workspaceId: workspaceId));
+    final pinnedMessageSummary = await _getPinnedMessageSummaryGroupUseCase
+        .call(GetPinnedMessageSummaryGroupParams(workspaceId: workspaceId));
 
-    final uiModel = PinnedMessageSummaryMapper.fromMessageEntity(
-      pinnedMessageSummary,
-    );
+    final uiModel = pinnedMessageSummary.toUIModel();
 
     emit(state.copyWith(pinnedMessageSummary: uiModel));
   }
@@ -628,7 +606,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     updatedMessages[messageIndex] = currentMessage;
 
     // Xử lý previous message và next message
-    // với mỗi previous message và next message, cần check lại cả previous của previous message, next message cần check lại cả next của next message
+    // với mỗi previous message và next message, cần check lại cả previous của
+    // previous message, next message cần check lại cả next của next message
 
     final previousMessage = messageIndex > 0
         ? updatedMessages[messageIndex - 1]

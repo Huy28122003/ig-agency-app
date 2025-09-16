@@ -4,27 +4,24 @@ import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class SearchMemberInWorkspaceUseCase
-    extends UseCase<List<UserEntity>, SearchMemberInWorkspaceParams> {
+class SearchMemberInGroupUseCase
+    extends UseCase<List<UserEntity>, SearchMemberInGroupParams> {
   final MemberRepository _memberRepository;
 
-  SearchMemberInWorkspaceUseCase(this._memberRepository);
+  SearchMemberInGroupUseCase(this._memberRepository);
 
   @override
-  Future<List<UserEntity>> call(SearchMemberInWorkspaceParams params) async {
-    return _memberRepository.searchMembersInWorkspace(
+  Future<List<UserEntity>> call(SearchMemberInGroupParams params) async {
+    return _memberRepository.searchMembersInGroup(
       workspaceId: params.workspaceId,
       query: params.query,
     );
   }
 }
 
-class SearchMemberInWorkspaceParams {
+class SearchMemberInGroupParams {
   final int workspaceId;
   final String query;
 
-  SearchMemberInWorkspaceParams({
-    required this.workspaceId,
-    required this.query,
-  });
+  SearchMemberInGroupParams({required this.workspaceId, required this.query});
 }

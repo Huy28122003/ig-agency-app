@@ -4,15 +4,15 @@ import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class FetchMemberInWorkspaceUseCase
-    extends UseCase<List<UserEntity>, FetchMemberInWorkspaceParams> {
+class FetchMemberInGroupUseCase
+    extends UseCase<List<UserEntity>, FetchMemberInGroupParams> {
   final MemberRepository _memberRepository;
 
-  FetchMemberInWorkspaceUseCase(this._memberRepository);
+  FetchMemberInGroupUseCase(this._memberRepository);
 
   @override
-  Future<List<UserEntity>> call(FetchMemberInWorkspaceParams params) async {
-    return _memberRepository.fetchMembersInWorkspace(
+  Future<List<UserEntity>> call(FetchMemberInGroupParams params) async {
+    return _memberRepository.fetchMembersInGroup(
       workspaceId: params.workspaceId,
       limit: params.limit,
       offset: params.offset,
@@ -20,14 +20,14 @@ class FetchMemberInWorkspaceUseCase
   }
 }
 
-class FetchMemberInWorkspaceParams {
+class FetchMemberInGroupParams {
   final int workspaceId;
   final int limit;
   final int offset;
 
-  FetchMemberInWorkspaceParams({
+  FetchMemberInGroupParams({
     required this.workspaceId,
-    this.limit = 10,
-    this.offset = 0,
+    required this.limit,
+    required this.offset,
   });
 }

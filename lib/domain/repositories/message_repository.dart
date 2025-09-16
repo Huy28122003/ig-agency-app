@@ -1,25 +1,22 @@
 import '../entities/message/message.dart';
-import '../entities/paged_result.dart';
 import '../entities/pinned_message_summary.dart';
 
 abstract class MessageRepository {
-  Future<PagedResult<MessageEntity>> fetchPinnedMessages(int limit, int offset);
+  Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset);
 
   Future unpinMessage(String messageId);
 
   Future pinMessage(String messageId);
 
-  Future<PinnedMessageSummary> getPinnedMessageSummaryByWorkspaceId(
-    int workspaceId,
-  );
+  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(int workspaceId);
 
-  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByWorkspaceId(
+  Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
     int workspaceId,
     int limit,
     int offset,
   );
 
-  Future<PagedResult<MessageEntity>> fetchMessagesByWorkspaceId(
+  Future<List<MessageEntity>> fetchMessagesInGroup(
     int workspaceId,
     int limit,
     String? oldestMessageId,

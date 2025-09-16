@@ -326,22 +326,25 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                             ),
                           ),
                   ),
-                  CustomContextMenuAction(
-                    text: 'Copy Message',
-                    onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: _message.content.toString()),
-                      );
-                    },
-                    trailingIcon: Assets.icons.icCopy.svg(
-                      height: 20,
-                      width: 20,
-                      colorFilter: ColorFilter.mode(
-                        AppColors.iconDefaultDefault,
-                        BlendMode.srcIn,
+                  if (_message.content is TextMessageContent)
+                    CustomContextMenuAction(
+                      text: 'Copy Message',
+                      onTap: () {
+                        Clipboard.setData(
+                          ClipboardData(
+                            text: (_message.content as TextMessageContent).text,
+                          ),
+                        );
+                      },
+                      trailingIcon: Assets.icons.icCopy.svg(
+                        height: 20,
+                        width: 20,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.iconDefaultDefault,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
-                  ),
                   CustomContextMenuAction(
                     text: 'Copy Name',
                     onTap: () {
@@ -414,6 +417,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
 class ChatAvatar extends StatelessWidget {
   final String imageUrl;
+
   const ChatAvatar({super.key, required this.imageUrl});
 
   @override
