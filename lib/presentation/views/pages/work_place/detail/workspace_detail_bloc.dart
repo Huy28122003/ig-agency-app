@@ -71,7 +71,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     _initializeListener();
 
     // TODO hoannk: Remove this after testing, fake user removed event
-    Future.delayed(const Duration(seconds: 60), () {
+    Future.delayed(const Duration(minutes: 3), () {
       add(
         AddMessageEvent(
           message: MessageEntity(
@@ -204,14 +204,20 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     _textEditingController.addListener(_onTextChanged);
   }
 
+  Timer? _sendButtonDebounceTimer;
+
   void _onTextChanged() {
     final input = _textEditingController.text;
 
-    if (state.showSendButton && input.isEmpty) {
-      add(ToggleHasSendButtonEvent(showSendButton: false));
-    } else if (!state.showSendButton && input.isNotEmpty) {
-      add(ToggleHasSendButtonEvent(showSendButton: true));
-    }
+    _sendButtonDebounceTimer?.cancel();
+    // Debounce prevent change send button state when text edit controller executing
+    _sendButtonDebounceTimer = Timer(const Duration(milliseconds: 100), () {
+      if (state.showSendButton && input.isEmpty) {
+        add(ToggleHasSendButtonEvent(showSendButton: false));
+      } else if (!state.showSendButton && input.isNotEmpty) {
+        add(ToggleHasSendButtonEvent(showSendButton: true));
+      }
+    });
   }
 
   Future<void> _onLoadData(
@@ -823,6 +829,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     _messageSubscription?.cancel();
     _tagQuerySubscription?.cancel();
     _showTagOverlaySubscription?.cancel();
+    _sendButtonDebounceTimer?.cancel();
     _textEditingController.removeListener(_onTextChanged);
     return super.close();
   }

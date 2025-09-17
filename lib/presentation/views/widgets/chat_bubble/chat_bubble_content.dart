@@ -144,22 +144,30 @@ class _LinkPreview extends StatelessWidget {
 
   final String url;
 
-  bool _isValidImageProvider(ImageProvider imageProvider) {
+  bool isValidNetworkImage(ImageProvider imageProvider) {
     if (imageProvider is NetworkImage) {
       final url = imageProvider.url;
+
       if (url.startsWith('file://') || !url.contains('://')) {
         return false;
       }
+
       try {
-        final uri = Uri.parse(url);
-        if (uri.host.isEmpty) {
+        final uri = Uri.tryParse(url);
+        if (uri == null) return false;
+
+        if (!(uri.scheme == 'http' || uri.scheme == 'https')) {
           return false;
         }
+
+        if (uri.host.isEmpty) return false;
+
+        return true;
       } catch (e) {
         return false;
       }
     }
-    return true;
+    return false;
   }
 
   @override
@@ -180,7 +188,7 @@ class _LinkPreview extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (imageProvider != null && _isValidImageProvider(imageProvider))
+              if (imageProvider != null && isValidNetworkImage(imageProvider))
                 Container(
                   constraints: BoxConstraints(maxHeight: 135),
                   decoration: BoxDecoration(

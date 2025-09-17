@@ -124,60 +124,148 @@ class TagUserTextEditingController extends TextEditingController {
     }
   }
 
+  /// Optimized method to find common prefix using binary search for long texts
+  int _findCommonPrefix(String oldText, String newText) {
+    final int oldLength = oldText.length;
+    final int newLength = newText.length;
+    final int maxLength = oldLength < newLength ? oldLength : newLength;
+
+    // For short texts, use simple linear search
+    if (maxLength <= 100) {
+      int prefix = 0;
+      while (prefix < maxLength &&
+          oldText.codeUnitAt(prefix) == newText.codeUnitAt(prefix)) {
+        prefix++;
+      }
+      return prefix;
+    }
+
+    // For long texts, use binary search
+    int left = 0, right = maxLength;
+    while (left < right) {
+      int mid = (left + right + 1) ~/ 2;
+      bool isCommon = true;
+
+      // Sample check every 10th character for performance
+      for (int i = 0; i < mid && isCommon; i += 10) {
+        if (i < mid && oldText.codeUnitAt(i) != newText.codeUnitAt(i)) {
+          isCommon = false;
+        }
+      }
+
+      if (isCommon) {
+        left = mid;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    // Fine-tune the result with linear search in the final range
+    int result = left;
+    while (result < maxLength &&
+        oldText.codeUnitAt(result) == newText.codeUnitAt(result)) {
+      result++;
+    }
+
+    return result;
+  }
+
+  /// Optimized method to find common suffix using binary search for long texts
+  int _findCommonSuffix(String oldText, String newText, int prefix) {
+    final int oldLength = oldText.length;
+    final int newLength = newText.length;
+    final int maxLength = oldLength < newLength ? oldLength : newLength;
+    final int availableLength = maxLength - prefix;
+
+    if (availableLength <= 0) return 0;
+
+    // For short texts, use simple linear search
+    if (availableLength <= 100) {
+      int suffix = 0;
+      while (suffix < availableLength &&
+          oldText.codeUnitAt(oldLength - 1 - suffix) ==
+              newText.codeUnitAt(newLength - 1 - suffix)) {
+        suffix++;
+      }
+      return suffix;
+    }
+
+    // For long texts, use binary search
+    int left = 0, right = availableLength;
+    while (left < right) {
+      int mid = (left + right + 1) ~/ 2;
+      bool isCommon = true;
+
+      // Sample check every 10th character for performance
+      for (int i = 0; i < mid && isCommon; i += 10) {
+        int oldIndex = oldLength - 1 - i;
+        int newIndex = newLength - 1 - i;
+        if (oldText.codeUnitAt(oldIndex) != newText.codeUnitAt(newIndex)) {
+          isCommon = false;
+        }
+      }
+
+      if (isCommon) {
+        left = mid;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    // Fine-tune the result with linear search in the final range
+    int result = left;
+    while (result < availableLength &&
+        oldText.codeUnitAt(oldLength - 1 - result) ==
+            newText.codeUnitAt(newLength - 1 - result)) {
+      result++;
+    }
+
+    return result;
+  }
+
   void _adjustAndCleanTags(String oldText, String newText) {
     if (oldText == newText) return;
 
     final int oldLength = oldText.length;
     final int newLength = newText.length;
 
-    int commonPrefix = 0;
-    while (commonPrefix < oldLength &&
-        commonPrefix < newLength &&
-        oldText.codeUnitAt(commonPrefix) == newText.codeUnitAt(commonPrefix)) {
-      commonPrefix++;
-    }
+    int samePrefix = _findCommonPrefix(oldText, newText);
+    int sameSuffix = _findCommonSuffix(oldText, newText, samePrefix);
 
-    int commonSuffix = 0;
-    while (commonSuffix < oldLength &&
-        commonSuffix < newLength &&
-        oldText.codeUnitAt(oldLength - 1 - commonSuffix) ==
-            newText.codeUnitAt(newLength - 1 - commonSuffix) &&
-        (oldLength - 1 - commonSuffix) >= commonPrefix &&
-        (newLength - 1 - commonSuffix) >= commonPrefix) {
-      commonSuffix++;
-    }
+    final int oldEditedStart = samePrefix; // Vị trí bắt đầu edit trong text cũ
+    final int oldEditedEnd =
+        oldLength - sameSuffix; // Vị trí kết thúc edit trong text cũ
+    final int newEditedEnd =
+        newLength - sameSuffix; // Vị trí kết thúc edit trong text mới
+    final int lengthChange = newEditedEnd - oldEditedEnd; // Độ dài thay đổi
 
-    final int oldEditedStart = commonPrefix;
-    final int oldEditedEnd = oldLength - commonSuffix;
-    final int newEditedEnd = newLength - commonSuffix;
+    // Duyệt ngược để không bị lỗi index do sẽ xoá nếu tag không đúng
+    for (int i = _tags.length - 1; i >= 0; i--) {
+      final tag = _tags[i];
 
-    final int lengthChange = newEditedEnd - oldEditedEnd;
-
-    final List<_UserTagData> updatedTags = [];
-    for (var tag in _tags) {
+      // Tag trước vùng edit => giữ nguyên
       if (tag.end <= oldEditedStart) {
-        updatedTags.add(tag);
-      } else if (tag.start >= oldEditedEnd) {
-        tag = tag.copyWith(
+        continue;
+      }
+
+      // Tag sau vùng edit => điều chỉnh vị trí
+      if (tag.start >= oldEditedEnd) {
+        _tags[i] = tag.copyWith(
           start: tag.start + lengthChange,
           end: tag.end + lengthChange,
         );
-        updatedTags.add(tag);
+        continue;
       }
-    }
 
-    final tags = updatedTags;
-    tags.removeWhere(
-      (tag) =>
-          tag.start < 0 ||
+      // Tag trong vùng edit => kiểm tra tính hợp lệ
+      if (tag.start < 0 ||
           tag.end > newText.length ||
           tag.start >= tag.end ||
-          newText.substring(tag.start, tag.end) != '@${tag.username}',
-    );
-
-    _tags
-      ..clear()
-      ..addAll(tags);
+          newText.substring(tag.start, tag.end) != '@${tag.username}') {
+        // Remove invalid tag
+        _tags.removeAt(i);
+      }
+    }
   }
 
   void addTag(String username, String userId) {
