@@ -71,7 +71,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     _initializeListener();
 
     // TODO hoannk: Remove this after testing, fake user removed event
-    Future.delayed(const Duration(seconds: 30), () {
+    Future.delayed(const Duration(seconds: 60), () {
       add(
         AddMessageEvent(
           message: MessageEntity(

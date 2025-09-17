@@ -1,5 +1,7 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../shared/utils/text_message_display_util.dart';
 import '../../../resources/colors.dart';
@@ -74,10 +76,24 @@ class _TextMessageContent extends StatelessWidget {
       searchText: searchText,
     );
 
+    final isOnlyLink =
+        link != null &&
+        link.length == (message.content as TextMessageContent).text.length;
+
+    if (isOnlyLink) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: _LinkPreview(url: link),
+      );
+    }
+
     return Container(
       clipBehavior: Clip.antiAlias,
       constraints: BoxConstraints(maxWidth: maxWidth),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerGrayStrong2,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,11 +132,112 @@ class _TextMessageContent extends StatelessWidget {
               ],
             ),
           ),
-          if (link != null) ...[
-            // Link preview implementation can be added here
-            const SizedBox.shrink(),
-          ],
+          if (link != null) _LinkPreview(url: link),
         ],
+      ),
+    );
+  }
+}
+
+class _LinkPreview extends StatelessWidget {
+  const _LinkPreview({required this.url});
+
+  final String url;
+
+  bool _isValidImageProvider(ImageProvider imageProvider) {
+    if (imageProvider is NetworkImage) {
+      final url = imageProvider.url;
+      if (url.startsWith('file://') || !url.contains('://')) {
+        return false;
+      }
+      try {
+        final uri = Uri.parse(url);
+        if (uri.host.isEmpty) {
+          return false;
+        }
+      } catch (e) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        try {
+          launchUrl(Uri.parse(url));
+        } catch (e) {
+          // TODO hoannk:
+        }
+      },
+      child: AnyLinkPreview.builder(
+        link: url,
+        itemBuilder: (context, metadata, imageProvider, _) {
+          final title = metadata.title;
+          final description = metadata.desc;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (imageProvider != null && _isValidImageProvider(imageProvider))
+                Container(
+                  constraints: BoxConstraints(maxHeight: 135),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                      onError: (exception, stackTrace) {
+                        // TODO hoannk:
+                      },
+                    ),
+                  ),
+                ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerPrimaryPrimaryLight,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (title != null) ...[
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextDefault,
+                          fontSize: 14,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.43,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                    ],
+                    if (description != null)
+                      Text(
+                        description,
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextSub2,
+                          fontSize: 12,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w400,
+                          height: 1.33,
+                        ),
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
