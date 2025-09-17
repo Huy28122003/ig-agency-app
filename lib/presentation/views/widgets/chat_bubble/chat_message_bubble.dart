@@ -23,10 +23,10 @@ class ChatMessageBubble extends StatefulWidget {
     required this.horizontalPadding,
     required this.userId,
     required this.message,
-    required this.shouldShowTime,
-    required this.shouldShowAvatar,
-    required this.shouldShowUserName,
-    required this.isContinuation,
+    this.shouldShowTime = false,
+    this.shouldShowAvatar = false,
+    this.shouldShowUserName = false,
+    this.isContinuation = false,
     this.onReply,
     this.onTap,
     this.onReplyTap,
@@ -51,9 +51,25 @@ class ChatMessageBubble extends StatefulWidget {
   final bool isContinuation;
 
   final VoidCallback? onForward;
-  final Function(bool isPinned)? onPin;
+  final VoidCallback? onPin;
   final VoidCallback? onDelete;
   final String? searchText;
+
+  factory ChatMessageBubble.system({
+    required MessageEntity message,
+    required String userId,
+    bool shouldShowTime = false,
+    double horizontalPadding = 12,
+  }) {
+    return ChatMessageBubble(
+      message: message,
+      userId: userId,
+      maxWidth: 0,
+      maxWidthReply: 0,
+      shouldShowTime: shouldShowTime,
+      horizontalPadding: horizontalPadding,
+    );
+  }
 
   @override
   State<ChatMessageBubble> createState() => _ChatMessageBubbleState();
@@ -224,7 +240,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                 )
               : GestureDetector(
-                  // behavior: HitTestBehavior.opaque,
+                  behavior: HitTestBehavior.opaque,
                   onPanStart: _onPanStart,
                   onPanUpdate: _onPanUpdate,
                   onPanEnd: _onPanEnd,
@@ -314,7 +330,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                   CustomContextMenuAction(
                     text: _message.isPinned ? 'Unpin' : 'Pin',
-                    onTap: () => widget.onPin?.call(_message.isPinned),
+                    onTap: widget.onPin,
                     trailingIcon: _message.isPinned
                         ? Assets.icons.icUnpin.svg(
                             height: 20,

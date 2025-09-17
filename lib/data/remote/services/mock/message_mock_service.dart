@@ -148,10 +148,6 @@ class MessageMockService {
       "systemType": SystemMessageType.userJoined,
       "message": "User joined the group",
     },
-    {
-      "systemType": SystemMessageType.userLeft,
-      "message": "User left the group",
-    },
   ];
 
   final List<Duration> _timeSteps = [
@@ -610,6 +606,44 @@ class MessageMockService {
       _ => throw UnimplementedError(),
     };
 
+    MessageReply? reply;
+    if (replyMessageId != null) {
+      final replyMessage = _messageMockData[workspaceId]
+          ?.where((message) => message.id == replyMessageId)
+          .firstOrNull;
+      if (replyMessage != null) {
+        final content = replyMessage.content;
+        final width = switch (content) {
+          ImageMessageContent _ => content.width,
+          VideoMessageContent _ => content.width,
+          _ => null,
+        };
+        final height = switch (content) {
+          ImageMessageContent _ => content.height,
+          VideoMessageContent _ => content.height,
+          _ => null,
+        };
+        reply = MessageReply(
+          messageId: replyMessageId,
+          senderId: replyMessage.sender.id,
+          senderName: replyMessage.sender.name,
+          previewText: content is TextMessageContent ? content.text : null,
+          previewImageUrl: content is ImageMessageContent
+              ? content.imageUrl
+              : null,
+          previewThumbnailUrl: content is VideoMessageContent
+              ? content.thumbnailUrl
+              : null,
+          previewFileName: content is FileMessageContent
+              ? content.fileName
+              : null,
+          previewWidth: width,
+          previewHeight: height,
+          originalMessageType: replyMessage.type,
+        );
+      }
+    }
+
     final sentMessage = MessageEntity(
       id: messageId,
       sender: MessageSender(
@@ -617,6 +651,7 @@ class MessageMockService {
         name: user.name,
         avatarUrl: user.avatar,
       ),
+      reply: reply,
       status: MessageStatus.sent,
       createdAt: DateTime.now(),
       type: type,

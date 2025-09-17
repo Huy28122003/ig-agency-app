@@ -155,4 +155,13 @@ class MessageRepositoryImpl implements MessageRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> deleteConversation(int workspaceId) async {
+    try {
+      // Todo: hoannk: rehandle this
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }

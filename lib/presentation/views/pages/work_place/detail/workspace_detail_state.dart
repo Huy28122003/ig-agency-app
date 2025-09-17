@@ -11,8 +11,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.messageReply,
     this.scrollToBottom = false,
     this.showScrollToBottomIcon = false,
-    this.hasOptions = true,
-    this.hasSendButton = false,
+    this.showOptions = true,
+    this.showSendButton = false,
     this.users = const [],
     this.chatMessagesPagingStatus = PagingStatus.idle,
     this.jumpToMessageIndex,
@@ -21,8 +21,9 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.initIndex = 0,
     this.isPinStatusSuccess = false,
     this.showTagOverlay = false,
-    this.groupMembershipStatus = GroupMembershipStatus.active,
+    this.groupMemberStatus = GroupMemberStatus.joined,
     this.groupSearchStatus = GroupSearchStatus.idle,
+    this.isDeletedConversationSuccess = false,
   });
 
   final bool isInitialized;
@@ -31,8 +32,8 @@ class WSDetailState extends BaseState<WSDetailState> {
   final MessageEntity? messageReply;
   final bool scrollToBottom;
   final bool showScrollToBottomIcon;
-  final bool hasOptions;
-  final bool hasSendButton;
+  final bool showOptions;
+  final bool showSendButton;
   final List<UserEntity> users;
   final PagingStatus chatMessagesPagingStatus;
   final int? jumpToMessageIndex;
@@ -41,8 +42,9 @@ class WSDetailState extends BaseState<WSDetailState> {
   final int initIndex;
   final bool isPinStatusSuccess;
   final bool showTagOverlay;
-  final GroupMembershipStatus groupMembershipStatus;
+  final GroupMemberStatus groupMemberStatus;
   final GroupSearchStatus groupSearchStatus;
+  final bool isDeletedConversationSuccess;
 
   bool get needLoadMoreOldMessages =>
       chatMessagesPagingStatus != PagingStatus.empty &&
@@ -60,8 +62,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool forceCloseReplyMessage = false,
     bool? scrollToBottom,
     bool? showScrollToBottomIcon,
-    bool? hasOptions,
-    bool? hasSendButton,
+    bool? showOptions,
+    bool? showSendButton,
     List<UserEntity>? users,
     PagingStatus? chatMessagesPagingStatus,
     bool? hasMoreOldMessages,
@@ -73,8 +75,9 @@ class WSDetailState extends BaseState<WSDetailState> {
     int? initIndex,
     bool? isPinStatusSuccess,
     bool? showTagOverlay,
-    GroupMembershipStatus? groupMembershipStatus,
+    GroupMemberStatus? groupMemberStatus,
     GroupSearchStatus? groupSearchStatus,
+    bool? isDeletedConversationSuccess,
   }) {
     return WSDetailState(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -89,8 +92,8 @@ class WSDetailState extends BaseState<WSDetailState> {
       scrollToBottom: scrollToBottom ?? this.scrollToBottom,
       showScrollToBottomIcon:
           showScrollToBottomIcon ?? this.showScrollToBottomIcon,
-      hasOptions: hasOptions ?? this.hasOptions,
-      hasSendButton: hasSendButton ?? this.hasSendButton,
+      showOptions: showOptions ?? this.showOptions,
+      showSendButton: showSendButton ?? this.showSendButton,
       users: users ?? this.users,
       chatMessagesPagingStatus:
           chatMessagesPagingStatus ?? this.chatMessagesPagingStatus,
@@ -104,8 +107,9 @@ class WSDetailState extends BaseState<WSDetailState> {
       initIndex: initIndex ?? this.initIndex,
       isPinStatusSuccess: isPinStatusSuccess ?? this.isPinStatusSuccess,
       showTagOverlay: showTagOverlay ?? this.showTagOverlay,
-      groupMembershipStatus:
-          groupMembershipStatus ?? this.groupMembershipStatus,
+      groupMemberStatus: groupMemberStatus ?? this.groupMemberStatus,
+      isDeletedConversationSuccess:
+          isDeletedConversationSuccess ?? this.isDeletedConversationSuccess,
     );
   }
 
@@ -118,8 +122,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     messageReply,
     scrollToBottom,
     showScrollToBottomIcon,
-    hasOptions,
-    hasSendButton,
+    showOptions,
+    showSendButton,
     users,
     chatMessagesPagingStatus,
     jumpToMessageIndex,
@@ -128,6 +132,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     initIndex,
     isPinStatusSuccess,
     showTagOverlay,
-    groupMembershipStatus,
+    groupMemberStatus,
+    isDeletedConversationSuccess,
   ];
 }

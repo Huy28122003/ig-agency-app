@@ -10,12 +10,14 @@ class ChatOption extends StatelessWidget {
     this.onDocumentTap,
     this.onCameraTap,
     this.onMediaTap,
+    this.onToggleOptions,
   });
 
   final bool hasOptions;
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
   final VoidCallback? onMediaTap;
+  final VoidCallback? onToggleOptions;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +103,7 @@ class ChatOption extends StatelessWidget {
   Widget _buildArrow() {
     return IconButton(
       padding: const EdgeInsets.all(10),
-      onPressed: () {},
+      onPressed: onToggleOptions,
       icon: RotatedBox(
         quarterTurns: 2,
         child: Assets.icons.icArrowLeft.svg(

@@ -33,4 +33,6 @@ abstract class MessageRepository {
   Future<void> deleteMessageForEveryone(String messageId);
 
   Future<void> deleteMessageForYou(String messageId);
+
+  Future<void> deleteConversation(int workspaceId);
 }

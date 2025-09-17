@@ -38,15 +38,15 @@ class AddMessageEvent extends WSDetailEvent {
   final MessageEntity message;
 }
 
-class UpdateHasOptionsEvent extends WSDetailEvent {
-  const UpdateHasOptionsEvent({required this.hasOptions});
-  final bool hasOptions;
+class ToggleHasOptionsEvent extends WSDetailEvent {
+  const ToggleHasOptionsEvent({required this.showOptions});
+  final bool showOptions;
 }
 
-class UpdateHasSendButtonEvent extends WSDetailEvent {
-  const UpdateHasSendButtonEvent({required this.hasSendButton});
+class ToggleHasSendButtonEvent extends WSDetailEvent {
+  const ToggleHasSendButtonEvent({required this.showSendButton});
 
-  final bool hasSendButton;
+  final bool showSendButton;
 }
 
 class FetchMembersEvent extends WSDetailEvent {
@@ -71,14 +71,8 @@ class LoadMorePinnedMessagesEvent extends WSDetailEvent {
   const LoadMorePinnedMessagesEvent();
 }
 
-class UnpinMessageFromDetailEvent extends WSDetailEvent {
-  const UnpinMessageFromDetailEvent({required this.messageId});
-
-  final String messageId;
-}
-
-class PinMessageFromDetailEvent extends WSDetailEvent {
-  const PinMessageFromDetailEvent({required this.messageId});
+class TogglePinMessageFromDetailEvent extends WSDetailEvent {
+  const TogglePinMessageFromDetailEvent({required this.messageId});
 
   final String messageId;
 }
@@ -97,14 +91,10 @@ class ResetJumpToMessageEvent extends WSDetailEvent {
   const ResetJumpToMessageEvent();
 }
 
-class ShowTimeEvent extends WSDetailEvent {
-  const ShowTimeEvent({required this.messageId});
+class ToggleShowTimeEvent extends WSDetailEvent {
+  const ToggleShowTimeEvent({required this.messageId});
 
   final String messageId;
-}
-
-class DisableShowTimeEvent extends WSDetailEvent {
-  const DisableShowTimeEvent();
 }
 
 class GetPinnedMessageSummaryEvent extends WSDetailEvent {
@@ -131,4 +121,14 @@ class DeleteMessageForYouEvent extends WSDetailEvent {
   const DeleteMessageForYouEvent({required this.messageId});
 
   final String messageId;
+}
+
+class DeleteConversationEvent extends WSDetailEvent {
+  const DeleteConversationEvent();
+}
+
+class ToggleOptionsEvent extends WSDetailEvent {
+  const ToggleOptionsEvent({required this.showOptions});
+
+  final bool showOptions;
 }

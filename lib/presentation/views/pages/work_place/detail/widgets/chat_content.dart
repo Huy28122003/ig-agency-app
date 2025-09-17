@@ -287,14 +287,9 @@ class _ChatContentState extends State<ChatContent> {
                           userId: _bloc.userId,
                           onTap: () {
                             final messageId = uiModel.message.id;
-                            if (uiModel.message.type == MessageType.text &&
-                                !uiModel.showTime) {
-                              if (!uiModel.shouldShowTime) {
-                                _bloc.add(ShowTimeEvent(messageId: messageId));
-                              } else if (uiModel.shouldShowTime) {
-                                _bloc.add(DisableShowTimeEvent());
-                              }
-                            }
+                            _bloc.add(
+                              ToggleShowTimeEvent(messageId: messageId),
+                            );
                           },
                           onReply: () {
                             _bloc.add(
@@ -304,20 +299,12 @@ class _ChatContentState extends State<ChatContent> {
                           onReplyTap: (messageId) {
                             _bloc.add(JumpToMessageEvent(messageId: messageId));
                           },
-                          onPin: (isPinned) {
-                            if (isPinned) {
-                              _bloc.add(
-                                UnpinMessageFromDetailEvent(
-                                  messageId: uiModel.message.id,
-                                ),
-                              );
-                            } else {
-                              _bloc.add(
-                                PinMessageFromDetailEvent(
-                                  messageId: uiModel.message.id,
-                                ),
-                              );
-                            }
+                          onPin: () {
+                            _bloc.add(
+                              TogglePinMessageFromDetailEvent(
+                                messageId: uiModel.message.id,
+                              ),
+                            );
                           },
                           onDelete: () {
                             _showDeleteOptionSheet(context, uiModel.message.id);

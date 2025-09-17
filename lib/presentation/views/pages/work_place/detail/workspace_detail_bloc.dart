@@ -21,6 +21,7 @@ import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../../../domain/usecases/message/pin_message_use_case.dart';
 import '../../../../../domain/usecases/message/delete_message_for_everyone_use_case.dart';
 import '../../../../../domain/usecases/message/delete_message_for_you_use_case.dart';
+import '../../../../../domain/usecases/message/delete_conversation_use_case.dart';
 import '../../../../../domain/usecases/member/search_member_in_group_use_case.dart';
 import '../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../shared/commons/enums/status.dart';
@@ -50,6 +51,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     required RamCache ramCache,
     required MediaManager mediaManager,
     required FileManager fileManager,
+    required DeleteConversationUseCase deleteConversationUseCase,
   }) : _fetchMessageUseCase = fetchMessageUseCase,
        _getPinnedMessageSummaryGroupUseCase =
            getPinnedMessageSummaryGroupUseCase,
@@ -60,12 +62,33 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
        _pinMessageUseCase = pinMessageUseCase,
        _deleteMessageForEveryoneUseCase = deleteMessageForEveryoneUseCase,
        _deleteMessageForYouUseCase = deleteMessageForYouUseCase,
+       _deleteConversationUseCase = deleteConversationUseCase,
        _ramCache = ramCache,
        _mediaManager = mediaManager,
        _fileManager = fileManager,
        super(WSDetailState()) {
     _registerHandlers();
     _initializeListener();
+
+    // TODO hoannk: Remove this after testing, fake user removed event
+    Future.delayed(const Duration(seconds: 30), () {
+      add(
+        AddMessageEvent(
+          message: MessageEntity(
+            id: 'msg_${workspaceId}_${DateTime.now().millisecondsSinceEpoch}',
+            workspaceId: workspaceId,
+            sender: MessageSender.system,
+            createdAt: DateTime.now(),
+            type: MessageType.system,
+            content: MessageContent.system(
+              systemType: SystemMessageType.userRemoved,
+              message: 'Admin removed you from the group.',
+            ),
+            status: MessageStatus.sent,
+          ),
+        ),
+      );
+    });
   }
 
   late final int workspaceId;
@@ -79,6 +102,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   final PinMessageUseCase _pinMessageUseCase;
   final DeleteMessageForEveryoneUseCase _deleteMessageForEveryoneUseCase;
   final DeleteMessageForYouUseCase _deleteMessageForYouUseCase;
+  final DeleteConversationUseCase _deleteConversationUseCase;
 
   final MediaManager _mediaManager;
   final FileManager _fileManager;
@@ -129,25 +153,25 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       // Ensures that each event of the same type is processed before the next event of the same type begins.
       transformer: sequential(),
     );
-    handleSubEvent<UpdateHasOptionsEvent>(_onUpdateHasOptions);
-    handleSubEvent<UpdateHasSendButtonEvent>(_onUpdateHasSendButton);
+    handleSubEvent<ToggleHasOptionsEvent>(_onToggleHasOptions);
+    handleSubEvent<ToggleHasSendButtonEvent>(_onToggleHasSendButton);
     handleSubEvent<SearchMembersEvent>(_onSearchMembers);
     handleSubEvent<JumpToMessageEvent>(_onJumpToMessage);
     handleSubEvent<ResetJumpToMessageEvent>(_onResetJumpToMessage);
-    handleSubEvent<ShowTimeEvent>(_onShowTime);
-    handleSubEvent<DisableShowTimeEvent>(_onDisableShowTime);
+    handleSubEvent<ToggleShowTimeEvent>(_onShowTime);
     handleSubEvent<GetPinnedMessageSummaryEvent>(_onGetPinnedMessageSummary);
     handleSubEvent<LoadMoreChatMessagesEvent>(
       _onLoadMoreMessages,
       // droppable to ensure that only one load more request is processed at a time
       transformer: droppable(),
     );
-    handleSubEvent<UnpinMessageFromDetailEvent>(_onUnpinMessage);
-    handleSubEvent<PinMessageFromDetailEvent>(_onPinMessage);
+    handleSubEvent<TogglePinMessageFromDetailEvent>(_onPinMessage);
     handleSubEvent<ResetPinStatusSuccessEvent>(_onResetPinStatusSuccess);
     handleSubEvent<UpdateShowTagOverlayEvent>(_onUpdateShowTagOverlay);
     handleSubEvent<DeleteMessageForEveryoneEvent>(_onDeleteMessageForEveryone);
     handleSubEvent<DeleteMessageForYouEvent>(_onDeleteMessageForYou);
+    handleSubEvent<DeleteConversationEvent>(_onDeleteConversation);
+    handleSubEvent<ToggleOptionsEvent>(_onToggleOptions);
   }
 
   void _initializeListener() {
@@ -183,10 +207,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   void _onTextChanged() {
     final input = _textEditingController.text;
 
-    if (state.hasSendButton && input.isEmpty) {
-      add(UpdateHasSendButtonEvent(hasSendButton: false));
-    } else if (!state.hasSendButton && input.isNotEmpty) {
-      add(UpdateHasSendButtonEvent(hasSendButton: true));
+    if (state.showSendButton && input.isEmpty) {
+      add(ToggleHasSendButtonEvent(showSendButton: false));
+    } else if (!state.showSendButton && input.isNotEmpty) {
+      add(ToggleHasSendButtonEvent(showSendButton: true));
     }
   }
 
@@ -353,7 +377,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     ResetScrollToBottomEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    emit(state.copyWith(scrollToBottom: false));
+    emit(state.copyWith(scrollToBottom: false, showScrollToBottomIcon: false));
   }
 
   Future<void> _onAddMessage(
@@ -361,11 +385,25 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     final message = event.message;
+
+    if (message.type == MessageType.system &&
+        message.content is SystemMessageContent) {
+      final systemMessageContent = message.content as SystemMessageContent;
+      if (systemMessageContent.systemType == SystemMessageType.userRemoved) {
+        emit(
+          state.copyWith(
+            groupMemberStatus: GroupMemberStatus.removed,
+            chatMessages: _mapMessagesToUIModels([message]),
+          ),
+        );
+        return;
+      }
+    }
+
     final uiModel = message.toUIModel(
       previousMessage: state.chatMessages.isNotEmpty
           ? state.chatMessages.last.message
           : null,
-      nextMessage: null,
     );
     final chatMessages = [...state.chatMessages, uiModel];
     final messageIndex = chatMessages.length - 1;
@@ -374,18 +412,18 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(state.copyWith(chatMessages: updatedListUiModel));
   }
 
-  Future<void> _onUpdateHasOptions(
-    UpdateHasOptionsEvent event,
+  Future<void> _onToggleHasOptions(
+    ToggleHasOptionsEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    emit(state.copyWith(hasOptions: event.hasOptions));
+    emit(state.copyWith(showOptions: event.showOptions));
   }
 
-  Future<void> _onUpdateHasSendButton(
-    UpdateHasSendButtonEvent event,
+  Future<void> _onToggleHasSendButton(
+    ToggleHasSendButtonEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    emit(state.copyWith(hasSendButton: event.hasSendButton));
+    emit(state.copyWith(showSendButton: event.showSendButton));
   }
 
   Future<void> _onSearchMembers(
@@ -464,73 +502,42 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   Future<void> _onShowTime(
-    ShowTimeEvent event,
+    ToggleShowTimeEvent event,
     Emitter<WSDetailState> emit,
   ) async {
     final messageIndex = state.chatMessages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
     if (messageIndex == -1) return;
-    final updatedMessages = _updateUIModel(
-      state.chatMessages,
-      messageIndex,
-      forceShowTime: true,
-    );
-    emit(
-      state.copyWith(
-        chatMessages: updatedMessages,
-        showTimeMessageId: event.messageId,
-      ),
-    );
-  }
+    final message = state.chatMessages[messageIndex];
 
-  Future<void> _onDisableShowTime(
-    DisableShowTimeEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    final messageIndex = state.chatMessages.indexWhere(
-      (uiModel) => uiModel.message.id == state.showTimeMessageId,
-    );
-    if (messageIndex == -1) return;
-    final updatedMessages = _updateUIModel(
-      state.chatMessages,
-      messageIndex,
-      forceShowTime: false,
-    );
-    emit(
-      state.copyWith(chatMessages: updatedMessages, forceDisableShowTime: true),
-    );
-  }
-
-  Future<void> _onUnpinMessage(
-    UnpinMessageFromDetailEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    emit(state.copyWith(processing: true));
-    final messageIndex = state.chatMessages.indexWhere(
-      (uiModel) => uiModel.message.id == event.messageId,
-    );
-    if (messageIndex == -1) return;
-
-    await _unpinMessageUseCase.call(
-      UnpinMessageParams(messageId: event.messageId),
-    );
-    // TODO hoannk: Remove delay
-    await Future.delayed(const Duration(seconds: 2));
-
-    final messages = List<ChatMessageUIModel>.from(state.chatMessages);
-    final currentMessage = messages[messageIndex];
-    messages[messageIndex] = currentMessage.copyWith(
-      message: currentMessage.message.copyWith(isPinned: false),
-    );
-
-    emit(
-      state.copyWith(
-        chatMessages: messages,
-        isPinStatusSuccess: true,
-        processing: false,
-      ),
-    );
+    if (message.message.type == MessageType.text && !message.showTime) {
+      if (!message.shouldShowTime) {
+        final updatedMessages = _updateUIModel(
+          state.chatMessages,
+          messageIndex,
+          forceShowTime: true,
+        );
+        emit(
+          state.copyWith(
+            chatMessages: updatedMessages,
+            showTimeMessageId: event.messageId,
+          ),
+        );
+      } else if (message.shouldShowTime) {
+        final updatedMessages = _updateUIModel(
+          state.chatMessages,
+          messageIndex,
+          forceShowTime: false,
+        );
+        emit(
+          state.copyWith(
+            chatMessages: updatedMessages,
+            forceDisableShowTime: true,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _onResetPinStatusSuccess(
@@ -541,7 +548,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   Future<void> _onPinMessage(
-    PinMessageFromDetailEvent event,
+    TogglePinMessageFromDetailEvent event,
     Emitter<WSDetailState> emit,
   ) async {
     emit(state.copyWith(processing: true));
@@ -550,14 +557,24 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     );
     if (messageIndex == -1) return;
 
-    await _pinMessageUseCase.call(PinMessageParams(messageId: event.messageId));
+    if (state.chatMessages[messageIndex].message.isPinned) {
+      await _unpinMessageUseCase.call(
+        UnpinMessageParams(messageId: event.messageId),
+      );
+    } else {
+      await _pinMessageUseCase.call(
+        PinMessageParams(messageId: event.messageId),
+      );
+    }
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
     final messages = List<ChatMessageUIModel>.from(state.chatMessages);
     final currentMessage = messages[messageIndex];
     messages[messageIndex] = currentMessage.copyWith(
-      message: currentMessage.message.copyWith(isPinned: true),
+      message: currentMessage.message.copyWith(
+        isPinned: !currentMessage.message.isPinned,
+      ),
     );
 
     emit(
@@ -601,21 +618,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
       await Future.delayed(const Duration(seconds: 2));
 
-      final messageIndex = state.chatMessages.indexWhere(
-        (uiModel) => uiModel.message.id == event.messageId,
+      final updatedMessages = _deleteMessage(
+        state.chatMessages,
+        event.messageId,
       );
-      var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
-      if (messageIndex != -1) {
-        updatedMessages.removeAt(messageIndex);
-        // Cập nhật message trước của message vừa xoá
-        if (messageIndex > 0) {
-          updatedMessages = _updateUIModel(updatedMessages, messageIndex - 1);
-        }
-        // Cập nhật message sau của message vừa xoá
-        if (messageIndex < updatedMessages.length - 1) {
-          updatedMessages = _updateUIModel(updatedMessages, messageIndex + 1);
-        }
-      }
 
       emit(state.copyWith(chatMessages: updatedMessages, processing: false));
     } catch (e) {
@@ -636,26 +642,34 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
       await Future.delayed(const Duration(seconds: 2));
 
-      final messageIndex = state.chatMessages.indexWhere(
-        (uiModel) => uiModel.message.id == event.messageId,
+      final updatedMessages = _deleteMessage(
+        state.chatMessages,
+        event.messageId,
       );
-      var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
-      if (messageIndex != -1) {
-        updatedMessages.removeAt(messageIndex);
-        // Cập nhật message trước của message vừa xoá
-        if (messageIndex > 0) {
-          updatedMessages = _updateUIModel(updatedMessages, messageIndex - 1);
-        }
-        // Cập nhật message sau của message vừa xoá
-        if (messageIndex < updatedMessages.length - 1) {
-          updatedMessages = _updateUIModel(updatedMessages, messageIndex + 1);
-        }
-      }
 
       emit(state.copyWith(chatMessages: updatedMessages, processing: false));
     } catch (e) {
       emit(state.copyWith(processing: false));
     }
+  }
+
+  Future<void> _onDeleteConversation(
+    DeleteConversationEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+    await _deleteConversationUseCase.call(
+      DeleteConversationParams(workspaceId: workspaceId),
+    );
+    await Future.delayed(const Duration(seconds: 2));
+    emit(state.copyWith(processing: false, isDeletedConversationSuccess: true));
+  }
+
+  Future<void> _onToggleOptions(
+    ToggleOptionsEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(showOptions: event.showOptions));
   }
 
   // Functions
@@ -707,7 +721,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           shouldShowAvatar,
           shouldShowUserName,
           isContinuation,
-        ) = ChatMessageHelper.updateUIModel(
+        ) = ChatMessageUiModelHelper.updateUIModel(
           currentMessage: previousMessage,
           previousMessage: previousPreviousMessage,
           nextMessage: currentMessage,
@@ -731,7 +745,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           shouldShowAvatar,
           shouldShowUserName,
           isContinuation,
-        ) = ChatMessageHelper.updateUIModel(
+        ) = ChatMessageUiModelHelper.updateUIModel(
           currentMessage: nextMessage,
           previousMessage: currentMessage,
           nextMessage: nextNextMessage,
@@ -779,6 +793,28 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       );
     }
 
+    return updatedMessages;
+  }
+
+  List<ChatMessageUIModel> _deleteMessage(
+    List<ChatMessageUIModel> chatMessages,
+    String messageId,
+  ) {
+    final messageIndex = chatMessages.indexWhere(
+      (uiModel) => uiModel.message.id == messageId,
+    );
+    var updatedMessages = List<ChatMessageUIModel>.from(chatMessages);
+    if (messageIndex != -1) {
+      updatedMessages.removeAt(messageIndex);
+      // Cập nhật message trước của message vừa xoá
+      if (messageIndex > 0) {
+        updatedMessages = _updateUIModel(updatedMessages, messageIndex - 1);
+      }
+      // Cập nhật message sau của message vừa xoá
+      if (messageIndex < updatedMessages.length - 1) {
+        updatedMessages = _updateUIModel(updatedMessages, messageIndex + 1);
+      }
+    }
     return updatedMessages;
   }
 

@@ -1,7 +1,7 @@
 import '../../../../domain/enums/message_enums.dart';
 import 'chat_message_ui_model.dart';
 
-class ChatMessageHelper {
+class ChatMessageUiModelHelper {
   static (
     bool shouldShowTime,
     bool shouldShowAvatar,

@@ -9,16 +9,27 @@ import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../../routers/app_router.dart';
 import '../../../../ui_models/pinned_message_summary_ui_model.dart';
+import '../../../../widgets/app_button.dart';
 import '../../../../widgets/chat/pinned_message_section.dart';
+import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
 import '../../../../widgets/circle_network_avatar.dart';
 import '../../../../widgets/chat_input/chat_input_bar.dart';
+import '../../../../widgets/chat_input/tag_user_list_view.dart';
 import '../widgets/chat_content.dart';
 import '../widgets/pinned_message_bottom_sheet.dart';
 import '../workspace_detail_bloc.dart';
 
 class WorkspaceDetailMobileLayout extends StatefulWidget {
-  const WorkspaceDetailMobileLayout({super.key});
+  const WorkspaceDetailMobileLayout({
+    super.key,
+    required this.groupName,
+    required this.groupAvatar,
+  });
+
+  final String groupName;
+  final String groupAvatar;
 
   @override
   State<WorkspaceDetailMobileLayout> createState() =>
@@ -28,11 +39,18 @@ class WorkspaceDetailMobileLayout extends StatefulWidget {
 class _WorkspaceDetailMobileLayoutState
     extends State<WorkspaceDetailMobileLayout> {
   late final WSDetailBloc _bloc;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _bloc = context.read<WSDetailBloc>();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -50,224 +68,291 @@ class _WorkspaceDetailMobileLayoutState
           },
         ),
       ],
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.white,
-        appBar: AppBar(
+      child: GestureDetector(
+        onTap: () {
+          if (_bloc.state.groupMemberStatus == GroupMemberStatus.removed) {
+            return;
+          }
+          _bloc.textEditingController.closeTagOverlay();
+          if (!_bloc.state.showTagOverlay) {
+            _focusNode.unfocus();
+            _bloc.add(ToggleOptionsEvent(showOptions: true));
+          }
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
           backgroundColor: Colors.white,
-          elevation: 0,
-          leadingWidth: 44,
-          toolbarHeight: 60,
-          scrolledUnderElevation: 0,
-          leading: GestureDetector(
-            onTap: () => context.router.pop(),
-            child: Stack(
-              children: [
-                Positioned(
-                  left: 8,
-                  top: 0,
-                  bottom: 0,
-                  child: Container(
-                    height: 24,
-                    width: 24,
-                    alignment: Alignment.center,
-                    child: GestureDetector(
-                      onTap: () => context.router.pop(),
-                      child: Assets.icons.icArrowLeft.svg(
-                        height: 24,
-                        width: 24,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.iconDefaultDefault,
-                          BlendMode.srcIn,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leadingWidth: 44,
+            toolbarHeight: 60,
+            scrolledUnderElevation: 0,
+            leading: GestureDetector(
+              onTap: () => context.router.pop(),
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: 8,
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      height: 24,
+                      width: 24,
+                      alignment: Alignment.center,
+                      child: GestureDetector(
+                        onTap: () => context.router.pop(),
+                        child: Assets.icons.icArrowLeft.svg(
+                          height: 24,
+                          width: 24,
+                          colorFilter: ColorFilter.mode(
+                            AppColors.iconDefaultDefault,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: Container(
-                    height: 18,
-                    alignment: Alignment.center,
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: AppColors.iconAlertInfo,
-                        shape: BoxShape.circle,
-                      ),
+                      height: 18,
                       alignment: Alignment.center,
-                      child: Text(
-                        '29',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: AppColors.iconAlertInfo,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '29',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
+                  ),
+                ],
+              ),
+            ),
+            titleSpacing: 12,
+            title: Row(
+              children: [
+                CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.groupName,
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextDefault,
+                          fontSize: 16,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.50,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      BlocSelector<
+                        WSDetailBloc,
+                        WSDetailState,
+                        List<UserEntity>
+                      >(
+                        selector: (state) {
+                          return state.users;
+                        },
+                        builder: (context, users) {
+                          final onlineUsers = users
+                              .where((user) => user.isOnline)
+                              .length;
+                          return Text(
+                            '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                            style: TextStyle(
+                              color: AppColors.textDefaultTextSub2,
+                              fontSize: 14,
+                              fontFamily: FontFamily.segoeUI,
+                              fontWeight: FontWeight.w400,
+                              height: 1.14,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          titleSpacing: 12,
-          title: Row(
-            children: [
-              CircleNetworkAvatar(
-                imageUrl: 'https://example.com/avatar.jpg',
-                size: 40,
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Whales - IG Agency 8%',
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextDefault,
-                        fontSize: 16,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w700,
-                        height: 1.50,
-                      ),
-                    ),
-                    BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
-                      selector: (state) {
-                        return state.users;
-                      },
-                      builder: (context, users) {
-                        final onlineUsers = users
-                            .where((user) => user.isOnline)
-                            .length;
-                        return Text(
-                          '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
-                          style: TextStyle(
-                            color: AppColors.textDefaultTextSub2,
-                            fontSize: 14,
-                            fontFamily: FontFamily.segoeUI,
-                            fontWeight: FontWeight.w400,
-                            height: 1.14,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          body: SafeArea(
+            child: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(
+              selector: (state) {
+                return state.groupMemberStatus;
+              },
+              builder: (context, state) {
+                return state == GroupMemberStatus.joined
+                    ? _GroupChatView(bloc: _bloc, focusNode: _focusNode)
+                    : _GroupRemovedView(bloc: _bloc);
+              },
+            ),
           ),
-        ),
-        body: SafeArea(
-          child:
-              BlocSelector<WSDetailBloc, WSDetailState, GroupMembershipStatus>(
-                selector: (state) {
-                  return state.groupMembershipStatus;
-                },
-                builder: (context, state) {
-                  return state == GroupMembershipStatus.active
-                      ? _ChatListMainView(bloc: _bloc)
-                      : _KickedView(bloc: _bloc);
-                },
-              ),
         ),
       ),
     );
   }
 }
 
-class _ChatListMainView extends StatelessWidget {
-  const _ChatListMainView({required WSDetailBloc bloc}) : _bloc = bloc;
+class _GroupChatView extends StatelessWidget {
+  const _GroupChatView({required this.bloc, required this.focusNode});
 
-  final WSDetailBloc _bloc;
+  final WSDetailBloc bloc;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        BlocSelector<WSDetailBloc, WSDetailState, PinnedMessageSummaryUiModel?>(
-          selector: (state) {
-            return state.pinnedMessageSummary;
-          },
-          builder: (context, pinnedMessageSummary) {
-            if (pinnedMessageSummary == null) {
-              return const SizedBox.shrink();
-            }
+        Expanded(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  BlocSelector<
+                    WSDetailBloc,
+                    WSDetailState,
+                    PinnedMessageSummaryUiModel?
+                  >(
+                    selector: (state) {
+                      return state.pinnedMessageSummary;
+                    },
+                    builder: (context, pinnedMessageSummary) {
+                      if (pinnedMessageSummary == null) {
+                        return const SizedBox.shrink();
+                      }
 
-            return SizedBox(
-              child: PinnedMessageSection(
-                pinnedMessageSummary: pinnedMessageSummary,
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    useSafeArea: true,
-                    elevation: 0,
-                    barrierColor: Colors.black.withValues(alpha: 0.68),
-                    backgroundColor: Colors.transparent,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return Stack(
-                        children: [
-                          // Tap to close bottom sheet
-                          Positioned.fill(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
+                      return SizedBox(
+                        child: PinnedMessageSection(
+                          pinnedMessageSummary: pinnedMessageSummary,
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              useSafeArea: true,
+                              elevation: 0,
+                              barrierColor: Colors.black.withValues(
+                                alpha: 0.68,
+                              ),
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              builder: (context) {
+                                return Stack(
+                                  children: [
+                                    // Tap to close bottom sheet
+                                    Positioned.fill(
+                                      top: 0,
+                                      left: 0,
+                                      right: 0,
+                                      bottom: 0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          color: Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
+                                    PinnedMessagesBottomSheet(
+                                      workspaceId: bloc.workspaceId,
+                                      onTap: (messageId) {
+                                        bloc.add(
+                                          JumpToMessageEvent(
+                                            messageId: messageId,
+                                          ),
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      onUnpinSuccess: () {
+                                        bloc.add(
+                                          GetPinnedMessageSummaryEvent(),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                );
                               },
-                              child: Container(color: Colors.transparent),
-                            ),
-                          ),
-                          PinnedMessagesBottomSheet(
-                            workspaceId: _bloc.workspaceId,
-                            onTap: (messageId) {
-                              _bloc.add(
-                                JumpToMessageEvent(messageId: messageId),
-                              );
-                              Navigator.pop(context);
-                            },
-                            onUnpinSuccess: () {
-                              _bloc.add(GetPinnedMessageSummaryEvent());
-                            },
-                          ),
-                        ],
+                            );
+                          },
+                        ),
                       );
                     },
-                  );
-                },
+                  ),
+                  Expanded(child: ChatContent()),
+                ],
               ),
-            );
-          },
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: BlocBuilder<WSDetailBloc, WSDetailState>(
+                  buildWhen: (previous, current) =>
+                      previous.users != current.users ||
+                      previous.showTagOverlay != current.showTagOverlay,
+                  builder: (context, state) {
+                    if (state.users.isEmpty || !state.showTagOverlay) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TagUserListView(
+                        users: state.users,
+                        onTap: (user) {
+                          bloc.textEditingController.addTag(user.name, user.id);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
-        Expanded(child: ChatContent()),
         BlocSelector<WSDetailBloc, WSDetailState, MessageEntity?>(
           selector: (state) {
             return state.messageReply;
           },
           builder: (context, message) {
             return ChatInputBar(
-              workspaceId: _bloc.workspaceId,
-              userId: _bloc.userId,
+              workspaceId: bloc.workspaceId,
+              userId: bloc.userId,
+              focusNode: focusNode,
+              textEditingController: bloc.textEditingController,
               messageReply: message,
               onReplyClose: () {
-                _bloc.add(CloseReplyMessageEvent());
+                bloc.add(CloseReplyMessageEvent());
               },
               onDocumentTap: () {
-                _bloc.add(SendMessageEvent(type: SendMessageType.file));
+                bloc.add(SendMessageEvent(type: SendMessageType.file));
               },
               onCameraTap: () {
-                // TODO hoannk:
+                context.router.push(CameraRoute());
               },
               onMediaTap: () {
-                _bloc.add(SendMessageEvent(type: SendMessageType.media));
+                bloc.add(SendMessageEvent(type: SendMessageType.media));
               },
               onSendTap: () {
-                _bloc.add(SendMessageEvent(type: SendMessageType.text));
+                bloc.add(SendMessageEvent(type: SendMessageType.text));
+              },
+              onToggleOptions: (showOptions) {
+                bloc.add(ToggleOptionsEvent(showOptions: showOptions));
               },
             );
           },
@@ -277,14 +362,117 @@ class _ChatListMainView extends StatelessWidget {
   }
 }
 
-class _KickedView extends StatelessWidget {
-  const _KickedView({required WSDetailBloc bloc}) : _bloc = bloc;
+class _GroupRemovedView extends StatelessWidget {
+  const _GroupRemovedView({required WSDetailBloc bloc}) : _bloc = bloc;
 
   final WSDetailBloc _bloc;
 
   @override
   Widget build(BuildContext context) {
-    // TODO hoannk:
-    return const SizedBox();
+    return BlocListener<WSDetailBloc, WSDetailState>(
+      listenWhen: (previous, current) =>
+          previous.isDeletedConversationSuccess !=
+          current.isDeletedConversationSuccess,
+      listener: (context, state) {
+        if (state.isDeletedConversationSuccess) {
+          context.router.pop();
+        }
+      },
+      child: Column(
+        spacing: 20,
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: BlocBuilder<WSDetailBloc, WSDetailState>(
+                buildWhen: (previous, current) =>
+                    previous.chatMessages != current.chatMessages,
+                builder: (context, state) {
+                  return state.chatMessages.isEmpty
+                      ? const SizedBox.shrink()
+                      : ChatMessageBubble.system(
+                          message: state.chatMessages.first.message,
+                          userId: _bloc.userId,
+                          shouldShowTime: true,
+                        );
+                },
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  width: 1,
+                  color: AppColors.outlineGrayStrong200,
+                ),
+              ),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 12,
+                children: [
+                  _buildContent(),
+                  AppButton.primary(
+                    minimumSize: const Size(double.infinity, 48),
+                    backgroundColor: AppColors.surfaceContainerAlertError,
+                    onPressed: () {
+                      _bloc.add(DeleteConversationEvent());
+                    },
+                    child: Text(
+                      'Delete conversation',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextInverted,
+                        fontSize: 16,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w700,
+                        height: 1.50,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'You can’t message this group',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textAlertTextError,
+            fontSize: 13,
+            fontFamily: FontFamily.segoeUI,
+            fontWeight: FontWeight.w600,
+            height: 1.23,
+          ),
+        ),
+        Text(
+          'You’re no longer in this group and can’t send or receive calls or messages unless you are added back to it.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textDefaultTextSub2,
+            fontSize: 12,
+            fontFamily: FontFamily.segoeUI,
+            fontWeight: FontWeight.w400,
+            height: 1.33,
+          ),
+        ),
+      ],
+    );
   }
 }

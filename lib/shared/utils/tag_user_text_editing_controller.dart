@@ -54,6 +54,7 @@ class TagUserTextEditingController extends TextEditingController {
 
   final _tagQueryController = StreamController<String>.broadcast();
   Stream<String> get tagQuery => _tagQueryController.stream;
+  var latestShowTagOverlay = false;
 
   Timer? _debounceTimer;
 
@@ -117,7 +118,10 @@ class TagUserTextEditingController extends TextEditingController {
       _debounceTimer?.cancel();
     }
 
-    _showTagOverlayController.add(shouldShowOverlay);
+    if (latestShowTagOverlay != shouldShowOverlay) {
+      latestShowTagOverlay = shouldShowOverlay;
+      _showTagOverlayController.add(shouldShowOverlay);
+    }
   }
 
   void _adjustAndCleanTags(String oldText, String newText) {
@@ -219,6 +223,11 @@ class TagUserTextEditingController extends TextEditingController {
         tag = tag.copyWith(start: tag.start + diff, end: tag.end + diff);
       }
     }
+  }
+
+  void closeTagOverlay() {
+    if (_showTagOverlayController.isClosed || !latestShowTagOverlay) return;
+    _showTagOverlayController.add(false);
   }
 
   List<TextSegment> get tagTextSegments {
