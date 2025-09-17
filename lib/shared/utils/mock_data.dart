@@ -7,10 +7,15 @@ import 'package:ig_agency_app/domain/enums/filter_type.dart';
 import '../../domain/entities/file_entity.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/media_entity.dart';
+import '../../domain/entities/message/message_content.dart';
+import '../../domain/entities/message/message_entity.dart';
+import '../../domain/entities/message/message_reply.dart';
+import '../../domain/entities/message/message_sender.dart';
 import '../../domain/entities/search.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/entities/workspace_entity.dart';
+import '../../domain/enums/message_enums.dart';
 
 class MockData {
   final List<MediaEntity> mockMediaData = List.generate(50, (index) {
@@ -562,5 +567,109 @@ class MockData {
         bio: 'Community-driven volunteer group.',
       ),
     ];
+  }
+
+  List<MessageEntity> mockMessages() {
+    final now = DateTime.now();
+    final random = Random();
+
+    final senders = [
+      const MessageSender(
+        id: "u1",
+        name: "Alice",
+        avatarUrl: "https://i.pravatar.cc/100?img=1",
+      ),
+      const MessageSender(
+        id: "u2",
+        name: "Bob",
+        avatarUrl: "https://i.pravatar.cc/100?img=2",
+      ),
+      const MessageSender(
+        id: "u3",
+        name: "Charlie",
+        avatarUrl: "https://i.pravatar.cc/100?img=3",
+      ),
+    ];
+
+    final statuses = MessageStatus.values;
+
+    List<MessageEntity> messages = [];
+
+    for (int i = 0; i < 30; i++) {
+      final sender = senders[random.nextInt(senders.length)];
+      final status = statuses[random.nextInt(statuses.length)];
+      final createdAt = now.subtract(Duration(minutes: i * 5));
+
+      final type =
+          MessageType.values[random.nextInt(MessageType.values.length)];
+
+      MessageContent content;
+      switch (type) {
+        case MessageType.text:
+          content = MessageContent.text(text: "Message $i from ${sender.name}");
+          break;
+        case MessageType.image:
+          content = MessageContent.image(
+            imageUrl: "https://picsum.photos/200/300?random=$i",
+            width: 200,
+            height: 300,
+          );
+          break;
+        case MessageType.video:
+          content = MessageContent.video(
+            videoUrl: "https://example.com/video_$i.mp4",
+            duration: Duration(seconds: 30 + i * 2),
+            thumbnailUrl: "https://picsum.photos/300/200?video=$i",
+            width: 300,
+            height: 200,
+          );
+          break;
+        case MessageType.file:
+          content = MessageContent.file(
+            fileUrl: "https://example.com/file_$i.pdf",
+            fileName: "Document_$i.pdf",
+            fileExtension: "pdf",
+            fileSize: 1024 * (i + 1),
+            fileType: FileType.document,
+          );
+          break;
+        case MessageType.system:
+          content = MessageContent.system(
+            systemType: i % 2 == 0
+                ? SystemMessageType.userJoined
+                : SystemMessageType.userLeft,
+            message: i % 2 == 0
+                ? "${sender.name} joined the group"
+                : "${sender.name} left the group",
+          );
+          break;
+      }
+
+      messages.add(
+        MessageEntity(
+          id: "msg_$i",
+          sender: sender,
+          createdAt: createdAt,
+          type: type,
+          content: content,
+          status: status,
+          groupName: "Test Group",
+          reply: (i % 7 == 0 && messages.isNotEmpty)
+              ? MessageReply(
+                  messageId:
+                      messages[random.nextInt(messages.length)].id,
+                  senderName: "ReplyUser",
+                  previewText: "This is a reply to msg_$i",
+                  originalMessageType: MessageType.text,
+                  senderId: '',
+                )
+              : null,
+          isPinned: i % 10 == 0,
+          pinnedAt: i % 10 == 0 ? now.subtract(Duration(minutes: i * 2)) : null,
+        ),
+      );
+    }
+
+    return messages;
   }
 }
