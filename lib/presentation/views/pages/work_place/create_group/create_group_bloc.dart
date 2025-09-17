@@ -128,15 +128,13 @@ class CreateGroupBloc extends BaseBloc<CreateGroupEvent, CreateGroupState> {
     SubmitCreateGroupEvent event,
     Emitter<CreateGroupState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loading));
+    emit(state.copyWith(processing: true));
 
     final value = await _repo.createGroup(
       state.groupName,
       state.listSelectedUser,
     );
 
-    emit(
-      state.copyWith(createGroupSuccess: value, pageStatus: PageStatus.loaded),
-    );
+    emit(state.copyWith(createGroupSuccess: value, processing: false));
   }
 }

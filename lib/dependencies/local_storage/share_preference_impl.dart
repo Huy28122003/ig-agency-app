@@ -6,7 +6,7 @@ import 'package:ig_agency_app/shared/extensions/object.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-@LazySingleton(as: LocalStorageManager)
+@LazySingleton(as: LocalStorageManager, order: -3)
 class SharePreferenceImpl extends LocalStorageManager {
   SharePreferenceImpl(this._prefs, this._secureStorage);
 

@@ -117,10 +117,15 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     TakePhotoEvent event,
     Emitter<CameraState> emit,
   ) async {
-    emit(state.copyWith(media: ''));
-    if (_cameraController?.value.isInitialized != true) return;
-    final file = await _cameraController?.takePicture();
-    emit(state.copyWith(media: file?.path ?? '', isPhoto: true));
+    try {
+      if (!state.status.isReady) return;
+      emit(state.copyWith(media: ''));
+      if (_cameraController?.value.isInitialized != true) return;
+      final file = await _cameraController?.takePicture();
+      emit(state.copyWith(media: file?.path ?? '', isPhoto: true));
+    } catch (e) {
+      return;
+    }
   }
 
   Future<void> _onStartRecord(
@@ -128,6 +133,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     Emitter<CameraState> emit,
   ) async {
     try {
+      if (!state.status.isReady) return;
       await _cameraController?.startVideoRecording();
       emit(state.copyWith(inProgress: true));
     } catch (e) {
@@ -140,6 +146,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     Emitter<CameraState> emit,
   ) async {
     try {
+      if (!state.status.isReady) return;
       emit(state.copyWith(inProgress: false));
       final file = await _cameraController?.stopVideoRecording();
       await Future.delayed(Duration(milliseconds: 250));

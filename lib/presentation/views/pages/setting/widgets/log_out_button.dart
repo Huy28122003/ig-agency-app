@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../../../../gen/assets.gen.dart';
@@ -27,7 +28,7 @@ class LogOutButton extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Log Out',
+                  'setting.logout'.tr(),
                   style: TextStyle(
                     color: AppColors.textAlertTextError,
                     fontSize: 16,

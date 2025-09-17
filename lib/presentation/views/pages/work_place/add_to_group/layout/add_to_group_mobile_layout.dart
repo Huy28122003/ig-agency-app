@@ -111,6 +111,8 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
               onTap: () {
                 context.router.push(const CreateGroupRoute());
               },
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
               child: Center(
                 child: Text(
                   'add_member.create_new'.tr(),

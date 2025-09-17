@@ -123,5 +123,13 @@
   "media_detail": {
     "forward": "Forward",
     "copy": "Copy"
+  },
+  "setting": {
+    "title": "Settings",
+    "dark_mode": "Dark Mode",
+    "pinned_message": "Pinned Messages",
+    "blocked_user": "Blocked Users",
+    "notification": "In App Alerts",
+    "logout": "Logout"
   }
 }

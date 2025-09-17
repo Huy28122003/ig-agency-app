@@ -9,4 +9,8 @@ extension FormattedDateTimeExtension on DateTime {
       return DateFormat('MMM d, yyyy').format(this);
     }
   }
+
+  String toShortTimeString() {
+    return DateFormat('h:mm a').format(this);
+  }
 }

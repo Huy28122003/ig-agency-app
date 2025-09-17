@@ -3,7 +3,6 @@ import 'package:ig_agency_app/domain/usecases/login_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../../shared/commons/constants/string.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
 
@@ -53,7 +52,6 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     await _loginUseCase(
       LoginParam(email: state.email, password: state.password),
     );
-    kTesting = true;
     emit(state.copyWith(processing: false, isSuccess: true));
   }
 }

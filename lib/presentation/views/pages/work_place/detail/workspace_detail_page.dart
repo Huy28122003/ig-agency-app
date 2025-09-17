@@ -10,12 +10,17 @@ import 'workspace_detail_bloc.dart';
 @RoutePage()
 class WSDetailPage
     extends BasePage<WSDetailBloc, WSDetailEvent, WSDetailState> {
-  const WSDetailPage({super.key});
+  const WSDetailPage({super.key, required this.workspaceId});
+
+  final int workspaceId;
+
+  @override
+  WSDetailBloc get buildBloc => super.buildBloc..workspaceId = workspaceId;
 
   @override
   void onInitState(BuildContext context) {
-    context.read<WSDetailBloc>().add(LoadDataEvent());
     super.onInitState(context);
+    context.read<WSDetailBloc>().add(LoadDataEvent());
   }
 
   @override

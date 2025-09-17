@@ -1,24 +1,247 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../routers/app_router.dart';
+import '../../../../../../domain/entities/message/message.dart';
+import '../../../../../../domain/enums/send_message_type.dart';
+import '../../../../../../gen/assets.gen.dart';
+import '../../../../../../gen/fonts.gen.dart';
+import '../../../../../resources/colors.dart';
+import '../../../../ui_models/pinned_message_summary_ui_model.dart';
+import '../../../../widgets/chat/pinned_message_section.dart';
+import '../../../../widgets/circle_network_avatar.dart';
+import '../../../../widgets/chat_input/chat_input_bar.dart';
+import '../widgets/chat_content.dart';
+import '../widgets/pinned_message_bottom_sheet.dart';
+import '../workspace_detail_bloc.dart';
 
-class WorkspaceDetailMobileLayout extends StatelessWidget {
+class WorkspaceDetailMobileLayout extends StatefulWidget {
   const WorkspaceDetailMobileLayout({super.key});
 
   @override
+  State<WorkspaceDetailMobileLayout> createState() =>
+      _WorkspaceDetailMobileLayoutState();
+}
+
+class _WorkspaceDetailMobileLayoutState
+    extends State<WorkspaceDetailMobileLayout> {
+  late final WSDetailBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = context.read<WSDetailBloc>();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: AppBar(title: Text('Detail')),
-      body: Container(
-        decoration: BoxDecoration(color: Colors.white),
-        alignment: Alignment.center,
-        child: GestureDetector(
-          onTap: () {
-            context.router.push(ChatInfoRoute());
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<WSDetailBloc, WSDetailState>(
+          listenWhen: (previous, current) =>
+              previous.isPinStatusSuccess != current.isPinStatusSuccess,
+          listener: (context, state) {
+            if (state.isPinStatusSuccess) {
+              _bloc.add(ResetPinStatusSuccessEvent());
+              _bloc.add(GetPinnedMessageSummaryEvent());
+            }
           },
-          child: Text('Detail'),
+        ),
+      ],
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leadingWidth: 44,
+          toolbarHeight: 60,
+          scrolledUnderElevation: 0,
+          leading: GestureDetector(
+            onTap: () => context.router.pop(),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 8,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 24,
+                    width: 24,
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTap: () => context.router.pop(),
+                      child: Assets.icons.icArrowLeft.svg(
+                        height: 24,
+                        width: 24,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.iconDefaultDefault,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 18,
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: AppColors.iconAlertInfo,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '29',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          titleSpacing: 12,
+          title: Row(
+            children: [
+              CircleNetworkAvatar(
+                imageUrl: 'https://example.com/avatar.jpg',
+                size: 40,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Whales - IG Agency 8%',
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextDefault,
+                        fontSize: 16,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w700,
+                        height: 1.50,
+                      ),
+                    ),
+                    Text(
+                      '99 Members, 29 Online',
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextSub2,
+                        fontSize: 14,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              BlocSelector<
+                WSDetailBloc,
+                WSDetailState,
+                PinnedMessageSummaryUiModel?
+              >(
+                selector: (state) {
+                  return state.pinnedMessageSummary;
+                },
+                builder: (context, pinnedMessageSummary) {
+                  if (pinnedMessageSummary == null) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return SizedBox(
+                    child: PinnedMessageSection(
+                      pinnedMessageSummary: pinnedMessageSummary,
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          useSafeArea: true,
+                          elevation: 0,
+                          barrierColor: Colors.black.withValues(alpha: 0.68),
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return Stack(
+                              children: [
+                                // Tap to close bottom sheet
+                                Positioned.fill(
+                                  top: 0,
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(color: Colors.transparent),
+                                  ),
+                                ),
+                                PinnedMessagesBottomSheet(
+                                  workspaceId: _bloc.workspaceId,
+                                  onTap: (messageId) {
+                                    _bloc.add(
+                                      JumpToMessageEvent(messageId: messageId),
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                  onUnpinSuccess: () {
+                                    _bloc.add(GetPinnedMessageSummaryEvent());
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+              Expanded(child: ChatContent()),
+              BlocSelector<WSDetailBloc, WSDetailState, MessageEntity?>(
+                selector: (state) {
+                  return state.messageReply;
+                },
+                builder: (context, message) {
+                  return ChatInputBar(
+                    workspaceId: _bloc.workspaceId,
+                    userId: _bloc.userId,
+                    messageReply: message,
+                    onReplyClose: () {
+                      _bloc.add(CloseReplyMessageEvent());
+                    },
+                    onDocumentTap: () {
+                      // TODO hoannk:
+                    },
+                    onCameraTap: () {
+                      // TODO hoannk:
+                    },
+                    onMediaTap: () {
+                      _bloc.add(SendMessageEvent(type: SendMessageType.media));
+                    },
+                    onSendTap: () {
+                      _bloc.add(SendMessageEvent(type: SendMessageType.text));
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
