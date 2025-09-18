@@ -23,6 +23,7 @@ class MessageResultTile extends StatelessWidget {
     return GestureDetector(
       onTap: () {},
       child: Container(
+        color: AppColors.surfaceBackgroundBackground,
         padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -84,19 +85,27 @@ class MessageResultTile extends StatelessWidget {
     final listWord = content.split(' ');
     final messageSearchIndex = listWord.indexWhere((e) => e == messageSearch);
 
-    final shortlist = listWord.sublist(
-      (messageSearchIndex - 2).clamp(0, listWord.length),
-      (messageSearchIndex + 3).clamp(0, listWord.length),
-    );
+    List<String> shortlist = [];
+    if (messageSearchIndex != -1) {
+      shortlist = listWord.sublist(
+        (messageSearchIndex - 2).clamp(0, listWord.length),
+        (messageSearchIndex + 3).clamp(0, listWord.length),
+      );
+    } else {
+      shortlist = List.from(listWord);
+    }
+
     return Row(
       children: [
         Flexible(
           child: Text.rich(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             TextSpan(
               children: shortlist
                   .map(
                     (e) => TextSpan(
-                      text: e,
+                      text: '$e ',
                       style: TextStyle(
                         fontFamily: FontFamily.segoeUI,
                         fontSize: 14,
@@ -133,12 +142,13 @@ class MessageResultTile extends StatelessWidget {
       ],
     );
   }
+
   String _convertDateTimeToString() {
     final now = DateTime.now();
     final isToday =
         now.year == message.createdAt.year &&
-            now.month == message.createdAt.month &&
-            now.day == message.createdAt.day;
+        now.month == message.createdAt.month &&
+        now.day == message.createdAt.day;
     if (isToday) {
       return message.createdAt.toHourMinuteAmPm;
     } else {

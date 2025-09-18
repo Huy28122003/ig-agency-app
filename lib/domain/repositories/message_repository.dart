@@ -32,4 +32,11 @@ abstract class MessageRepository {
     String? replyMessageId,
     dynamic content,
   );
+
+  Future<List<MessageEntity>> searchMessageInWorkspace({
+    required int workspaceId,
+    required String searchMessage,
+    required int limit,
+    required int offset,
+  });
 }

@@ -126,5 +126,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: LinkedDeviceRoute.page),
     AutoRoute(page: DeviceDetailRoute.page),
     AutoRoute(page: LoginHistoryRoute.page),
+    AutoRoute(page: MessageSearchResultsListRoute.page),
   ];
 }

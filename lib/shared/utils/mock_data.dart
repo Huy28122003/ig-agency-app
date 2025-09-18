@@ -600,64 +600,23 @@ class MockData {
       final status = statuses[random.nextInt(statuses.length)];
       final createdAt = now.subtract(Duration(minutes: i * 5));
 
-      final type =
-          MessageType.values[random.nextInt(MessageType.values.length)];
-
-      MessageContent content;
-      switch (type) {
-        case MessageType.text:
-          content = MessageContent.text(text: "Message $i from ${sender.name}");
-          break;
-        case MessageType.image:
-          content = MessageContent.image(
-            imageUrl: "https://picsum.photos/200/300?random=$i",
-            width: 200,
-            height: 300,
-          );
-          break;
-        case MessageType.video:
-          content = MessageContent.video(
-            videoUrl: "https://example.com/video_$i.mp4",
-            duration: Duration(seconds: 30 + i * 2),
-            thumbnailUrl: "https://picsum.photos/300/200?video=$i",
-            width: 300,
-            height: 200,
-          );
-          break;
-        case MessageType.file:
-          content = MessageContent.file(
-            fileUrl: "https://example.com/file_$i.pdf",
-            fileName: "Document_$i.pdf",
-            fileExtension: "pdf",
-            fileSize: 1024 * (i + 1),
-            fileType: FileType.document,
-          );
-          break;
-        case MessageType.system:
-          content = MessageContent.system(
-            systemType: i % 2 == 0
-                ? SystemMessageType.userJoined
-                : SystemMessageType.userLeft,
-            message: i % 2 == 0
-                ? "${sender.name} joined the group"
-                : "${sender.name} left the group",
-          );
-          break;
-      }
+      // 🔹 Chỉ tạo message text
+      final content = MessageContent.text(
+        text: "This is text message $i from ${sender.name}",
+      );
 
       messages.add(
         MessageEntity(
           id: "msg_$i",
           sender: sender,
           createdAt: createdAt,
-          type: type,
+          type: MessageType.text,
           content: content,
           status: status,
           groupName: "Test Group",
           reply: (i % 7 == 0 && messages.isNotEmpty)
               ? MessageReply(
-                  messageId:
-                      messages[random.nextInt(messages.length)].id,
+                  messageId: messages[random.nextInt(messages.length)].id,
                   senderName: "ReplyUser",
                   previewText: "This is a reply to msg_$i",
                   originalMessageType: MessageType.text,

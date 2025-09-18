@@ -1,3 +1,5 @@
+import 'package:dartx/dartx.dart';
+import 'package:ig_agency_app/shared/utils/mock_data.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/message/message.dart';
@@ -132,6 +134,26 @@ class MessageRepositoryImpl implements MessageRepository {
         workspaceId,
         replyMessageId,
         content,
+      );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<List<MessageEntity>> searchMessageInWorkspace({
+    required int workspaceId,
+    required String searchMessage,
+    required int limit,
+    required int offset,
+  }) async {
+    try {
+      await 500.milliseconds.delay;
+      return MockData().mockMessages().sublist(
+        offset,
+        offset + limit > MockData().mockMessages().length
+            ? MockData().mockMessages().length
+            : (offset + limit),
       );
     } catch (e) {
       throw FailureConverter.convert(e);
