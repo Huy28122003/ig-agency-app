@@ -72,22 +72,24 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     // TODO hoannk: Remove this after testing, fake user removed event
     Future.delayed(const Duration(minutes: 3), () {
-      add(
-        AddMessageEvent(
-          message: MessageEntity(
-            id: 'msg_${workspaceId}_${DateTime.now().millisecondsSinceEpoch}',
-            workspaceId: workspaceId,
-            sender: MessageSender.system,
-            createdAt: DateTime.now(),
-            type: MessageType.system,
-            content: MessageContent.system(
-              systemType: SystemMessageType.userRemoved,
-              message: 'Admin removed you from the group.',
+      if (!isClosed) {
+        add(
+          AddMessageEvent(
+            message: MessageEntity(
+              id: 'msg_${workspaceId}_${DateTime.now().millisecondsSinceEpoch}',
+              workspaceId: workspaceId,
+              sender: MessageSender.system,
+              createdAt: DateTime.now(),
+              type: MessageType.system,
+              content: MessageContent.system(
+                systemType: SystemMessageType.userRemoved,
+                message: 'Admin removed you from the group.',
+              ),
+              status: MessageStatus.sent,
             ),
-            status: MessageStatus.sent,
           ),
-        ),
-      );
+        );
+      }
     });
   }
 
@@ -231,11 +233,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     );
 
     final messages = result;
-    final pagingStatus = messages.isEmpty
-        ? PagingStatus.empty
-        : (messages.length < _limit
-              ? PagingStatus.noMoreData
-              : PagingStatus.loadCompleted);
+    final pagingStatus =
+        messages.isEmpty
+            ? PagingStatus.empty
+            : (messages.length < _limit
+                ? PagingStatus.noMoreData
+                : PagingStatus.loadCompleted);
 
     final pinnedMessageSummaryResult =
         await _getPinnedMessageSummaryGroupUseCase.call(
@@ -257,6 +260,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         pinnedMessageSummary: pinnedMessageSummary,
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
         users: users,
+        usersSearch: users,
       ),
     );
   }
@@ -280,9 +284,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     await Future.delayed(const Duration(seconds: 2));
 
     final messages = result;
-    final pagingStatus = messages.isEmpty || messages.length < _limit
-        ? PagingStatus.noMoreData
-        : PagingStatus.loadCompleted;
+    final pagingStatus =
+        messages.isEmpty || messages.length < _limit
+            ? PagingStatus.noMoreData
+            : PagingStatus.loadCompleted;
 
     final updatedMessages = _addMessageList(leadingMessageList: messages);
 
@@ -407,9 +412,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     }
 
     final uiModel = message.toUIModel(
-      previousMessage: state.chatMessages.isNotEmpty
-          ? state.chatMessages.last.message
-          : null,
+      previousMessage:
+          state.chatMessages.isNotEmpty
+              ? state.chatMessages.last.message
+              : null,
     );
     final chatMessages = [...state.chatMessages, uiModel];
     final messageIndex = chatMessages.length - 1;
@@ -437,13 +443,13 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     if (event.query.isEmpty) {
-      emit(state.copyWith(users: []));
+      emit(state.copyWith(usersSearch: []));
       return;
     }
     final users = await _searchMemberInGroupUseCase.call(
       SearchMemberInGroupParams(workspaceId: workspaceId, query: event.query),
     );
-    emit(state.copyWith(users: users));
+    emit(state.copyWith(usersSearch: users));
   }
 
   Future<void> _onJumpToMessage(
@@ -469,9 +475,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       await Future.delayed(const Duration(seconds: 2));
 
       final messages = result;
-      final pagingStatus = messages.isEmpty || messages.length < _limit
-          ? PagingStatus.noMoreData
-          : PagingStatus.loadCompleted;
+      final pagingStatus =
+          messages.isEmpty || messages.length < _limit
+              ? PagingStatus.noMoreData
+              : PagingStatus.loadCompleted;
 
       final updatedMessages = _addMessageList(leadingMessageList: messages);
 
@@ -596,6 +603,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     UpdateShowTagOverlayEvent event,
     Emitter<WSDetailState> emit,
   ) async {
+    // Reset lits when disable tag overlay
+    if (!event.showTagOverlay) {
+      emit(state.copyWith(usersSearch: state.users));
+    }
     emit(state.copyWith(showTagOverlay: event.showTagOverlay));
   }
 
@@ -701,25 +712,25 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     bool? forceShowTime,
   }) {
     final updatedMessages = List<ChatMessageUIModel>.from(chatMessages);
-    final currentMessage = forceShowTime != null
-        ? chatMessages[messageIndex].copyWith(shouldShowTime: forceShowTime)
-        : chatMessages[messageIndex];
+    final currentMessage =
+        forceShowTime != null
+            ? chatMessages[messageIndex].copyWith(shouldShowTime: forceShowTime)
+            : chatMessages[messageIndex];
     updatedMessages[messageIndex] = currentMessage;
 
     // Xử lý previous message và next message
     // với mỗi previous message và next message, cần check lại cả previous của
     // previous message, next message cần check lại cả next của next message
 
-    final previousMessage = messageIndex > 0
-        ? updatedMessages[messageIndex - 1]
-        : null;
-    final nextMessage = messageIndex < chatMessages.length - 1
-        ? updatedMessages[messageIndex + 1]
-        : null;
+    final previousMessage =
+        messageIndex > 0 ? updatedMessages[messageIndex - 1] : null;
+    final nextMessage =
+        messageIndex < chatMessages.length - 1
+            ? updatedMessages[messageIndex + 1]
+            : null;
     if (previousMessage != null) {
-      final previousPreviousMessage = messageIndex > 1
-          ? updatedMessages[messageIndex - 2]
-          : null;
+      final previousPreviousMessage =
+          messageIndex > 1 ? updatedMessages[messageIndex - 2] : null;
 
       if (previousPreviousMessage != null) {
         final (
@@ -742,9 +753,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     }
 
     if (nextMessage != null) {
-      final nextNextMessage = messageIndex < updatedMessages.length - 2
-          ? chatMessages[messageIndex + 2]
-          : null;
+      final nextNextMessage =
+          messageIndex < updatedMessages.length - 2
+              ? chatMessages[messageIndex + 2]
+              : null;
       if (nextNextMessage != null) {
         final (
           shouldShowTime,

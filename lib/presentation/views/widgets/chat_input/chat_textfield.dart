@@ -24,8 +24,10 @@ class ChatTextField extends StatelessWidget {
         color: AppColors.surfaceContainerGrayStrong2,
         shape: RoundedRectangleBorder(
           side: BorderSide(width: 1, color: AppColors.outlineGrayStrong200),
-          // TODO: hoannk:
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(22),
+            right: Radius.circular(22),
+          ),
         ),
         shadows: [
           BoxShadow(

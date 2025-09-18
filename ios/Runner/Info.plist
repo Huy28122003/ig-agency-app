@@ -62,5 +62,25 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	
+	<!-- File Picker Permissions -->
+	<!-- Required for FileType.any or FileType.custom -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	
+	<!-- Required for FileType.audio -->
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Ứng dụng cần quyền truy cập thư viện nhạc để chọn file âm thanh.</string>
+	
+	<!-- Required for writing directly on directories -->
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	
+	<!-- Required for opening original file instead of caching (FileType.all) -->
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>

@@ -58,8 +58,9 @@ class _WorkspaceDetailMobileLayoutState
     return MultiBlocListener(
       listeners: [
         BlocListener<WSDetailBloc, WSDetailState>(
-          listenWhen: (previous, current) =>
-              previous.isPinStatusSuccess != current.isPinStatusSuccess,
+          listenWhen:
+              (previous, current) =>
+                  previous.isPinStatusSuccess != current.isPinStatusSuccess,
           listener: (context, state) {
             if (state.isPinStatusSuccess) {
               _bloc.add(ResetPinStatusSuccessEvent());
@@ -171,9 +172,8 @@ class _WorkspaceDetailMobileLayoutState
                           return state.users;
                         },
                         builder: (context, users) {
-                          final onlineUsers = users
-                              .where((user) => user.isOnline)
-                              .length;
+                          final onlineUsers =
+                              users.where((user) => user.isOnline).length;
                           return Text(
                             '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
                             style: TextStyle(
@@ -302,18 +302,19 @@ class _GroupChatView extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: BlocBuilder<WSDetailBloc, WSDetailState>(
-                  buildWhen: (previous, current) =>
-                      previous.users != current.users ||
-                      previous.showTagOverlay != current.showTagOverlay,
+                  buildWhen:
+                      (previous, current) =>
+                          previous.usersSearch != current.usersSearch ||
+                          previous.showTagOverlay != current.showTagOverlay,
                   builder: (context, state) {
-                    if (state.users.isEmpty || !state.showTagOverlay) {
+                    if (state.usersSearch.isEmpty || !state.showTagOverlay) {
                       return const SizedBox.shrink();
                     }
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: TagUserListView(
-                        users: state.users,
+                        users: state.usersSearch,
                         onTap: (user) {
                           bloc.textEditingController.addTag(user.name, user.id);
                         },
@@ -370,9 +371,10 @@ class _GroupRemovedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<WSDetailBloc, WSDetailState>(
-      listenWhen: (previous, current) =>
-          previous.isDeletedConversationSuccess !=
-          current.isDeletedConversationSuccess,
+      listenWhen:
+          (previous, current) =>
+              previous.isDeletedConversationSuccess !=
+              current.isDeletedConversationSuccess,
       listener: (context, state) {
         if (state.isDeletedConversationSuccess) {
           context.router.pop();
@@ -385,16 +387,17 @@ class _GroupRemovedView extends StatelessWidget {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: BlocBuilder<WSDetailBloc, WSDetailState>(
-                buildWhen: (previous, current) =>
-                    previous.chatMessages != current.chatMessages,
+                buildWhen:
+                    (previous, current) =>
+                        previous.chatMessages != current.chatMessages,
                 builder: (context, state) {
                   return state.chatMessages.isEmpty
                       ? const SizedBox.shrink()
                       : ChatMessageBubble.system(
-                          message: state.chatMessages.first.message,
-                          userId: _bloc.userId,
-                          shouldShowTime: true,
-                        );
+                        message: state.chatMessages.first.message,
+                        userId: _bloc.userId,
+                        shouldShowTime: true,
+                      );
                 },
               ),
             ),

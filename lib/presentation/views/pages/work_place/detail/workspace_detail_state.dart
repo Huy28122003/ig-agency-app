@@ -14,6 +14,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.showOptions = true,
     this.showSendButton = false,
     this.users = const [],
+    this.usersSearch = const [],
     this.chatMessagesPagingStatus = PagingStatus.idle,
     this.jumpToMessageIndex,
     this.scrollToTop = false,
@@ -35,6 +36,7 @@ class WSDetailState extends BaseState<WSDetailState> {
   final bool showOptions;
   final bool showSendButton;
   final List<UserEntity> users;
+  final List<UserEntity> usersSearch;
   final PagingStatus chatMessagesPagingStatus;
   final int? jumpToMessageIndex;
   final bool scrollToTop;
@@ -65,6 +67,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? showOptions,
     bool? showSendButton,
     List<UserEntity>? users,
+    List<UserEntity>? usersSearch,
     PagingStatus? chatMessagesPagingStatus,
     bool? hasMoreOldMessages,
     int? jumpToMessageIndex,
@@ -86,24 +89,26 @@ class WSDetailState extends BaseState<WSDetailState> {
       processing: processing ?? this.processing,
       chatMessages: chatMessages ?? this.chatMessages,
       pinnedMessageSummary: pinnedMessageSummary ?? this.pinnedMessageSummary,
-      messageReply: forceCloseReplyMessage
-          ? null
-          : messageReply ?? this.messageReply,
+      messageReply:
+          forceCloseReplyMessage ? null : messageReply ?? this.messageReply,
       scrollToBottom: scrollToBottom ?? this.scrollToBottom,
       showScrollToBottomIcon:
           showScrollToBottomIcon ?? this.showScrollToBottomIcon,
       showOptions: showOptions ?? this.showOptions,
       showSendButton: showSendButton ?? this.showSendButton,
       users: users ?? this.users,
+      usersSearch: usersSearch ?? this.usersSearch,
       chatMessagesPagingStatus:
           chatMessagesPagingStatus ?? this.chatMessagesPagingStatus,
-      jumpToMessageIndex: forceCloseJumpToMessage
-          ? null
-          : jumpToMessageIndex ?? this.jumpToMessageIndex,
+      jumpToMessageIndex:
+          forceCloseJumpToMessage
+              ? null
+              : jumpToMessageIndex ?? this.jumpToMessageIndex,
       scrollToTop: scrollToTop ?? this.scrollToTop,
-      showTimeMessageId: forceDisableShowTime
-          ? null
-          : showTimeMessageId ?? this.showTimeMessageId,
+      showTimeMessageId:
+          forceDisableShowTime
+              ? null
+              : showTimeMessageId ?? this.showTimeMessageId,
       initIndex: initIndex ?? this.initIndex,
       isPinStatusSuccess: isPinStatusSuccess ?? this.isPinStatusSuccess,
       showTagOverlay: showTagOverlay ?? this.showTagOverlay,
@@ -125,6 +130,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     showOptions,
     showSendButton,
     users,
+    usersSearch,
     chatMessagesPagingStatus,
     jumpToMessageIndex,
     scrollToTop,
