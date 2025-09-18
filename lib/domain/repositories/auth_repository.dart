@@ -5,11 +5,11 @@ abstract class AuthRepository {
 
   Future logout();
 
-  Future getToken();
+  Future<String> getAccessToken();
 
-  Future saveToken(String token);
+  Future saveAccessToken(String token);
 
-  Future clearToken();
+  Future clearAccessToken();
 
   Future sendOtpCode(String email);
 

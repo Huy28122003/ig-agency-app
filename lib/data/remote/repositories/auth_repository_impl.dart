@@ -1,3 +1,5 @@
+import 'package:ig_agency_app/data/local/app/auth_local_data_source.dart';
+import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:injectable/injectable.dart';
@@ -8,13 +10,18 @@ import '../app/auth_remote_data_source.dart';
 
 @Injectable(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource _authRemoteDataSource;
   final RamCache _ramCache;
+  final AuthLocalDataSource _authLocalDataSource;
+  final AuthRemoteDataSource _authRemoteDataSource;
 
-  AuthRepositoryImpl(this._authRemoteDataSource, this._ramCache);
+  AuthRepositoryImpl(
+    this._authRemoteDataSource,
+    this._ramCache,
+    this._authLocalDataSource,
+  );
 
   @override
-  Future clearToken() async {
+  Future clearAccessToken() async {
     try {
       // Simulate clearing token
       return;
@@ -24,10 +31,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future getToken() async {
+  Future<String> getAccessToken() async {
     try {
-      // Simulate fetching token
-      return await _authRemoteDataSource.getAccessToken();
+      final accessToken = await _authRemoteDataSource.getAccessToken();
+      return accessToken ?? "";
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -36,9 +43,21 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future login(String email, String password) async {
     try {
-      // Simulate login process
-      await _authRemoteDataSource.login(email, password);
-      return _ramCache.saveProfileInfo(
+      final deviceType = "ios";
+      final deviceId = "test";
+      final osVersion = "test";
+      final model = "test";
+      final deviceToken = "test";
+      final request = LoginRequestModel(
+        email: email,
+        password: password,
+        deviceType: deviceType,
+        deviceId: deviceId,
+        osVersion: osVersion,
+        model: model,
+        deviceToken: deviceToken,
+      );
+      _ramCache.saveProfileInfo(
         UserEntity(
           id: '1',
           name: 'Đinh Thị Quỳnh',
@@ -50,6 +69,9 @@ class AuthRepositoryImpl implements AuthRepository {
           lastActiveAt: DateTime.now().subtract(const Duration(hours: 5)),
         ),
       );
+      final response = await _authRemoteDataSource.login(request);
+
+      return await _authLocalDataSource.saveAccessToken(response.accessToken);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -61,17 +83,16 @@ class AuthRepositoryImpl implements AuthRepository {
       // Simulate login process
       await _authRemoteDataSource.logout();
       _ramCache.clearUserData();
-      return await clearToken();
+      return await clearAccessToken();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future saveToken(String token) async {
+  Future saveAccessToken(String token) async {
     try {
-      // Simulate saving token
-      return Future.value();
+      await _authLocalDataSource.saveAccessToken(token);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -144,7 +165,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future deleteAccount(String userId) async {
     try {
       await _authRemoteDataSource.deleteAccount(userId);
-      return await clearToken();
+      return await clearAccessToken();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

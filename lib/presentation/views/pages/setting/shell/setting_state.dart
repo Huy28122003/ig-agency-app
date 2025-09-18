@@ -2,7 +2,7 @@ part of 'setting_bloc.dart';
 
 class SettingState extends BaseState<SettingState> {
   const SettingState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing = false,
   });

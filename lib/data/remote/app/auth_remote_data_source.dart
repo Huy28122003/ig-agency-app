@@ -1,5 +1,8 @@
+import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/login_response_model.dart';
+
 abstract class AuthRemoteDataSource {
-  Future<void> login(String email, String password);
+  Future<LoginResponseModel> login(LoginRequestModel request);
 
   Future<void> register(String name, String email, String password);
 
