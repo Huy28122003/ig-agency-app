@@ -123,50 +123,53 @@ class _ChatInputBarState extends State<_ChatInputBar> {
               ),
             ],
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            spacing: 8,
-            children: [
-              BlocBuilder<WSDetailBloc, WSDetailState>(
-                buildWhen: (previous, current) =>
-                    previous.showOptions != current.showOptions,
-                builder: (context, state) {
-                  return ChatOption(
-                    hasOptions: state.showOptions,
-                    onDocumentTap: widget.onDocumentTap,
-                    onCameraTap: widget.onCameraTap,
-                    onMediaTap: widget.onMediaTap,
-                    onToggleOptions: () => widget.onToggleOptions?.call(true),
-                  );
-                },
-              ),
-              Expanded(
-                child: ChatTextField(
-                  focusNode: widget.focusNode,
-                  textEditingController: _textEditingController,
-                  onToggleOptions: widget.onToggleOptions,
-                ),
-              ),
-              BlocBuilder<WSDetailBloc, WSDetailState>(
-                buildWhen: (previous, current) =>
-                    previous.showSendButton != current.showSendButton,
-                builder: (context, state) {
-                  if (state.showSendButton) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: IconButton(
-                        padding: EdgeInsets.all(10),
-                        onPressed: () {
-                          widget.onSendTap?.call();
-                        },
-                        icon: Assets.icons.icSend.svg(width: 24, height: 24),
-                      ),
+          child: SafeArea(
+            top: false,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              spacing: 8,
+              children: [
+                BlocBuilder<WSDetailBloc, WSDetailState>(
+                  buildWhen: (previous, current) =>
+                      previous.showOptions != current.showOptions,
+                  builder: (context, state) {
+                    return ChatOption(
+                      hasOptions: state.showOptions,
+                      onDocumentTap: widget.onDocumentTap,
+                      onCameraTap: widget.onCameraTap,
+                      onMediaTap: widget.onMediaTap,
+                      onToggleOptions: () => widget.onToggleOptions?.call(true),
                     );
-                  }
-                  return const SizedBox(width: 12);
-                },
-              ),
-            ],
+                  },
+                ),
+                Expanded(
+                  child: ChatTextField(
+                    focusNode: widget.focusNode,
+                    textEditingController: _textEditingController,
+                    onToggleOptions: widget.onToggleOptions,
+                  ),
+                ),
+                BlocBuilder<WSDetailBloc, WSDetailState>(
+                  buildWhen: (previous, current) =>
+                      previous.showSendButton != current.showSendButton,
+                  builder: (context, state) {
+                    if (state.showSendButton) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: IconButton(
+                          padding: EdgeInsets.all(10),
+                          onPressed: () {
+                            widget.onSendTap?.call();
+                          },
+                          icon: Assets.icons.icSend.svg(width: 24, height: 24),
+                        ),
+                      );
+                    }
+                    return const SizedBox(width: 12);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ],

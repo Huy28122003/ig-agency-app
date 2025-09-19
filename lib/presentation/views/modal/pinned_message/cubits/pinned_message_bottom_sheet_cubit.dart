@@ -4,10 +4,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../domain/usecases/message/fetch_pinned_message_in_group_use_case.dart';
-import '../../../domain/usecases/message/unpin_message_use_case.dart';
-import '../../../shared/commons/enums/status.dart';
-import '../../views/ui_models/pinned_message_ui_model.dart';
+import '../../../../../domain/usecases/message/fetch_pinned_message_in_group_use_case.dart';
+import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
+import '../../../../../shared/commons/enums/status.dart';
+import '../../../ui_models/pinned_message_ui_model.dart';
 
 part 'pinned_message_bottom_sheet_state.dart';
 

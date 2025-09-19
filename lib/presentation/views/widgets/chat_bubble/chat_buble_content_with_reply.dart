@@ -78,7 +78,11 @@ class ChatBubbleContentWithReply extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(top: textLines > 1 ? 48 : 30),
-          child: ChatBubbleContent(message: message, maxWidth: maxWidth),
+          child: ChatBubbleContent(
+            message: message,
+            maxWidth: maxWidth,
+            isMe: isMe,
+          ),
         ),
       ],
     );

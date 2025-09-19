@@ -18,7 +18,7 @@ import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/enums/send_message_type.dart';
 import '../../../../../domain/usecases/member/fetch_member_in_group_use_case.dart';
 import '../../../../../domain/usecases/message/get_pinned_message_summary_group_use_case.dart';
-import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case.dart';
+import '../../../../../domain/usecases/message/fetch_messages_in_group_use_case.dart';
 import '../../../../../domain/usecases/message/send_message_use_case.dart';
 import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../../../domain/usecases/message/pin_message_use_case.dart';
@@ -83,7 +83,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
   late final int groupId;
   final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
-  final FetchMessagesWorkspaceUseCase _fetchMessageUseCase;
+  final FetchMessagesInGroupUseCase _fetchMessageUseCase;
   final GetPinnedMessageSummaryGroupUseCase
   _getPinnedMessageSummaryGroupUseCase;
   final SendMessageUseCase _sendMessageUseCase;
@@ -112,32 +112,18 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   TagUserTextEditingController get textEditingController =>
       _textEditingController;
 
-  List<TextSegment> detectLinkTextSegment(String text) {
-    final regex = RegExp(r'https?://\S+');
-    final match = regex.allMatches(text);
-    if (match.isEmpty) {
-      return [];
-    }
-
-    return match
-        .map(
-          (e) => TextSegment(
-            type: TextSegmentType.link,
-            start: e.start,
-            end: e.end,
-          ),
-        )
-        .toList();
-  }
-
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<LoadMoreChatMessagesEvent>(
       _onLoadMoreMessages,
-      // droppable to ensure that only one load more request is processed at a time
+      // bỏ qua bất kỳ sự kiện nào được thêm vào trong khi sự kiện đang được xử lý
       transformer: droppable(),
     );
-    handleSubEvent<JumpToMessageEvent>(_onJumpToMessage);
+    handleSubEvent<JumpToMessageEvent>(
+      _onJumpToMessage,
+      // chỉ xử lý sự kiện mới nhất và hủy bỏ trình xử lý sự kiện trước đó
+      transformer: restartable(),
+    );
     handleSubEvent<CloseReplyMessageEvent>(_onCloseReplyMessage);
     handleSubEvent<ReplyToMessageEvent>(_onReplyToMessage);
     handleSubEvent<ToggleShowScrollToBottomIcon>(
@@ -147,7 +133,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<SendMessageEvent>(_onSendMessage);
     handleSubEvent<AddMessageEvent>(
       _onAddMessage,
-      // Ensures that each event of the same type is processed before the next event of the same type begins.
+      // xử lý các sự kiện theo trình tự
       transformer: sequential(),
     );
     handleSubEvent<ToggleHasOptionsEvent>(_onToggleHasOptions);
@@ -171,9 +157,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       (message) {
         if (message.groupId != groupId) return;
         add(AddMessageEvent(message: message));
-        if (message.user.id == userId) {
-          add(JumpToMessageEvent(messageId: message.id));
-        }
       },
       onError: (_) {
         // TODO hoank: Handle this case.
@@ -220,7 +203,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final user = await _fetchCurrentUserUseCase.call(NoParam());
 
     final result = await _fetchMessageUseCase.call(
-      FetchMessagesWorkspaceParams(groupId: groupId, limit: _limit),
+      FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
     );
 
     final messages = result;
@@ -246,7 +229,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         user: user,
         pageStatus: PageStatus.loaded,
         chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
-        chatMessagesPagingStatus: pagingStatus,
+        pagingStatus: pagingStatus,
         pinnedMessageSummary: pinnedMessageSummary,
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
         users: users,
@@ -259,11 +242,15 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     LoadMoreChatMessagesEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    if (!state.needLoadMoreOldMessages) return;
-    emit(state.copyWith(chatMessagesPagingStatus: PagingStatus.loading));
+    if (state.pagingStatus == PagingStatus.noMoreData ||
+        state.pagingStatus == PagingStatus.empty) {
+      return;
+    }
 
-    final result = await _fetchMessageUseCase.call(
-      FetchMessagesWorkspaceParams(
+    emit(state.copyWith(pagingStatus: PagingStatus.loading));
+
+    final messages = await _fetchMessageUseCase.call(
+      FetchMessagesInGroupParams(
         groupId: groupId,
         limit: _limit,
         oldestMessageId: state.chatMessages.first.message.id,
@@ -273,17 +260,16 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    final messages = result;
-    final pagingStatus = messages.isEmpty || messages.length < _limit
-        ? PagingStatus.noMoreData
-        : PagingStatus.loadCompleted;
+    if (messages.isEmpty || messages.length < _limit) {
+      return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+    }
 
     final updatedMessages = _addMessageList(leadingMessageList: messages);
 
     emit(
       state.copyWith(
         chatMessages: updatedMessages,
-        chatMessagesPagingStatus: pagingStatus,
+        pagingStatus: PagingStatus.loadCompleted,
         // Giữ vị trí là ví trị của message cuối cùng của list vừa được thêm để
         // tạo thêm cảm giác được scroll tiếp cho load more kế tiếp
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
@@ -411,7 +397,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final messageIndex = chatMessages.length - 1;
     final updatedListUiModel = _updateUIModel(chatMessages, messageIndex);
 
-    emit(state.copyWith(chatMessages: updatedListUiModel));
+    emit(
+      state.copyWith(
+        chatMessages: updatedListUiModel,
+        scrollToBottom: message.user.id == userId,
+      ),
+    );
   }
 
   Future<void> _onToggleHasOptions(
@@ -451,11 +442,13 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       (uiModel) => uiModel.message.id == event.messageId,
     );
 
-    if (!hasMessage && state.needLoadMoreOldMessages) {
-      emit(state.copyWith(chatMessagesPagingStatus: PagingStatus.loading));
+    if (!hasMessage &&
+        (state.pagingStatus != PagingStatus.noMoreData ||
+            state.pagingStatus != PagingStatus.empty)) {
+      emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
       final result = await _fetchMessageUseCase.call(
-        FetchMessagesWorkspaceParams(
+        FetchMessagesInGroupParams(
           groupId: groupId,
           limit: _limit,
           oldestMessageId: state.chatMessages.first.message.id,
@@ -481,7 +474,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         emit(
           state.copyWith(
             chatMessages: updatedMessages,
-            chatMessagesPagingStatus: pagingStatus,
+            pagingStatus: pagingStatus,
             jumpToMessageId: messageId,
           ),
         );
@@ -489,7 +482,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         emit(
           state.copyWith(
             chatMessages: updatedMessages,
-            chatMessagesPagingStatus: pagingStatus,
+            pagingStatus: pagingStatus,
           ),
         );
       }
@@ -806,6 +799,24 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       }
     }
     return updatedMessages;
+  }
+
+  List<TextSegment> detectLinkTextSegment(String text) {
+    final regex = RegExp(r'https?://\S+');
+    final match = regex.allMatches(text);
+    if (match.isEmpty) {
+      return [];
+    }
+
+    return match
+        .map(
+          (e) => TextSegment(
+            type: TextSegmentType.link,
+            start: e.start,
+            end: e.end,
+          ),
+        )
+        .toList();
   }
 
   @override

@@ -5,14 +5,14 @@ import '../../entities/message/message.dart';
 import '../use_case.dart';
 
 @injectable
-class FetchMessagesWorkspaceUseCase
-    extends UseCase<List<MessageEntity>, FetchMessagesWorkspaceParams> {
+class FetchMessagesInGroupUseCase
+    extends UseCase<List<MessageEntity>, FetchMessagesInGroupParams> {
   final MessageRepository _messageRepository;
 
-  FetchMessagesWorkspaceUseCase(this._messageRepository);
+  FetchMessagesInGroupUseCase(this._messageRepository);
 
   @override
-  Future<List<MessageEntity>> call(FetchMessagesWorkspaceParams params) async {
+  Future<List<MessageEntity>> call(FetchMessagesInGroupParams params) async {
     return await _messageRepository.fetchMessagesInGroup(
       params.groupId,
       params.limit,
@@ -22,13 +22,13 @@ class FetchMessagesWorkspaceUseCase
   }
 }
 
-class FetchMessagesWorkspaceParams {
+class FetchMessagesInGroupParams {
   final int groupId;
   final int limit;
   final String? oldestMessageId;
   final String? targetMessageId;
 
-  FetchMessagesWorkspaceParams({
+  FetchMessagesInGroupParams({
     required this.groupId,
     required this.limit,
     this.oldestMessageId,

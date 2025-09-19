@@ -22,8 +22,10 @@ class MessageRepositoryImpl implements MessageRepository {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final (pinnedMessages, totalRecords) = _messageMockService
-          .mockFetchPinnedMessages(limit: limit, offset: offset);
+      final pinnedMessages = _messageMockService.mockFetchPinnedMessages(
+        limit: limit,
+        offset: offset,
+      );
 
       return pinnedMessages;
     } catch (e) {
@@ -60,12 +62,11 @@ class MessageRepositoryImpl implements MessageRepository {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final (pinnedMessages, totalRecords) = _messageMockService
-          .mockFetchPinnedMessages(
-            groupId: groupId,
-            limit: limit,
-            offset: offset,
-          );
+      final pinnedMessages = _messageMockService.mockFetchPinnedMessages(
+        groupId: groupId,
+        limit: limit,
+        offset: offset,
+      );
 
       return pinnedMessages;
     } catch (e) {
@@ -97,13 +98,12 @@ class MessageRepositoryImpl implements MessageRepository {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final (messages, totalRecords) = _messageMockService
-          .mockFetchMessagesByGroupId(
-            groupId: groupId,
-            limit: limit,
-            oldestMessageId: oldestMessageId,
-            targetMessageId: targetMessageId,
-          );
+      final messages = _messageMockService.mockFetchMessagesByGroupId(
+        groupId: groupId,
+        limit: limit,
+        oldestMessageId: oldestMessageId,
+        targetMessageId: targetMessageId,
+      );
 
       return messages;
     } catch (e) {

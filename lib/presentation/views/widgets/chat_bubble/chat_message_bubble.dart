@@ -187,6 +187,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
   @override
   Widget build(BuildContext context) {
+    final messageContent = _message.content;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -214,43 +215,44 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
         Padding(
           padding: EdgeInsets.only(
             top: _isContinuation
-                ? _message.content.isSystem
+                ? messageContent.isSystem
                       ? ChatBubbleConstants.continuationSystemVerticalPadding
                       : ChatBubbleConstants.continuationVerticalPadding
                 : 16,
           ),
-          child: _message.content is SystemMessageContent
-              ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: widget.horizontalPadding,
-                  ),
-                  child: Text(
-                    (_message.content as SystemMessageContent).message,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textPrimaryTextDefault,
-                      fontSize: 13,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w600,
-                      height: 1.54,
-                    ),
-                  ),
-                )
-              : GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onPanStart: _onPanStart,
-                  onPanUpdate: _onPanUpdate,
-                  onPanEnd: _onPanEnd,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ValueListenableBuilder(
-                      valueListenable: _dragDistance,
-                      builder: (context, value, child) {
-                        return _buildMainChatBubble(value);
-                      },
-                    ),
-                  ),
+          child: switch (messageContent) {
+            SystemMessageContent _ => Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: widget.horizontalPadding,
+              ),
+              child: Text(
+                messageContent.message,
+                style: TextStyle(
+                  color: AppColors.textPrimaryTextDefault,
+                  fontSize: 13,
+                  fontFamily: 'Segoe UI',
+                  fontWeight: FontWeight.w600,
+                  height: 1.54,
                 ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            _ => GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onPanStart: _onPanStart,
+              onPanUpdate: _onPanUpdate,
+              onPanEnd: _onPanEnd,
+              child: SizedBox(
+                width: double.infinity,
+                child: ValueListenableBuilder(
+                  valueListenable: _dragDistance,
+                  builder: (context, value, child) {
+                    return _buildMainChatBubble(value);
+                  },
+                ),
+              ),
+            ),
+          },
         ),
       ],
     );
@@ -258,6 +260,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
   Widget _buildMainChatBubble(double value) {
     final repliedMessage = _message.repliedMessage;
+    final messageContent = _message.content;
     return GestureDetector(
       onTap: widget.onTap,
       child: Stack(
@@ -347,14 +350,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                             ),
                           ),
                   ),
-                  if (_message.content is TextMessageContent)
+                  if (messageContent is TextMessageContent)
                     CustomContextMenuAction(
                       text: 'Copy Message',
                       onTap: () {
                         Clipboard.setData(
-                          ClipboardData(
-                            text: (_message.content as TextMessageContent).text,
-                          ),
+                          ClipboardData(text: messageContent.text),
                         );
                       },
                       trailingIcon: Assets.icons.icCopy.svg(
@@ -397,6 +398,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                 ],
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: isMe
                       ? CrossAxisAlignment.end
                       : CrossAxisAlignment.start,
@@ -411,7 +413,6 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                     ],
                     repliedMessage != null
                         ? ChatBubbleContentWithReply(
-                            key: ValueKey('${_message.id}-reply'),
                             message: _message,
                             replyMessage: repliedMessage,
                             maxWidth: widget.maxWidth,
@@ -420,10 +421,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                             onTap: widget.onReplyTap,
                           )
                         : ChatBubbleContent(
-                            key: ValueKey('${_message.id}-no-reply'),
                             message: _message,
                             maxWidth: widget.maxWidth,
                             searchText: _searchText,
+                            isMe: isMe,
                           ),
                   ],
                 ),

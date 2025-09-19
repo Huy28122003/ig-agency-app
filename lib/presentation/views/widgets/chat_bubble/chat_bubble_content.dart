@@ -1,5 +1,6 @@
 import 'package:any_link_preview/any_link_preview.dart';
-import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../domain/entities/message/message.dart';
@@ -11,17 +12,22 @@ import '../../../../shared/extensions/duration_ext.dart';
 import '../../../../shared/extensions/int_ext.dart';
 import '../network_image.dart';
 
+const _kMaxHeightImageLinkPreview = 100.0;
+const _kMaxHeightContentLinkPreview = 54.0;
+
 class ChatBubbleContent extends StatelessWidget {
   const ChatBubbleContent({
     super.key,
     required this.message,
     required this.maxWidth,
     this.searchText,
+    this.isMe = false,
   });
 
   final MessageEntity message;
   final double maxWidth;
   final String? searchText;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +39,7 @@ class ChatBubbleContent extends StatelessWidget {
           createdAt: message.createdAt.toShortTimeString(),
           maxWidth: maxWidth,
           searchText: searchText,
+          isMe: isMe,
         );
       case ImageMessageContent _:
         return _ImageMessageContent(imageContent: content);
@@ -52,17 +59,21 @@ class _TextMessageContent extends StatelessWidget {
     required this.createdAt,
     required this.maxWidth,
     this.searchText,
+    this.isMe = false,
   });
 
   final TextMessageContent textContent;
   final String createdAt;
   final double maxWidth;
   final String? searchText;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = const TextStyle(
-      color: AppColors.textDefaultTextDefault,
+    final textStyle = TextStyle(
+      color: isMe
+          ? AppColors.textDefaultTextInverted
+          : AppColors.textDefaultTextDefault,
       fontSize: 16,
       fontFamily: FontFamily.segoeUI,
       fontWeight: FontWeight.w400,
@@ -93,18 +104,17 @@ class _TextMessageContent extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       constraints: BoxConstraints(maxWidth: maxWidth),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerGrayStrong2,
+        color: isMe
+            ? AppColors.surfaceContainerSecondarySecondaryDefault
+            : AppColors.surfaceContainerGrayStrong2,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 8),
-            decoration: const BoxDecoration(
-              color: AppColors.surfaceContainerGrayStrong2,
-            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +131,9 @@ class _TextMessageContent extends StatelessWidget {
                       Text(
                         createdAt,
                         style: TextStyle(
-                          color: AppColors.textDefaultTextSub2,
+                          color: isMe
+                              ? AppColors.textDefaultTextInverted
+                              : AppColors.textDefaultTextSub2,
                           fontSize: 12,
                           fontFamily: FontFamily.segoeUI,
                           fontWeight: FontWeight.w400,
@@ -146,34 +158,14 @@ class _LinkPreview extends StatelessWidget {
 
   final String url;
 
-  bool isValidNetworkImage(ImageProvider imageProvider) {
-    if (imageProvider is NetworkImage) {
-      final url = imageProvider.url;
-
-      if (url.startsWith('file://') || !url.contains('://')) {
-        return false;
-      }
-
-      try {
-        final uri = Uri.tryParse(url);
-        if (uri == null) return false;
-
-        if (!(uri.scheme == 'http' || uri.scheme == 'https')) {
-          return false;
-        }
-
-        if (uri.host.isEmpty) return false;
-
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final isValidLink = AnyLinkPreview.isValidLink(url);
+
+    if (!isValidLink) {
+      return const SizedBox.shrink();
+    }
+
     return GestureDetector(
       onTap: () {
         try {
@@ -190,20 +182,30 @@ class _LinkPreview extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (imageProvider != null && isValidNetworkImage(imageProvider))
-                Container(
-                  constraints: BoxConstraints(maxHeight: 135),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
+              if (imageProvider != null && imageProvider is NetworkImage)
+                SizedBox(
+                  height: _kMaxHeightImageLinkPreview,
+                  child: CachedNetworkImage(
+                    imageUrl: imageProvider.url,
+                    imageBuilder: (context, imageProvider) => Image(
                       image: imageProvider,
                       fit: BoxFit.cover,
-                      onError: (exception, stackTrace) {
-                        // TODO hoannk:
-                      },
+                      height: _kMaxHeightImageLinkPreview,
+                      width: double.infinity,
+                    ),
+                    placeholder: (_, _) => Container(
+                      height: _kMaxHeightImageLinkPreview,
+                      color: AppColors.surfaceContainerGrayStrong2,
+                      child: const Center(child: CupertinoActivityIndicator()),
+                    ),
+                    errorWidget: (_, _, _) => Container(
+                      height: _kMaxHeightImageLinkPreview,
+                      color: Color.fromARGB(255, 195, 197, 201),
                     ),
                   ),
                 ),
               Container(
+                height: _kMaxHeightContentLinkPreview,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
@@ -214,40 +216,42 @@ class _LinkPreview extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (title != null) ...[
-                      Text(
-                        title,
-                        style: TextStyle(
-                          color: AppColors.textDefaultTextDefault,
-                          fontSize: 14,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w700,
-                          height: 1.43,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                    Text(
+                      title ?? 'Title not found',
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextDefault,
+                        fontSize: 14,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w700,
+                        height: 1.43,
                       ),
-                      const SizedBox(height: 2),
-                    ],
-                    if (description != null)
-                      Text(
-                        description,
-                        style: TextStyle(
-                          color: AppColors.textDefaultTextSub2,
-                          fontSize: 12,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w400,
-                          height: 1.33,
-                        ),
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      description ?? url,
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextSub2,
+                        fontSize: 12,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.33,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),
             ],
           );
         },
+        placeholderWidget: Container(
+          height: _kMaxHeightImageLinkPreview + _kMaxHeightContentLinkPreview,
+          color: AppColors.surfaceContainerGrayStrong2,
+          child: const Center(child: CupertinoActivityIndicator()),
+        ),
       ),
     );
   }

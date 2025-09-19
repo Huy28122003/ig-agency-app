@@ -18,7 +18,7 @@ import '../../../../widgets/circle_network_avatar.dart';
 import '../../../../widgets/chat_input/chat_input_bar.dart';
 import '../../../../widgets/chat_input/tag_user_list_view.dart';
 import '../widgets/chat_content.dart';
-import '../widgets/pinned_message_bottom_sheet.dart';
+import '../../../../modal/pinned_message/pinned_message_bottom_sheet.dart';
 import '../workspace_detail_bloc.dart';
 
 class WorkspaceDetailMobileLayout extends StatefulWidget {
@@ -175,17 +175,15 @@ class _WorkspaceDetailMobileLayoutState
             ],
           ),
         ),
-        body: SafeArea(
-          child: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(
-            selector: (state) {
-              return state.groupMemberStatus;
-            },
-            builder: (context, state) {
-              return state == GroupMemberStatus.joined
-                  ? _GroupChatView(bloc: _bloc, focusNode: _focusNode)
-                  : _GroupRemovedView(bloc: _bloc);
-            },
-          ),
+        body: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(
+          selector: (state) {
+            return state.groupMemberStatus;
+          },
+          builder: (context, state) {
+            return state == GroupMemberStatus.joined
+                ? _GroupChatView(bloc: _bloc, focusNode: _focusNode)
+                : _GroupRemovedView(bloc: _bloc);
+          },
         ),
       ),
     );
@@ -324,39 +322,38 @@ class _GroupRemovedView extends StatelessWidget {
           context.router.pop();
         }
       },
-      child: Column(
-        spacing: 20,
-        children: [
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: BlocBuilder<WSDetailBloc, WSDetailState>(
-                buildWhen: (previous, current) =>
-                    previous.chatMessages != current.chatMessages,
-                builder: (context, state) {
-                  return state.chatMessages.isEmpty
-                      ? const SizedBox.shrink()
-                      : ChatMessageBubble.system(
-                          message: state.chatMessages.first.message,
-                          shouldShowTime: true,
-                        );
-                },
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  width: 1,
-                  color: AppColors.outlineGrayStrong200,
+      child: SafeArea(
+        child: Column(
+          spacing: 20,
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: BlocBuilder<WSDetailBloc, WSDetailState>(
+                  buildWhen: (previous, current) =>
+                      previous.chatMessages != current.chatMessages,
+                  builder: (context, state) {
+                    return state.chatMessages.isEmpty
+                        ? const SizedBox.shrink()
+                        : ChatMessageBubble.system(
+                            message: state.chatMessages.first.message,
+                            shouldShowTime: true,
+                          );
+                  },
                 ),
               ),
             ),
-            child: SafeArea(
-              top: false,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    width: 1,
+                    color: AppColors.outlineGrayStrong200,
+                  ),
+                ),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -385,8 +382,8 @@ class _GroupRemovedView extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

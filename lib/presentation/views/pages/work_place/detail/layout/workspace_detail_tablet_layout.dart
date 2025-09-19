@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
@@ -6,6 +7,7 @@ import '../../../../../../domain/entities/message/message_entity.dart';
 import '../../../../../../domain/enums/send_message_type.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../../routers/app_router.dart';
 import '../../../../widgets/chat_input/chat_input_bar.dart';
 import '../../../../widgets/circle_network_avatar.dart';
 import '../widgets/chat_content.dart';
@@ -93,16 +95,19 @@ class _WorkspaceDetailTabletLayoutState
                     _bloc.add(CloseReplyMessageEvent());
                   },
                   onDocumentTap: () {
-                    // TODO hoannk:
+                    _bloc.add(SendMessageEvent(type: SendMessageType.file));
                   },
                   onCameraTap: () {
-                    // TODO hoannk:
+                    context.router.push(CameraRoute());
                   },
                   onMediaTap: () {
                     _bloc.add(SendMessageEvent(type: SendMessageType.media));
                   },
                   onSendTap: () {
                     _bloc.add(SendMessageEvent(type: SendMessageType.text));
+                  },
+                  onToggleOptions: (showOptions) {
+                    _bloc.add(ToggleHasOptionsEvent(showOptions: showOptions));
                   },
                 );
               },

@@ -56,10 +56,6 @@ class ToggleShowTagOverlayEvent extends WSDetailEvent {
   final bool showTagOverlay;
 }
 
-class FetchMembersEvent extends WSDetailEvent {
-  const FetchMembersEvent();
-}
-
 class SearchMembersEvent extends WSDetailEvent {
   const SearchMembersEvent({required this.query});
 

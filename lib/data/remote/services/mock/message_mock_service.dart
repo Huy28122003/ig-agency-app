@@ -342,7 +342,7 @@ class MessageMockService {
   }
 
   // Mock function call
-  (List<MessageEntity>, int) mockFetchPinnedMessages({
+  List<MessageEntity> mockFetchPinnedMessages({
     int? groupId,
     int limit = 10,
     int offset = 0,
@@ -351,7 +351,7 @@ class MessageMockService {
       final messages = _messageMockData[groupId];
 
       if (messages == null || messages.isEmpty) {
-        return ([], 0);
+        return [];
       }
 
       final allPinnedMessages = messages
@@ -363,13 +363,13 @@ class MessageMockService {
           .take(limit)
           .toList();
 
-      return (pinnedMessages, allPinnedMessages.length);
+      return pinnedMessages;
     }
 
     final messages = _messageMockData.values.expand((e) => e).toList();
 
     if (messages.isEmpty) {
-      return ([], 0);
+      return [];
     }
 
     final allPinnedMessages = messages
@@ -378,7 +378,7 @@ class MessageMockService {
 
     final pinnedMessages = allPinnedMessages.skip(offset).take(limit).toList();
 
-    return (pinnedMessages, allPinnedMessages.length);
+    return pinnedMessages;
   }
 
   Future<void> mockUnpinMessage(String messageId) async {
@@ -476,7 +476,7 @@ class MessageMockService {
     );
   }
 
-  (List<MessageEntity>, int) mockFetchMessagesByGroupId({
+  List<MessageEntity> mockFetchMessagesByGroupId({
     required int groupId,
     int limit = 10,
     String? oldestMessageId,
@@ -484,7 +484,7 @@ class MessageMockService {
   }) {
     final messages = _messageMockData[groupId];
     if (messages == null || messages.isEmpty) {
-      return ([], 0);
+      return [];
     }
 
     var messageIndex = 0;
@@ -513,20 +513,24 @@ class MessageMockService {
         if (targetMessageIndex >= messageIndex) {
           throw Exception();
         }
-        return (
-          messages
-              .skip(offset)
-              .take(messageIndex - targetMessageIndex)
-              .toList(),
-          messages.length,
-        );
+        final filteredMessages = messages
+            .skip(offset)
+            .take(messageIndex - targetMessageIndex)
+            .toList();
+        return filteredMessages;
       }
     }
 
     offset = max(0, messageIndex + 1 - limit);
+
+    if (offset == 0) {
+      return [];
+    }
+
     final newLimit = limit >= messageIndex ? limit : (messageIndex + 1);
 
-    return (messages.skip(offset).take(newLimit).toList(), messages.length);
+    final filteredMessages = messages.skip(offset).take(newLimit).toList();
+    return filteredMessages;
   }
 
   UserEntity? getUserById(String userId) {

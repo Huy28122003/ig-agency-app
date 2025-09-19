@@ -88,11 +88,7 @@ class _ChatContentState extends State<ChatContent> {
   }
 
   void _onRefresh() async {
-    final state = _bloc.state;
-    if (state.needLoadMoreOldMessages) {
-      refreshController.requestRefresh();
-      _bloc.add(LoadMoreChatMessagesEvent());
-    }
+    _bloc.add(LoadMoreChatMessagesEvent());
   }
 
   Future<void> _showDeleteOptionSheet(
@@ -193,11 +189,10 @@ class _ChatContentState extends State<ChatContent> {
         ),
         BlocListener<WSDetailBloc, WSDetailState>(
           listenWhen: (previous, current) =>
-              previous.chatMessagesPagingStatus !=
-              current.chatMessagesPagingStatus,
+              previous.pagingStatus != current.pagingStatus,
           listener: (context, state) {
-            if (state.chatMessagesPagingStatus == PagingStatus.loading) return;
-            switch (state.chatMessagesPagingStatus) {
+            if (state.pagingStatus == PagingStatus.loading) return;
+            switch (state.pagingStatus) {
               case PagingStatus.loadCompleted:
                 refreshController.refreshCompleted();
                 break;
@@ -213,23 +208,18 @@ class _ChatContentState extends State<ChatContent> {
           BlocSelector<
             WSDetailBloc,
             WSDetailState,
-            (List<ChatMessageUIModel>, bool, bool, int)
+            (List<ChatMessageUIModel>, bool, int)
           >(
             selector: (state) {
               return (
                 state.chatMessages,
                 state.needLoadMoreOldMessages,
-                state.chatMessagesPagingStatus == PagingStatus.loading,
                 state.initIndex,
               );
             },
             builder: (context, state) {
-              final (
-                chatMessages,
-                needLoadMoreOldMessages,
-                isLoading,
-                initIndex,
-              ) = state;
+              final (chatMessages, needLoadMoreOldMessages, initIndex) = state;
+
               if (chatMessages.isEmpty) {
                 return const SizedBox.shrink();
               }

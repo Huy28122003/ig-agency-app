@@ -14,7 +14,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.showSendButton = false,
     this.users = const [],
     this.usersSearch = const [],
-    this.chatMessagesPagingStatus = PagingStatus.idle,
+    this.pagingStatus = PagingStatus.idle,
     this.jumpToMessageId,
     this.scrollToTop = false,
     this.showTimeMessageId,
@@ -35,7 +35,7 @@ class WSDetailState extends BaseState<WSDetailState> {
   final bool showSendButton;
   final List<UserEntity> users;
   final List<UserEntity> usersSearch;
-  final PagingStatus chatMessagesPagingStatus;
+  final PagingStatus pagingStatus;
   final String? jumpToMessageId;
   final bool scrollToTop;
   final String? showTimeMessageId;
@@ -47,8 +47,8 @@ class WSDetailState extends BaseState<WSDetailState> {
   final UserEntity? user;
 
   bool get needLoadMoreOldMessages =>
-      chatMessagesPagingStatus != PagingStatus.empty &&
-      chatMessagesPagingStatus != PagingStatus.noMoreData;
+      pagingStatus != PagingStatus.empty &&
+      pagingStatus != PagingStatus.noMoreData;
 
   @override
   WSDetailState copyWith({
@@ -65,8 +65,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? showSendButton,
     List<UserEntity>? users,
     List<UserEntity>? usersSearch,
-    PagingStatus? chatMessagesPagingStatus,
-    bool? hasMoreOldMessages,
+    PagingStatus? pagingStatus,
     String? jumpToMessageId,
     bool? scrollToTop,
     String? showTimeMessageId,
@@ -94,8 +93,7 @@ class WSDetailState extends BaseState<WSDetailState> {
       showSendButton: showSendButton ?? this.showSendButton,
       users: users ?? this.users,
       usersSearch: usersSearch ?? this.usersSearch,
-      chatMessagesPagingStatus:
-          chatMessagesPagingStatus ?? this.chatMessagesPagingStatus,
+      pagingStatus: pagingStatus ?? this.pagingStatus,
       jumpToMessageId: jumpToMessageId ?? this.jumpToMessageId,
       scrollToTop: scrollToTop ?? this.scrollToTop,
       showTimeMessageId: forceDisableShowTime
@@ -122,7 +120,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     showSendButton,
     users,
     usersSearch,
-    chatMessagesPagingStatus,
+    pagingStatus,
     jumpToMessageId,
     scrollToTop,
     showTimeMessageId,
