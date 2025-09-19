@@ -10,18 +10,18 @@ import 'package:ig_agency_app/shared/utils/bloc_observer.dart';
 import 'app/app.dart';
 import 'di/di.dart';
 
-void main() async {
+void main() {
   runZonedGuarded(
     () async {
       WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-
-      await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
       EasyLocalization.ensureInitialized();
       Bloc.observer = AppBlocObserver();
       await configureDependencies();
       getIt.registerSingleton(AppRouter());
-      FlutterNativeSplash.remove();
       _startApp();
     },
     (error, stackTrace) {

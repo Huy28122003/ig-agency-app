@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.ig_agency_app"
+    namespace = "com.anhtran.agency"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.ig_agency_app"
+        applicationId = "com.anhtran.agency"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -38,6 +38,32 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    flavorDimensions += "app"
+
+    productFlavors {
+        create("development") {
+            dimension = "app"
+            applicationId = "com.anhtran.agency.dev"
+            resValue("string", "app_name", "IG Agency Dev")
+            versionName = "1.0.0-dev"
+            versionCode = 1
+        }
+        create("staging") {
+            dimension = "app"
+            applicationId = "com.anhtran.agency.stag"
+            resValue("string", "app_name", "IG Agency Stag")
+            versionName = "1.0.0-stag"
+            versionCode = 1
+        }
+        create("production") {
+            dimension = "app"
+            applicationId = "com.anhtran.agency"
+            resValue("string", "app_name", "IG Agency")
+            versionName = "1.0.0"
+            versionCode = 1
         }
     }
 }

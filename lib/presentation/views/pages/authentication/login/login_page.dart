@@ -12,6 +12,9 @@ class LoginPage extends BasePage<LoginBloc, LoginEvent, LoginState> {
   const LoginPage({super.key});
 
   @override
+  bool get needRemoveSplash => true;
+
+  @override
   Widget mobileBuilder(BuildContext context) {
     return LoginMobileLayout();
   }

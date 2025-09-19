@@ -11,6 +11,9 @@ class NavPage extends BasePage<NavBloc, NavEvent, NavState> {
   const NavPage({super.key});
 
   @override
+  bool get needRemoveSplash => true;
+
+  @override
   Widget mobileBuilder(BuildContext context) {
     return NavMobileLayout();
   }
