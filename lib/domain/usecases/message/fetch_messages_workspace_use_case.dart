@@ -14,7 +14,7 @@ class FetchMessagesWorkspaceUseCase
   @override
   Future<List<MessageEntity>> call(FetchMessagesWorkspaceParams params) async {
     return await _messageRepository.fetchMessagesInGroup(
-      params.workspaceId,
+      params.groupId,
       params.limit,
       params.oldestMessageId,
       params.targetMessageId,
@@ -23,13 +23,13 @@ class FetchMessagesWorkspaceUseCase
 }
 
 class FetchMessagesWorkspaceParams {
-  final int workspaceId;
+  final int groupId;
   final int limit;
   final String? oldestMessageId;
   final String? targetMessageId;
 
   FetchMessagesWorkspaceParams({
-    required this.workspaceId,
+    required this.groupId,
     required this.limit,
     this.oldestMessageId,
     this.targetMessageId,

@@ -12,12 +12,12 @@ class DeleteConversationUseCase
 
   @override
   Future<void> call(DeleteConversationParams params) async {
-    return await _messageRepository.deleteConversation(params.workspaceId);
+    return await _messageRepository.deleteConversation(params.groupId);
   }
 }
 
 class DeleteConversationParams {
-  final int workspaceId;
+  final int groupId;
 
-  DeleteConversationParams({required this.workspaceId});
+  DeleteConversationParams({required this.groupId});
 }

@@ -13,9 +13,8 @@ import 'chat_textfield.dart';
 class ChatInputBar extends StatelessWidget {
   const ChatInputBar({
     super.key,
-    required this.workspaceId,
-    this.focusNode,
     required this.textEditingController,
+    this.focusNode,
     this.userId,
     this.messageReply,
     this.onReplyClose,
@@ -26,7 +25,6 @@ class ChatInputBar extends StatelessWidget {
     this.onToggleOptions,
   });
 
-  final int workspaceId;
   final String? userId;
   final FocusNode? focusNode;
   final TagUserTextEditingController textEditingController;
@@ -105,7 +103,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
         if (hasReplyMessage)
           ReplyMessageSection(
             messageReply: messageReply,
-            isMe: widget.userId == messageReply.sender.id,
+            isMe: widget.userId == messageReply.user.id,
             onClose: widget.onReplyClose,
           ),
         Container(

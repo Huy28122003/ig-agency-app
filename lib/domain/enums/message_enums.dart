@@ -1,4 +1,4 @@
-enum MessageType { text, image, video, file, system }
+enum MessageContentType { text, image, video, file, system }
 
 enum MessageStatus { sent, delivered, read, failed, pending }
 

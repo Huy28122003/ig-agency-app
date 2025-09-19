@@ -25,38 +25,37 @@ class ChatBubbleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (message.isText) {
-      return _TextMessageContent(
-        message: message,
-        maxWidth: maxWidth,
-        searchText: searchText,
-      );
+    final content = message.content;
+    switch (content) {
+      case TextMessageContent _:
+        return _TextMessageContent(
+          textContent: content,
+          createdAt: message.createdAt.toShortTimeString(),
+          maxWidth: maxWidth,
+          searchText: searchText,
+        );
+      case ImageMessageContent _:
+        return _ImageMessageContent(imageContent: content);
+      case VideoMessageContent _:
+        return _VideoMessageContent(videoContent: content);
+      case FileMessageContent _:
+        return _FileMessageContent(fileContent: content, maxWidth: maxWidth);
+      default:
+        return const SizedBox.shrink();
     }
-
-    if (message.isImage) {
-      return _ImageMessageContent(message: message);
-    }
-
-    if (message.isVideo) {
-      return _VideoMessageContent(message: message);
-    }
-
-    if (message.isFile) {
-      return _FileMessageContent(message: message, maxWidth: maxWidth);
-    }
-
-    return const SizedBox.shrink();
   }
 }
 
 class _TextMessageContent extends StatelessWidget {
   const _TextMessageContent({
-    required this.message,
+    required this.textContent,
+    required this.createdAt,
     required this.maxWidth,
     this.searchText,
   });
 
-  final MessageEntity message;
+  final TextMessageContent textContent;
+  final String createdAt;
   final double maxWidth;
   final String? searchText;
 
@@ -71,18 +70,21 @@ class _TextMessageContent extends StatelessWidget {
     );
 
     final (textSpans, _, link) = TextMessageDisplayUtil.parseTextContent(
-      message.content,
+      textContent,
       textStyle,
       searchText: searchText,
     );
 
-    final isOnlyLink =
-        link != null &&
-        link.length == (message.content as TextMessageContent).text.length;
+    final isOnlyLink = link != null && link.length == textContent.text.length;
 
     if (isOnlyLink) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+      return Container(
+        clipBehavior: Clip.antiAlias,
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerGrayStrong2,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: _LinkPreview(url: link),
       );
     }
@@ -117,7 +119,7 @@ class _TextMessageContent extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        message.createdAt.toShortTimeString(),
+                        createdAt,
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 12,
@@ -252,14 +254,12 @@ class _LinkPreview extends StatelessWidget {
 }
 
 class _ImageMessageContent extends StatelessWidget {
-  const _ImageMessageContent({required this.message});
+  const _ImageMessageContent({required this.imageContent});
 
-  final MessageEntity message;
+  final ImageMessageContent imageContent;
 
   @override
   Widget build(BuildContext context) {
-    final imageContent = message.content as ImageMessageContent;
-
     return NetworkImageWidget(
       imageUrl: imageContent.imageUrl,
       originalWidth: imageContent.width,
@@ -271,14 +271,12 @@ class _ImageMessageContent extends StatelessWidget {
 }
 
 class _VideoMessageContent extends StatelessWidget {
-  const _VideoMessageContent({required this.message});
+  const _VideoMessageContent({required this.videoContent});
 
-  final MessageEntity message;
+  final VideoMessageContent videoContent;
 
   @override
   Widget build(BuildContext context) {
-    final videoContent = message.content as VideoMessageContent;
-
     return NetworkImageWidget(
       imageUrl: videoContent.thumbnailUrl ?? '',
       originalWidth: videoContent.width,
@@ -336,15 +334,16 @@ class _VideoMessageContent extends StatelessWidget {
 }
 
 class _FileMessageContent extends StatelessWidget {
-  const _FileMessageContent({required this.message, required this.maxWidth});
+  const _FileMessageContent({
+    required this.fileContent,
+    required this.maxWidth,
+  });
 
-  final MessageEntity message;
+  final FileMessageContent fileContent;
   final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
-    final fileContent = message.content as FileMessageContent;
-
     return Container(
       clipBehavior: Clip.antiAlias,
       constraints: BoxConstraints(maxWidth: maxWidth),

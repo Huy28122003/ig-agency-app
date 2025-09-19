@@ -6,7 +6,7 @@ import '../../presentation/resources/colors.dart';
 
 class TextMessageDisplayUtil {
   static (List<TextSpan>, String?, String?) parseTextContent(
-    MessageContent content,
+    TextMessageContent textContent,
     TextStyle? textStyle, {
     TextStyle? linkStyle,
     TextStyle? mentionStyle,
@@ -14,8 +14,6 @@ class TextMessageDisplayUtil {
     String? searchText,
     bool caseSensitive = true,
   }) {
-    final textContent = content as TextMessageContent;
-
     if (textContent.textSegments != null &&
         textContent.textSegments!.isNotEmpty) {
       return _handleTextSegments(
@@ -45,6 +43,15 @@ class TextMessageDisplayUtil {
   }) {
     List<TextSegment> allSegments = List.from(textSegments);
 
+    final spans = <TextSpan>[];
+    String? hostName;
+    String? link;
+
+    int lastIndex = 0;
+
+    linkStyle ??= textStyle?.copyWith(decoration: TextDecoration.underline);
+    mentionStyle ??= textStyle?.copyWith(fontWeight: FontWeight.w700);
+    // TODO hoannk: Vì search sẽ có thể dính vào các text segment khác nên cần xử lý
     if (searchText != null && searchText.isNotEmpty) {
       final searchSegments = _createSearchSegments(
         text,
@@ -57,14 +64,6 @@ class TextMessageDisplayUtil {
     allSegments = _handleSegments(allSegments)
       ..sort((a, b) => a.start.compareTo(b.start));
 
-    final spans = <TextSpan>[];
-    String? hostName;
-    String? link;
-
-    int lastIndex = 0;
-
-    linkStyle ??= textStyle?.copyWith(decoration: TextDecoration.underline);
-    mentionStyle ??= textStyle?.copyWith(fontWeight: FontWeight.w700);
     searchStyle ??= textStyle?.copyWith(
       backgroundColor: AppColors.surfaceContainerGrayStrong95,
       color: AppColors.textDefaultTextInverted,

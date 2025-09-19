@@ -63,7 +63,7 @@ extension PinnedMessageSummaryUiModelMapper on PinnedMessageSummary {
 
   PinnedMessageSummaryUiModel toUIModel() {
     final content = _extractContent(latestMessage?.content);
-    final senderName = content != null ? latestMessage?.sender.name : null;
+    final senderName = content != null ? latestMessage?.user.name : null;
     return PinnedMessageSummaryUiModel(
       latestPinnedMessageContent: content,
       latestSenderName: senderName,

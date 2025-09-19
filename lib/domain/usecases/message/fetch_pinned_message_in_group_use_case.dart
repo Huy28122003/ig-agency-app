@@ -16,7 +16,7 @@ class FetchPinnedMessageInGroupUseCase
     FetchPinnedMessageInGroupParams params,
   ) async {
     return await _messageRepository.fetchPinnedMessagesInGroup(
-      params.workspaceId,
+      params.groupId,
       params.limit,
       params.offset,
     );
@@ -24,12 +24,12 @@ class FetchPinnedMessageInGroupUseCase
 }
 
 class FetchPinnedMessageInGroupParams {
-  final int workspaceId;
+  final int groupId;
   final int limit;
   final int offset;
 
   FetchPinnedMessageInGroupParams({
-    required this.workspaceId,
+    required this.groupId,
     required this.limit,
     required this.offset,
   });

@@ -1,4 +1,3 @@
-import '../../../../domain/enums/message_enums.dart';
 import 'chat_message_ui_model.dart';
 
 class ChatMessageUiModelHelper {
@@ -28,9 +27,10 @@ class ChatMessageUiModelHelper {
             previousMessage?.message.createdAt.year;
 
     // System message
-    if (currentMessage.message.type == MessageType.system) {
+    if (currentMessage.message.content.isSystem) {
       final bool isSameSystemTypeAsPrevious =
-          currentMessage.message.type == previousMessage?.message.type;
+          currentMessage.message.content.messageContentType ==
+          previousMessage?.message.content.messageContentType;
 
       // Same system type and same day
       if (isSameSystemTypeAsPrevious && isSameDayAsPrevious) {
@@ -38,14 +38,14 @@ class ChatMessageUiModelHelper {
       }
     }
     // current message has not reply
-    else if (currentMessage.message.reply == null) {
+    else if (currentMessage.message.repliedMessage == null) {
       // previous message has not reply and is not system message
       final previous = previousMessage?.message;
       if (previous != null &&
-          previous.reply == null &&
-          previous.type != MessageType.system) {
+          previous.repliedMessage == null &&
+          previous.content.isSystem) {
         final bool isSameSenderAsPrevious =
-            currentMessage.message.sender.id == previous.sender.id;
+            currentMessage.message.user.id == previous.user.id;
         final Duration timeDiffWithPrevious = currentMessage.message.createdAt
             .difference(previous.createdAt);
         final bool isWithinFiveMinutesWithPrevious =
@@ -78,10 +78,10 @@ class ChatMessageUiModelHelper {
 
       final next = nextMessage?.message;
       if (next != null &&
-          next.reply == null &&
-          next.type != MessageType.system) {
+          next.repliedMessage == null &&
+          next.content.isSystem) {
         final bool isSameSenderAsNext =
-            currentMessage.message.sender.id == next.sender.id;
+            currentMessage.message.user.id == next.user.id;
         final Duration timeDiffWithNext = next.createdAt.difference(
           currentMessage.message.createdAt,
         );

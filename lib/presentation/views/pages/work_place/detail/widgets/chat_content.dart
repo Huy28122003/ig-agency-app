@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
-import '../../../../../../domain/enums/message_enums.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
@@ -58,7 +57,7 @@ class _ChatContentState extends State<ChatContent> {
 
   void _onScrollListener() {
     final state = _bloc.state;
-    if (state.isInitialized) {
+    if (state.pageStatus == PageStatus.loaded) {
       if ((listViewController.offset >=
               listViewController.position.maxScrollExtent - 100) &&
           state.showScrollToBottomIcon) {
@@ -79,7 +78,10 @@ class _ChatContentState extends State<ChatContent> {
     }
   }
 
-  void _jumpToMessage(int index) {
+  void _jumpToMessage(String messageId) {
+    final index = _bloc.state.chatMessages.indexWhere(
+      (uiModel) => uiModel.message.id == messageId,
+    );
     if (index >= 0 && index < _bloc.state.chatMessages.length) {
       listViewController.sliverController.jumpToIndex(index, offset: 0.5);
     }
@@ -179,12 +181,12 @@ class _ChatContentState extends State<ChatContent> {
         ),
         BlocListener<WSDetailBloc, WSDetailState>(
           listenWhen: (previous, current) =>
-              previous.jumpToMessageIndex != current.jumpToMessageIndex,
+              previous.jumpToMessageId != current.jumpToMessageId,
           listener: (context, state) {
-            if (state.jumpToMessageIndex != null) {
+            final messageId = state.jumpToMessageId;
+            if (messageId != null) {
               WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                _jumpToMessage(state.jumpToMessageIndex!);
-                _bloc.add(ResetJumpToMessageEvent());
+                _jumpToMessage(messageId);
               });
             }
           },

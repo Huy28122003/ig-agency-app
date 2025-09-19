@@ -86,7 +86,6 @@ class _WorkspaceDetailTabletLayoutState
               },
               builder: (context, message) {
                 return ChatInputBar(
-                  workspaceId: _bloc.workspaceId,
                   userId: _bloc.userId,
                   textEditingController: _bloc.textEditingController,
                   messageReply: message,

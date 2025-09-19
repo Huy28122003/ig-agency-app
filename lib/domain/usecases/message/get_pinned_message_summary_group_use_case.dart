@@ -16,13 +16,13 @@ class GetPinnedMessageSummaryGroupUseCase
     GetPinnedMessageSummaryGroupParams params,
   ) async {
     return await _messageRepository.getPinnedMessageSummaryInGroup(
-      params.workspaceId,
+      params.groupId,
     );
   }
 }
 
 class GetPinnedMessageSummaryGroupParams {
-  final int workspaceId;
+  final int groupId;
 
-  GetPinnedMessageSummaryGroupParams({required this.workspaceId});
+  GetPinnedMessageSummaryGroupParams({required this.groupId});
 }

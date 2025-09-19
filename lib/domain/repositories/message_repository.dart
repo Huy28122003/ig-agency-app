@@ -8,16 +8,16 @@ abstract class MessageRepository {
 
   Future pinMessage(String messageId);
 
-  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(int workspaceId);
+  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(int groupId);
 
   Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
-    int workspaceId,
+    int groupId,
     int limit,
     int offset,
   );
 
   Future<List<MessageEntity>> fetchMessagesInGroup(
-    int workspaceId,
+    int groupId,
     int limit,
     String? oldestMessageId,
     String? targetMessageId,
@@ -25,7 +25,7 @@ abstract class MessageRepository {
 
   Future<void> sendMessage(
     String userId,
-    int workspaceId,
+    int groupId,
     String? replyMessageId,
     dynamic content,
   );
@@ -34,5 +34,5 @@ abstract class MessageRepository {
 
   Future<void> deleteMessageForYou(String messageId);
 
-  Future<void> deleteConversation(int workspaceId);
+  Future<void> deleteConversation(int groupId);
 }

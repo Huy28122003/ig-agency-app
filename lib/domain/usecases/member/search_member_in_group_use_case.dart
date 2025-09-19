@@ -13,15 +13,15 @@ class SearchMemberInGroupUseCase
   @override
   Future<List<UserEntity>> call(SearchMemberInGroupParams params) async {
     return _memberRepository.searchMembersInGroup(
-      workspaceId: params.workspaceId,
+      groupId: params.groupId,
       query: params.query,
     );
   }
 }
 
 class SearchMemberInGroupParams {
-  final int workspaceId;
+  final int groupId;
   final String query;
 
-  SearchMemberInGroupParams({required this.workspaceId, required this.query});
+  SearchMemberInGroupParams({required this.groupId, required this.query});
 }

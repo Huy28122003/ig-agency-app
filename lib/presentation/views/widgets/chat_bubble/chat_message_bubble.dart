@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
 import '../../../../domain/entities/message/message.dart';
-import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
@@ -21,7 +20,7 @@ class ChatMessageBubble extends StatefulWidget {
     required this.maxWidth,
     required this.maxWidthReply,
     required this.horizontalPadding,
-    required this.userId,
+    this.userId,
     required this.message,
     this.shouldShowTime = false,
     this.shouldShowAvatar = false,
@@ -40,7 +39,7 @@ class ChatMessageBubble extends StatefulWidget {
   final double maxWidthReply;
   final MessageEntity message;
   final double horizontalPadding;
-  final String userId;
+  final String? userId;
   final VoidCallback? onReply;
   final VoidCallback? onTap;
   final Function(String messageId)? onReplyTap;
@@ -57,13 +56,11 @@ class ChatMessageBubble extends StatefulWidget {
 
   factory ChatMessageBubble.system({
     required MessageEntity message,
-    required String userId,
     bool shouldShowTime = false,
     double horizontalPadding = 12,
   }) {
     return ChatMessageBubble(
       message: message,
-      userId: userId,
       maxWidth: 0,
       maxWidthReply: 0,
       shouldShowTime: shouldShowTime,
@@ -119,7 +116,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     }
   }
 
-  bool get isMe => widget.userId == widget.message.sender.id;
+  bool get isMe => widget.userId == widget.message.user.id;
 
   void _onPanStart(DragStartDetails details) {
     _isDragging = true;
@@ -217,7 +214,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
         Padding(
           padding: EdgeInsets.only(
             top: _isContinuation
-                ? _message.type == MessageType.system
+                ? _message.content.isSystem
                       ? ChatBubbleConstants.continuationSystemVerticalPadding
                       : ChatBubbleConstants.continuationVerticalPadding
                 : 16,
@@ -260,6 +257,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   }
 
   Widget _buildMainChatBubble(double value) {
+    final repliedMessage = _message.repliedMessage;
     return GestureDetector(
       onTap: widget.onTap,
       child: Stack(
@@ -272,8 +270,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                 child: Opacity(
                   opacity: _animationHelper.getAvatarOpacity(value),
                   child: ChatAvatar(
-                    key: ValueKey(_message.sender.id),
-                    imageUrl: _message.sender.avatarUrl,
+                    key: ValueKey(_message.user.id),
+                    imageUrl: _message.user.avatar,
                   ),
                 ),
               ),
@@ -372,7 +370,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                     text: 'Copy Name',
                     onTap: () {
                       Clipboard.setData(
-                        ClipboardData(text: _message.sender.name),
+                        ClipboardData(text: _message.user.name),
                       );
                     },
                     trailingIcon: Assets.icons.icCopyName.svg(
@@ -403,7 +401,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                       ? CrossAxisAlignment.end
                       : CrossAxisAlignment.start,
                   children: [
-                    if ((!isMe || (isMe && _message.reply != null)) &&
+                    if ((!isMe || (isMe && repliedMessage != null)) &&
                         _shouldShowUserName) ...[
                       ChatBubbleSenderInfo(
                         message: _message,
@@ -411,11 +409,11 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                         isMe: isMe,
                       ),
                     ],
-                    _message.reply != null
+                    repliedMessage != null
                         ? ChatBubbleContentWithReply(
                             key: ValueKey('${_message.id}-reply'),
                             message: _message,
-                            replyMessage: _message.reply!,
+                            replyMessage: repliedMessage,
                             maxWidth: widget.maxWidth,
                             maxWidthReply: widget.maxWidthReply,
                             isMe: isMe,

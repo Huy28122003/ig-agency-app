@@ -53,7 +53,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
-    int workspaceId,
+    int groupId,
     int limit,
     int offset,
   ) async {
@@ -62,7 +62,7 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final (pinnedMessages, totalRecords) = _messageMockService
           .mockFetchPinnedMessages(
-            groupId: workspaceId,
+            groupId: groupId,
             limit: limit,
             offset: offset,
           );
@@ -75,14 +75,12 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(
-    int workspaceId,
+    int groupId,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final summary = _messageMockService.mockGetPinnedMessageSummary(
-        workspaceId,
-      );
+      final summary = _messageMockService.mockGetPinnedMessageSummary(groupId);
       return summary;
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -91,7 +89,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> fetchMessagesInGroup(
-    int workspaceId,
+    int groupId,
     int limit,
     String? oldestMessageId,
     String? targetMessageId,
@@ -101,7 +99,7 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final (messages, totalRecords) = _messageMockService
           .mockFetchMessagesByGroupId(
-            groupId: workspaceId,
+            groupId: groupId,
             limit: limit,
             oldestMessageId: oldestMessageId,
             targetMessageId: targetMessageId,
@@ -116,7 +114,7 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> sendMessage(
     String userId,
-    int workspaceId,
+    int groupId,
     String? replyMessageId,
     dynamic content,
   ) async {
@@ -125,7 +123,7 @@ class MessageRepositoryImpl implements MessageRepository {
       // TODO: Sử dụng tạm mock tại repository
       await _messageMockService.addMessage(
         userId,
-        workspaceId,
+        groupId,
         replyMessageId,
         content,
       );
@@ -157,7 +155,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<void> deleteConversation(int workspaceId) async {
+  Future<void> deleteConversation(int groupId) async {
     try {
       // Todo: hoannk: rehandle this
     } catch (e) {

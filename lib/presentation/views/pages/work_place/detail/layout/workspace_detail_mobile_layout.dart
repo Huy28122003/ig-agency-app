@@ -55,154 +55,136 @@ class _WorkspaceDetailMobileLayoutState
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<WSDetailBloc, WSDetailState>(
-          listenWhen:
-              (previous, current) =>
-                  previous.isPinStatusSuccess != current.isPinStatusSuccess,
-          listener: (context, state) {
-            if (state.isPinStatusSuccess) {
-              _bloc.add(ResetPinStatusSuccessEvent());
-              _bloc.add(GetPinnedMessageSummaryEvent());
-            }
-          },
-        ),
-      ],
-      child: GestureDetector(
-        onTap: () {
-          if (_bloc.state.groupMemberStatus == GroupMemberStatus.removed) {
-            return;
-          }
-          _bloc.textEditingController.closeTagOverlay();
-          if (!_bloc.state.showTagOverlay) {
-            _focusNode.unfocus();
-            _bloc.add(ToggleOptionsEvent(showOptions: true));
-          }
-        },
-        child: Scaffold(
-          resizeToAvoidBottomInset: true,
+    return GestureDetector(
+      onTap: () {
+        if (_bloc.state.groupMemberStatus == GroupMemberStatus.removed) {
+          return;
+        }
+        _bloc.textEditingController.closeTagOverlay();
+        if (!_bloc.state.showTagOverlay) {
+          _focusNode.unfocus();
+          _bloc.add(ToggleHasOptionsEvent(showOptions: true));
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leadingWidth: 44,
-            toolbarHeight: 60,
-            scrolledUnderElevation: 0,
-            leading: GestureDetector(
-              onTap: () => context.router.pop(),
-              child: Stack(
-                children: [
-                  Positioned(
-                    left: 8,
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      height: 24,
-                      width: 24,
-                      alignment: Alignment.center,
-                      child: GestureDetector(
-                        onTap: () => context.router.pop(),
-                        child: Assets.icons.icArrowLeft.svg(
-                          height: 24,
-                          width: 24,
-                          colorFilter: ColorFilter.mode(
-                            AppColors.iconDefaultDefault,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      height: 18,
-                      alignment: Alignment.center,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: AppColors.iconAlertInfo,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '29',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            titleSpacing: 12,
-            title: Row(
+          elevation: 0,
+          leadingWidth: 44,
+          toolbarHeight: 60,
+          scrolledUnderElevation: 0,
+          leading: GestureDetector(
+            onTap: () => context.router.pop(),
+            child: Stack(
               children: [
-                CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.groupName,
-                        style: TextStyle(
-                          color: AppColors.textDefaultTextDefault,
-                          fontSize: 16,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w700,
-                          height: 1.50,
+                Positioned(
+                  left: 8,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 24,
+                    width: 24,
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTap: () => context.router.pop(),
+                      child: Assets.icons.icArrowLeft.svg(
+                        height: 24,
+                        width: 24,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.iconDefaultDefault,
+                          BlendMode.srcIn,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      BlocSelector<
-                        WSDetailBloc,
-                        WSDetailState,
-                        List<UserEntity>
-                      >(
-                        selector: (state) {
-                          return state.users;
-                        },
-                        builder: (context, users) {
-                          final onlineUsers =
-                              users.where((user) => user.isOnline).length;
-                          return Text(
-                            '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
-                            style: TextStyle(
-                              color: AppColors.textDefaultTextSub2,
-                              fontSize: 14,
-                              fontFamily: FontFamily.segoeUI,
-                              fontWeight: FontWeight.w400,
-                              height: 1.14,
-                            ),
-                          );
-                        },
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 18,
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: AppColors.iconAlertInfo,
+                        shape: BoxShape.circle,
                       ),
-                    ],
+                      alignment: Alignment.center,
+                      child: Text(
+                        '29',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          body: SafeArea(
-            child: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(
-              selector: (state) {
-                return state.groupMemberStatus;
-              },
-              builder: (context, state) {
-                return state == GroupMemberStatus.joined
-                    ? _GroupChatView(bloc: _bloc, focusNode: _focusNode)
-                    : _GroupRemovedView(bloc: _bloc);
-              },
-            ),
+          titleSpacing: 12,
+          title: Row(
+            children: [
+              CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.groupName,
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextDefault,
+                        fontSize: 16,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w700,
+                        height: 1.50,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
+                      selector: (state) {
+                        return state.users;
+                      },
+                      builder: (context, users) {
+                        final onlineUsers = users
+                            .where((user) => user.isOnline)
+                            .length;
+                        return Text(
+                          '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                          style: TextStyle(
+                            color: AppColors.textDefaultTextSub2,
+                            fontSize: 14,
+                            fontFamily: FontFamily.segoeUI,
+                            fontWeight: FontWeight.w400,
+                            height: 1.14,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(
+            selector: (state) {
+              return state.groupMemberStatus;
+            },
+            builder: (context, state) {
+              return state == GroupMemberStatus.joined
+                  ? _GroupChatView(bloc: _bloc, focusNode: _focusNode)
+                  : _GroupRemovedView(bloc: _bloc);
+            },
           ),
         ),
       ),
@@ -242,50 +224,15 @@ class _GroupChatView extends StatelessWidget {
                         child: PinnedMessageSection(
                           pinnedMessageSummary: pinnedMessageSummary,
                           onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              useSafeArea: true,
-                              elevation: 0,
-                              barrierColor: Colors.black.withValues(
-                                alpha: 0.68,
-                              ),
-                              backgroundColor: Colors.transparent,
-                              isScrollControlled: true,
-                              builder: (context) {
-                                return Stack(
-                                  children: [
-                                    // Tap to close bottom sheet
-                                    Positioned.fill(
-                                      top: 0,
-                                      left: 0,
-                                      right: 0,
-                                      bottom: 0,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Container(
-                                          color: Colors.transparent,
-                                        ),
-                                      ),
-                                    ),
-                                    PinnedMessagesBottomSheet(
-                                      workspaceId: bloc.workspaceId,
-                                      onTap: (messageId) {
-                                        bloc.add(
-                                          JumpToMessageEvent(
-                                            messageId: messageId,
-                                          ),
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                      onUnpinSuccess: () {
-                                        bloc.add(
-                                          GetPinnedMessageSummaryEvent(),
-                                        );
-                                      },
-                                    ),
-                                  ],
+                            PinnedMessagesBottomSheet.show(
+                              context,
+                              bloc.groupId,
+                              onUnpinSuccess: () {
+                                bloc.add(GetPinnedMessageSummaryEvent());
+                              },
+                              onTap: (messageId) {
+                                bloc.add(
+                                  JumpToMessageEvent(messageId: messageId),
                                 );
                               },
                             );
@@ -302,10 +249,9 @@ class _GroupChatView extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: BlocBuilder<WSDetailBloc, WSDetailState>(
-                  buildWhen:
-                      (previous, current) =>
-                          previous.usersSearch != current.usersSearch ||
-                          previous.showTagOverlay != current.showTagOverlay,
+                  buildWhen: (previous, current) =>
+                      previous.usersSearch != current.usersSearch ||
+                      previous.showTagOverlay != current.showTagOverlay,
                   builder: (context, state) {
                     if (state.usersSearch.isEmpty || !state.showTagOverlay) {
                       return const SizedBox.shrink();
@@ -332,7 +278,6 @@ class _GroupChatView extends StatelessWidget {
           },
           builder: (context, message) {
             return ChatInputBar(
-              workspaceId: bloc.workspaceId,
               userId: bloc.userId,
               focusNode: focusNode,
               textEditingController: bloc.textEditingController,
@@ -353,7 +298,7 @@ class _GroupChatView extends StatelessWidget {
                 bloc.add(SendMessageEvent(type: SendMessageType.text));
               },
               onToggleOptions: (showOptions) {
-                bloc.add(ToggleOptionsEvent(showOptions: showOptions));
+                bloc.add(ToggleHasOptionsEvent(showOptions: showOptions));
               },
             );
           },
@@ -371,10 +316,9 @@ class _GroupRemovedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<WSDetailBloc, WSDetailState>(
-      listenWhen:
-          (previous, current) =>
-              previous.isDeletedConversationSuccess !=
-              current.isDeletedConversationSuccess,
+      listenWhen: (previous, current) =>
+          previous.isDeletedConversationSuccess !=
+          current.isDeletedConversationSuccess,
       listener: (context, state) {
         if (state.isDeletedConversationSuccess) {
           context.router.pop();
@@ -387,17 +331,15 @@ class _GroupRemovedView extends StatelessWidget {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: BlocBuilder<WSDetailBloc, WSDetailState>(
-                buildWhen:
-                    (previous, current) =>
-                        previous.chatMessages != current.chatMessages,
+                buildWhen: (previous, current) =>
+                    previous.chatMessages != current.chatMessages,
                 builder: (context, state) {
                   return state.chatMessages.isEmpty
                       ? const SizedBox.shrink()
                       : ChatMessageBubble.system(
-                        message: state.chatMessages.first.message,
-                        userId: _bloc.userId,
-                        shouldShowTime: true,
-                      );
+                          message: state.chatMessages.first.message,
+                          shouldShowTime: true,
+                        );
                 },
               ),
             ),

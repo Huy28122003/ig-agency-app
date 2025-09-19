@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/entities/pinned_message_summary.dart';
+import '../../../../domain/entities/user.dart';
 import '../../../../domain/entities/user_entity.dart';
 import '../../../../domain/enums/message_enums.dart';
 
@@ -225,59 +226,19 @@ class MessageMockService {
     for (int i = 0; i < count; i++) {
       current = current.add(_timeSteps[_random.nextInt(_timeSteps.length)]);
 
-      final type =
-          MessageType.values[_random.nextInt(MessageType.values.length)];
+      final type = MessageContentType
+          .values[_random.nextInt(MessageContentType.values.length)];
       final content = _generateContent(type);
 
-      MessageReply? reply;
+      MessageEntity? reply;
       if (messages.isNotEmpty && _random.nextDouble() < 0.3 && i != 0) {
         final message = messages[_random.nextInt(messages.length)];
-        final messageId = message.id;
-        if (message.type != MessageType.system) {
-          final messageType = message.type;
-
-          reply = MessageReply(
-            messageId: messageId,
-            senderId: message.sender.id,
-            senderName: message.sender.name,
-            originalMessageType: messageType,
-          );
-
-          switch (messageType) {
-            case MessageType.text:
-              reply = reply.copyWith(
-                previewText: (message.content as TextMessageContent).text,
-              );
-              break;
-            case MessageType.image:
-              final image = message.content as ImageMessageContent;
-              reply = reply.copyWith(
-                previewImageUrl: image.imageUrl,
-                previewWidth: image.width,
-                previewHeight: image.height,
-              );
-              break;
-            case MessageType.video:
-              final video = message.content as VideoMessageContent;
-              reply = reply.copyWith(
-                previewThumbnailUrl: video.thumbnailUrl,
-                previewWidth: video.width,
-                previewHeight: video.height,
-              );
-              break;
-            case MessageType.file:
-              final file = message.content as FileMessageContent;
-              reply = reply.copyWith(
-                previewFileName: '${file.fileName}.${file.fileExtension}',
-              );
-              break;
-            default:
-              break;
-          }
+        if (content.isNotSystem) {
+          reply = message;
         }
       }
 
-      final sender = _mockUsers[_random.nextInt(_mockUsers.length)];
+      final user = _mockUsers[_random.nextInt(_mockUsers.length)];
       final groupIndex = _mockGroups.indexWhere(
         (element) => element["id"] == groupId,
       );
@@ -286,20 +247,21 @@ class MessageMockService {
       messages.add(
         MessageEntity(
           id: "msg_${groupId}_${current.millisecondsSinceEpoch}",
-          sender: MessageSender(
-            id: sender['id']!,
-            name: sender['name']!,
-            avatarUrl: sender['avatarUrl']!,
+          user: UserSummary(
+            id: user['id']!,
+            name: user['name']!,
+            avatar: user['avatarUrl']!,
           ),
           createdAt: current,
-          type: type,
           content: content,
           status: MessageStatus.sent,
-          workspaceId: groupId,
+          groupId: groupId,
           groupName: groupName,
-          reply: reply,
-          isPinned: type == MessageType.system ? false : _random.nextBool(),
-          pinnedAt: type == MessageType.system ? null : current,
+          repliedMessage: reply,
+          isPinned: type == MessageContentType.system
+              ? false
+              : _random.nextBool(),
+          pinnedAt: type == MessageContentType.system ? null : current,
         ),
       );
     }
@@ -307,42 +269,42 @@ class MessageMockService {
     return messages;
   }
 
-  MessageContent _generateContent(MessageType type) {
+  MessageContent _generateContent(MessageContentType type) {
     switch (type) {
-      case MessageType.text:
+      case MessageContentType.text:
         final (text, segments) = mockText();
-        return MessageContent.text(text: text, textSegments: segments);
-      case MessageType.image:
+        return TextMessageContent(text: text, textSegments: segments);
+      case MessageContentType.image:
         final imageUrl = _mockImages[_random.nextInt(_mockImages.length)];
         final (width, height) = extractDimensions(imageUrl);
-        return MessageContent.image(
+        return ImageMessageContent(
           imageUrl: imageUrl,
           width: width,
           height: height,
         );
-      case MessageType.video:
+      case MessageContentType.video:
         final video = _mockVideos[_random.nextInt(_mockVideos.length)];
         final thumbnailUrl = video['thumbnailUrl'];
         final (width, height) = extractDimensions(thumbnailUrl);
-        return MessageContent.video(
+        return VideoMessageContent(
           videoUrl: video['videoUrl'],
           duration: video['duration'],
           thumbnailUrl: thumbnailUrl,
           width: width,
           height: height,
         );
-      case MessageType.file:
+      case MessageContentType.file:
         final file = _mockFiles[_random.nextInt(_mockFiles.length)];
-        return MessageContent.file(
+        return FileMessageContent(
           fileUrl: file['fileUrl'],
           fileName: file['fileName'],
           fileExtension: file['fileExtension'],
           fileSize: file['fileSize'],
           fileType: file['fileType'],
         );
-      case MessageType.system:
+      case MessageContentType.system:
         final sys = _mockSystems[_random.nextInt(_mockSystems.length)];
-        return MessageContent.system(
+        return SystemMessageContent(
           systemType: sys['systemType'],
           message: sys['message'],
         );
@@ -586,12 +548,11 @@ class MessageMockService {
 
   Future<void> addMessage(
     String userId,
-    int workspaceId,
+    int groupId,
     String? replyMessageId,
     dynamic content,
   ) async {
-    final messageId =
-        "msg_${workspaceId}_${DateTime.now().millisecondsSinceEpoch}";
+    final messageId = "msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}";
 
     final user = getUserById(userId);
     if (user == null) {
@@ -599,73 +560,38 @@ class MessageMockService {
     }
 
     final type = switch (content) {
-      TextMessageContent _ => MessageType.text,
-      ImageMessageContent _ => MessageType.image,
-      VideoMessageContent _ => MessageType.video,
-      FileMessageContent _ => MessageType.file,
-      _ => throw UnimplementedError(),
+      TextMessageContent _ => MessageContentType.text,
+      ImageMessageContent _ => MessageContentType.image,
+      VideoMessageContent _ => MessageContentType.video,
+      FileMessageContent _ => MessageContentType.file,
+      _ => throw Exception(),
     };
 
-    MessageReply? reply;
+    MessageEntity? reply;
     if (replyMessageId != null) {
-      final replyMessage = _messageMockData[workspaceId]
+      final replyMessage = _messageMockData[groupId]
           ?.where((message) => message.id == replyMessageId)
           .firstOrNull;
-      if (replyMessage != null) {
-        final content = replyMessage.content;
-        final width = switch (content) {
-          ImageMessageContent _ => content.width,
-          VideoMessageContent _ => content.width,
-          _ => null,
-        };
-        final height = switch (content) {
-          ImageMessageContent _ => content.height,
-          VideoMessageContent _ => content.height,
-          _ => null,
-        };
-        reply = MessageReply(
-          messageId: replyMessageId,
-          senderId: replyMessage.sender.id,
-          senderName: replyMessage.sender.name,
-          previewText: content is TextMessageContent ? content.text : null,
-          previewImageUrl: content is ImageMessageContent
-              ? content.imageUrl
-              : null,
-          previewThumbnailUrl: content is VideoMessageContent
-              ? content.thumbnailUrl
-              : null,
-          previewFileName: content is FileMessageContent
-              ? content.fileName
-              : null,
-          previewWidth: width,
-          previewHeight: height,
-          originalMessageType: replyMessage.type,
-        );
-      }
+      reply = replyMessage;
     }
 
     final sentMessage = MessageEntity(
       id: messageId,
-      sender: MessageSender(
-        id: user.id,
-        name: user.name,
-        avatarUrl: user.avatar,
-      ),
-      reply: reply,
+      user: UserSummary(id: user.id, name: user.name, avatar: user.avatar),
+      repliedMessage: reply,
       status: MessageStatus.sent,
       createdAt: DateTime.now(),
-      type: type,
       content: switch (content) {
         TextMessageContent _ => content,
         _ => _generateContent(type),
       },
-      workspaceId: workspaceId,
+      groupId: groupId,
     );
 
-    if (_messageMockData[workspaceId] == null) {
-      _messageMockData[workspaceId] = [];
+    if (_messageMockData[groupId] == null) {
+      _messageMockData[groupId] = [];
     }
-    _messageMockData[workspaceId]?.add(sentMessage);
+    _messageMockData[groupId]?.add(sentMessage);
     _ramCache.saveMessage(sentMessage);
   }
 
@@ -698,8 +624,8 @@ class MessageMockService {
   }
 
   Future<void> mockDeleteMessageForEveryone(String messageId) async {
-    for (final workspaceId in _messageMockData.keys) {
-      _messageMockData[workspaceId]?.removeWhere(
+    for (final groupId in _messageMockData.keys) {
+      _messageMockData[groupId]?.removeWhere(
         (message) => message.id == messageId,
       );
     }

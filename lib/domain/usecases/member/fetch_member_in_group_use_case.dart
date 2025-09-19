@@ -12,14 +12,12 @@ class FetchMemberInGroupUseCase
 
   @override
   Future<List<UserEntity>> call(FetchMemberInGroupParams params) async {
-    return _memberRepository.fetchMembersInGroup(
-      workspaceId: params.workspaceId,
-    );
+    return _memberRepository.fetchMembersInGroup(groupId: params.groupId);
   }
 }
 
 class FetchMemberInGroupParams {
-  final int workspaceId;
+  final int groupId;
 
-  FetchMemberInGroupParams({required this.workspaceId});
+  FetchMemberInGroupParams({required this.groupId});
 }

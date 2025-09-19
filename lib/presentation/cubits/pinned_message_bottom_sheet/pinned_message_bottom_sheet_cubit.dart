@@ -14,21 +14,18 @@ part 'pinned_message_bottom_sheet_state.dart';
 @injectable
 class PinnedMessageBottomSheetCubit
     extends Cubit<PinnedMessageBottomSheetState> {
-  PinnedMessageBottomSheetCubit({
-    required int workspaceId,
-    required FetchPinnedMessageInGroupUseCase fetchPinnedMessageUseCase,
-    required UnpinMessageUseCase unpinMessageUseCase,
-  }) : _workspaceId = workspaceId,
-       _fetchPinnedMessageUseCase = fetchPinnedMessageUseCase,
-       _unpinMessageUseCase = unpinMessageUseCase,
-       super(PinnedMessageBottomSheetState()) {
+  PinnedMessageBottomSheetCubit(
+    this.groupId,
+    this._fetchPinnedMessageUseCase,
+    this._unpinMessageUseCase,
+  ) : super(PinnedMessageBottomSheetState()) {
     loadPinnedMessage();
   }
 
   final int _limit = 10;
   int _offset = 0;
 
-  final int _workspaceId;
+  final int groupId;
 
   final FetchPinnedMessageInGroupUseCase _fetchPinnedMessageUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
@@ -39,7 +36,7 @@ class PinnedMessageBottomSheetCubit
   }) async {
     final result = await _fetchPinnedMessageUseCase.call(
       FetchPinnedMessageInGroupParams(
-        workspaceId: _workspaceId,
+        groupId: groupId,
         limit: _limit,
         offset: offset,
       ),
