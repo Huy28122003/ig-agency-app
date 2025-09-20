@@ -14,7 +14,7 @@ class SettingHomeState extends BaseState<SettingHomeState> {
   final bool isDarkMode;
   final bool isInAppAlerts;
   final bool isLogoutSuccess;
-  final UserEntity? user;
+  final ProfileInfoEntity? user;
 
   @override
   SettingHomeState copyWith({
@@ -24,7 +24,7 @@ class SettingHomeState extends BaseState<SettingHomeState> {
     bool? isDarkMode,
     bool? isInAppAlerts,
     bool? isLogoutSuccess,
-    UserEntity? user,
+    ProfileInfoEntity? user,
   }) {
     return SettingHomeState(
       pageStatus: pageStatus ?? this.pageStatus,

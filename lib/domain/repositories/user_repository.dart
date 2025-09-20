@@ -1,16 +1,17 @@
 import 'dart:async';
+import '../entities/user/profile_info_entity.dart';
 import '../entities/user_entity.dart';
 
 abstract class UserRepository {
-  Future<UserEntity> fetchCurrentUser();
+  Future<ProfileInfoEntity> getProfileInfo([bool isForceFetch = false]);
 
-  Stream<UserEntity> get userStream;
+  Stream<ProfileInfoEntity> get fetchProfileInfo;
 
-  Future updateUser(UserEntity user);
+  Future updateProfileInfo(ProfileInfoEntity user);
 
-  Future updateUserName(String name);
+  Future updateUsername(String name);
 
-  Future updateUserBio(String bio);
+  Future updateProfileBio(String bio);
 
   Future<UserEntity> getUserInfo(String userId);
 }

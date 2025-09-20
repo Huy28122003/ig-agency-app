@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ig_agency_app/domain/entities/user_entity.dart';
+import 'package:ig_agency_app/domain/entities/user/profile_info_entity.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/message/message_entity.dart';
@@ -9,21 +9,21 @@ import '../../domain/entities/message/message_entity.dart';
 class RamCache {
   RamCache();
 
-  UserEntity? _latestProfileValue;
-  StreamController<UserEntity> _profileInfoController =
-      StreamController<UserEntity>.broadcast();
+  ProfileInfoEntity? _latestProfileValue;
+  StreamController<ProfileInfoEntity> _profileInfoController =
+      StreamController<ProfileInfoEntity>.broadcast();
 
-  void saveProfileInfo(UserEntity data) {
+  void saveProfileInfo(ProfileInfoEntity data) {
     if (_profileInfoController.isClosed) {
-      _profileInfoController = StreamController<UserEntity>.broadcast();
+      _profileInfoController = StreamController<ProfileInfoEntity>.broadcast();
     }
     _profileInfoController.sink.add(data);
     _latestProfileValue = data;
   }
 
-  Stream<UserEntity> getProfileInfoStream() {
+  Stream<ProfileInfoEntity> fetchProfileInfo() {
     if (_profileInfoController.isClosed) {
-      _profileInfoController = StreamController<UserEntity>.broadcast();
+      _profileInfoController = StreamController<ProfileInfoEntity>.broadcast();
     }
     if (_latestProfileValue != null) {
       Future.microtask(
@@ -34,7 +34,7 @@ class RamCache {
     return _profileInfoController.stream;
   }
 
-  UserEntity? getLatestProfileInfo() {
+  ProfileInfoEntity? getLatestProfileInfo() {
     return _latestProfileValue;
   }
 

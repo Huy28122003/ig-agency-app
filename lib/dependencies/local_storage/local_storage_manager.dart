@@ -1,9 +1,10 @@
 enum LocalStorageKeys {
-  userName,
+  email,
   password,
   isDarkMode,
   isInAppAlerts,
   accessToken,
+  profileInfo,
 }
 
 abstract class LocalStorageManager {
