@@ -6,12 +6,12 @@ sealed class MessageContent {
 
   final MessageContentType messageContentType;
 
-  bool get isText => messageContentType is TextMessageContent;
-  bool get isImage => messageContentType is ImageMessageContent;
-  bool get isVideo => messageContentType is VideoMessageContent;
-  bool get isFile => messageContentType is FileMessageContent;
-  bool get isSystem => messageContentType is SystemMessageContent;
-  bool get isNotSystem => messageContentType is SystemMessageContent;
+  bool get isText => messageContentType == MessageContentType.text;
+  bool get isImage => messageContentType == MessageContentType.image;
+  bool get isVideo => messageContentType == MessageContentType.video;
+  bool get isFile => messageContentType == MessageContentType.file;
+  bool get isSystem => messageContentType == MessageContentType.system;
+  bool get isNotSystem => messageContentType != MessageContentType.system;
 }
 
 class TextMessageContent extends MessageContent {

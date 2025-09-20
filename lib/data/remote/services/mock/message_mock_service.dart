@@ -233,7 +233,7 @@ class MessageMockService {
       MessageEntity? reply;
       if (messages.isNotEmpty && _random.nextDouble() < 0.3 && i != 0) {
         final message = messages[_random.nextInt(messages.length)];
-        if (content.isNotSystem) {
+        if (message.content.isNotSystem) {
           reply = message;
         }
       }
@@ -553,10 +553,9 @@ class MessageMockService {
   ) async {
     final messageId = "msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}";
 
-    final user = getUserById(userId);
-    if (user == null) {
-      throw Exception();
-    }
+    final user =
+        getUserById(userId) ??
+        UserEntity(id: userId, name: 'Unknown', email: '', avatar: '');
 
     final type = switch (content) {
       TextMessageContent _ => MessageContentType.text,

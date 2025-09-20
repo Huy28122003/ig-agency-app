@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/usecases/fetch_current_user_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/use_case.dart';
+import 'package:ig_agency_app/domain/entities/user/profile_info_entity.dart';
+import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
@@ -41,7 +41,7 @@ part 'workspace_detail_state.dart';
 @injectable
 class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   WSDetailBloc(
-    this._fetchCurrentUserUseCase,
+    this._getProfileInfoUseCase,
     this._fetchMessageUseCase,
     this._getPinnedMessageSummaryGroupUseCase,
     this._sendMessageUseCase,
@@ -82,7 +82,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   late final int groupId;
-  final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
+  final GetProfileInfoUseCase _getProfileInfoUseCase;
   final FetchMessagesInGroupUseCase _fetchMessageUseCase;
   final GetPinnedMessageSummaryGroupUseCase
   _getPinnedMessageSummaryGroupUseCase;
@@ -107,7 +107,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   final TagUserTextEditingController _textEditingController =
       TagUserTextEditingController();
 
-  String? get userId => state.user?.id;
+  String? get userId => state.profile?.id;
 
   TagUserTextEditingController get textEditingController =>
       _textEditingController;
@@ -200,13 +200,13 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   ) async {
     emit(state.copyWith(pageStatus: PageStatus.loading));
 
-    final user = await _fetchCurrentUserUseCase.call(NoParam());
+    final profile = await _getProfileInfoUseCase.call();
 
-    final result = await _fetchMessageUseCase.call(
+    final messagesResult = await _fetchMessageUseCase.call(
       FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
     );
 
-    final messages = result;
+    final messages = messagesResult;
     final pagingStatus = messages.isEmpty
         ? PagingStatus.empty
         : (messages.length < _limit
@@ -226,7 +226,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     emit(
       state.copyWith(
-        user: user,
+        profile: profile,
         pageStatus: PageStatus.loaded,
         chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
         pagingStatus: pagingStatus,
@@ -536,7 +536,6 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     );
     if (uiModelIndex < 0) return;
     final uiModel = state.chatMessages[uiModelIndex];
-
     if (uiModel.message.content.isText && !uiModel.showTime) {
       if (!uiModel.shouldShowTime) {
         final updatedMessages = _updateUIModel(
