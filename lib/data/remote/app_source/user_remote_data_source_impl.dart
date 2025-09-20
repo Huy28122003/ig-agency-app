@@ -1,0 +1,21 @@
+import 'package:ig_agency_app/data/remote/models/response/profile_info_response.dart';
+import 'package:ig_agency_app/data/remote/services/api_services.dart';
+import 'package:injectable/injectable.dart';
+import '../../../shared/commons/exception_converter.dart';
+import '../app/user_remote_data_source.dart';
+
+@Injectable(as: UserRemoteDataSource)
+class UserRemoteDataSourceImpl implements UserRemoteDataSource {
+  final ApiService _apiService;
+
+  UserRemoteDataSourceImpl(this._apiService);
+
+  @override
+  Future<ProfileInfoResponse> getProfileInfo() async {
+    try {
+      return await _apiService.getProfileInfo();
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+}

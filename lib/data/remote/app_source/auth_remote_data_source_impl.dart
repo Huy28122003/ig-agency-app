@@ -1,4 +1,3 @@
-import 'package:ig_agency_app/data/local/app/auth_local_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/response/login_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
@@ -12,29 +11,9 @@ import '../models/requests/delete_account_request_model.dart';
 
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl(this._apiService, this._authLocalDataSource);
+  AuthRemoteDataSourceImpl(this._apiService);
 
   final ApiService _apiService;
-  final AuthLocalDataSource _authLocalDataSource;
-
-  @override
-  Future<String?> getAccessToken() async {
-    try {
-      return await _authLocalDataSource.getAccessToken();
-    } catch (e) {
-      throw ExceptionConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<String?> getRefreshToken() {
-    try {
-      // Simulate fetching refresh token
-      return Future.value("mock_refresh_token");
-    } catch (e) {
-      throw ExceptionConverter.convert(e);
-    }
-  }
 
   @override
   Future<LoginResponseModel> login(LoginRequestModel request) async {

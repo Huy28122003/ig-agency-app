@@ -10,7 +10,7 @@ class ProfileState extends BaseState<ProfileState> {
   });
 
   final bool isDeleteAccountSuccess;
-  final UserEntity? user;
+  final ProfileInfoEntity? user;
 
   @override
   ProfileState copyWith({
@@ -18,7 +18,7 @@ class ProfileState extends BaseState<ProfileState> {
     String? pageErrorMessage,
     bool? processing,
     bool? isDeleteAccountSuccess,
-    UserEntity? user,
+    ProfileInfoEntity? user,
   }) {
     return ProfileState(
       pageStatus: pageStatus ?? this.pageStatus,

@@ -38,4 +38,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     // TODO: implement saveRefreshToken
     throw UnimplementedError();
   }
+
+  @override
+  Future logout() async {
+    await _localStorageManager.deleteAll();
+  }
 }

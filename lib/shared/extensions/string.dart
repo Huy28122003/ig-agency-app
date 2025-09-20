@@ -28,3 +28,13 @@ extension PathFileExtension on String {
     ].contains(ext);
   }
 }
+
+extension StringNullableExtension on String? {
+  bool isNullOrEmpty() {
+    return (this ?? '').isEmpty;
+  }
+
+  bool isNotNullOrEmpty() {
+    return (this ?? '').isNotEmpty;
+  }
+}

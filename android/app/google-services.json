@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "275257763877",
+    "project_id": "ig-agency-7a016",
+    "storage_bucket": "ig-agency-7a016.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275257763877:android:21eef02dea4dbe06efb7cc",
+        "android_client_info": {
+          "package_name": "com.anhtran.agency"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_h6oPfpUY_puJ4q_a3R5tzar0ZcRV3Ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275257763877:android:8c3d860105ef792befb7cc",
+        "android_client_info": {
+          "package_name": "com.anhtran.agency.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_h6oPfpUY_puJ4q_a3R5tzar0ZcRV3Ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275257763877:android:6bb2b242c9201435efb7cc",
+        "android_client_info": {
+          "package_name": "com.anhtran.agency.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_h6oPfpUY_puJ4q_a3R5tzar0ZcRV3Ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

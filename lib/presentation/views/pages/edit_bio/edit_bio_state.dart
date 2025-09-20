@@ -10,7 +10,7 @@ class EditBioState extends BaseState<EditBioState> {
     this.isSaveSuccess = false,
   });
 
-  final UserEntity? user;
+  final ProfileInfoEntity? user;
   final String bio;
   final bool isSaveSuccess;
 
@@ -21,7 +21,7 @@ class EditBioState extends BaseState<EditBioState> {
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    UserEntity? user,
+    ProfileInfoEntity? user,
     String? bio,
     bool? isSaveSuccess,
   }) {
