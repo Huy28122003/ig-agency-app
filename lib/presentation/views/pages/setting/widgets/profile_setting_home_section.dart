@@ -4,7 +4,7 @@ import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
 import '../../../../../../gen/assets.gen.dart';
-import '../../../../../domain/entities/user_entity.dart';
+import '../../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../widgets/circle_network_avatar.dart';
 import '../home/setting_home_bloc.dart';
 
@@ -15,7 +15,7 @@ class ProfileSettingHomeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<SettingHomeBloc, SettingHomeState, UserEntity?>(
+    return BlocSelector<SettingHomeBloc, SettingHomeState, ProfileInfoEntity?>(
       selector: (state) => state.user,
       builder: (context, user) {
         final currentUser = user;
@@ -60,7 +60,7 @@ class ProfileSettingHomeSection extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        currentUser.email,
+                        'currentUser.email',
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,

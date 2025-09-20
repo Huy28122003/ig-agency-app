@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/user_entity.dart';
+import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/domain/usecases/logout_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_dark_mode_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/set_dark_mode_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_in_app_alerts_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/set_in_app_alerts_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/stream_user_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../../domain/usecases/fetch_current_user_use_case.dart';
-import '../../../../../domain/usecases/use_case.dart';
+import '../../../../../domain/entities/user/profile_info_entity.dart';
+import '../../../../../domain/usecases/get_profile_info_use_case.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
 
@@ -28,7 +27,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     this._getInAppAlertsUseCase,
     this._setInAppAlertsUseCase,
     this._fetchCurrentUserUseCase,
-    this._streamUserUseCase,
+    this._userRepository,
   ) : super(SettingHomeState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -39,10 +38,10 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   final SetDarkModeUseCase _setDarkModeUseCase;
   final GetInAppAlertsUseCase _getInAppAlertsUseCase;
   final SetInAppAlertsUseCase _setInAppAlertsUseCase;
-  final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
-  final StreamUserUseCase _streamUserUseCase;
+  final GetProfileInfoUseCase _fetchCurrentUserUseCase;
+  final UserRepository _userRepository;
 
-  StreamSubscription<UserEntity>? _userSubscription;
+  StreamSubscription<ProfileInfoEntity>? _userSubscription;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -57,7 +56,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   }
 
   void _initializeUserListener() {
-    _userSubscription = _streamUserUseCase.call(NoParam()).listen((user) {
+    _userSubscription = _userRepository.fetchProfileInfo.listen((user) {
       add(UpdateUserEvent(user: user));
     });
   }
@@ -70,7 +69,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
 
     final darkModeResult = await _getDarkModeUseCase.call(null);
     final inAppAlertsResult = await _getInAppAlertsUseCase.call(null);
-    final userResult = await _fetchCurrentUserUseCase.call(NoParam());
+    final userResult = await _fetchCurrentUserUseCase.call();
 
     emit(
       state.copyWith(

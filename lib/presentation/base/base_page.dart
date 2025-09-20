@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/di/di.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/shared/utils/alert.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'package:responsive_builder/responsive_builder.dart';
 import '../../shared/commons/enums/status.dart';
@@ -14,7 +15,9 @@ import 'base_state.dart';
 abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
     extends StatefulWidget
     implements AutoRouteWrapper {
-  const BasePage({super.key});
+  const BasePage({super.key, this.needRemoveSplash = false});
+
+  final bool needRemoveSplash;
 
   Widget buildLoadingView(BuildContext context) {
     return Container(color: Colors.grey);
@@ -70,6 +73,9 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.needRemoveSplash) {
+        FlutterNativeSplash.remove();
+      }
       widget.onInitState(context);
     });
   }
@@ -148,7 +154,7 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
         builder = widget.tabletBuilder(context);
       default:
         builder = widget.tabletBuilder(context);
-        // builder = widget.desktopBuilder(context);
+      // builder = widget.desktopBuilder(context);
     }
     if (sizingInformation.isMobile || sizingInformation.isTablet) {
       return GestureDetector(
