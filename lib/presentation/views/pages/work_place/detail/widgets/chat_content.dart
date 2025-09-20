@@ -25,7 +25,7 @@ class ChatContent extends StatefulWidget {
   State<ChatContent> createState() => _ChatContentState();
 }
 
-class _ChatContentState extends State<ChatContent> {
+class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
   late final WSDetailBloc _bloc;
 
   final listViewController = FlutterListViewController();
@@ -37,11 +37,29 @@ class _ChatContentState extends State<ChatContent> {
     super.initState();
 
     _bloc = context.read<WSDetailBloc>();
+    WidgetsBinding.instance.addObserver(this);
 
     listViewController.addListener(() {
       _onRefreshListener();
       _onScrollListener();
     });
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    final bottomInset = View.of(context).viewInsets.bottom;
+    if (bottomInset > 0) {
+      _scrollToBottom();
+    }
+  }
+
+  @override
+  void dispose() {
+    listViewController.dispose();
+    refreshController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void _onRefreshListener() {
@@ -59,11 +77,11 @@ class _ChatContentState extends State<ChatContent> {
     final state = _bloc.state;
     if (state.pageStatus == PageStatus.loaded) {
       if ((listViewController.offset >=
-              listViewController.position.maxScrollExtent - 100) &&
+              listViewController.position.maxScrollExtent - 300) &&
           state.showScrollToBottomIcon) {
         _bloc.add(ToggleShowScrollToBottomIcon());
       } else if ((listViewController.offset <
-              listViewController.position.maxScrollExtent - 100) &&
+              listViewController.position.maxScrollExtent - 300) &&
           !state.showScrollToBottomIcon) {
         _bloc.add(ToggleShowScrollToBottomIcon());
       }
@@ -72,9 +90,10 @@ class _ChatContentState extends State<ChatContent> {
 
   void _scrollToBottom() {
     if (_bloc.state.chatMessages.isNotEmpty) {
-      final position = _bloc.state.chatMessages.length - 1;
-      listViewController.sliverController.jumpToIndex(position);
-      _bloc.add(ToggleShowScrollToBottomIcon());
+      final maxScrollExtent = listViewController.position.maxScrollExtent;
+      if (maxScrollExtent > 0) {
+        listViewController.jumpTo(maxScrollExtent);
+      }
     }
   }
 
@@ -384,12 +403,5 @@ class _ChatContentState extends State<ChatContent> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    listViewController.dispose();
-    refreshController.dispose();
-    super.dispose();
   }
 }

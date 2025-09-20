@@ -143,8 +143,8 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.5,
-      minChildSize: 0.5,
+      initialChildSize: 0.6,
+      minChildSize: 0.6,
       maxChildSize: 1,
       expand: true,
       builder: (context, scrollController) {

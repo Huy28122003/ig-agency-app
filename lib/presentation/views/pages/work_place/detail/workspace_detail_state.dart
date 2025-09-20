@@ -23,7 +23,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.groupMemberStatus = GroupMemberStatus.joined,
     this.groupSearchStatus = GroupSearchStatus.idle,
     this.isDeletedConversationSuccess = false,
-    this.user,
+    this.profile,
   });
 
   final List<ChatMessageUIModel> chatMessages;
@@ -44,7 +44,7 @@ class WSDetailState extends BaseState<WSDetailState> {
   final GroupMemberStatus groupMemberStatus;
   final GroupSearchStatus groupSearchStatus;
   final bool isDeletedConversationSuccess;
-  final UserEntity? user;
+  final ProfileInfoEntity? profile;
 
   bool get needLoadMoreOldMessages =>
       pagingStatus != PagingStatus.empty &&
@@ -75,7 +75,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     GroupMemberStatus? groupMemberStatus,
     GroupSearchStatus? groupSearchStatus,
     bool? isDeletedConversationSuccess,
-    UserEntity? user,
+    ProfileInfoEntity? profile,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -104,7 +104,7 @@ class WSDetailState extends BaseState<WSDetailState> {
       groupMemberStatus: groupMemberStatus ?? this.groupMemberStatus,
       isDeletedConversationSuccess:
           isDeletedConversationSuccess ?? this.isDeletedConversationSuccess,
-      user: user ?? this.user,
+      profile: profile ?? this.profile,
     );
   }
 
@@ -128,6 +128,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     showTagOverlay,
     groupMemberStatus,
     isDeletedConversationSuccess,
-    user,
+    profile,
   ];
 }
