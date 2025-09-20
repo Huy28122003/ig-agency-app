@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/domain/usecases/delete_account_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/fetch_current_user_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/stream_user_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
-import '../../../../domain/entities/user_entity.dart';
-import '../../../../domain/usecases/use_case.dart';
+import '../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../base/base_state.dart';
 
 part 'profile_event.dart';
@@ -18,23 +17,20 @@ part 'profile_state.dart';
 
 @injectable
 class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
-  ProfileBloc({
-    required DeleteAccountUseCase deleteAccountUseCase,
-    required FetchCurrentUserUseCase fetchCurrentUserUseCase,
-    required StreamUserUseCase streamUserUseCase,
-  }) : _deleteAccountUseCase = deleteAccountUseCase,
-       _fetchCurrentUserUseCase = fetchCurrentUserUseCase,
-       _streamUserUseCase = streamUserUseCase,
-       super(ProfileState()) {
+  ProfileBloc(
+    this._deleteAccountUseCase,
+    this._fetchCurrentUserUseCase,
+    this._userRepository,
+  ) : super(ProfileState()) {
     _registerHandlers();
     _initializeUserListener();
   }
 
   final DeleteAccountUseCase _deleteAccountUseCase;
-  final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
-  final StreamUserUseCase _streamUserUseCase;
+  final GetProfileInfoUseCase _fetchCurrentUserUseCase;
+  final UserRepository _userRepository;
 
-  StreamSubscription<UserEntity>? _userSubscription;
+  StreamSubscription<ProfileInfoEntity>? _userSubscription;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -45,7 +41,7 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   }
 
   void _initializeUserListener() {
-    _userSubscription = _streamUserUseCase.call(NoParam()).listen((user) {
+    _userSubscription = _userRepository.fetchProfileInfo.listen((user) {
       add(UpdateUserEvent(user: user));
     });
   }
@@ -56,7 +52,7 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(pageStatus: PageStatus.loading));
 
-    final userResult = await _fetchCurrentUserUseCase(NoParam());
+    final userResult = await _fetchCurrentUserUseCase.call();
 
     emit(state.copyWith(pageStatus: PageStatus.loaded, user: userResult));
   }

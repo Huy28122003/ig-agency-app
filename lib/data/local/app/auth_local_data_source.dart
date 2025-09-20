@@ -8,4 +8,6 @@ abstract class AuthLocalDataSource {
   Future<void> saveRefreshToken(String refreshToken);
 
   Future<void> revokeTokens();
+
+  Future logout();
 }

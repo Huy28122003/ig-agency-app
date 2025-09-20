@@ -10,7 +10,7 @@ class EditNameState extends BaseState<EditNameState> {
     this.isSaveSuccess = false,
   });
 
-  final UserEntity? user;
+  final ProfileInfoEntity? user;
   final String name;
   final bool isSaveSuccess;
 
@@ -21,7 +21,7 @@ class EditNameState extends BaseState<EditNameState> {
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    UserEntity? user,
+    ProfileInfoEntity? user,
     String? name,
     bool? isSaveSuccess,
   }) {

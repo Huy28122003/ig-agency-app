@@ -23,5 +23,5 @@ class ToggleInAppAlertsEvent extends SettingHomeEvent {
 class UpdateUserEvent extends SettingHomeEvent {
   const UpdateUserEvent({required this.user});
 
-  final UserEntity user;
+  final ProfileInfoEntity user;
 }
