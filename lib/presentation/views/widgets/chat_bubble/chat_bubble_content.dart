@@ -206,6 +206,7 @@ class _LinkPreview extends StatelessWidget {
                 ),
               Container(
                 height: _kMaxHeightContentLinkPreview,
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
