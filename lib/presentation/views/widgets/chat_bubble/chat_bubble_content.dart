@@ -252,6 +252,10 @@ class _LinkPreview extends StatelessWidget {
           color: AppColors.surfaceContainerGrayStrong2,
           child: const Center(child: CupertinoActivityIndicator()),
         ),
+        errorWidget: Container(
+          height: _kMaxHeightImageLinkPreview + _kMaxHeightContentLinkPreview,
+          color: Color.fromARGB(255, 195, 197, 201),
+        ),
       ),
     );
   }

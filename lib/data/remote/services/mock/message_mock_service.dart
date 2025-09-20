@@ -239,10 +239,6 @@ class MessageMockService {
       }
 
       final user = _mockUsers[_random.nextInt(_mockUsers.length)];
-      final groupIndex = _mockGroups.indexWhere(
-        (element) => element["id"] == groupId,
-      );
-      final groupName = _mockGroups[groupIndex]['name']!;
 
       messages.add(
         MessageEntity(
@@ -256,7 +252,6 @@ class MessageMockService {
           content: content,
           status: MessageStatus.sent,
           groupId: groupId,
-          groupName: groupName,
           repliedMessage: reply,
           isPinned: type == MessageContentType.system
               ? false

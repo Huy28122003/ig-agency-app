@@ -15,6 +15,7 @@ class ChatBubbleContentWithReply extends StatelessWidget {
     required this.maxWidthReply,
     required this.isMe,
     this.onTap,
+    this.searchText,
   });
 
   final MessageEntity message;
@@ -23,6 +24,7 @@ class ChatBubbleContentWithReply extends StatelessWidget {
   final double maxWidthReply;
   final bool isMe;
   final Function(String messageId)? onTap;
+  final String? searchText;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +84,7 @@ class ChatBubbleContentWithReply extends StatelessWidget {
             message: message,
             maxWidth: maxWidth,
             isMe: isMe,
+            searchText: searchText,
           ),
         ),
       ],

@@ -92,7 +92,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     _shouldShowAvatar = widget.shouldShowAvatar;
     _shouldShowUserName = widget.shouldShowUserName;
     _isContinuation = widget.isContinuation;
-    _searchText = widget.searchText;
+    _searchText = 'https://flutter.dev'; // TODO hoannk: test search
     _animationHelper = ChatBubbleAnimationHelper(
       isMe: isMe,
       horizontalPadding: widget.horizontalPadding,
@@ -419,6 +419,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                             maxWidthReply: widget.maxWidthReply,
                             isMe: isMe,
                             onTap: widget.onReplyTap,
+                            searchText: _searchText,
                           )
                         : ChatBubbleContent(
                             message: _message,

@@ -222,6 +222,11 @@ class _CustomContextMenuState extends State<CustomContextMenu>
       return;
     }
 
+    // Kiểm tra xem renderBox đã được layout chưa
+    if (!renderBox.hasSize) {
+      return;
+    }
+
     final Size childSize = renderBox.size;
     final Offset childOffset = renderBox.localToGlobal(Offset.zero);
 
@@ -280,6 +285,7 @@ class _CustomContextMenuState extends State<CustomContextMenu>
     }
     return GestureDetector(
       key: _childKey,
+      behavior: HitTestBehavior.deferToChild,
       onLongPress: _showContextMenu,
       child: widget.child,
     );
