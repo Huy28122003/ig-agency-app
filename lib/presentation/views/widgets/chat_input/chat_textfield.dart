@@ -18,7 +18,8 @@ class ChatTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
       constraints: BoxConstraints(maxHeight: 120),
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerGrayStrong2,

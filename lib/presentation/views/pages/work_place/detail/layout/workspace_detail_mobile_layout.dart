@@ -180,9 +180,24 @@ class _WorkspaceDetailMobileLayoutState
             return state.groupMemberStatus;
           },
           builder: (context, state) {
-            return state == GroupMemberStatus.joined
-                ? _GroupChatView(bloc: _bloc, focusNode: _focusNode)
-                : _GroupRemovedView(bloc: _bloc);
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 1200),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: state == GroupMemberStatus.joined
+                  ? _GroupChatView(
+                      key: const ValueKey('group_chat'),
+                      bloc: _bloc,
+                      focusNode: _focusNode,
+                    )
+                  : _GroupRemovedView(
+                      key: const ValueKey('group_removed'),
+                      bloc: _bloc,
+                    ),
+            );
           },
         ),
       ),
@@ -191,7 +206,11 @@ class _WorkspaceDetailMobileLayoutState
 }
 
 class _GroupChatView extends StatelessWidget {
-  const _GroupChatView({required this.bloc, required this.focusNode});
+  const _GroupChatView({
+    super.key,
+    required this.bloc,
+    required this.focusNode,
+  });
 
   final WSDetailBloc bloc;
   final FocusNode focusNode;
@@ -307,7 +326,8 @@ class _GroupChatView extends StatelessWidget {
 }
 
 class _GroupRemovedView extends StatelessWidget {
-  const _GroupRemovedView({required WSDetailBloc bloc}) : _bloc = bloc;
+  const _GroupRemovedView({super.key, required WSDetailBloc bloc})
+    : _bloc = bloc;
 
   final WSDetailBloc _bloc;
 
