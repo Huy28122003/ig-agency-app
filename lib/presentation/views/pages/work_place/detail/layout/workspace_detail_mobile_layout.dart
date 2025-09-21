@@ -193,50 +193,57 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
         ),
       ),
       titleSpacing: 12,
-      title: Row(
-        children: [
-          CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.groupName,
-                  style: TextStyle(
-                    color: AppColors.textDefaultTextDefault,
-                    fontSize: 16,
-                    fontFamily: FontFamily.segoeUI,
-                    fontWeight: FontWeight.w700,
-                    height: 1.50,
+      title: GestureDetector(
+        onTap: () {
+          context.router.push(
+            GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),
+          );
+        },
+        child: Row(
+          children: [
+            CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.groupName,
+                    style: TextStyle(
+                      color: AppColors.textDefaultTextDefault,
+                      fontSize: 16,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w700,
+                      height: 1.50,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
-                  selector: (state) {
-                    return state.users;
-                  },
-                  builder: (context, users) {
-                    final onlineUsers = users
-                        .where((user) => user.isOnline)
-                        .length;
-                    return Text(
-                      '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextSub2,
-                        fontSize: 14,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w400,
-                        height: 1.14,
-                      ),
-                    );
-                  },
-                ),
-              ],
+                  BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
+                    selector: (state) {
+                      return state.users;
+                    },
+                    builder: (context, users) {
+                      final onlineUsers = users
+                          .where((user) => user.isOnline)
+                          .length;
+                      return Text(
+                        '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextSub2,
+                          fontSize: 14,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w400,
+                          height: 1.14,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

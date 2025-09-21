@@ -17,7 +17,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _bloc = context.read<GroupInfoBloc>();
+    final bloc = context.read<GroupInfoBloc>();
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
@@ -67,7 +67,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
             children: [
               _buildHeaderInfo(context),
               SizedBox(height: 20),
-              _buildBody(context,_bloc),
+              _buildBody(context,bloc),
               SizedBox(height: 12),
               _buildLeaveGroupButton(),
             ],
