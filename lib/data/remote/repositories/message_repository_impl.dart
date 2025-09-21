@@ -1,7 +1,6 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/message/message.dart';
-import '../../../domain/entities/paged_result.dart';
 import '../../../domain/entities/pinned_message_summary.dart';
 import '../../../domain/repositories/message_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
@@ -19,17 +18,16 @@ class MessageRepositoryImpl implements MessageRepository {
   final MessageMockService _messageMockService;
 
   @override
-  Future<PagedResult<MessageEntity>> fetchPinnedMessages(
-    int limit,
-    int offset,
-  ) async {
+  Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final (pinnedMessages, totalRecords) = _messageMockService
-          .mockFetchPinnedMessages(limit: limit, offset: offset);
+      final pinnedMessages = _messageMockService.mockFetchPinnedMessages(
+        limit: limit,
+        offset: offset,
+      );
 
-      return PagedResult(data: pinnedMessages, totalRecords: totalRecords);
+      return pinnedMessages;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -56,37 +54,34 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByWorkspaceId(
-    int workspaceId,
+  Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
+    int groupId,
     int limit,
     int offset,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final (pinnedMessages, totalRecords) = _messageMockService
-          .mockFetchPinnedMessages(
-            groupId: workspaceId,
-            limit: limit,
-            offset: offset,
-          );
+      final pinnedMessages = _messageMockService.mockFetchPinnedMessages(
+        groupId: groupId,
+        limit: limit,
+        offset: offset,
+      );
 
-      return PagedResult(data: pinnedMessages, totalRecords: totalRecords);
+      return pinnedMessages;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<PinnedMessageSummary> getPinnedMessageSummaryByWorkspaceId(
-    int workspaceId,
+  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(
+    int groupId,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final summary = _messageMockService.mockGetPinnedMessageSummary(
-        workspaceId,
-      );
+      final summary = _messageMockService.mockGetPinnedMessageSummary(groupId);
       return summary;
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -94,8 +89,8 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<PagedResult<MessageEntity>> fetchMessagesByWorkspaceId(
-    int workspaceId,
+  Future<List<MessageEntity>> fetchMessagesInGroup(
+    int groupId,
     int limit,
     String? oldestMessageId,
     String? targetMessageId,
@@ -103,15 +98,14 @@ class MessageRepositoryImpl implements MessageRepository {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final (messages, totalRecords) = _messageMockService
-          .mockFetchMessagesByGroupId(
-            groupId: workspaceId,
-            limit: limit,
-            oldestMessageId: oldestMessageId,
-            targetMessageId: targetMessageId,
-          );
+      final messages = _messageMockService.mockFetchMessagesByGroupId(
+        groupId: groupId,
+        limit: limit,
+        oldestMessageId: oldestMessageId,
+        targetMessageId: targetMessageId,
+      );
 
-      return PagedResult(data: messages, totalRecords: totalRecords);
+      return messages;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -120,7 +114,7 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> sendMessage(
     String userId,
-    int workspaceId,
+    int groupId,
     String? replyMessageId,
     dynamic content,
   ) async {
@@ -129,10 +123,41 @@ class MessageRepositoryImpl implements MessageRepository {
       // TODO: Sử dụng tạm mock tại repository
       await _messageMockService.addMessage(
         userId,
-        workspaceId,
+        groupId,
         replyMessageId,
         content,
       );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteMessageForEveryone(String messageId) async {
+    try {
+      // Todo: hoannk: rehandle this
+      // TODO: Sử dụng tạm mock tại repository
+      await _messageMockService.mockDeleteMessageForEveryone(messageId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteMessageForYou(String messageId) async {
+    try {
+      // Todo: hoannk: rehandle this
+      // TODO: Sử dụng tạm mock tại repository
+      await _messageMockService.mockDeleteMessageForYou(messageId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteConversation(int groupId) async {
+    try {
+      // Todo: hoannk: rehandle this
     } catch (e) {
       throw FailureConverter.convert(e);
     }

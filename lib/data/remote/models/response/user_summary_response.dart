@@ -10,7 +10,7 @@ class UserSummaryResponse {
     required this.avatar,
   });
 
-  final int id;
+  final String id;
   final String name;
   final String avatar;
 

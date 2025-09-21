@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:ig_agency_app/domain/entities/message/message_entity.dart';
-import 'package:ig_agency_app/domain/enums/message_enums.dart';
 
 class ChatMessageUIModel extends Equatable {
   const ChatMessageUIModel({
@@ -69,9 +68,10 @@ extension ChatMessageUIModelMapper on MessageEntity {
     }
 
     // System message
-    if (type == MessageType.system) {
+    if (content.isSystem) {
       if (previousMessage != null) {
-        final bool isSameSystemTypeAsPrevious = type == previousMessage.type;
+        final bool isSameSystemTypeAsPrevious =
+            previousMessage.content.isSystem;
 
         // Same system type and same day
         if (isSameSystemTypeAsPrevious && isSameDayAsPrevious) {
@@ -80,13 +80,12 @@ extension ChatMessageUIModelMapper on MessageEntity {
       }
     }
     // current message has not reply
-    else if (reply == null) {
+    else if (repliedMessage == null) {
       // previous message has not reply and is not system message
       if (previousMessage != null &&
-          previousMessage.reply == null &&
-          previousMessage.type != MessageType.system) {
-        final bool isSameSenderAsPrevious =
-            sender.id == previousMessage.sender.id;
+          previousMessage.hasNotReply &&
+          previousMessage.content.isNotSystem) {
+        final bool isSameSenderAsPrevious = user.id == previousMessage.user.id;
         final Duration timeDiffWithPrevious = createdAt.difference(
           previousMessage.createdAt,
         );
@@ -117,9 +116,9 @@ extension ChatMessageUIModelMapper on MessageEntity {
       }
 
       if (nextMessage != null &&
-          nextMessage.reply == null &&
-          nextMessage.type != MessageType.system) {
-        final bool isSameSenderAsNext = sender.id == nextMessage.sender.id;
+          nextMessage.hasNotReply &&
+          nextMessage.content.isNotSystem) {
+        final bool isSameSenderAsNext = user.id == nextMessage.user.id;
         final Duration timeDiffWithNext = nextMessage.createdAt.difference(
           createdAt,
         );

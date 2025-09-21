@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/entities/pinned_message_summary.dart';
+import '../../../../domain/entities/user.dart';
 import '../../../../domain/entities/user_entity.dart';
 import '../../../../domain/enums/message_enums.dart';
 
@@ -148,10 +149,6 @@ class MessageMockService {
       "systemType": SystemMessageType.userJoined,
       "message": "User joined the group",
     },
-    {
-      "systemType": SystemMessageType.userLeft,
-      "message": "User left the group",
-    },
   ];
 
   final List<Duration> _timeSteps = [
@@ -229,81 +226,37 @@ class MessageMockService {
     for (int i = 0; i < count; i++) {
       current = current.add(_timeSteps[_random.nextInt(_timeSteps.length)]);
 
-      final type =
-          MessageType.values[_random.nextInt(MessageType.values.length)];
+      final type = MessageContentType
+          .values[_random.nextInt(MessageContentType.values.length)];
       final content = _generateContent(type);
 
-      MessageReply? reply;
+      MessageEntity? reply;
       if (messages.isNotEmpty && _random.nextDouble() < 0.3 && i != 0) {
         final message = messages[_random.nextInt(messages.length)];
-        final messageId = message.id;
-        if (message.type != MessageType.system) {
-          final messageType = message.type;
-
-          reply = MessageReply(
-            messageId: messageId,
-            senderId: message.sender.id,
-            senderName: message.sender.name,
-            originalMessageType: messageType,
-          );
-
-          switch (messageType) {
-            case MessageType.text:
-              reply = reply.copyWith(
-                previewText: (message.content as TextMessageContent).text,
-              );
-              break;
-            case MessageType.image:
-              final image = message.content as ImageMessageContent;
-              reply = reply.copyWith(
-                previewImageUrl: image.imageUrl,
-                previewWidth: image.width,
-                previewHeight: image.height,
-              );
-              break;
-            case MessageType.video:
-              final video = message.content as VideoMessageContent;
-              reply = reply.copyWith(
-                previewThumbnailUrl: video.thumbnailUrl,
-                previewWidth: video.width,
-                previewHeight: video.height,
-              );
-              break;
-            case MessageType.file:
-              final file = message.content as FileMessageContent;
-              reply = reply.copyWith(
-                previewFileName: '${file.fileName}.${file.fileExtension}',
-              );
-              break;
-            default:
-              break;
-          }
+        if (message.content.isNotSystem) {
+          reply = message;
         }
       }
 
-      final sender = _mockUsers[_random.nextInt(_mockUsers.length)];
-      final groupIndex = _mockGroups.indexWhere(
-        (element) => element["id"] == groupId,
-      );
-      final groupName = _mockGroups[groupIndex]['name']!;
+      final user = _mockUsers[_random.nextInt(_mockUsers.length)];
 
       messages.add(
         MessageEntity(
           id: "msg_${groupId}_${current.millisecondsSinceEpoch}",
-          sender: MessageSender(
-            id: sender['id']!,
-            name: sender['name']!,
-            avatarUrl: sender['avatarUrl']!,
+          user: UserSummary(
+            id: user['id']!,
+            name: user['name']!,
+            avatar: user['avatarUrl']!,
           ),
           createdAt: current,
-          type: type,
           content: content,
           status: MessageStatus.sent,
-          workspaceId: groupId,
-          groupName: groupName,
-          reply: reply,
-          isPinned: type == MessageType.system ? false : _random.nextBool(),
-          pinnedAt: type == MessageType.system ? null : current,
+          groupId: groupId,
+          repliedMessage: reply,
+          isPinned: type == MessageContentType.system
+              ? false
+              : _random.nextBool(),
+          pinnedAt: type == MessageContentType.system ? null : current,
         ),
       );
     }
@@ -311,42 +264,42 @@ class MessageMockService {
     return messages;
   }
 
-  MessageContent _generateContent(MessageType type) {
+  MessageContent _generateContent(MessageContentType type) {
     switch (type) {
-      case MessageType.text:
+      case MessageContentType.text:
         final (text, segments) = mockText();
-        return MessageContent.text(text: text, textSegments: segments);
-      case MessageType.image:
+        return TextMessageContent(text: text, textSegments: segments);
+      case MessageContentType.image:
         final imageUrl = _mockImages[_random.nextInt(_mockImages.length)];
         final (width, height) = extractDimensions(imageUrl);
-        return MessageContent.image(
+        return ImageMessageContent(
           imageUrl: imageUrl,
           width: width,
           height: height,
         );
-      case MessageType.video:
+      case MessageContentType.video:
         final video = _mockVideos[_random.nextInt(_mockVideos.length)];
         final thumbnailUrl = video['thumbnailUrl'];
         final (width, height) = extractDimensions(thumbnailUrl);
-        return MessageContent.video(
+        return VideoMessageContent(
           videoUrl: video['videoUrl'],
           duration: video['duration'],
           thumbnailUrl: thumbnailUrl,
           width: width,
           height: height,
         );
-      case MessageType.file:
+      case MessageContentType.file:
         final file = _mockFiles[_random.nextInt(_mockFiles.length)];
-        return MessageContent.file(
+        return FileMessageContent(
           fileUrl: file['fileUrl'],
           fileName: file['fileName'],
           fileExtension: file['fileExtension'],
           fileSize: file['fileSize'],
           fileType: file['fileType'],
         );
-      case MessageType.system:
+      case MessageContentType.system:
         final sys = _mockSystems[_random.nextInt(_mockSystems.length)];
-        return MessageContent.system(
+        return SystemMessageContent(
           systemType: sys['systemType'],
           message: sys['message'],
         );
@@ -384,7 +337,7 @@ class MessageMockService {
   }
 
   // Mock function call
-  (List<MessageEntity>, int) mockFetchPinnedMessages({
+  List<MessageEntity> mockFetchPinnedMessages({
     int? groupId,
     int limit = 10,
     int offset = 0,
@@ -393,7 +346,7 @@ class MessageMockService {
       final messages = _messageMockData[groupId];
 
       if (messages == null || messages.isEmpty) {
-        return ([], 0);
+        return [];
       }
 
       final allPinnedMessages = messages
@@ -405,13 +358,13 @@ class MessageMockService {
           .take(limit)
           .toList();
 
-      return (pinnedMessages, allPinnedMessages.length);
+      return pinnedMessages;
     }
 
     final messages = _messageMockData.values.expand((e) => e).toList();
 
     if (messages.isEmpty) {
-      return ([], 0);
+      return [];
     }
 
     final allPinnedMessages = messages
@@ -420,7 +373,7 @@ class MessageMockService {
 
     final pinnedMessages = allPinnedMessages.skip(offset).take(limit).toList();
 
-    return (pinnedMessages, allPinnedMessages.length);
+    return pinnedMessages;
   }
 
   Future<void> mockUnpinMessage(String messageId) async {
@@ -518,7 +471,7 @@ class MessageMockService {
     );
   }
 
-  (List<MessageEntity>, int) mockFetchMessagesByGroupId({
+  List<MessageEntity> mockFetchMessagesByGroupId({
     required int groupId,
     int limit = 10,
     String? oldestMessageId,
@@ -526,7 +479,7 @@ class MessageMockService {
   }) {
     final messages = _messageMockData[groupId];
     if (messages == null || messages.isEmpty) {
-      return ([], 0);
+      return [];
     }
 
     var messageIndex = 0;
@@ -555,20 +508,24 @@ class MessageMockService {
         if (targetMessageIndex >= messageIndex) {
           throw Exception();
         }
-        return (
-          messages
-              .skip(offset)
-              .take(messageIndex - targetMessageIndex)
-              .toList(),
-          messages.length,
-        );
+        final filteredMessages = messages
+            .skip(offset)
+            .take(messageIndex - targetMessageIndex)
+            .toList();
+        return filteredMessages;
       }
     }
 
     offset = max(0, messageIndex + 1 - limit);
+
+    if (offset == 0) {
+      return [];
+    }
+
     final newLimit = limit >= messageIndex ? limit : (messageIndex + 1);
 
-    return (messages.skip(offset).take(newLimit).toList(), messages.length);
+    final filteredMessages = messages.skip(offset).take(newLimit).toList();
+    return filteredMessages;
   }
 
   UserEntity? getUserById(String userId) {
@@ -590,55 +547,53 @@ class MessageMockService {
 
   Future<void> addMessage(
     String userId,
-    int workspaceId,
+    int groupId,
     String? replyMessageId,
     dynamic content,
   ) async {
-    final messageId =
-        "msg_${workspaceId}_${DateTime.now().millisecondsSinceEpoch}";
+    final messageId = "msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}";
 
-    final user = getUserById(userId);
-    if (user == null) {
-      throw Exception();
-    }
+    final user =
+        getUserById(userId) ??
+        UserEntity(id: userId, name: 'Unknown', email: '', avatar: '');
 
     final type = switch (content) {
-      TextMessageContent _ => MessageType.text,
-      ImageMessageContent _ => MessageType.image,
-      VideoMessageContent _ => MessageType.video,
-      FileMessageContent _ => MessageType.file,
-      _ => throw UnimplementedError(),
+      TextMessageContent _ => MessageContentType.text,
+      ImageMessageContent _ => MessageContentType.image,
+      VideoMessageContent _ => MessageContentType.video,
+      FileMessageContent _ => MessageContentType.file,
+      _ => throw Exception(),
     };
+
+    MessageEntity? reply;
+    if (replyMessageId != null) {
+      final replyMessage = _messageMockData[groupId]
+          ?.where((message) => message.id == replyMessageId)
+          .firstOrNull;
+      reply = replyMessage;
+    }
 
     final sentMessage = MessageEntity(
       id: messageId,
-      sender: MessageSender(
-        id: user.id,
-        name: user.name,
-        avatarUrl: user.avatar,
-      ),
+      user: UserSummary(id: user.id, name: user.name, avatar: user.avatar),
+      repliedMessage: reply,
       status: MessageStatus.sent,
       createdAt: DateTime.now(),
-      type: type,
       content: switch (content) {
         TextMessageContent _ => content,
         _ => _generateContent(type),
       },
-      workspaceId: workspaceId,
+      groupId: groupId,
     );
 
-    if (_messageMockData[workspaceId] == null) {
-      _messageMockData[workspaceId] = [];
+    if (_messageMockData[groupId] == null) {
+      _messageMockData[groupId] = [];
     }
-    _messageMockData[workspaceId]?.add(sentMessage);
+    _messageMockData[groupId]?.add(sentMessage);
     _ramCache.saveMessage(sentMessage);
   }
 
-  List<UserEntity> mockGetMemberInGroup(
-    int groupId, {
-    int limit = 10,
-    int offset = 0,
-  }) {
+  List<UserEntity> mockGetMemberInGroup(int groupId) {
     return _mockUsers
         .map(
           (e) => UserEntity(
@@ -646,10 +601,9 @@ class MessageMockService {
             name: e['name']!,
             email: '',
             avatar: e['avatarUrl']!,
+            isOnline: _random.nextBool(),
           ),
         )
-        .skip(offset)
-        .take(limit)
         .toList();
   }
 
@@ -665,5 +619,17 @@ class MessageMockService {
         )
         .where((e) => e.name.contains(query))
         .toList();
+  }
+
+  Future<void> mockDeleteMessageForEveryone(String messageId) async {
+    for (final groupId in _messageMockData.keys) {
+      _messageMockData[groupId]?.removeWhere(
+        (message) => message.id == messageId,
+      );
+    }
+  }
+
+  Future<void> mockDeleteMessageForYou(String messageId) async {
+    mockDeleteMessageForEveryone(messageId);
   }
 }

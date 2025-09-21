@@ -1,58 +1,24 @@
-import 'package:equatable/equatable.dart';
 import '../../enums/message_enums.dart';
 import 'text_segment.dart';
 
-sealed class MessageContent extends Equatable {
-  const MessageContent();
+sealed class MessageContent {
+  const MessageContent({required this.messageContentType});
 
-  // Text message
-  const factory MessageContent.text({
-    required String text,
-    List<TextSegment>? textSegments,
-  }) = TextMessageContent;
+  final MessageContentType messageContentType;
 
-  // Image message
-  const factory MessageContent.image({
-    required String imageUrl,
-    double? width,
-    double? height,
-    String? path,
-  }) = ImageMessageContent;
-
-  // Video message
-  const factory MessageContent.video({
-    required String videoUrl,
-    required Duration duration,
-    String? thumbnailUrl,
-    double? width,
-    double? height,
-    String? path,
-  }) = VideoMessageContent;
-
-  // File message
-  const factory MessageContent.file({
-    required String fileUrl,
-    required String fileName,
-    required String fileExtension,
-    required int fileSize,
-    FileType? fileType,
-    String? path,
-  }) = FileMessageContent;
-
-  // System message
-  const factory MessageContent.system({
-    required SystemMessageType systemType,
-    required String message,
-  }) = SystemMessageContent;
+  bool get isText => messageContentType == MessageContentType.text;
+  bool get isImage => messageContentType == MessageContentType.image;
+  bool get isVideo => messageContentType == MessageContentType.video;
+  bool get isFile => messageContentType == MessageContentType.file;
+  bool get isSystem => messageContentType == MessageContentType.system;
+  bool get isNotSystem => messageContentType != MessageContentType.system;
 }
 
 class TextMessageContent extends MessageContent {
   final String text;
   final List<TextSegment>? textSegments;
-  const TextMessageContent({required this.text, this.textSegments});
-
-  @override
-  List<Object?> get props => [text, textSegments];
+  const TextMessageContent({required this.text, this.textSegments})
+    : super(messageContentType: MessageContentType.text);
 }
 
 class ImageMessageContent extends MessageContent {
@@ -65,10 +31,7 @@ class ImageMessageContent extends MessageContent {
     this.width,
     this.height,
     this.path,
-  });
-
-  @override
-  List<Object?> get props => [imageUrl, width, height, path];
+  }) : super(messageContentType: MessageContentType.image);
 }
 
 class VideoMessageContent extends MessageContent {
@@ -85,17 +48,7 @@ class VideoMessageContent extends MessageContent {
     this.width,
     this.height,
     this.path,
-  });
-
-  @override
-  List<Object?> get props => [
-    videoUrl,
-    duration,
-    thumbnailUrl,
-    width,
-    height,
-    path,
-  ];
+  }) : super(messageContentType: MessageContentType.video);
 }
 
 class FileMessageContent extends MessageContent {
@@ -112,24 +65,12 @@ class FileMessageContent extends MessageContent {
     required this.fileSize,
     this.fileType,
     this.path,
-  });
-
-  @override
-  List<Object?> get props => [
-    fileUrl,
-    fileName,
-    fileExtension,
-    fileSize,
-    fileType,
-    path,
-  ];
+  }) : super(messageContentType: MessageContentType.file);
 }
 
 class SystemMessageContent extends MessageContent {
   final SystemMessageType systemType;
   final String message;
-  const SystemMessageContent({required this.systemType, required this.message});
-
-  @override
-  List<Object?> get props => [systemType, message];
+  const SystemMessageContent({required this.systemType, required this.message})
+    : super(messageContentType: MessageContentType.system);
 }

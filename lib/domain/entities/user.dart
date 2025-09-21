@@ -7,7 +7,7 @@ class UserSummary with _$UserSummary {
   UserSummary({required this.id, required this.name, required this.avatar});
 
   @override
-  final int id;
+  final String id;
   @override
   final String name;
   @override

@@ -13,7 +13,7 @@ class SendMessageUseCase extends UseCase<void, SendMessageParams> {
   Future<void> call(SendMessageParams params) async {
     return await _messageRepository.sendMessage(
       params.userId,
-      params.workspaceId,
+      params.groupId,
       params.replyMessageId,
       params.content,
     );
@@ -22,12 +22,12 @@ class SendMessageUseCase extends UseCase<void, SendMessageParams> {
 
 class SendMessageParams {
   final String userId;
-  final int workspaceId;
+  final int groupId;
   final String? replyMessageId;
   final dynamic content;
 
   SendMessageParams({
-    required this.workspaceId,
+    required this.groupId,
     required this.userId,
     required this.replyMessageId,
     required this.content,

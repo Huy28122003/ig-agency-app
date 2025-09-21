@@ -6,7 +6,7 @@ import 'file_manager.dart';
 @Injectable(as: FileManager)
 class FileManagerImpl implements FileManager {
   @override
-  Future<List<PlatformFile>?> pickFiles({
+  Future<PlatformFile?> pickFile({
     FileType type = FileType.any,
     List<String>? allowedExtensions,
     bool allowMultiple = true,
@@ -19,7 +19,7 @@ class FileManagerImpl implements FileManager {
       );
 
       if (result != null && result.files.isNotEmpty) {
-        return result.files;
+        return result.files.single;
       }
       return null;
     } catch (e) {

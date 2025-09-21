@@ -2,22 +2,19 @@ import 'package:ig_agency_app/domain/repositories/message_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../entities/message/message.dart';
-import '../../entities/paged_result.dart';
 import '../use_case.dart';
 
 @injectable
-class FetchMessagesWorkspaceUseCase
-    extends UseCase<PagedResult<MessageEntity>, FetchMessagesWorkspaceParams> {
+class FetchMessagesInGroupUseCase
+    extends UseCase<List<MessageEntity>, FetchMessagesInGroupParams> {
   final MessageRepository _messageRepository;
 
-  FetchMessagesWorkspaceUseCase(this._messageRepository);
+  FetchMessagesInGroupUseCase(this._messageRepository);
 
   @override
-  Future<PagedResult<MessageEntity>> call(
-    FetchMessagesWorkspaceParams params,
-  ) async {
-    return await _messageRepository.fetchMessagesByWorkspaceId(
-      params.workspaceId,
+  Future<List<MessageEntity>> call(FetchMessagesInGroupParams params) async {
+    return await _messageRepository.fetchMessagesInGroup(
+      params.groupId,
       params.limit,
       params.oldestMessageId,
       params.targetMessageId,
@@ -25,14 +22,14 @@ class FetchMessagesWorkspaceUseCase
   }
 }
 
-class FetchMessagesWorkspaceParams {
-  final int workspaceId;
+class FetchMessagesInGroupParams {
+  final int groupId;
   final int limit;
   final String? oldestMessageId;
   final String? targetMessageId;
 
-  FetchMessagesWorkspaceParams({
-    required this.workspaceId,
+  FetchMessagesInGroupParams({
+    required this.groupId,
     required this.limit,
     this.oldestMessageId,
     this.targetMessageId,

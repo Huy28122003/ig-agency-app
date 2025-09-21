@@ -10,12 +10,19 @@ import 'workspace_detail_bloc.dart';
 @RoutePage()
 class WSDetailPage
     extends BasePage<WSDetailBloc, WSDetailEvent, WSDetailState> {
-  const WSDetailPage({super.key, required this.workspaceId});
+  const WSDetailPage({
+    super.key,
+    required this.groupId,
+    required this.groupName,
+    required this.groupAvatar,
+  });
 
-  final int workspaceId;
+  final int groupId;
+  final String groupName;
+  final String groupAvatar;
 
   @override
-  WSDetailBloc get buildBloc => super.buildBloc..workspaceId = workspaceId;
+  WSDetailBloc get buildBloc => super.buildBloc..groupId = groupId;
 
   @override
   void onInitState(BuildContext context) {
@@ -25,7 +32,10 @@ class WSDetailPage
 
   @override
   Widget mobileBuilder(BuildContext context) {
-    return WorkspaceDetailMobileLayout();
+    return WorkspaceDetailMobileLayout(
+      groupName: groupName,
+      groupAvatar: groupAvatar,
+    );
   }
 
   @override

@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:any_link_preview/any_link_preview.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../shared/utils/text_message_display_util.dart';
 import '../../../resources/colors.dart';
@@ -9,48 +12,68 @@ import '../../../../shared/extensions/duration_ext.dart';
 import '../../../../shared/extensions/int_ext.dart';
 import '../network_image.dart';
 
+const _kMaxHeightImageLinkPreview = 100.0;
+const _kMaxHeightContentLinkPreview = 54.0;
+
 class ChatBubbleContent extends StatelessWidget {
   const ChatBubbleContent({
     super.key,
     required this.message,
     required this.maxWidth,
+    this.searchText,
+    this.isMe = false,
   });
 
   final MessageEntity message;
   final double maxWidth;
+  final String? searchText;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
-    if (message.isText) {
-      return _TextMessageContent(message: message, maxWidth: maxWidth);
+    final content = message.content;
+    switch (content) {
+      case TextMessageContent _:
+        return _TextMessageContent(
+          textContent: content,
+          createdAt: message.createdAt.toShortTimeString(),
+          maxWidth: maxWidth,
+          searchText: searchText,
+          isMe: isMe,
+        );
+      case ImageMessageContent _:
+        return _ImageMessageContent(imageContent: content);
+      case VideoMessageContent _:
+        return _VideoMessageContent(videoContent: content);
+      case FileMessageContent _:
+        return _FileMessageContent(fileContent: content, maxWidth: maxWidth);
+      default:
+        return const SizedBox.shrink();
     }
-
-    if (message.isImage) {
-      return _ImageMessageContent(message: message);
-    }
-
-    if (message.isVideo) {
-      return _VideoMessageContent(message: message);
-    }
-
-    if (message.isFile) {
-      return _FileMessageContent(message: message, maxWidth: maxWidth);
-    }
-
-    return const SizedBox.shrink();
   }
 }
 
 class _TextMessageContent extends StatelessWidget {
-  const _TextMessageContent({required this.message, required this.maxWidth});
+  const _TextMessageContent({
+    required this.textContent,
+    required this.createdAt,
+    required this.maxWidth,
+    this.searchText,
+    this.isMe = false,
+  });
 
-  final MessageEntity message;
+  final TextMessageContent textContent;
+  final String createdAt;
   final double maxWidth;
+  final String? searchText;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = const TextStyle(
-      color: AppColors.textDefaultTextDefault,
+    final textStyle = TextStyle(
+      color: isMe
+          ? AppColors.textDefaultTextInverted
+          : AppColors.textDefaultTextDefault,
       fontSize: 16,
       fontFamily: FontFamily.segoeUI,
       fontWeight: FontWeight.w400,
@@ -58,23 +81,40 @@ class _TextMessageContent extends StatelessWidget {
     );
 
     final (textSpans, _, link) = TextMessageDisplayUtil.parseTextContent(
-      message.content,
+      textContent,
       textStyle,
+      searchText: searchText,
     );
+
+    final isOnlyLink = link != null && link.length == textContent.text.length;
+
+    if (isOnlyLink) {
+      return Container(
+        clipBehavior: Clip.antiAlias,
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerGrayStrong2,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: _LinkPreview(url: link),
+      );
+    }
 
     return Container(
       clipBehavior: Clip.antiAlias,
       constraints: BoxConstraints(maxWidth: maxWidth),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: isMe
+            ? AppColors.surfaceContainerSecondarySecondaryDefault
+            : AppColors.surfaceContainerGrayStrong2,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 8),
-            decoration: const BoxDecoration(
-              color: AppColors.surfaceContainerGrayStrong2,
-            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,9 +129,11 @@ class _TextMessageContent extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        message.createdAt.toShortTimeString(),
+                        createdAt,
                         style: TextStyle(
-                          color: AppColors.textDefaultTextSub2,
+                          color: isMe
+                              ? AppColors.textDefaultTextInverted
+                              : AppColors.textDefaultTextSub2,
                           fontSize: 12,
                           fontFamily: FontFamily.segoeUI,
                           fontWeight: FontWeight.w400,
@@ -104,25 +146,129 @@ class _TextMessageContent extends StatelessWidget {
               ],
             ),
           ),
-          if (link != null) ...[
-            // Link preview implementation can be added here
-            const SizedBox.shrink(),
-          ],
+          if (link != null) _LinkPreview(url: link),
         ],
       ),
     );
   }
 }
 
-class _ImageMessageContent extends StatelessWidget {
-  const _ImageMessageContent({required this.message});
+class _LinkPreview extends StatelessWidget {
+  const _LinkPreview({required this.url});
 
-  final MessageEntity message;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
-    final imageContent = message.content as ImageMessageContent;
+    final isValidLink = AnyLinkPreview.isValidLink(url);
 
+    if (!isValidLink) {
+      return const SizedBox.shrink();
+    }
+
+    return GestureDetector(
+      onTap: () {
+        try {
+          launchUrl(Uri.parse(url));
+        } catch (e) {
+          // TODO hoannk:
+        }
+      },
+      child: AnyLinkPreview.builder(
+        link: url,
+        itemBuilder: (context, metadata, imageProvider, _) {
+          final title = metadata.title;
+          final description = metadata.desc;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (imageProvider != null && imageProvider is NetworkImage)
+                SizedBox(
+                  height: _kMaxHeightImageLinkPreview,
+                  child: CachedNetworkImage(
+                    imageUrl: imageProvider.url,
+                    imageBuilder: (context, imageProvider) => Image(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                      height: _kMaxHeightImageLinkPreview,
+                      width: double.infinity,
+                    ),
+                    placeholder: (_, _) => Container(
+                      height: _kMaxHeightImageLinkPreview,
+                      color: AppColors.surfaceContainerGrayStrong2,
+                      child: const Center(child: CupertinoActivityIndicator()),
+                    ),
+                    errorWidget: (_, _, _) => Container(
+                      height: _kMaxHeightImageLinkPreview,
+                      color: Color.fromARGB(255, 195, 197, 201),
+                    ),
+                  ),
+                ),
+              Container(
+                height: _kMaxHeightContentLinkPreview,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerPrimaryPrimaryLight,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title ?? 'Title not found',
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextDefault,
+                        fontSize: 14,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w700,
+                        height: 1.43,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      description ?? url,
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextSub2,
+                        fontSize: 12,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.33,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+        placeholderWidget: Container(
+          height: _kMaxHeightImageLinkPreview + _kMaxHeightContentLinkPreview,
+          color: AppColors.surfaceContainerGrayStrong2,
+          child: const Center(child: CupertinoActivityIndicator()),
+        ),
+        errorWidget: Container(
+          height: _kMaxHeightImageLinkPreview + _kMaxHeightContentLinkPreview,
+          color: Color.fromARGB(255, 195, 197, 201),
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageMessageContent extends StatelessWidget {
+  const _ImageMessageContent({required this.imageContent});
+
+  final ImageMessageContent imageContent;
+
+  @override
+  Widget build(BuildContext context) {
     return NetworkImageWidget(
       imageUrl: imageContent.imageUrl,
       originalWidth: imageContent.width,
@@ -134,14 +280,12 @@ class _ImageMessageContent extends StatelessWidget {
 }
 
 class _VideoMessageContent extends StatelessWidget {
-  const _VideoMessageContent({required this.message});
+  const _VideoMessageContent({required this.videoContent});
 
-  final MessageEntity message;
+  final VideoMessageContent videoContent;
 
   @override
   Widget build(BuildContext context) {
-    final videoContent = message.content as VideoMessageContent;
-
     return NetworkImageWidget(
       imageUrl: videoContent.thumbnailUrl ?? '',
       originalWidth: videoContent.width,
@@ -199,15 +343,16 @@ class _VideoMessageContent extends StatelessWidget {
 }
 
 class _FileMessageContent extends StatelessWidget {
-  const _FileMessageContent({required this.message, required this.maxWidth});
+  const _FileMessageContent({
+    required this.fileContent,
+    required this.maxWidth,
+  });
 
-  final MessageEntity message;
+  final FileMessageContent fileContent;
   final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
-    final fileContent = message.content as FileMessageContent;
-
     return Container(
       clipBehavior: Clip.antiAlias,
       constraints: BoxConstraints(maxWidth: maxWidth),

@@ -7,19 +7,20 @@ class ChatBubbleSenderInfo extends StatelessWidget {
   const ChatBubbleSenderInfo({
     super.key,
     required this.message,
-    required this.userId,
     required this.isMe,
+    this.userId,
   });
 
   final MessageEntity message;
-  final String userId;
+  final String? userId;
   final bool isMe;
 
-  bool get replyMessageSenderIdIsMe => userId == message.reply?.senderId;
+  bool get replyMessageSenderIdIsMe =>
+      userId == message.repliedMessage?.user.id;
 
   @override
   Widget build(BuildContext context) {
-    final MessageReply? reply = message.reply;
+    final MessageEntity? reply = message.repliedMessage;
     final bool hasReply = reply != null;
 
     return Column(
@@ -31,7 +32,7 @@ class ChatBubbleSenderInfo extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  isMe ? 'You' : message.sender.name,
+                  isMe ? 'You' : message.user.name,
                   style: const TextStyle(
                     color: AppColors.textDefaultTextSub2,
                     fontSize: 12,
@@ -59,7 +60,7 @@ class ChatBubbleSenderInfo extends StatelessWidget {
                       ? 'yourself'
                       : replyMessageSenderIdIsMe
                       ? 'you'
-                      : reply.senderName,
+                      : reply.user.name,
                   style: const TextStyle(
                     color: AppColors.textDefaultTextSub2,
                     fontSize: 12,
@@ -73,7 +74,7 @@ class ChatBubbleSenderInfo extends StatelessWidget {
           ),
         ] else
           Text(
-            message.sender.name,
+            message.user.name,
             style: const TextStyle(
               color: AppColors.textDefaultTextSub2,
               fontSize: 12,

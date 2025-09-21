@@ -116,7 +116,7 @@ class MockData {
       userInfo: index % 2 == 0
           ? null
           : UserSummary(
-              id: 1,
+              id: '1',
               name: 'Nguyen Van A',
               avatar:
                   'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',

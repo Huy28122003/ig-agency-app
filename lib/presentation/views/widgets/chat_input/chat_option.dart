@@ -10,57 +10,70 @@ class ChatOption extends StatelessWidget {
     this.onDocumentTap,
     this.onCameraTap,
     this.onMediaTap,
+    this.onToggleOptions,
   });
 
   final bool hasOptions;
   final VoidCallback? onDocumentTap;
   final VoidCallback? onCameraTap;
   final VoidCallback? onMediaTap;
+  final VoidCallback? onToggleOptions;
 
   @override
   Widget build(BuildContext context) {
-    // Animation
-    // return AnimatedSwitcher(
-    //   duration: const Duration(milliseconds: 100),
-    //   transitionBuilder: (child, animation) {
-    //     final fade = CurvedAnimation(parent: animation, curve: Curves.linear);
+    return SizedBox(
+      height: 44,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 100),
+        transitionBuilder: (child, animation) {
+          final fade = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          );
 
-    //     if (child.key == const Key('options-bar')) {
-    //       final slide = Tween<Offset>(
-    //         begin: const Offset(-0.2, 0),
-    //         end: Offset.zero,
-    //       ).animate(animation);
-    //       return SlideTransition(
-    //         position: slide,
-    //         child: FadeTransition(opacity: fade, child: child),
-    //       );
-    //     } else {
-    //       return FadeTransition(opacity: fade, child: child);
-    //     }
-    //   },
-    //   child: hasOptions
-    //       ? Padding(
-    //           key: const Key('options-bar'),
-    //           padding: const EdgeInsets.only(left: 12),
-    //           child: _buildOptionsBar(),
-    //         )
-    //       : Padding(
-    //           key: const Key('arrow'),
-    //           padding: const EdgeInsets.only(left: 10),
-    //           child: _buildArrow(),
-    //         ),
-    // );
-
-    if (hasOptions) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: _buildOptionsBar(),
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
-      child: _buildArrow(),
+          if (child.key == const Key('options-bar')) {
+            final slide =
+                Tween<Offset>(
+                  begin: const Offset(-0.1, 0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  ),
+                );
+            return SlideTransition(
+              position: slide,
+              child: FadeTransition(opacity: fade, child: child),
+            );
+          } else {
+            return FadeTransition(opacity: fade, child: child);
+          }
+        },
+        child: hasOptions
+            ? Padding(
+                key: const Key('options-bar'),
+                padding: const EdgeInsets.only(left: 12),
+                child: _buildOptionsBar(),
+              )
+            : Padding(
+                key: const Key('arrow'),
+                padding: const EdgeInsets.only(left: 10),
+                child: _buildArrow(),
+              ),
+      ),
     );
+
+    // if (hasOptions) {
+    //   return Padding(
+    //     padding: const EdgeInsets.only(left: 12),
+    //     child: _buildOptionsBar(),
+    //   );
+    // }
+    // return Padding(
+    //   padding: const EdgeInsets.only(left: 10),
+    //   child: _buildArrow(),
+    // );
   }
 
   Widget _buildOptionsBar() {
@@ -99,17 +112,21 @@ class ChatOption extends StatelessWidget {
   }
 
   Widget _buildArrow() {
-    return IconButton(
-      padding: const EdgeInsets.all(10),
-      onPressed: () {},
-      icon: RotatedBox(
-        quarterTurns: 2,
-        child: Assets.icons.icArrowLeft.svg(
-          width: 24,
-          height: 24,
-          colorFilter: const ColorFilter.mode(
-            AppColors.textDefaultTextDefault,
-            BlendMode.srcIn,
+    return Container(
+      height: 44,
+      width: 44,
+      alignment: Alignment.center,
+      child: GestureDetector(
+        onTap: onToggleOptions,
+        child: RotatedBox(
+          quarterTurns: 2,
+          child: Assets.icons.icArrowLeft.svg(
+            width: 24,
+            height: 24,
+            colorFilter: const ColorFilter.mode(
+              AppColors.textDefaultTextDefault,
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),

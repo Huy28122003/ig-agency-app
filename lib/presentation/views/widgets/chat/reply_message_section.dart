@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../domain/entities/message/message.dart';
-import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
@@ -23,30 +22,31 @@ class ReplyMessageSection extends StatelessWidget {
   Widget build(BuildContext context) {
     String? previewText;
     Widget? previewWidget;
-    switch (messageReply.type) {
-      case MessageType.text:
-        previewText = (messageReply.content as TextMessageContent).text;
+    final content = messageReply.content;
+
+    switch (content) {
+      case TextMessageContent _:
+        previewText = content.text;
         break;
-      case MessageType.image:
+      case ImageMessageContent _:
         previewText = 'Image';
         previewWidget = NetworkImageWidget(
-          imageUrl: (messageReply.content as ImageMessageContent).imageUrl,
+          imageUrl: content.imageUrl,
           maxWidth: 40,
           maxHeight: 40,
           borderRadius: BorderRadius.circular(8),
         );
         break;
-      case MessageType.video:
+      case VideoMessageContent _:
         previewText = 'Video';
         previewWidget = NetworkImageWidget(
-          imageUrl:
-              (messageReply.content as VideoMessageContent).thumbnailUrl ?? '',
+          imageUrl: content.thumbnailUrl ?? '',
           maxWidth: 40,
           maxHeight: 40,
           borderRadius: BorderRadius.circular(8),
         );
         break;
-      case MessageType.file:
+      case FileMessageContent _:
         previewText = 'Attachment';
         previewWidget = Assets.icons.icCircleDocumentPrimary.svg(
           width: 40,
@@ -86,7 +86,7 @@ class ReplyMessageSection extends StatelessWidget {
                     ),
                     Flexible(
                       child: Text(
-                        isMe ? 'yourself' : messageReply.sender.name,
+                        isMe ? 'yourself' : messageReply.user.name,
                         style: TextStyle(
                           color: AppColors.textDefaultTextDefault,
                           fontSize: 13,

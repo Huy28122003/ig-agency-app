@@ -1,26 +1,23 @@
 import '../entities/message/message.dart';
-import '../entities/paged_result.dart';
 import '../entities/pinned_message_summary.dart';
 
 abstract class MessageRepository {
-  Future<PagedResult<MessageEntity>> fetchPinnedMessages(int limit, int offset);
+  Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset);
 
   Future unpinMessage(String messageId);
 
   Future pinMessage(String messageId);
 
-  Future<PinnedMessageSummary> getPinnedMessageSummaryByWorkspaceId(
-    int workspaceId,
-  );
+  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(int groupId);
 
-  Future<PagedResult<MessageEntity>> fetchPinnedMessagesByWorkspaceId(
-    int workspaceId,
+  Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
+    int groupId,
     int limit,
     int offset,
   );
 
-  Future<PagedResult<MessageEntity>> fetchMessagesByWorkspaceId(
-    int workspaceId,
+  Future<List<MessageEntity>> fetchMessagesInGroup(
+    int groupId,
     int limit,
     String? oldestMessageId,
     String? targetMessageId,
@@ -28,8 +25,14 @@ abstract class MessageRepository {
 
   Future<void> sendMessage(
     String userId,
-    int workspaceId,
+    int groupId,
     String? replyMessageId,
     dynamic content,
   );
+
+  Future<void> deleteMessageForEveryone(String messageId);
+
+  Future<void> deleteMessageForYou(String messageId);
+
+  Future<void> deleteConversation(int groupId);
 }

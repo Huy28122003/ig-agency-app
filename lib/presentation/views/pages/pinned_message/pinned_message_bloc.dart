@@ -5,10 +5,9 @@ import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
-import '../../../../domain/usecases/fetch_pinned_message_use_case.dart';
+import '../../../../domain/usecases/message/fetch_pinned_message_use_case.dart';
 import '../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../base/base_state.dart';
-import '../../mappers/pinned_message_mapper.dart';
 import '../../ui_models/pinned_message_ui_model.dart';
 
 part 'pinned_message_event.dart';
@@ -48,18 +47,11 @@ class PinnedMessageBloc
       FetchPinnedMessageParams(limit: _limit, offset: offset),
     );
 
-    final pagedResult = result.data;
-    final messages = pagedResult
-        .map((e) => PinnedMessageMapper.fromMessageEntity(e))
-        .toList();
-
-    final currentPage = (offset / _limit).floor() + 1;
-    final totalPages = (result.totalRecords / _limit).ceil();
-    final isLastPage = currentPage >= totalPages;
+    final messages = result.map((e) => e.toUIModel()).toList();
 
     final fetchStatus = messages.isEmpty
         ? PagingStatus.empty
-        : (isLastPage
+        : (messages.length < _limit
               ? PagingStatus.noMoreData
               : (isRefresh
                     ? PagingStatus.refreshCompleted
