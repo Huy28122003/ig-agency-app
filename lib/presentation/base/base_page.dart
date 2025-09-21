@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/di/di.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
+import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/shared/utils/alert.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -23,10 +24,16 @@ abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
     return Container(color: Colors.grey);
   }
 
-  Widget buildErrorView(BuildContext context, String? errorMessage) {
+  Widget buildErrorView(String? errorMessage, VoidCallback onRefresh) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(child: Text(errorMessage ?? 'An error occurred')),
+      body: Center(
+        child: Column(
+          children: [
+            Text(errorMessage ?? 'An error occurred'),
+            AppButton.primary(onPressed: onRefresh, child: Text('Refresh')),
+          ],
+        ),
+      ),
     );
   }
 
@@ -39,6 +46,8 @@ abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
   void onDispose(BuildContext context) {
     loggerNoStack.i('$runtimeType screen disposed');
   }
+
+  void onRefresh() {}
 
   Widget? desktopBuilder(BuildContext context) {
     return null;
@@ -94,9 +103,9 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveBuilder(
-      builder: (context, sizingInfo) {
-        return BlocConsumer<B, S>(
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<B, S>(
           listener: (context, state) {
             if (state.processing) {
               _appDialog.show(context, type: AppAlertType.loading);
@@ -105,20 +114,26 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
             }
           },
           listenWhen: (pre, cur) => pre.processing != cur.processing,
-          buildWhen: (pre, cur) => pre.pageStatus != cur.pageStatus,
-          builder: (context, state) {
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: _buildBody(
-                context,
-                sizingInfo,
-                state.pageStatus,
-                state.pageErrorMessage,
-              ),
-            );
-          },
-        );
-      },
+        ),
+      ],
+      child: ResponsiveBuilder(
+        builder: (context, sizingInfo) {
+          return BlocBuilder<B, S>(
+            buildWhen: (pre, cur) => cur.pageStatus != pre.pageStatus,
+            builder: (context, state) {
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: _buildBody(
+                  context,
+                  sizingInfo,
+                  state.pageStatus,
+                  state.pageErrorMessage,
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -126,7 +141,7 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
     BuildContext context,
     SizingInformation sizingInfo,
     PageStatus pageStatus,
-    String? errorMessage,
+    String? messageError,
   ) {
     switch (pageStatus) {
       case PageStatus.initial:
@@ -138,7 +153,9 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
 
         return builder;
       case PageStatus.failure:
-        return widget.buildErrorView(context, errorMessage);
+        return widget.buildErrorView(messageError, () {
+          widget.onRefresh();
+        });
     }
   }
 

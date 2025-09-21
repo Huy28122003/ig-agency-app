@@ -15,7 +15,7 @@ class AddToGroupState extends BaseState<AddToGroupState> {
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing = false,
-    this.user = const UserEntity(id: "", name: "", email: ""),
+    this.user = const UserEntity(id: '1', name: ""),
     this.pagination = const Pagination(),
     this.searchKeyWord = "",
     this.listGroup = const [],
