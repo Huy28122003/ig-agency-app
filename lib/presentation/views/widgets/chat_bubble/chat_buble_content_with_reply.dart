@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../domain/entities/message/message.dart';
-import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../../shared/utils/text_message_display_util.dart';
 import '../../../resources/colors.dart';
@@ -16,17 +15,22 @@ class ChatBubbleContentWithReply extends StatelessWidget {
     required this.maxWidthReply,
     required this.isMe,
     this.onTap,
+    this.searchText,
   });
 
   final MessageEntity message;
-  final MessageReply replyMessage;
+  final MessageEntity replyMessage;
   final double maxWidth;
   final double maxWidthReply;
   final bool isMe;
   final Function(String messageId)? onTap;
+  final String? searchText;
 
   @override
   Widget build(BuildContext context) {
+    String? text = getReplyText(replyMessage);
+    if (text == null) return const SizedBox.shrink();
+
     final replyTextStyle = TextStyle(
       color: AppColors.textDefaultTextSub2,
       fontSize: 14,
@@ -34,7 +38,6 @@ class ChatBubbleContentWithReply extends StatelessWidget {
       fontWeight: FontWeight.w400,
       height: 1.43,
     );
-    String text = getReplyText(replyMessage);
     final textLines = TextMessageDisplayUtil.calculateTextLines(
       text: text,
       maxWidth: maxWidthReply,
@@ -46,7 +49,7 @@ class ChatBubbleContentWithReply extends StatelessWidget {
       alignment: isMe ? Alignment.topRight : Alignment.topLeft,
       children: [
         GestureDetector(
-          onTap: () => onTap?.call(replyMessage.messageId),
+          onTap: () => onTap?.call(replyMessage.id),
           child: Container(
             constraints: BoxConstraints(maxWidth: maxWidthReply, maxHeight: 60),
             padding: const EdgeInsets.only(
@@ -77,24 +80,30 @@ class ChatBubbleContentWithReply extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(top: textLines > 1 ? 48 : 30),
-          child: ChatBubbleContent(message: message, maxWidth: maxWidth),
+          child: ChatBubbleContent(
+            message: message,
+            maxWidth: maxWidth,
+            isMe: isMe,
+            searchText: searchText,
+          ),
         ),
       ],
     );
   }
 
-  String getReplyText(MessageReply replyMessage) {
-    switch (replyMessage.originalMessageType) {
-      case MessageType.text:
-        return replyMessage.previewText ?? '';
-      case MessageType.image:
+  String? getReplyText(MessageEntity replyMessage) {
+    final content = replyMessage.content;
+    switch (content) {
+      case TextMessageContent _:
+        return content.text;
+      case ImageMessageContent _:
         return 'Image';
-      case MessageType.video:
+      case VideoMessageContent _:
         return 'Video';
-      case MessageType.file:
+      case FileMessageContent _:
         return 'Attachment';
       default:
-        return '';
+        return null;
     }
   }
 }

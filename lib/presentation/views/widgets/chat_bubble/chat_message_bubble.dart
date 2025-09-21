@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
 import '../../../../domain/entities/message/message.dart';
-import '../../../../domain/enums/message_enums.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
 import '../../../resources/colors.dart';
@@ -21,25 +20,26 @@ class ChatMessageBubble extends StatefulWidget {
     required this.maxWidth,
     required this.maxWidthReply,
     required this.horizontalPadding,
-    required this.userId,
+    this.userId,
     required this.message,
-    required this.shouldShowTime,
-    required this.shouldShowAvatar,
-    required this.shouldShowUserName,
-    required this.isContinuation,
+    this.shouldShowTime = false,
+    this.shouldShowAvatar = false,
+    this.shouldShowUserName = false,
+    this.isContinuation = false,
     this.onReply,
     this.onTap,
     this.onReplyTap,
     this.onForward,
     this.onPin,
     this.onDelete,
+    this.searchText,
   });
 
   final double maxWidth;
   final double maxWidthReply;
   final MessageEntity message;
   final double horizontalPadding;
-  final String userId;
+  final String? userId;
   final VoidCallback? onReply;
   final VoidCallback? onTap;
   final Function(String messageId)? onReplyTap;
@@ -50,8 +50,23 @@ class ChatMessageBubble extends StatefulWidget {
   final bool isContinuation;
 
   final VoidCallback? onForward;
-  final Function(bool isPinned)? onPin;
+  final VoidCallback? onPin;
   final VoidCallback? onDelete;
+  final String? searchText;
+
+  factory ChatMessageBubble.system({
+    required MessageEntity message,
+    bool shouldShowTime = false,
+    double horizontalPadding = 12,
+  }) {
+    return ChatMessageBubble(
+      message: message,
+      maxWidth: 0,
+      maxWidthReply: 0,
+      shouldShowTime: shouldShowTime,
+      horizontalPadding: horizontalPadding,
+    );
+  }
 
   @override
   State<ChatMessageBubble> createState() => _ChatMessageBubbleState();
@@ -63,6 +78,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   late bool _shouldShowAvatar;
   late bool _shouldShowUserName;
   late bool _isContinuation;
+  late String? _searchText;
   late ChatBubbleAnimationHelper _animationHelper;
 
   final ValueNotifier<double> _dragDistance = ValueNotifier(0.0);
@@ -76,6 +92,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     _shouldShowAvatar = widget.shouldShowAvatar;
     _shouldShowUserName = widget.shouldShowUserName;
     _isContinuation = widget.isContinuation;
+    _searchText = 'https://flutter.dev'; // TODO hoannk: test search
     _animationHelper = ChatBubbleAnimationHelper(
       isMe: isMe,
       horizontalPadding: widget.horizontalPadding,
@@ -94,9 +111,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
       _shouldShowUserName = widget.shouldShowUserName;
       _isContinuation = widget.isContinuation;
     }
+    if (widget.searchText != oldWidget.searchText) {
+      _searchText = widget.searchText;
+    }
   }
 
-  bool get isMe => widget.userId == widget.message.sender.id;
+  bool get isMe => widget.userId == widget.message.user.id;
 
   void _onPanStart(DragStartDetails details) {
     _isDragging = true;
@@ -167,6 +187,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
   @override
   Widget build(BuildContext context) {
+    final messageContent = _message.content;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -194,49 +215,52 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
         Padding(
           padding: EdgeInsets.only(
             top: _isContinuation
-                ? _message.type == MessageType.system
+                ? messageContent.isSystem
                       ? ChatBubbleConstants.continuationSystemVerticalPadding
                       : ChatBubbleConstants.continuationVerticalPadding
                 : 16,
           ),
-          child: _message.content is SystemMessageContent
-              ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: widget.horizontalPadding,
-                  ),
-                  child: Text(
-                    (_message.content as SystemMessageContent).message,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textPrimaryTextDefault,
-                      fontSize: 13,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w600,
-                      height: 1.54,
-                    ),
-                  ),
-                )
-              : GestureDetector(
-                  // behavior: HitTestBehavior.opaque,
-                  onPanStart: _onPanStart,
-                  onPanUpdate: _onPanUpdate,
-                  onPanEnd: _onPanEnd,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ValueListenableBuilder(
-                      valueListenable: _dragDistance,
-                      builder: (context, value, child) {
-                        return _buildMainChatBubble(value);
-                      },
-                    ),
-                  ),
+          child: switch (messageContent) {
+            SystemMessageContent _ => Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: widget.horizontalPadding,
+              ),
+              child: Text(
+                messageContent.message,
+                style: TextStyle(
+                  color: AppColors.textPrimaryTextDefault,
+                  fontSize: 13,
+                  fontFamily: 'Segoe UI',
+                  fontWeight: FontWeight.w600,
+                  height: 1.54,
                 ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            _ => GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onPanStart: _onPanStart,
+              onPanUpdate: _onPanUpdate,
+              onPanEnd: _onPanEnd,
+              child: SizedBox(
+                width: double.infinity,
+                child: ValueListenableBuilder(
+                  valueListenable: _dragDistance,
+                  builder: (context, value, child) {
+                    return _buildMainChatBubble(value);
+                  },
+                ),
+              ),
+            ),
+          },
         ),
       ],
     );
   }
 
   Widget _buildMainChatBubble(double value) {
+    final repliedMessage = _message.repliedMessage;
+    final messageContent = _message.content;
     return GestureDetector(
       onTap: widget.onTap,
       child: Stack(
@@ -249,8 +273,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                 child: Opacity(
                   opacity: _animationHelper.getAvatarOpacity(value),
                   child: ChatAvatar(
-                    key: ValueKey(_message.sender.id),
-                    imageUrl: _message.sender.avatarUrl,
+                    key: ValueKey(_message.user.id),
+                    imageUrl: _message.user.avatar,
                   ),
                 ),
               ),
@@ -307,7 +331,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                   CustomContextMenuAction(
                     text: _message.isPinned ? 'Unpin' : 'Pin',
-                    onTap: () => widget.onPin?.call(_message.isPinned),
+                    onTap: widget.onPin,
                     trailingIcon: _message.isPinned
                         ? Assets.icons.icUnpin.svg(
                             height: 20,
@@ -326,27 +350,28 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                             ),
                           ),
                   ),
-                  CustomContextMenuAction(
-                    text: 'Copy Message',
-                    onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: _message.content.toString()),
-                      );
-                    },
-                    trailingIcon: Assets.icons.icCopy.svg(
-                      height: 20,
-                      width: 20,
-                      colorFilter: ColorFilter.mode(
-                        AppColors.iconDefaultDefault,
-                        BlendMode.srcIn,
+                  if (messageContent is TextMessageContent)
+                    CustomContextMenuAction(
+                      text: 'Copy Message',
+                      onTap: () {
+                        Clipboard.setData(
+                          ClipboardData(text: messageContent.text),
+                        );
+                      },
+                      trailingIcon: Assets.icons.icCopy.svg(
+                        height: 20,
+                        width: 20,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.iconDefaultDefault,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
-                  ),
                   CustomContextMenuAction(
                     text: 'Copy Name',
                     onTap: () {
                       Clipboard.setData(
-                        ClipboardData(text: _message.sender.name),
+                        ClipboardData(text: _message.user.name),
                       );
                     },
                     trailingIcon: Assets.icons.icCopyName.svg(
@@ -373,11 +398,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                 ],
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: isMe
                       ? CrossAxisAlignment.end
                       : CrossAxisAlignment.start,
                   children: [
-                    if ((!isMe || (isMe && _message.reply != null)) &&
+                    if ((!isMe || (isMe && repliedMessage != null)) &&
                         _shouldShowUserName) ...[
                       ChatBubbleSenderInfo(
                         message: _message,
@@ -385,20 +411,21 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                         isMe: isMe,
                       ),
                     ],
-                    _message.reply != null
+                    repliedMessage != null
                         ? ChatBubbleContentWithReply(
-                            key: ValueKey('${_message.id}-reply'),
                             message: _message,
-                            replyMessage: _message.reply!,
+                            replyMessage: repliedMessage,
                             maxWidth: widget.maxWidth,
                             maxWidthReply: widget.maxWidthReply,
                             isMe: isMe,
                             onTap: widget.onReplyTap,
+                            searchText: _searchText,
                           )
                         : ChatBubbleContent(
-                            key: ValueKey('${_message.id}-no-reply'),
                             message: _message,
                             maxWidth: widget.maxWidth,
+                            searchText: _searchText,
+                            isMe: isMe,
                           ),
                   ],
                 ),
@@ -414,6 +441,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
 class ChatAvatar extends StatelessWidget {
   final String imageUrl;
+
   const ChatAvatar({super.key, required this.imageUrl});
 
   @override

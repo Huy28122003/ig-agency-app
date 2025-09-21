@@ -11,7 +11,7 @@ class UpdateUserBioUseCase extends UseCase<void, UpdateUserBioParam> {
 
   @override
   Future call(UpdateUserBioParam param) async {
-    return await _userRepository.updateUserBio(param.bio);
+    return await _userRepository.updateProfileBio(param.bio);
   }
 }
 

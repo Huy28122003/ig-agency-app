@@ -1,72 +1,52 @@
 import 'package:equatable/equatable.dart';
+import 'package:ig_agency_app/domain/entities/user.dart';
 
 import '../../enums/message_enums.dart';
 import 'message_content.dart';
-import 'message_reply.dart';
-import 'message_sender.dart';
 
 class MessageEntity extends Equatable {
   const MessageEntity({
     required this.id,
-    required this.sender,
+    required this.user,
     required this.createdAt,
-    required this.type,
     required this.content,
     required this.status,
-    this.workspaceId,
-    this.groupName,
-    this.reply,
+    this.groupId,
+    this.repliedMessage,
     this.isPinned = false,
     this.pinnedAt,
   });
 
-  bool get isText => type == MessageType.text && content is TextMessageContent;
-
-  bool get isImage =>
-      type == MessageType.image && content is ImageMessageContent;
-
-  bool get isVideo =>
-      type == MessageType.video && content is VideoMessageContent;
-
-  bool get isFile => type == MessageType.file && content is FileMessageContent;
-
-  bool get isSystem =>
-      type == MessageType.system && content is SystemMessageContent;
-
   final String id;
-  final MessageSender sender;
+  final UserSummary user;
   final DateTime createdAt;
-  final MessageType type;
   final MessageContent content;
   final MessageStatus status;
-  final int? workspaceId;
-  final String? groupName;
-  final MessageReply? reply;
+  final int? groupId;
+  final MessageEntity? repliedMessage;
   final bool isPinned;
   final DateTime? pinnedAt;
 
+  bool get hasNotReply => repliedMessage == null;
+
   MessageEntity copyWith({
     String? id,
-    MessageSender? sender,
+    UserSummary? user,
     DateTime? createdAt,
-    MessageType? type,
     MessageContent? content,
     MessageStatus? status,
-    int? workspaceId,
-    String? groupName,
-    MessageReply? reply,
+    int? groupId,
+    MessageEntity? repliedMessage,
     bool? isPinned,
     DateTime? pinnedAt,
   }) => MessageEntity(
     id: id ?? this.id,
-    sender: sender ?? this.sender,
+    user: user ?? this.user,
     createdAt: createdAt ?? this.createdAt,
-    type: type ?? this.type,
     content: content ?? this.content,
     status: status ?? this.status,
-    workspaceId: workspaceId ?? this.workspaceId,
-    groupName: groupName ?? this.groupName,
-    reply: reply ?? reply,
+    groupId: groupId ?? this.groupId,
+    repliedMessage: repliedMessage ?? this.repliedMessage,
     isPinned: isPinned ?? this.isPinned,
     pinnedAt: pinnedAt ?? this.pinnedAt,
   );
@@ -74,14 +54,12 @@ class MessageEntity extends Equatable {
   @override
   List<Object?> get props => [
     id,
-    sender,
+    user,
     createdAt,
-    type,
     content,
     status,
-    workspaceId,
-    groupName,
-    reply,
+    groupId,
+    repliedMessage,
     isPinned,
     pinnedAt,
   ];

@@ -6,11 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
-import '../../../../../../domain/enums/message_enums.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
+import '../../../../../resources/colors.dart';
 import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
-import '../../../../ui_models/chat_message_ui_model.dart';
+import '../../../../ui_models/chat_message/chat_message_ui_model.dart';
 import '../workspace_detail_bloc.dart';
 
 const double _kMaxWidthChatBubbleContentRatio = 277 / 390;
@@ -25,7 +25,7 @@ class ChatContent extends StatefulWidget {
   State<ChatContent> createState() => _ChatContentState();
 }
 
-class _ChatContentState extends State<ChatContent> {
+class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
   late final WSDetailBloc _bloc;
 
   final listViewController = FlutterListViewController();
@@ -37,11 +37,29 @@ class _ChatContentState extends State<ChatContent> {
     super.initState();
 
     _bloc = context.read<WSDetailBloc>();
+    WidgetsBinding.instance.addObserver(this);
 
     listViewController.addListener(() {
       _onRefreshListener();
       _onScrollListener();
     });
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    final bottomInset = View.of(context).viewInsets.bottom;
+    if (bottomInset > 0) {
+      _scrollToBottom();
+    }
+  }
+
+  @override
+  void dispose() {
+    listViewController.dispose();
+    refreshController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void _onRefreshListener() {
@@ -57,13 +75,13 @@ class _ChatContentState extends State<ChatContent> {
 
   void _onScrollListener() {
     final state = _bloc.state;
-    if (state.isInitialized) {
+    if (state.pageStatus == PageStatus.loaded) {
       if ((listViewController.offset >=
-              listViewController.position.maxScrollExtent - 100) &&
+              listViewController.position.maxScrollExtent - 300) &&
           state.showScrollToBottomIcon) {
         _bloc.add(ToggleShowScrollToBottomIcon());
       } else if ((listViewController.offset <
-              listViewController.position.maxScrollExtent - 100) &&
+              listViewController.position.maxScrollExtent - 300) &&
           !state.showScrollToBottomIcon) {
         _bloc.add(ToggleShowScrollToBottomIcon());
       }
@@ -72,24 +90,88 @@ class _ChatContentState extends State<ChatContent> {
 
   void _scrollToBottom() {
     if (_bloc.state.chatMessages.isNotEmpty) {
-      final position = _bloc.state.chatMessages.length - 1;
-      listViewController.sliverController.jumpToIndex(position);
-      _bloc.add(ToggleShowScrollToBottomIcon());
+      final maxScrollExtent = listViewController.position.maxScrollExtent;
+      if (maxScrollExtent > 0) {
+        listViewController.jumpTo(maxScrollExtent);
+      }
     }
   }
 
-  void _jumpToMessage(int index) {
+  void _jumpToMessage(String messageId) {
+    final index = _bloc.state.chatMessages.indexWhere(
+      (uiModel) => uiModel.message.id == messageId,
+    );
     if (index >= 0 && index < _bloc.state.chatMessages.length) {
       listViewController.sliverController.jumpToIndex(index, offset: 0.5);
     }
   }
 
   void _onRefresh() async {
-    final state = _bloc.state;
-    if (state.needLoadMoreOldMessages) {
-      refreshController.requestRefresh();
-      _bloc.add(LoadMoreChatMessagesEvent());
-    }
+    _bloc.add(LoadMoreChatMessagesEvent());
+  }
+
+  Future<void> _showDeleteOptionSheet(
+    BuildContext context,
+    String messageId,
+  ) async {
+    await showCupertinoModalPopup(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.68),
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _bloc.add(DeleteMessageForEveryoneEvent(messageId: messageId));
+            },
+            child: Text(
+              'Delete for everyone',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.colorsRed,
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                height: 1.29,
+                letterSpacing: -0.43,
+              ),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _bloc.add(DeleteMessageForYouEvent(messageId: messageId));
+            },
+            child: Text(
+              'Delete for you',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.colorsRed,
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                height: 1.29,
+                letterSpacing: -0.43,
+              ),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'Cancel',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.colorsBlue,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              height: 1.29,
+              letterSpacing: -0.43,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -114,23 +196,22 @@ class _ChatContentState extends State<ChatContent> {
         ),
         BlocListener<WSDetailBloc, WSDetailState>(
           listenWhen: (previous, current) =>
-              previous.jumpToMessageIndex != current.jumpToMessageIndex,
+              previous.jumpToMessageId != current.jumpToMessageId,
           listener: (context, state) {
-            if (state.jumpToMessageIndex != null) {
+            final messageId = state.jumpToMessageId;
+            if (messageId != null) {
               WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                _jumpToMessage(state.jumpToMessageIndex!);
-                _bloc.add(ResetJumpToMessageEvent());
+                _jumpToMessage(messageId);
               });
             }
           },
         ),
         BlocListener<WSDetailBloc, WSDetailState>(
           listenWhen: (previous, current) =>
-              previous.chatMessagesPagingStatus !=
-              current.chatMessagesPagingStatus,
+              previous.pagingStatus != current.pagingStatus,
           listener: (context, state) {
-            if (state.chatMessagesPagingStatus == PagingStatus.loading) return;
-            switch (state.chatMessagesPagingStatus) {
+            if (state.pagingStatus == PagingStatus.loading) return;
+            switch (state.pagingStatus) {
               case PagingStatus.loadCompleted:
                 refreshController.refreshCompleted();
                 break;
@@ -146,23 +227,18 @@ class _ChatContentState extends State<ChatContent> {
           BlocSelector<
             WSDetailBloc,
             WSDetailState,
-            (List<ChatMessageUIModel>, bool, bool, int)
+            (List<ChatMessageUIModel>, bool, int)
           >(
             selector: (state) {
               return (
                 state.chatMessages,
                 state.needLoadMoreOldMessages,
-                state.chatMessagesPagingStatus == PagingStatus.loading,
                 state.initIndex,
               );
             },
             builder: (context, state) {
-              final (
-                chatMessages,
-                needLoadMoreOldMessages,
-                isLoading,
-                initIndex,
-              ) = state;
+              final (chatMessages, needLoadMoreOldMessages, initIndex) = state;
+
               if (chatMessages.isEmpty) {
                 return const SizedBox.shrink();
               }
@@ -218,17 +294,13 @@ class _ChatContentState extends State<ChatContent> {
                           shouldShowAvatar: shouldShowAvatar,
                           shouldShowUserName: shouldShowUserName,
                           isContinuation: isContinuation,
+                          searchText: 'alabama',
                           userId: _bloc.userId,
                           onTap: () {
                             final messageId = uiModel.message.id;
-                            if (uiModel.message.type == MessageType.text &&
-                                !uiModel.showTime) {
-                              if (!uiModel.shouldShowTime) {
-                                _bloc.add(ShowTimeEvent(messageId: messageId));
-                              } else if (uiModel.shouldShowTime) {
-                                _bloc.add(DisableShowTimeEvent());
-                              }
-                            }
+                            _bloc.add(
+                              ToggleShowTimeEvent(messageId: messageId),
+                            );
                           },
                           onReply: () {
                             _bloc.add(
@@ -238,20 +310,15 @@ class _ChatContentState extends State<ChatContent> {
                           onReplyTap: (messageId) {
                             _bloc.add(JumpToMessageEvent(messageId: messageId));
                           },
-                          onPin: (isPinned) {
-                            if (isPinned) {
-                              _bloc.add(
-                                UnpinMessageFromDetailEvent(
-                                  messageId: uiModel.message.id,
-                                ),
-                              );
-                            } else {
-                              _bloc.add(
-                                PinMessageFromDetailEvent(
-                                  messageId: uiModel.message.id,
-                                ),
-                              );
-                            }
+                          onPin: () {
+                            _bloc.add(
+                              TogglePinMessageFromDetailEvent(
+                                messageId: uiModel.message.id,
+                              ),
+                            );
+                          },
+                          onDelete: () {
+                            _showDeleteOptionSheet(context, uiModel.message.id);
                           },
                         ),
                       );
@@ -336,12 +403,5 @@ class _ChatContentState extends State<ChatContent> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    listViewController.dispose();
-    refreshController.dispose();
-    super.dispose();
   }
 }

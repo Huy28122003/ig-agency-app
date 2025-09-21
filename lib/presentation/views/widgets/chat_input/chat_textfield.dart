@@ -7,22 +7,28 @@ import '../../../resources/colors.dart';
 class ChatTextField extends StatelessWidget {
   const ChatTextField({
     super.key,
+    this.focusNode,
     required this.textEditingController,
-    required this.focusNode,
+    this.onToggleOptions,
   });
 
+  final FocusNode? focusNode;
   final TagUserTextEditingController textEditingController;
-  final FocusNode focusNode;
+  final Function(bool showOptions)? onToggleOptions;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
       constraints: BoxConstraints(maxHeight: 120),
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerGrayStrong2,
         shape: RoundedRectangleBorder(
           side: BorderSide(width: 1, color: AppColors.outlineGrayStrong200),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(22),
+            right: Radius.circular(22),
+          ),
         ),
         shadows: [
           BoxShadow(
@@ -34,8 +40,9 @@ class ChatTextField extends StatelessWidget {
         ],
       ),
       child: TextFormField(
-        controller: textEditingController,
+        onTap: () => onToggleOptions?.call(false),
         focusNode: focusNode,
+        controller: textEditingController,
         maxLines: null,
         minLines: 1,
         style: TextStyle(

@@ -1,6 +1,6 @@
-import 'package:auto_route/auto_route.dart';
+// import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:ig_agency_app/presentation/routers/app_router.dart';
+// import 'package:ig_agency_app/presentation/routers/app_router.dart';
 
 class AddToGroupTabletLayout extends StatefulWidget {
   const AddToGroupTabletLayout({super.key});
@@ -20,7 +20,7 @@ class _AddToGroupTabletLayoutState extends State<AddToGroupTabletLayout> {
         child: GestureDetector(
           child: Text('TODO'),
           onTap: () {
-            context.router.replaceAll([WSDetailRoute(workspaceId: 1,)]);
+            // context.router.replaceAll([WSDetailRoute(workspaceId: 1)]);
           },
         ),
       ),

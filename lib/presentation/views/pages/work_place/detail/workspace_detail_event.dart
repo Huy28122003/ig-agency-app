@@ -8,6 +8,12 @@ class LoadDataEvent extends WSDetailEvent {
   const LoadDataEvent();
 }
 
+class ReplyToMessageEvent extends WSDetailEvent {
+  const ReplyToMessageEvent({required this.message});
+
+  final MessageEntity message;
+}
+
 class CloseReplyMessageEvent extends WSDetailEvent {
   const CloseReplyMessageEvent();
 }
@@ -16,10 +22,8 @@ class ToggleShowScrollToBottomIcon extends WSDetailEvent {
   const ToggleShowScrollToBottomIcon();
 }
 
-class ReplyToMessageEvent extends WSDetailEvent {
-  const ReplyToMessageEvent({required this.message});
-
-  final MessageEntity message;
+class ResetScrollToBottomEvent extends WSDetailEvent {
+  const ResetScrollToBottomEvent();
 }
 
 class SendMessageEvent extends WSDetailEvent {
@@ -28,29 +32,28 @@ class SendMessageEvent extends WSDetailEvent {
   final SendMessageType type;
 }
 
-class ResetScrollToBottomEvent extends WSDetailEvent {
-  const ResetScrollToBottomEvent();
-}
-
 class AddMessageEvent extends WSDetailEvent {
   const AddMessageEvent({required this.message});
 
   final MessageEntity message;
 }
 
-class UpdateHasOptionsEvent extends WSDetailEvent {
-  const UpdateHasOptionsEvent({required this.hasOptions});
-  final bool hasOptions;
+class ToggleHasOptionsEvent extends WSDetailEvent {
+  const ToggleHasOptionsEvent({required this.showOptions});
+
+  final bool showOptions;
 }
 
-class UpdateHasSendButtonEvent extends WSDetailEvent {
-  const UpdateHasSendButtonEvent({required this.hasSendButton});
+class ToggleHasSendButtonEvent extends WSDetailEvent {
+  const ToggleHasSendButtonEvent({required this.showSendButton});
 
-  final bool hasSendButton;
+  final bool showSendButton;
 }
 
-class FetchMembersEvent extends WSDetailEvent {
-  const FetchMembersEvent();
+class ToggleShowTagOverlayEvent extends WSDetailEvent {
+  const ToggleShowTagOverlayEvent({required this.showTagOverlay});
+
+  final bool showTagOverlay;
 }
 
 class SearchMembersEvent extends WSDetailEvent {
@@ -59,52 +62,22 @@ class SearchMembersEvent extends WSDetailEvent {
   final String query;
 }
 
-class LoadPinnedMessagesEvent extends WSDetailEvent {
-  const LoadPinnedMessagesEvent();
-}
-
-class RefreshPinnedMessagesEvent extends WSDetailEvent {
-  const RefreshPinnedMessagesEvent();
-}
-
-class LoadMorePinnedMessagesEvent extends WSDetailEvent {
-  const LoadMorePinnedMessagesEvent();
-}
-
-class UnpinMessageFromDetailEvent extends WSDetailEvent {
-  const UnpinMessageFromDetailEvent({required this.messageId});
-
-  final String messageId;
-}
-
-class PinMessageFromDetailEvent extends WSDetailEvent {
-  const PinMessageFromDetailEvent({required this.messageId});
-
-  final String messageId;
-}
-
-class ResetPinStatusSuccessEvent extends WSDetailEvent {
-  const ResetPinStatusSuccessEvent();
-}
-
 class JumpToMessageEvent extends WSDetailEvent {
   const JumpToMessageEvent({required this.messageId});
 
   final String messageId;
 }
 
-class ResetJumpToMessageEvent extends WSDetailEvent {
-  const ResetJumpToMessageEvent();
-}
-
-class ShowTimeEvent extends WSDetailEvent {
-  const ShowTimeEvent({required this.messageId});
+class ToggleShowTimeEvent extends WSDetailEvent {
+  const ToggleShowTimeEvent({required this.messageId});
 
   final String messageId;
 }
 
-class DisableShowTimeEvent extends WSDetailEvent {
-  const DisableShowTimeEvent();
+class TogglePinMessageFromDetailEvent extends WSDetailEvent {
+  const TogglePinMessageFromDetailEvent({required this.messageId});
+
+  final String messageId;
 }
 
 class GetPinnedMessageSummaryEvent extends WSDetailEvent {
@@ -115,8 +88,18 @@ class LoadMoreChatMessagesEvent extends WSDetailEvent {
   const LoadMoreChatMessagesEvent();
 }
 
-class UpdateShowTagOverlayEvent extends WSDetailEvent {
-  const UpdateShowTagOverlayEvent({required this.showTagOverlay});
+class DeleteMessageForEveryoneEvent extends WSDetailEvent {
+  const DeleteMessageForEveryoneEvent({required this.messageId});
 
-  final bool showTagOverlay;
+  final String messageId;
+}
+
+class DeleteMessageForYouEvent extends WSDetailEvent {
+  const DeleteMessageForYouEvent({required this.messageId});
+
+  final String messageId;
+}
+
+class DeleteConversationEvent extends WSDetailEvent {
+  const DeleteConversationEvent();
 }

@@ -15,5 +15,5 @@ class DeleteAccountEvent extends ProfileEvent {
 class UpdateUserEvent extends ProfileEvent {
   const UpdateUserEvent({required this.user});
 
-  final UserEntity user;
+  final ProfileInfoEntity user;
 }

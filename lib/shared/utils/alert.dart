@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:one_context/one_context.dart';
 
-import '../../presentation/views/dialogs/confirm_dialog.dart';
-import '../../presentation/views/dialogs/error_dialog.dart';
+import '../../presentation/views/modal/confirm_dialog.dart';
+import '../../presentation/views/modal/error_dialog.dart';
 import '../../presentation/views/widgets/app_loading.dart';
 
 enum AppAlertType { success, error, warning, confirm, info, loading }

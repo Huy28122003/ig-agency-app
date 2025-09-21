@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 
-import '../../../../../domain/entities/user_entity.dart';
+import '../../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
@@ -20,7 +20,7 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ProfileBloc, ProfileState, UserEntity?>(
+    return BlocSelector<ProfileBloc, ProfileState, ProfileInfoEntity?>(
       selector: (state) {
         return state.user;
       },
@@ -36,7 +36,7 @@ class ProfileHeader extends StatelessWidget {
           spacing: 16,
           children: [
             _buildAvatar(currentUser.avatar),
-            _buildInfo(currentUser.name, currentUser.email),
+            _buildInfo(currentUser.name, 'currentUser.email'),
           ],
         );
       },

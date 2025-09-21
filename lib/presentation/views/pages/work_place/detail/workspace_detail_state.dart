@@ -5,48 +5,53 @@ class WSDetailState extends BaseState<WSDetailState> {
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing,
-    this.isInitialized = false,
     this.chatMessages = const [],
     this.pinnedMessageSummary,
     this.messageReply,
     this.scrollToBottom = false,
     this.showScrollToBottomIcon = false,
-    this.hasOptions = true,
-    this.hasSendButton = false,
+    this.showOptions = true,
+    this.showSendButton = false,
     this.users = const [],
-    this.chatMessagesPagingStatus = PagingStatus.idle,
-    this.jumpToMessageIndex,
+    this.usersSearch = const [],
+    this.pagingStatus = PagingStatus.idle,
+    this.jumpToMessageId,
     this.scrollToTop = false,
     this.showTimeMessageId,
     this.initIndex = 0,
-    this.isPinStatusSuccess = false,
     this.showTagOverlay = false,
+    this.groupMemberStatus = GroupMemberStatus.joined,
+    this.groupSearchStatus = GroupSearchStatus.idle,
+    this.isDeletedConversationSuccess = false,
+    this.profile,
   });
 
-  final bool isInitialized;
   final List<ChatMessageUIModel> chatMessages;
   final PinnedMessageSummaryUiModel? pinnedMessageSummary;
   final MessageEntity? messageReply;
   final bool scrollToBottom;
   final bool showScrollToBottomIcon;
-  final bool hasOptions;
-  final bool hasSendButton;
+  final bool showOptions;
+  final bool showSendButton;
   final List<UserEntity> users;
-  final PagingStatus chatMessagesPagingStatus;
-  final int? jumpToMessageIndex;
+  final List<UserEntity> usersSearch;
+  final PagingStatus pagingStatus;
+  final String? jumpToMessageId;
   final bool scrollToTop;
   final String? showTimeMessageId;
   final int initIndex;
-  final bool isPinStatusSuccess;
   final bool showTagOverlay;
+  final GroupMemberStatus groupMemberStatus;
+  final GroupSearchStatus groupSearchStatus;
+  final bool isDeletedConversationSuccess;
+  final ProfileInfoEntity? profile;
 
   bool get needLoadMoreOldMessages =>
-      chatMessagesPagingStatus != PagingStatus.empty &&
-      chatMessagesPagingStatus != PagingStatus.noMoreData;
+      pagingStatus != PagingStatus.empty &&
+      pagingStatus != PagingStatus.noMoreData;
 
   @override
   WSDetailState copyWith({
-    bool? isInitialized,
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
@@ -56,22 +61,23 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool forceCloseReplyMessage = false,
     bool? scrollToBottom,
     bool? showScrollToBottomIcon,
-    bool? hasOptions,
-    bool? hasSendButton,
+    bool? showOptions,
+    bool? showSendButton,
     List<UserEntity>? users,
-    PagingStatus? chatMessagesPagingStatus,
-    bool? hasMoreOldMessages,
-    int? jumpToMessageIndex,
+    List<UserEntity>? usersSearch,
+    PagingStatus? pagingStatus,
+    String? jumpToMessageId,
     bool? scrollToTop,
-    bool forceCloseJumpToMessage = false,
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
     int? initIndex,
-    bool? isPinStatusSuccess,
     bool? showTagOverlay,
+    GroupMemberStatus? groupMemberStatus,
+    GroupSearchStatus? groupSearchStatus,
+    bool? isDeletedConversationSuccess,
+    ProfileInfoEntity? profile,
   }) {
     return WSDetailState(
-      isInitialized: isInitialized ?? this.isInitialized,
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
@@ -83,42 +89,45 @@ class WSDetailState extends BaseState<WSDetailState> {
       scrollToBottom: scrollToBottom ?? this.scrollToBottom,
       showScrollToBottomIcon:
           showScrollToBottomIcon ?? this.showScrollToBottomIcon,
-      hasOptions: hasOptions ?? this.hasOptions,
-      hasSendButton: hasSendButton ?? this.hasSendButton,
+      showOptions: showOptions ?? this.showOptions,
+      showSendButton: showSendButton ?? this.showSendButton,
       users: users ?? this.users,
-      chatMessagesPagingStatus:
-          chatMessagesPagingStatus ?? this.chatMessagesPagingStatus,
-      jumpToMessageIndex: forceCloseJumpToMessage
-          ? null
-          : jumpToMessageIndex ?? this.jumpToMessageIndex,
+      usersSearch: usersSearch ?? this.usersSearch,
+      pagingStatus: pagingStatus ?? this.pagingStatus,
+      jumpToMessageId: jumpToMessageId ?? this.jumpToMessageId,
       scrollToTop: scrollToTop ?? this.scrollToTop,
       showTimeMessageId: forceDisableShowTime
           ? null
           : showTimeMessageId ?? this.showTimeMessageId,
       initIndex: initIndex ?? this.initIndex,
-      isPinStatusSuccess: isPinStatusSuccess ?? this.isPinStatusSuccess,
       showTagOverlay: showTagOverlay ?? this.showTagOverlay,
+      groupMemberStatus: groupMemberStatus ?? this.groupMemberStatus,
+      isDeletedConversationSuccess:
+          isDeletedConversationSuccess ?? this.isDeletedConversationSuccess,
+      profile: profile ?? this.profile,
     );
   }
 
   @override
   List<Object?> get props => [
     ...super.props,
-    isInitialized,
     chatMessages,
     pinnedMessageSummary,
     messageReply,
     scrollToBottom,
     showScrollToBottomIcon,
-    hasOptions,
-    hasSendButton,
+    showOptions,
+    showSendButton,
     users,
-    chatMessagesPagingStatus,
-    jumpToMessageIndex,
+    usersSearch,
+    pagingStatus,
+    jumpToMessageId,
     scrollToTop,
     showTimeMessageId,
     initIndex,
-    isPinStatusSuccess,
     showTagOverlay,
+    groupMemberStatus,
+    isDeletedConversationSuccess,
+    profile,
   ];
 }

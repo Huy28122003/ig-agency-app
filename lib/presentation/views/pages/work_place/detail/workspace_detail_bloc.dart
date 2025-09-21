@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/entities/user/profile_info_entity.dart';
+import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
@@ -10,23 +12,27 @@ import '../../../../../data/cache/ram_cache.dart';
 import '../../../../../dependencies/media/media_manager.dart';
 import '../../../../../dependencies/file/file_manager.dart';
 import '../../../../../domain/entities/message/message.dart';
+import '../../../../../domain/entities/user.dart';
 import '../../../../../domain/enums/message_enums.dart';
 import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/enums/send_message_type.dart';
-import '../../../../../domain/usecases/fetch_member_in_workspace_use_case.dart';
-import '../../../../../domain/usecases/get_pinned_message_summary_workspace_use_case.dart';
-import '../../../../../domain/usecases/message/fetch_messages_workspace_use_case.dart';
+import '../../../../../domain/usecases/member/fetch_member_in_group_use_case.dart';
+import '../../../../../domain/usecases/message/get_pinned_message_summary_group_use_case.dart';
+import '../../../../../domain/usecases/message/fetch_messages_in_group_use_case.dart';
 import '../../../../../domain/usecases/message/send_message_use_case.dart';
 import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
 import '../../../../../domain/usecases/message/pin_message_use_case.dart';
-import '../../../../../domain/usecases/search_member_in_workspace_use_case.dart';
+import '../../../../../domain/usecases/message/delete_message_for_everyone_use_case.dart';
+import '../../../../../domain/usecases/message/delete_message_for_you_use_case.dart';
+import '../../../../../domain/usecases/message/delete_conversation_use_case.dart';
+import '../../../../../domain/usecases/member/search_member_in_group_use_case.dart';
+import '../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../shared/commons/enums/status.dart';
-import '../../../../../shared/helpers/chat_message_helper.dart';
+import '../../../ui_models/chat_message/chat_message_ui_model_helper.dart';
 import '../../../../../shared/utils/tag_user_text_editing_controller.dart';
 import '../../../../base/base_state.dart';
-import '../../../mappers/pinned_message_summary_mapper.dart';
 import '../../../ui_models/pinned_message_summary_ui_model.dart';
-import '../../../ui_models/chat_message_ui_model.dart';
+import '../../../ui_models/chat_message/chat_message_ui_model.dart';
 
 part 'workspace_detail_event.dart';
 
@@ -35,110 +41,122 @@ part 'workspace_detail_state.dart';
 @injectable
 class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   WSDetailBloc(
+    this._getProfileInfoUseCase,
     this._fetchMessageUseCase,
-    this._getPinnedMessageSummaryWorkspaceUseCase,
+    this._getPinnedMessageSummaryGroupUseCase,
     this._sendMessageUseCase,
-    this._fetchMemberInWorkspaceUseCase,
-    this._searchMemberInWorkspaceUseCase,
+    this._fetchMemberInGroupUseCase,
+    this._searchMemberInGroupUseCase,
     this._unpinMessageUseCase,
     this._pinMessageUseCase,
+    this._deleteMessageForEveryoneUseCase,
+    this._deleteMessageForYouUseCase,
+    this._ramCache,
     this._mediaManager,
     this._fileManager,
-    this._ramCache,
+    this._deleteConversationUseCase,
   ) : super(WSDetailState()) {
     _registerHandlers();
     _initializeListener();
+
+    // TODO hoannk: Remove this after testing, fake user removed event
+    Future.delayed(const Duration(minutes: 3), () {
+      if (!isClosed) {
+        add(
+          AddMessageEvent(
+            message: MessageEntity(
+              id: 'msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}',
+              groupId: groupId,
+              user: UserSummary(id: '1', name: 'Admin', avatar: ''),
+              createdAt: DateTime.now(),
+              content: SystemMessageContent(
+                systemType: SystemMessageType.userRemoved,
+                message: 'Admin removed you from the group.',
+              ),
+              status: MessageStatus.sent,
+            ),
+          ),
+        );
+      }
+    });
   }
 
-  final FetchMessagesWorkspaceUseCase _fetchMessageUseCase;
-  final GetPinnedMessageSummaryWorkspaceUseCase
-  _getPinnedMessageSummaryWorkspaceUseCase;
+  late final int groupId;
+  final GetProfileInfoUseCase _getProfileInfoUseCase;
+  final FetchMessagesInGroupUseCase _fetchMessageUseCase;
+  final GetPinnedMessageSummaryGroupUseCase
+  _getPinnedMessageSummaryGroupUseCase;
   final SendMessageUseCase _sendMessageUseCase;
-  final FetchMemberInWorkspaceUseCase _fetchMemberInWorkspaceUseCase;
-  final SearchMemberInWorkspaceUseCase _searchMemberInWorkspaceUseCase;
+  final FetchMemberInGroupUseCase _fetchMemberInGroupUseCase;
+  final SearchMemberInGroupUseCase _searchMemberInGroupUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
   final PinMessageUseCase _pinMessageUseCase;
+  final DeleteMessageForEveryoneUseCase _deleteMessageForEveryoneUseCase;
+  final DeleteMessageForYouUseCase _deleteMessageForYouUseCase;
+  final DeleteConversationUseCase _deleteConversationUseCase;
+
   final MediaManager _mediaManager;
   final FileManager _fileManager;
   final RamCache _ramCache;
+
   StreamSubscription<MessageEntity>? _messageSubscription;
   StreamSubscription<String>? _tagQuerySubscription;
   StreamSubscription<bool>? _showTagOverlaySubscription;
 
-  late int workspaceId;
-
-  final String _userId = '1';
   final int _limit = 20;
   final TagUserTextEditingController _textEditingController =
       TagUserTextEditingController();
 
-  String get userId => _userId;
+  String? get userId => state.profile?.id;
 
   TagUserTextEditingController get textEditingController =>
       _textEditingController;
 
-  List<TextSegment> detectLinkTextSegment(String text) {
-    final regex = RegExp(r'https?://\S+');
-    final match = regex.allMatches(text);
-    if (match.isEmpty) {
-      return [];
-    }
-
-    return match
-        .map(
-          (e) => TextSegment(
-            type: TextSegmentType.link,
-            start: e.start,
-            end: e.end,
-            extra: e.group(0)!,
-          ),
-        )
-        .toList();
-  }
-
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
+    handleSubEvent<LoadMoreChatMessagesEvent>(
+      _onLoadMoreMessages,
+      // bỏ qua bất kỳ sự kiện nào được thêm vào trong khi sự kiện đang được xử lý
+      transformer: droppable(),
+    );
+    handleSubEvent<JumpToMessageEvent>(
+      _onJumpToMessage,
+      // chỉ xử lý sự kiện mới nhất và hủy bỏ trình xử lý sự kiện trước đó
+      transformer: restartable(),
+    );
     handleSubEvent<CloseReplyMessageEvent>(_onCloseReplyMessage);
+    handleSubEvent<ReplyToMessageEvent>(_onReplyToMessage);
     handleSubEvent<ToggleShowScrollToBottomIcon>(
       _onToggleShowScrollToBottomIcon,
     );
-    handleSubEvent<ReplyToMessageEvent>(_onReplyToMessage);
+    handleSubEvent<ResetScrollToBottomEvent>(_onResetScrollToBottom);
     handleSubEvent<SendMessageEvent>(_onSendMessage);
-    handleSubEvent<ResetScrollToBottomEvent>(_onDisableIsNeedScrollToBottom);
     handleSubEvent<AddMessageEvent>(
       _onAddMessage,
-      // Ensures that each event of the same type is processed before the next event of the same type begins.
+      // xử lý các sự kiện theo trình tự
       transformer: sequential(),
     );
-    handleSubEvent<UpdateHasOptionsEvent>(_onUpdateHasOptions);
-    handleSubEvent<UpdateHasSendButtonEvent>(_onUpdateHasSendButton);
-    handleSubEvent<FetchMembersEvent>(_onFetchMembers);
+    handleSubEvent<ToggleHasOptionsEvent>(_onToggleHasOptions);
+    handleSubEvent<ToggleHasSendButtonEvent>(_onToggleHasSendButton);
+    handleSubEvent<ToggleShowTagOverlayEvent>(_onToggleShowTagOverlay);
     handleSubEvent<SearchMembersEvent>(_onSearchMembers);
-    handleSubEvent<JumpToMessageEvent>(_onJumpToMessage);
-    handleSubEvent<ResetJumpToMessageEvent>(_onResetJumpToMessage);
-    handleSubEvent<ShowTimeEvent>(_onShowTime);
-    handleSubEvent<DisableShowTimeEvent>(_onDisableShowTime);
+    handleSubEvent<ToggleShowTimeEvent>(_onShowTime);
     handleSubEvent<GetPinnedMessageSummaryEvent>(_onGetPinnedMessageSummary);
-    handleSubEvent<LoadMoreChatMessagesEvent>(
-      _onLoadMoreMessages,
-      // droppable to ensure that only one load more request is processed at a time
-      transformer: droppable(),
+
+    handleSubEvent<TogglePinMessageFromDetailEvent>(
+      _onTogglePinMessageFromDetail,
     );
-    handleSubEvent<UnpinMessageFromDetailEvent>(_onUnpinMessage);
-    handleSubEvent<PinMessageFromDetailEvent>(_onPinMessage);
-    handleSubEvent<ResetPinStatusSuccessEvent>(_onResetPinStatusSuccess);
-    handleSubEvent<UpdateShowTagOverlayEvent>(_onUpdateShowTagOverlay);
+    handleSubEvent<DeleteMessageForEveryoneEvent>(_onDeleteMessageForEveryone);
+    handleSubEvent<DeleteMessageForYouEvent>(_onDeleteMessageForYou);
+    handleSubEvent<DeleteConversationEvent>(_onDeleteConversation);
   }
 
   void _initializeListener() {
     // Listen to message stream
     _messageSubscription = _ramCache.getMessageStream().listen(
       (message) {
-        if (message.workspaceId != workspaceId) return;
+        if (message.groupId != groupId) return;
         add(AddMessageEvent(message: message));
-        if (message.sender.id == userId) {
-          add(JumpToMessageEvent(messageId: message.id));
-        }
       },
       onError: (_) {
         // TODO hoank: Handle this case.
@@ -149,7 +167,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     _showTagOverlaySubscription = _textEditingController.showTagOverlay.listen((
       show,
     ) {
-      add(UpdateShowTagOverlayEvent(showTagOverlay: show));
+      add(ToggleShowTagOverlayEvent(showTagOverlay: show));
     });
 
     _tagQuerySubscription = _textEditingController.tagQuery.listen((query) {
@@ -160,14 +178,20 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     _textEditingController.addListener(_onTextChanged);
   }
 
+  Timer? _sendButtonDebounceTimer;
+
   void _onTextChanged() {
     final input = _textEditingController.text;
 
-    if (state.hasSendButton && input.isEmpty) {
-      add(UpdateHasSendButtonEvent(hasSendButton: false));
-    } else if (!state.hasSendButton && input.isNotEmpty) {
-      add(UpdateHasSendButtonEvent(hasSendButton: true));
-    }
+    _sendButtonDebounceTimer?.cancel();
+    // Debounce prevent change send button state when text edit controller executing
+    _sendButtonDebounceTimer = Timer(const Duration(milliseconds: 100), () {
+      if (state.showSendButton && input.isEmpty) {
+        add(ToggleHasSendButtonEvent(showSendButton: false));
+      } else if (!state.showSendButton && input.isNotEmpty) {
+        add(ToggleHasSendButtonEvent(showSendButton: true));
+      }
+    });
   }
 
   Future<void> _onLoadData(
@@ -176,34 +200,40 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   ) async {
     emit(state.copyWith(pageStatus: PageStatus.loading));
 
-    final result = await _fetchMessageUseCase.call(
-      FetchMessagesWorkspaceParams(workspaceId: workspaceId, limit: _limit),
+    final profile = await _getProfileInfoUseCase.call();
+
+    final messagesResult = await _fetchMessageUseCase.call(
+      FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
     );
 
-    final messages = result.data;
+    final messages = messagesResult;
     final pagingStatus = messages.isEmpty
         ? PagingStatus.empty
-        : (result.totalRecords <= _limit
+        : (messages.length < _limit
               ? PagingStatus.noMoreData
               : PagingStatus.loadCompleted);
 
     final pinnedMessageSummaryResult =
-        await _getPinnedMessageSummaryWorkspaceUseCase.call(
-          GetPinnedMessageSummaryWorkspaceParams(workspaceId: workspaceId),
+        await _getPinnedMessageSummaryGroupUseCase.call(
+          GetPinnedMessageSummaryGroupParams(groupId: groupId),
         );
 
-    final pinnedMessageSummary = PinnedMessageSummaryMapper.fromMessageEntity(
-      pinnedMessageSummaryResult,
+    final pinnedMessageSummary = pinnedMessageSummaryResult.toUIModel();
+
+    final users = await _fetchMemberInGroupUseCase.call(
+      FetchMemberInGroupParams(groupId: groupId),
     );
 
     emit(
       state.copyWith(
-        isInitialized: true,
+        profile: profile,
         pageStatus: PageStatus.loaded,
         chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
-        chatMessagesPagingStatus: pagingStatus,
+        pagingStatus: pagingStatus,
         pinnedMessageSummary: pinnedMessageSummary,
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
+        users: users,
+        usersSearch: users,
       ),
     );
   }
@@ -212,12 +242,16 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     LoadMoreChatMessagesEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    if (!state.needLoadMoreOldMessages) return;
-    emit(state.copyWith(chatMessagesPagingStatus: PagingStatus.loading));
+    if (state.pagingStatus == PagingStatus.noMoreData ||
+        state.pagingStatus == PagingStatus.empty) {
+      return;
+    }
 
-    final result = await _fetchMessageUseCase.call(
-      FetchMessagesWorkspaceParams(
-        workspaceId: workspaceId,
+    emit(state.copyWith(pagingStatus: PagingStatus.loading));
+
+    final messages = await _fetchMessageUseCase.call(
+      FetchMessagesInGroupParams(
+        groupId: groupId,
         limit: _limit,
         oldestMessageId: state.chatMessages.first.message.id,
       ),
@@ -226,17 +260,16 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    final messages = result.data;
-    final pagingStatus = messages.isEmpty
-        ? PagingStatus.noMoreData
-        : PagingStatus.loadCompleted;
+    if (messages.isEmpty || messages.length < _limit) {
+      return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+    }
 
     final updatedMessages = _addMessageList(leadingMessageList: messages);
 
     emit(
       state.copyWith(
         chatMessages: updatedMessages,
-        chatMessagesPagingStatus: pagingStatus,
+        pagingStatus: PagingStatus.loadCompleted,
         // Giữ vị trí là ví trị của message cuối cùng của list vừa được thêm để
         // tạo thêm cảm giác được scroll tiếp cho load more kế tiếp
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
@@ -271,25 +304,61 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     SendMessageEvent event,
     Emitter<WSDetailState> emit,
   ) async {
+    final userId = this.userId;
+    if (userId == null) return;
     final reply = state.messageReply;
 
     add(CloseReplyMessageEvent());
 
     dynamic content;
     if (event.type == SendMessageType.text) {
-      final tagTextSegments = _textEditingController.tagTextSegments;
-      final linkTextSegments = detectLinkTextSegment(
-        _textEditingController.text,
-      );
-      final textSegments = [...tagTextSegments, ...linkTextSegments];
-      content = TextMessageContent(
-        text: _textEditingController.text,
-        textSegments: textSegments,
-      );
+      // final text = _textEditingController.text;
+      // final tagTextSegments = _textEditingController.tagTextSegments;
+      // final linkTextSegments = detectLinkTextSegment(text);
+      // final textSegments = [...tagTextSegments, ...linkTextSegments];
+      // content = TextMessageContent(text: text, textSegments: textSegments);
+
+      // TODO: Demo search
+      final text =
+          '''Hôm nay @minh đi dạo quanh Hồ Gươm cùng @anh và @minhchoco. 
+Cậu ấy bảo: “Tôi cho bạn xem link này: https://flutter.dev và https://dart.dev 
+rất hay, mình cho thêm ví dụ trong https://example.com/cho.” 
+Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập trình. 
+Đặc biệt, mình cho đi nhiều kinh nghiệm quý giá, cho tới tận khuya mới về. 
+''';
+
+      final textSegments = [
+        TextSegment(type: TextSegmentType.tag, start: 8, end: 13), // @minh
+        TextSegment(type: TextSegmentType.tag, start: 40, end: 44), // @anh
+        TextSegment(
+          type: TextSegmentType.tag,
+          start: 48,
+          end: 58,
+        ), // @minhchoco
+        TextSegment(
+          type: TextSegmentType.link,
+          start: 100,
+          end: 119,
+        ), // https://flutter.dev
+        TextSegment(
+          type: TextSegmentType.link,
+          start: 123,
+          end: 139,
+        ), // https://dart.dev
+        TextSegment(
+          type: TextSegmentType.link,
+          start: 176,
+          end: 199,
+        ), // https://example.com/cho
+      ];
+
+      content = TextMessageContent(text: text, textSegments: textSegments);
+      // Clear text editing controller
+      _textEditingController.clear();
     } else if (event.type == SendMessageType.file) {
-      final result = await _fileManager.pickFiles();
+      final result = await _fileManager.pickFile();
       if (result == null) return;
-      final file = result.first;
+      final file = result;
 
       content = FileMessageContent(
         fileUrl: '',
@@ -321,18 +390,18 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     await _sendMessageUseCase.call(
       SendMessageParams(
         userId: userId,
-        workspaceId: workspaceId,
+        groupId: groupId,
         replyMessageId: reply?.id,
         content: content,
       ),
     );
   }
 
-  Future<void> _onDisableIsNeedScrollToBottom(
+  Future<void> _onResetScrollToBottom(
     ResetScrollToBottomEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    emit(state.copyWith(scrollToBottom: false));
+    emit(state.copyWith(scrollToBottom: false, showScrollToBottomIcon: false));
   }
 
   Future<void> _onAddMessage(
@@ -340,45 +409,50 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     final message = event.message;
+    final messageContent = message.content;
+
+    if (messageContent is SystemMessageContent) {
+      final systemMessageContent = messageContent;
+      if (systemMessageContent.systemType == SystemMessageType.userRemoved) {
+        emit(
+          state.copyWith(
+            groupMemberStatus: GroupMemberStatus.removed,
+            chatMessages: _mapMessagesToUIModels([message]),
+          ),
+        );
+        return;
+      }
+    }
+
     final uiModel = message.toUIModel(
       previousMessage: state.chatMessages.isNotEmpty
           ? state.chatMessages.last.message
           : null,
-      nextMessage: null,
     );
     final chatMessages = [...state.chatMessages, uiModel];
     final messageIndex = chatMessages.length - 1;
     final updatedListUiModel = _updateUIModel(chatMessages, messageIndex);
 
-    emit(state.copyWith(chatMessages: updatedListUiModel));
-  }
-
-  Future<void> _onUpdateHasOptions(
-    UpdateHasOptionsEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    emit(state.copyWith(hasOptions: event.hasOptions));
-  }
-
-  Future<void> _onUpdateHasSendButton(
-    UpdateHasSendButtonEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    emit(state.copyWith(hasSendButton: event.hasSendButton));
-  }
-
-  Future<void> _onFetchMembers(
-    FetchMembersEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    final users = await _fetchMemberInWorkspaceUseCase.call(
-      FetchMemberInWorkspaceParams(
-        workspaceId: workspaceId,
-        limit: _limit,
-        offset: 0,
+    emit(
+      state.copyWith(
+        chatMessages: updatedListUiModel,
+        scrollToBottom: message.user.id == userId,
       ),
     );
-    emit(state.copyWith(users: users));
+  }
+
+  Future<void> _onToggleHasOptions(
+    ToggleHasOptionsEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(showOptions: event.showOptions));
+  }
+
+  Future<void> _onToggleHasSendButton(
+    ToggleHasSendButtonEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(showSendButton: event.showSendButton));
   }
 
   Future<void> _onSearchMembers(
@@ -386,31 +460,32 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     if (event.query.isEmpty) {
-      emit(state.copyWith(users: []));
+      emit(state.copyWith(usersSearch: []));
       return;
     }
-    final users = await _searchMemberInWorkspaceUseCase.call(
-      SearchMemberInWorkspaceParams(
-        workspaceId: workspaceId,
-        query: event.query,
-      ),
+    final users = await _searchMemberInGroupUseCase.call(
+      SearchMemberInGroupParams(groupId: groupId, query: event.query),
     );
-    emit(state.copyWith(users: users));
+    emit(state.copyWith(usersSearch: users));
   }
 
   Future<void> _onJumpToMessage(
     JumpToMessageEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    final messageIndex = state.chatMessages.indexWhere(
+    final messageId = event.messageId;
+    final hasMessage = state.chatMessages.any(
       (uiModel) => uiModel.message.id == event.messageId,
     );
-    if (messageIndex == -1 && state.needLoadMoreOldMessages) {
-      emit(state.copyWith(chatMessagesPagingStatus: PagingStatus.loading));
+
+    if (!hasMessage &&
+        (state.pagingStatus != PagingStatus.noMoreData ||
+            state.pagingStatus != PagingStatus.empty)) {
+      emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
       final result = await _fetchMessageUseCase.call(
-        FetchMessagesWorkspaceParams(
-          workspaceId: workspaceId,
+        FetchMessagesInGroupParams(
+          groupId: groupId,
           limit: _limit,
           oldestMessageId: state.chatMessages.first.message.id,
           targetMessageId: event.messageId,
@@ -420,155 +495,126 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       // TODO hoannk: Remove delay
       await Future.delayed(const Duration(seconds: 2));
 
-      final messages = result.data;
-      final pagingStatus = messages.isEmpty || result.data.length == _limit
+      final messages = result;
+      final pagingStatus = messages.isEmpty || messages.length < _limit
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
       final updatedMessages = _addMessageList(leadingMessageList: messages);
 
-      final jumpToMessageIndex = updatedMessages.indexWhere(
+      final hasMessage = updatedMessages.any(
         (uiModel) => uiModel.message.id == event.messageId,
       );
 
-      if (jumpToMessageIndex != -1) {
+      if (hasMessage) {
         emit(
           state.copyWith(
             chatMessages: updatedMessages,
-            chatMessagesPagingStatus: pagingStatus,
-            jumpToMessageIndex: jumpToMessageIndex,
+            pagingStatus: pagingStatus,
+            jumpToMessageId: messageId,
           ),
         );
       } else {
         emit(
           state.copyWith(
             chatMessages: updatedMessages,
-            chatMessagesPagingStatus: pagingStatus,
+            pagingStatus: pagingStatus,
           ),
         );
       }
-    } else {
-      emit(state.copyWith(jumpToMessageIndex: messageIndex));
+    } else if (hasMessage) {
+      emit(state.copyWith(jumpToMessageId: messageId));
     }
   }
 
-  Future<void> _onResetJumpToMessage(
-    ResetJumpToMessageEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    emit(state.copyWith(forceCloseJumpToMessage: true));
-  }
-
   Future<void> _onShowTime(
-    ShowTimeEvent event,
+    ToggleShowTimeEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    final messageIndex = state.chatMessages.indexWhere(
+    final uiModelIndex = state.chatMessages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
-    if (messageIndex == -1) return;
-    final updatedMessages = _updateUIModel(
-      state.chatMessages,
-      messageIndex,
-      forceShowTime: true,
-    );
-    emit(
-      state.copyWith(
-        chatMessages: updatedMessages,
-        showTimeMessageId: event.messageId,
-      ),
-    );
+    if (uiModelIndex < 0) return;
+    final uiModel = state.chatMessages[uiModelIndex];
+    if (uiModel.message.content.isText && !uiModel.showTime) {
+      if (!uiModel.shouldShowTime) {
+        final updatedMessages = _updateUIModel(
+          state.chatMessages,
+          uiModelIndex,
+          forceShowTime: true,
+        );
+        emit(
+          state.copyWith(
+            chatMessages: updatedMessages,
+            showTimeMessageId: event.messageId,
+          ),
+        );
+      } else if (uiModel.shouldShowTime) {
+        final updatedMessages = _updateUIModel(
+          state.chatMessages,
+          uiModelIndex,
+          forceShowTime: false,
+        );
+        emit(
+          state.copyWith(
+            chatMessages: updatedMessages,
+            forceDisableShowTime: true,
+          ),
+        );
+      }
+    }
   }
 
-  Future<void> _onDisableShowTime(
-    DisableShowTimeEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    final messageIndex = state.chatMessages.indexWhere(
-      (uiModel) => uiModel.message.id == state.showTimeMessageId,
-    );
-    if (messageIndex == -1) return;
-    final updatedMessages = _updateUIModel(
-      state.chatMessages,
-      messageIndex,
-      forceShowTime: false,
-    );
-    emit(
-      state.copyWith(chatMessages: updatedMessages, forceDisableShowTime: true),
-    );
-  }
-
-  Future<void> _onUnpinMessage(
-    UnpinMessageFromDetailEvent event,
+  Future<void> _onTogglePinMessageFromDetail(
+    TogglePinMessageFromDetailEvent event,
     Emitter<WSDetailState> emit,
   ) async {
     emit(state.copyWith(processing: true));
-    final messageIndex = state.chatMessages.indexWhere(
+    final messages = List<ChatMessageUIModel>.from(state.chatMessages);
+
+    final uiModelIndex = messages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
-    if (messageIndex == -1) return;
 
-    await _unpinMessageUseCase.call(
-      UnpinMessageParams(messageId: event.messageId),
-    );
+    if (uiModelIndex >= 0) {
+      emit(state.copyWith(processing: false));
+      return;
+    }
+
+    final currentMessage = messages[uiModelIndex];
+
+    final isPinned = currentMessage.message.isPinned;
+
+    if (isPinned) {
+      await _unpinMessageUseCase.call(
+        UnpinMessageParams(messageId: event.messageId),
+      );
+    } else {
+      await _pinMessageUseCase.call(
+        PinMessageParams(messageId: event.messageId),
+      );
+    }
+
+    add(GetPinnedMessageSummaryEvent());
+
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    final messages = List<ChatMessageUIModel>.from(state.chatMessages);
-    final currentMessage = messages[messageIndex];
-    messages[messageIndex] = currentMessage.copyWith(
-      message: currentMessage.message.copyWith(isPinned: false),
+    messages[uiModelIndex] = currentMessage.copyWith(
+      message: currentMessage.message.copyWith(isPinned: !isPinned),
     );
 
-    emit(
-      state.copyWith(
-        chatMessages: messages,
-        isPinStatusSuccess: true,
-        processing: false,
-      ),
-    );
+    emit(state.copyWith(chatMessages: messages, processing: false));
   }
 
-  Future<void> _onResetPinStatusSuccess(
-    ResetPinStatusSuccessEvent event,
+  Future<void> _onToggleShowTagOverlay(
+    ToggleShowTagOverlayEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    emit(state.copyWith(isPinStatusSuccess: false));
-  }
-
-  Future<void> _onPinMessage(
-    PinMessageFromDetailEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    emit(state.copyWith(processing: true));
-    final messageIndex = state.chatMessages.indexWhere(
-      (uiModel) => uiModel.message.id == event.messageId,
-    );
-    if (messageIndex == -1) return;
-
-    await _pinMessageUseCase.call(PinMessageParams(messageId: event.messageId));
-    // TODO hoannk: Remove delay
-    await Future.delayed(const Duration(seconds: 2));
-
-    final messages = List<ChatMessageUIModel>.from(state.chatMessages);
-    final currentMessage = messages[messageIndex];
-    messages[messageIndex] = currentMessage.copyWith(
-      message: currentMessage.message.copyWith(isPinned: true),
-    );
-
-    emit(
-      state.copyWith(
-        chatMessages: messages,
-        isPinStatusSuccess: true,
-        processing: false,
-      ),
-    );
-  }
-
-  Future<void> _onUpdateShowTagOverlay(
-    UpdateShowTagOverlayEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
+    // Reset lits when disable tag overlay
+    if (!event.showTagOverlay) {
+      emit(state.copyWith(usersSearch: state.users));
+    }
     emit(state.copyWith(showTagOverlay: event.showTagOverlay));
   }
 
@@ -576,14 +622,72 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     GetPinnedMessageSummaryEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    final pinnedMessageSummary = await _getPinnedMessageSummaryWorkspaceUseCase
-        .call(GetPinnedMessageSummaryWorkspaceParams(workspaceId: workspaceId));
+    final pinnedMessageSummary = await _getPinnedMessageSummaryGroupUseCase
+        .call(GetPinnedMessageSummaryGroupParams(groupId: groupId));
 
-    final uiModel = PinnedMessageSummaryMapper.fromMessageEntity(
-      pinnedMessageSummary,
-    );
+    final uiModel = pinnedMessageSummary.toUIModel();
 
     emit(state.copyWith(pinnedMessageSummary: uiModel));
+  }
+
+  Future<void> _onDeleteMessageForEveryone(
+    DeleteMessageForEveryoneEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+
+    try {
+      await _deleteMessageForEveryoneUseCase.call(
+        DeleteMessageForEveryoneParams(messageId: event.messageId),
+      );
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      final updatedMessages = _deleteMessage(
+        state.chatMessages,
+        event.messageId,
+      );
+
+      emit(state.copyWith(chatMessages: updatedMessages, processing: false));
+    } catch (e) {
+      emit(state.copyWith(processing: false));
+    }
+  }
+
+  Future<void> _onDeleteMessageForYou(
+    DeleteMessageForYouEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+
+    try {
+      await _deleteMessageForYouUseCase.call(
+        DeleteMessageForYouParams(messageId: event.messageId),
+      );
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      final updatedMessages = _deleteMessage(
+        state.chatMessages,
+        event.messageId,
+      );
+
+      emit(state.copyWith(chatMessages: updatedMessages, processing: false));
+    } catch (e) {
+      emit(state.copyWith(processing: false));
+    }
+  }
+
+  Future<void> _onDeleteConversation(
+    DeleteConversationEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(processing: true));
+    await _deleteConversationUseCase.call(
+      DeleteConversationParams(groupId: groupId),
+    );
+    await Future.delayed(const Duration(seconds: 2));
+    emit(state.copyWith(processing: false, isDeletedConversationSuccess: true));
   }
 
   // Functions
@@ -615,7 +719,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     updatedMessages[messageIndex] = currentMessage;
 
     // Xử lý previous message và next message
-    // với mỗi previous message và next message, cần check lại cả previous của previous message, next message cần check lại cả next của next message
+    // với mỗi previous message và next message, cần check lại cả previous của
+    // previous message, next message cần check lại cả next của next message
 
     final previousMessage = messageIndex > 0
         ? updatedMessages[messageIndex - 1]
@@ -634,7 +739,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           shouldShowAvatar,
           shouldShowUserName,
           isContinuation,
-        ) = ChatMessageHelper.updateUIModel(
+        ) = ChatMessageUiModelHelper.updateUIModel(
           currentMessage: previousMessage,
           previousMessage: previousPreviousMessage,
           nextMessage: currentMessage,
@@ -658,7 +763,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           shouldShowAvatar,
           shouldShowUserName,
           isContinuation,
-        ) = ChatMessageHelper.updateUIModel(
+        ) = ChatMessageUiModelHelper.updateUIModel(
           currentMessage: nextMessage,
           previousMessage: currentMessage,
           nextMessage: nextNextMessage,
@@ -709,11 +814,52 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     return updatedMessages;
   }
 
+  List<ChatMessageUIModel> _deleteMessage(
+    List<ChatMessageUIModel> chatMessages,
+    String messageId,
+  ) {
+    final uiModelIndex = chatMessages.indexWhere(
+      (uiModel) => uiModel.message.id == messageId,
+    );
+    var updatedMessages = List<ChatMessageUIModel>.from(chatMessages);
+    if (uiModelIndex >= 0) {
+      updatedMessages.removeAt(uiModelIndex);
+      // Cập nhật message trước của message vừa xoá
+      if (uiModelIndex > 0) {
+        updatedMessages = _updateUIModel(updatedMessages, uiModelIndex - 1);
+      }
+      // Cập nhật message sau của message vừa xoá
+      if (uiModelIndex < updatedMessages.length - 1) {
+        updatedMessages = _updateUIModel(updatedMessages, uiModelIndex + 1);
+      }
+    }
+    return updatedMessages;
+  }
+
+  List<TextSegment> detectLinkTextSegment(String text) {
+    final regex = RegExp(r'https?://\S+');
+    final match = regex.allMatches(text);
+    if (match.isEmpty) {
+      return [];
+    }
+
+    return match
+        .map(
+          (e) => TextSegment(
+            type: TextSegmentType.link,
+            start: e.start,
+            end: e.end,
+          ),
+        )
+        .toList();
+  }
+
   @override
   Future<void> close() {
     _messageSubscription?.cancel();
     _tagQuerySubscription?.cancel();
     _showTagOverlaySubscription?.cancel();
+    _sendButtonDebounceTimer?.cancel();
     _textEditingController.removeListener(_onTextChanged);
     return super.close();
   }

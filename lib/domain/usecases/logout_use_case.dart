@@ -10,7 +10,7 @@ class LogoutUseCase extends UseCase<void, void> {
   final AuthRepository _authRepository;
 
   @override
-  Future call(void param) async {
+  Future call([void param]) async {
     return await _authRepository.logout();
   }
 }

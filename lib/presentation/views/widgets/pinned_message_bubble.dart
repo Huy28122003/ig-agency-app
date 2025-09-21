@@ -37,7 +37,7 @@ class PinnedMessageBubble extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 12,
         children: [
-          CircleNetworkAvatar(imageUrl: message.senderAvatarUrl, size: 24),
+          CircleNetworkAvatar(imageUrl: message.userAvatar, size: 24),
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -53,7 +53,7 @@ class PinnedMessageBubble extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          message.senderName,
+                          message.userName,
                           style: TextStyle(
                             color: AppColors.textDefaultTextSub2,
                             fontSize: 14,
@@ -102,58 +102,49 @@ class PinnedMessageBubble extends StatelessWidget {
               ],
             ),
           ),
-          if (hasArrow) Assets.icons.icArrowRightThin.svg(width: 24, height: 24),
+          if (hasArrow)
+            Assets.icons.icArrowRightThin.svg(width: 24, height: 24),
         ],
       ),
     );
   }
 
   Widget _buildPinnedMessageContent() {
-    if (message.isText) {
-      final textStyle = const TextStyle(
-        color: AppColors.textDefaultTextDefault,
-        fontSize: 16,
-        fontFamily: FontFamily.segoeUI,
-        fontWeight: FontWeight.w400,
-        height: 1.50,
-      );
+    final content = message.content;
+    switch (content) {
+      case TextMessageContent _:
+        final textStyle = const TextStyle(
+          color: AppColors.textDefaultTextDefault,
+          fontSize: 16,
+          fontFamily: FontFamily.segoeUI,
+          fontWeight: FontWeight.w400,
+          height: 1.50,
+        );
 
-      final (textSpans, hostName, _) = TextMessageDisplayUtil.parseTextContent(
-        message.content,
-        textStyle,
-      );
-      return _PinnedMessageText(textSpans: textSpans, hostName: hostName);
+        final (textSpans, hostName, _) =
+            TextMessageDisplayUtil.parseTextContent(content, textStyle);
+        return _PinnedMessageText(textSpans: textSpans, hostName: hostName);
+      case ImageMessageContent _:
+        return _PinnedMessageImage(
+          imageUrl: content.imageUrl,
+          width: content.width,
+          height: content.height,
+        );
+      case VideoMessageContent _:
+        return _PinnedMessageVideo(
+          imageUrl: content.thumbnailUrl ?? '',
+          width: content.width,
+          height: content.height,
+          duration: content.duration,
+        );
+      case FileMessageContent _:
+        return _PinnedMessageFile(
+          fileFullName: '${content.fileName}.${content.fileExtension}',
+          fileSize: content.fileSize,
+        );
+      default:
+        return SizedBox.shrink();
     }
-
-    if (message.isImage) {
-      final imageContent = message.content as ImageMessageContent;
-      return _PinnedMessageImage(
-        imageUrl: imageContent.imageUrl,
-        width: imageContent.width,
-        height: imageContent.height,
-      );
-    }
-
-    if (message.isVideo) {
-      final videoContent = message.content as VideoMessageContent;
-      return _PinnedMessageVideo(
-        imageUrl: videoContent.thumbnailUrl ?? '',
-        width: videoContent.width,
-        height: videoContent.height,
-        duration: videoContent.duration,
-      );
-    }
-
-    if (message.isFile) {
-      final fileContent = message.content as FileMessageContent;
-
-      return _PinnedMessageFile(
-        fileFullName: '${fileContent.fileName}.${fileContent.fileExtension}',
-        fileSize: fileContent.fileSize,
-      );
-    }
-
-    return SizedBox.shrink();
   }
 }
 

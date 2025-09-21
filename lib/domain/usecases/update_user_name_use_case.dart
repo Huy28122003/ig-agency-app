@@ -11,7 +11,7 @@ class UpdateUserNameUseCase extends UseCase<void, UpdateUserNameParam> {
 
   @override
   Future call(UpdateUserNameParam param) async {
-    return await _userRepository.updateUserName(param.name);
+    return await _userRepository.updateUsername(param.name);
   }
 }
 
