@@ -39,7 +39,7 @@ abstract class MessageRepository {
   Future<List<MessageEntity>> searchMessageInWorkspace({
     required int workspaceId,
     required String searchMessage,
-    required int limit,
-    required int offset,
+    int? limit,
+    int? offset,
   });
 }

@@ -32,7 +32,7 @@ class MessageResultTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleNetworkAvatar(
-                  imageUrl: message.sender.avatarUrl,
+                  imageUrl: message.user.avatar,
                   isGroupAvt: true,
                 ),
                 const SizedBox(width: 8),
@@ -47,7 +47,7 @@ class MessageResultTile extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  message.sender.name,
+                                  message.user.avatar,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18,

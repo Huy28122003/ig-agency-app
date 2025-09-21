@@ -24,6 +24,11 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.groupSearchStatus = GroupSearchStatus.idle,
     this.isDeletedConversationSuccess = false,
     this.profile,
+    this.isSearchMode = false,
+    this.indexSearchMessage = 0,
+    this.totalSearchMessage = 0,
+    this.searchKeyword = "",
+    this.messageSearchResults = const [],
   });
 
   final List<ChatMessageUIModel> chatMessages;
@@ -45,6 +50,11 @@ class WSDetailState extends BaseState<WSDetailState> {
   final GroupSearchStatus groupSearchStatus;
   final bool isDeletedConversationSuccess;
   final ProfileInfoEntity? profile;
+  final bool isSearchMode;
+  final int indexSearchMessage;
+  final int totalSearchMessage;
+  final String searchKeyword;
+  final List<MessageEntity> messageSearchResults;
 
   bool get needLoadMoreOldMessages =>
       pagingStatus != PagingStatus.empty &&
@@ -63,6 +73,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? showScrollToBottomIcon,
     bool? showOptions,
     bool? showSendButton,
+    bool? isSearchMode,
     List<UserEntity>? users,
     List<UserEntity>? usersSearch,
     PagingStatus? pagingStatus,
@@ -71,11 +82,15 @@ class WSDetailState extends BaseState<WSDetailState> {
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
     int? initIndex,
+    int? totalSearchMessage,
+    int? indexSearchMessage,
     bool? showTagOverlay,
     GroupMemberStatus? groupMemberStatus,
     GroupSearchStatus? groupSearchStatus,
     bool? isDeletedConversationSuccess,
     ProfileInfoEntity? profile,
+    String? searchKeyword,
+    List<MessageEntity>? messageSearchResults,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -105,6 +120,11 @@ class WSDetailState extends BaseState<WSDetailState> {
       isDeletedConversationSuccess:
           isDeletedConversationSuccess ?? this.isDeletedConversationSuccess,
       profile: profile ?? this.profile,
+      isSearchMode: isSearchMode ?? this.isSearchMode,
+      indexSearchMessage: indexSearchMessage ?? this.indexSearchMessage,
+      totalSearchMessage: totalSearchMessage ?? this.totalSearchMessage,
+      searchKeyword: searchKeyword ?? this.searchKeyword,
+      messageSearchResults: messageSearchResults ?? this.messageSearchResults,
     );
   }
 
@@ -129,5 +149,10 @@ class WSDetailState extends BaseState<WSDetailState> {
     groupMemberStatus,
     isDeletedConversationSuccess,
     profile,
+    isSearchMode,
+    totalSearchMessage,
+    indexSearchMessage,
+    searchKeyword,
+    messageSearchResults,
   ];
 }

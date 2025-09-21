@@ -72,5 +72,12 @@
   "media_detail": {
     "forward": "Chuyển tiếp",
     "copy": "Sao chép"
+  },
+  "search": {
+    "search": "Tìm kiếm",
+    "group": "Nhóm",
+    "message": "Tin nhắn",
+    "search_in_conversation": "Tìm kiếm trong cuộc trò chuyện",
+    "show_as_list": "Hiển thị danh sách"
   }
 }

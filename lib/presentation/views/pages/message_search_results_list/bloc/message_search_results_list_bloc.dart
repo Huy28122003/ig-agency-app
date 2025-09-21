@@ -17,6 +17,7 @@ class MessageSearchResultsListBloc
         BaseBloc<MessageSearchResultsListEvent, MessageSearchResultsListState> {
   late final String searchMessage;
   late final int workspaceId;
+  late final List<int> messageIds;
   int _offset = 0;
   final int _limit = 15;
   late final String workspaceName;

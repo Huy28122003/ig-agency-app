@@ -169,14 +169,14 @@ class MessageRepositoryImpl implements MessageRepository {
   Future<List<MessageEntity>> searchMessageInWorkspace({
     required int workspaceId,
     required String searchMessage,
-    required int limit,
-    required int offset,
+     int? limit,
+     int? offset,
   }) async {
     try {
       await 500.milliseconds.delay;
       return MockData().mockMessages().sublist(
-        offset,
-        offset + limit > MockData().mockMessages().length
+        offset!,
+        offset + limit! > MockData().mockMessages().length
             ? MockData().mockMessages().length
             : (offset + limit),
       );

@@ -10,7 +10,9 @@
   "search": {
     "search": "Search",
     "group": "Group",
-    "message": "Message"
+    "message": "Message",
+    "search_in_conversation": "Search in conversation",
+    "show_as_list": "Show as list"
   },
   "workspace": {
     "workspace": "Workspace",

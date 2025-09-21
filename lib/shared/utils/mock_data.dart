@@ -9,8 +9,6 @@ import '../../domain/entities/group.dart';
 import '../../domain/entities/media_entity.dart';
 import '../../domain/entities/message/message_content.dart';
 import '../../domain/entities/message/message_entity.dart';
-import '../../domain/entities/message/message_reply.dart';
-import '../../domain/entities/message/message_sender.dart';
 import '../../domain/entities/search.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/user_entity.dart';
@@ -574,25 +572,24 @@ class MockData {
     final random = Random();
 
     final senders = [
-      const MessageSender(
+      UserSummary(
         id: "u1",
         name: "Alice",
-        avatarUrl: "https://i.pravatar.cc/100?img=1",
+        avatar: "https://i.pravatar.cc/100?img=1",
       ),
-      const MessageSender(
+      UserSummary(
         id: "u2",
         name: "Bob",
-        avatarUrl: "https://i.pravatar.cc/100?img=2",
+        avatar: "https://i.pravatar.cc/100?img=2",
       ),
-      const MessageSender(
+      UserSummary(
         id: "u3",
         name: "Charlie",
-        avatarUrl: "https://i.pravatar.cc/100?img=3",
+        avatar: "https://i.pravatar.cc/100?img=3",
       ),
     ];
 
     final statuses = MessageStatus.values;
-
     List<MessageEntity> messages = [];
 
     for (int i = 0; i < 30; i++) {
@@ -600,29 +597,26 @@ class MockData {
       final status = statuses[random.nextInt(statuses.length)];
       final createdAt = now.subtract(Duration(minutes: i * 5));
 
-      // 🔹 Chỉ tạo message text
-      final content = MessageContent.text(
+      // 🔹 Nội dung chỉ là text
+      final content = TextMessageContent(
         text: "This is text message $i from ${sender.name}",
       );
+
+      // 🔹 Nếu có reply thì tham chiếu lại message trước đó
+      MessageEntity? repliedMessage;
+      if (i % 7 == 0 && messages.isNotEmpty) {
+        repliedMessage = messages[random.nextInt(messages.length)];
+      }
 
       messages.add(
         MessageEntity(
           id: "msg_$i",
-          sender: sender,
+          user: sender,
           createdAt: createdAt,
-          type: MessageType.text,
           content: content,
           status: status,
-          groupName: "Test Group",
-          reply: (i % 7 == 0 && messages.isNotEmpty)
-              ? MessageReply(
-                  messageId: messages[random.nextInt(messages.length)].id,
-                  senderName: "ReplyUser",
-                  previewText: "This is a reply to msg_$i",
-                  originalMessageType: MessageType.text,
-                  senderId: '',
-                )
-              : null,
+          groupId: 1,
+          repliedMessage: repliedMessage,
           isPinned: i % 10 == 0,
           pinnedAt: i % 10 == 0 ? now.subtract(Duration(minutes: i * 2)) : null,
         ),

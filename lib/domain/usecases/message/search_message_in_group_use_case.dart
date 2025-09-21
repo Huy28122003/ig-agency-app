@@ -24,14 +24,14 @@ class SearchMessageInGroupUseCase
 
 class SearchMessageInGroupParams {
   final int workspaceId;
-  final int limit;
-  final int offset;
+  final int? limit;
+  final int? offset;
   final String searchMessage;
 
   SearchMessageInGroupParams({
     required this.workspaceId,
-    required this.limit,
+    this.limit,
     required this.searchMessage,
-    required this.offset,
+    this.offset,
   });
 }

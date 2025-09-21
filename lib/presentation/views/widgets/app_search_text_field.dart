@@ -185,7 +185,9 @@ class _AppSearchTextFieldState extends State<AppSearchTextField> {
           ),
         ),
         Positioned(
-          right: 0,
+          top: 0,
+          bottom: 0,
+          right: 16,
           child: AbsorbPointer(
             absorbing: false,
             child: GestureDetector(
@@ -203,22 +205,13 @@ class _AppSearchTextFieldState extends State<AppSearchTextField> {
               child: ValueListenableBuilder(
                 valueListenable: _isSearchEnable,
                 builder: (context, isEnable, _) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      right: 20,
-                      top: 16,
-                      bottom: 16,
-                      left: 12,
-                    ),
-                    child:
-                        widget.suffixIcon ??
-                        (isEnable
-                            ? Assets.icons.icCloseSize20.svg(
-                                height: 20,
-                                width: 20,
-                              )
-                            : Assets.icons.icSearch.svg(height: 20, width: 20)),
-                  );
+                  return widget.suffixIcon ??
+                  (isEnable
+                      ? Assets.icons.icCloseSize20.svg(
+                          height: 20,
+                          width: 20,
+                        )
+                      : Assets.icons.icSearch.svg(height: 20, width: 20));
                 },
               ),
             ),

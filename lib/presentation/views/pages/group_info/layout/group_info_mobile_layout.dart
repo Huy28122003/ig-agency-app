@@ -241,6 +241,21 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   title: "group_info.search_in_conversation".tr(),
+                  onTap: () {
+                    final workspace = context
+                        .read<GroupInfoBloc>()
+                        .state
+                        .workspace;
+                    if (workspace == null) return;
+                    context.router.push(
+                      WSDetailRoute(
+                        groupId: workspace.id,
+                        groupName: workspace.workspaceName,
+                        groupAvatar: workspace.workspaceAvatar,
+                        isSearchMode: true,
+                      ),
+                    );
+                  },
                 ),
                 GroupInfoItem(
                   icon: Assets.icons.icMembers.svg(
