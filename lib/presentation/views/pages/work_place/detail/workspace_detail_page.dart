@@ -17,7 +17,7 @@ class WSDetailPage
     required this.groupAvatar,
   });
 
-  final int groupId;
+  final String groupId;
   final String groupName;
   final String groupAvatar;
 

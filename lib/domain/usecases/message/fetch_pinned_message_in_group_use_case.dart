@@ -24,7 +24,7 @@ class FetchPinnedMessageInGroupUseCase
 }
 
 class FetchPinnedMessageInGroupParams {
-  final int groupId;
+  final String groupId;
   final int limit;
   final int offset;
 

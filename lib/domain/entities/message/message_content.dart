@@ -11,6 +11,7 @@ sealed class MessageContent {
   bool get isVideo => messageContentType == MessageContentType.video;
   bool get isFile => messageContentType == MessageContentType.file;
   bool get isSystem => messageContentType == MessageContentType.system;
+  bool get isSticker => messageContentType == MessageContentType.sticker;
   bool get isNotSystem => messageContentType != MessageContentType.system;
 }
 
@@ -73,4 +74,17 @@ class SystemMessageContent extends MessageContent {
   final String message;
   const SystemMessageContent({required this.systemType, required this.message})
     : super(messageContentType: MessageContentType.system);
+}
+
+class StickerMessageContent extends MessageContent {
+  final String stickerUrl;
+  final int? width;
+  final int? height;
+  final int? fileSize;
+  const StickerMessageContent({
+    required this.stickerUrl,
+    this.width,
+    this.height,
+    this.fileSize,
+  }) : super(messageContentType: MessageContentType.sticker);
 }

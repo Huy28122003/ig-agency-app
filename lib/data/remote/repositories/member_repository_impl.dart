@@ -10,13 +10,15 @@ class MemberRepositoryImpl implements MemberRepository {
   MemberRepositoryImpl(this._messageMockService);
 
   @override
-  Future<List<UserEntity>> fetchMembersInGroup({required int groupId}) async {
+  Future<List<UserEntity>> fetchMembersInGroup({
+    required String groupId,
+  }) async {
     return _messageMockService.mockGetMemberInGroup(groupId);
   }
 
   @override
   Future<List<UserEntity>> searchMembersInGroup({
-    required int groupId,
+    required String groupId,
     required String query,
   }) async {
     return _messageMockService.mockSearchMemberInGroup(groupId, query);

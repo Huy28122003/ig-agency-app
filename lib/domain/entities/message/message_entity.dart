@@ -22,7 +22,7 @@ class MessageEntity extends Equatable {
   final DateTime createdAt;
   final MessageContent content;
   final MessageStatus status;
-  final int? groupId;
+  final String? groupId;
   final MessageEntity? repliedMessage;
   final bool isPinned;
   final DateTime? pinnedAt;
@@ -35,7 +35,7 @@ class MessageEntity extends Equatable {
     DateTime? createdAt,
     MessageContent? content,
     MessageStatus? status,
-    int? groupId,
+    String? groupId,
     MessageEntity? repliedMessage,
     bool? isPinned,
     DateTime? pinnedAt,
