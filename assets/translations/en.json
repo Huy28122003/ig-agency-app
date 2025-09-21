@@ -133,5 +133,10 @@
     "blocked_user": "Blocked Users",
     "notification": "In App Alerts",
     "logout": "Logout"
+  },
+  "pinned_message_list": {
+    "title": "Pinned Messages",
+    "content": "No pinned messages",
+    "description": "Messages pinned from this chat\nwill appear here"
   }
 }

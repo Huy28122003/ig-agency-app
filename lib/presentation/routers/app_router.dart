@@ -22,6 +22,7 @@ import '../views/pages/members/members_page.dart';
 import '../views/pages/message_search_results_list/message_search_results_list_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
+import '../views/pages/pinned_message_list/pinned_message_list_page.dart';
 import '../views/pages/profile/profile_page.dart';
 import '../views/pages/edit_name/edit_name_page.dart';
 import '../views/pages/edit_bio/edit_bio_page.dart';
