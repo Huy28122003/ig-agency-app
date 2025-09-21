@@ -40,6 +40,9 @@ class WSDetailPage
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return WorkspaceDetailTabletLayout();
+    return WorkspaceDetailTabletLayout(
+      groupName: groupName,
+      groupAvatar: groupAvatar,
+    );
   }
 }

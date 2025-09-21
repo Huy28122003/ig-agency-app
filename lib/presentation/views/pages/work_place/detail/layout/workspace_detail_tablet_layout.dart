@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
 
 import '../../../../../../domain/entities/message/message_entity.dart';
@@ -13,7 +14,14 @@ import '../../../../widgets/circle_network_avatar.dart';
 import '../widgets/chat_content.dart';
 
 class WorkspaceDetailTabletLayout extends StatefulWidget {
-  const WorkspaceDetailTabletLayout({super.key});
+  const WorkspaceDetailTabletLayout({
+    super.key,
+    required this.groupName,
+    required this.groupAvatar,
+  });
+
+  final String groupName;
+  final String groupAvatar;
 
   @override
   State<WorkspaceDetailTabletLayout> createState() =>
@@ -41,19 +49,18 @@ class _WorkspaceDetailTabletLayoutState
         leadingWidth: 44,
         toolbarHeight: 60,
         scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false,
+        // titleSpacing: 12,
         title: Row(
           children: [
-            CircleNetworkAvatar(
-              imageUrl: 'https://example.com/avatar.jpg',
-              size: 40,
-            ),
+            CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
             SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Whales - IG Agency 8%',
+                    widget.groupName,
                     style: TextStyle(
                       color: AppColors.textDefaultTextDefault,
                       fontSize: 16,
@@ -61,16 +68,28 @@ class _WorkspaceDetailTabletLayoutState
                       fontWeight: FontWeight.w700,
                       height: 1.50,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    '99 Members, 29 Online',
-                    style: TextStyle(
-                      color: AppColors.textDefaultTextSub2,
-                      fontSize: 14,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w400,
-                      height: 1.14,
-                    ),
+                  BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
+                    selector: (state) {
+                      return state.users;
+                    },
+                    builder: (context, users) {
+                      final onlineUsers = users
+                          .where((user) => user.isOnline)
+                          .length;
+                      return Text(
+                        '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextSub2,
+                          fontSize: 14,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w400,
+                          height: 1.14,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
