@@ -508,6 +508,7 @@ class SearchResultsBar extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
+                  margin: EdgeInsets.only(right: 12),
                   width: 26,
                   height: 26,
                   padding: EdgeInsets.all(8),
@@ -532,6 +533,7 @@ class SearchResultsBar extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
+                  margin: EdgeInsets.only(right: 12),
                   width: 26,
                   height: 26,
                   padding: EdgeInsets.all(8),
@@ -576,7 +578,7 @@ class SearchResultsBar extends StatelessWidget {
                       final total = state.$2;
                       return Text(
                         textAlign: TextAlign.start,
-                        "$index of $total",
+                        "${index + 1} of $total",
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,

@@ -243,7 +243,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
         users: users,
         usersSearch: users,
-        isSearchMode: true,
+        isSearchMode: event.isSearchMode,
       ),
     );
   }
