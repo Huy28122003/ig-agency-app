@@ -15,7 +15,10 @@ abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
   }
 
   void handlePageLoadFailed(Emitter<S> emit, Object error) async {
-    safeEmit(emit, state.copyWith(processing: false));
+    safeEmit(
+      emit,
+      state.copyWith(processing: false, pageStatus: PageStatus.failure),
+    );
     await Future.delayed(Duration(milliseconds: 285));
     ErrorHandler.handle(error);
   }
@@ -33,10 +36,7 @@ abstract class BaseBloc<E, S extends BaseState<S>> extends Bloc<E, S> {
     } else {
       error = UnknowFailure();
     }
-    safeEmit(
-      emit,
-      state.copyWith(pageStatus: PageStatus.failure),
-    );
+    safeEmit(emit, state.copyWith(pageStatus: PageStatus.failure));
   }
 
   void handleSubEventFailure(Emitter<S> emit, Object error) {
