@@ -5,7 +5,6 @@ import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 
-
 class MemberTileWidget extends StatelessWidget {
   const MemberTileWidget({
     super.key,
