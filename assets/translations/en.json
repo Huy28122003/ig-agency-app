@@ -129,5 +129,8 @@
     "blocked_user": "Blocked Users",
     "notification": "In App Alerts",
     "logout": "Logout"
+  },
+  "error": {
+    "error": "Error"
   }
 }

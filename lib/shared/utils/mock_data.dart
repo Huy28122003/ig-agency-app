@@ -132,11 +132,8 @@ class MockData {
     (index) => UserEntity(
       id: 'user_$index',
       name: 'User ${index + 1}',
-      email: 'user${index + 1}@example.com',
       avatar: 'https://placehold.co/44x44?text=U${index + 1}',
-      bio: (index % 3 == 0) ? 'This is bio of user ${index + 1}' : null,
-      createdAt: DateTime.now().subtract(Duration(days: index * 2)),
-      updatedAt: DateTime.now().subtract(Duration(days: index)),
+      bio: (index % 3 == 0) ? 'This is bio of user ${index + 1}' : '',
       lastActiveAt: DateTime.now().subtract(Duration(minutes: index * 5)),
       isAdmin: index % 10 == 0,
     ),

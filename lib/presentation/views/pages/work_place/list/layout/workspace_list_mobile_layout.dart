@@ -37,21 +37,13 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<WorkspaceListBloc, WorkspaceListState>(
-      listener: (context, state) {
-        if (state.pageStatus == PageStatus.failure) {
-          // todo
-        }
-      },
-      listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
-      child: Container(
-        color: AppColors.surfaceContainerGrayStrong0,
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(child: _buildBody()),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: AppColors.surfaceContainerGrayStrong0,
+      body: Column(
+        children: [
+          _buildHeader(),
+          Expanded(child: _buildBody()),
+        ],
       ),
     );
   }
