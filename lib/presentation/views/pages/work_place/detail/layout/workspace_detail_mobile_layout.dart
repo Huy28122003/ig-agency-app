@@ -251,62 +251,70 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
   PreferredSizeWidget _buildAppBarSearchMode(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
-      child: SafeArea(
-        child: Container(
+      child: Container(
+        decoration: BoxDecoration(
           color: Colors.white,
-          child: Row(
-            children: [
-              SizedBox(width: 12),
-              Expanded(
-                child: BlocSelector<WSDetailBloc, WSDetailState, String>(
-                  selector: (state) {
-                    return state.searchKeyword;
-                  },
-                  builder: (context, state) {
-                    return AppSearchTextField(
-                      value: state,
-                      contentPadding: EdgeInsets.only(
-                        left: 16,
-                        top: 8,
-                        bottom: 8,
-                      ),
-                      fillColor: AppColors.surfaceContainerGrayStrong2,
-                      hintText: "search.search_in_conversation".tr(),
-                      hintStyle: TextStyle(
-                        fontSize: 16,
-                        height: 24 / 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textDefaultTextSub2,
-                        fontFamily: FontFamily.segoeUI,
-                      ),
-                      onChanged: (value) {
-                        context.read<WSDetailBloc>().add(
-                          SearchKeywordChangeEvent(value: value),
-                        );
-                        context.read<WSDetailBloc>().add(SearchMessageEvent());
-                      },
-                    );
-                  },
-                ),
-              ),
-              SizedBox(width: 10),
-              TextButton(
-                onPressed: () {
-                  context.read<WSDetailBloc>().add(CancelSearchEvent());
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 4,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
+        margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+        child: Row(
+          children: [
+            SizedBox(width: 12),
+            Expanded(
+              child: BlocSelector<WSDetailBloc, WSDetailState, String>(
+                selector: (state) {
+                  return state.searchKeyword;
                 },
-                child: Text(
-                  "general.cancel".tr(),
-                  style: TextStyle(
-                    color: AppColors.iconAlertInfo,
-                    fontFamily: FontFamily.segoeUI,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    height: 24 / 16,
-                  ),
+                builder: (context, state) {
+                  return AppSearchTextField(
+                    value: state,
+                    contentPadding: EdgeInsets.only(
+                      left: 16,
+                      top: 8,
+                      bottom: 8,
+                    ),
+                    fillColor: AppColors.surfaceContainerGrayStrong2,
+                    hintText: "search.search_in_conversation".tr(),
+                    hintStyle: TextStyle(
+                      fontSize: 16,
+                      height: 24 / 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textDefaultTextSub2,
+                      fontFamily: FontFamily.segoeUI,
+                    ),
+                    onChanged: (value) {
+                      context.read<WSDetailBloc>().add(
+                        SearchKeywordChangeEvent(value: value),
+                      );
+                      context.read<WSDetailBloc>().add(SearchMessageEvent());
+                    },
+                  );
+                },
+              ),
+            ),
+            SizedBox(width: 10),
+            TextButton(
+              onPressed: () {
+                context.read<WSDetailBloc>().add(CancelSearchEvent());
+              },
+              child: Text(
+                "general.cancel".tr(),
+                style: TextStyle(
+                  color: AppColors.iconAlertInfo,
+                  fontFamily: FontFamily.segoeUI,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  height: 24 / 16,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

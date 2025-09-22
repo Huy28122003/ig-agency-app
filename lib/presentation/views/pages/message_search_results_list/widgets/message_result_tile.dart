@@ -132,7 +132,7 @@ class MessageResultTile extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          _convertDateTimeToString(),
+          message.createdAt.convertDateTimeToString(),
           style: TextStyle(
             fontFamily: FontFamily.segoeUI,
             fontSize: 14,
@@ -141,18 +141,5 @@ class MessageResultTile extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String _convertDateTimeToString() {
-    final now = DateTime.now();
-    final isToday =
-        now.year == message.createdAt.year &&
-        now.month == message.createdAt.month &&
-        now.day == message.createdAt.day;
-    if (isToday) {
-      return message.createdAt.toHourMinuteAmPm;
-    } else {
-      return message.createdAt.toRelativeString;
-    }
   }
 }

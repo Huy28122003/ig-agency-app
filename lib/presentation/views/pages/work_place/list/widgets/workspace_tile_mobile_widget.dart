@@ -6,7 +6,7 @@ import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.d
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 import '../../../../../../gen/assets.gen.dart';
 
-class WorkspaceTileMobileWidget extends StatefulWidget {
+class WorkspaceTileMobileWidget extends StatelessWidget {
   const WorkspaceTileMobileWidget({
     super.key,
     required this.workspaceAvatar,
@@ -33,20 +33,12 @@ class WorkspaceTileMobileWidget extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<WorkspaceTileMobileWidget> createState() =>
-      _WorkspaceTileMobileWidgetState();
-}
-
-class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
-  final now = DateTime.now();
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
-        child: widget.isSearchMode ? _buildSearchMode() : _buildNormalMode(),
+        child: isSearchMode ? _buildSearchMode() : _buildNormalMode(),
       ),
     );
   }
@@ -64,7 +56,7 @@ class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  widget.workspaceName,
+                  workspaceName,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
@@ -105,7 +97,7 @@ class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.workspaceName,
+                              workspaceName,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
@@ -120,16 +112,15 @@ class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    (widget.countNewMessage > 1 &&
-                                            !widget.isSeen)
-                                        ? "${widget.countNewMessage} ${'workspace.new_message'.tr()}"
-                                        : widget.lastMessage,
+                                    (countNewMessage > 1 && !isSeen)
+                                        ? "$countNewMessage ${'workspace.new_message'.tr()}"
+                                        : lastMessage,
                                     style: TextStyle(
                                       fontFamily: FontFamily.segoeUI,
                                       fontSize: 14,
                                       height: 20 / 14,
                                       overflow: TextOverflow.ellipsis,
-                                      fontWeight: widget.isSeen
+                                      fontWeight: isSeen
                                           ? FontWeight.w400
                                           : FontWeight.w700,
                                     ),
@@ -147,7 +138,7 @@ class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  _convertDateTimeToString(),
+                                  lastMessageTime.convertDateTimeToString(),
                                   style: TextStyle(
                                     fontFamily: FontFamily.segoeUI,
                                     fontSize: 14,
@@ -160,10 +151,9 @@ class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      if (widget.isPin) Assets.icons.icPin.svg(),
-                      if (!widget.isMute)
-                        Assets.icons.icBlockNotification.svg(),
-                      if (!widget.isSeen)
+                      if (isPin) Assets.icons.icPin.svg(),
+                      if (!isMute) Assets.icons.icBlockNotification.svg(),
+                      if (!isSeen)
                         Container(
                           margin: const EdgeInsets.only(left: 4),
                           width: 6,
@@ -187,29 +177,15 @@ class _WorkspaceTileMobileWidgetState extends State<WorkspaceTileMobileWidget> {
   }
 
   Widget _buildAvatar() {
-    return CircleNetworkAvatar(
-      imageUrl: widget.workspaceAvatar,
-      isGroupAvt: true,
-    );
+    return CircleNetworkAvatar(imageUrl: workspaceAvatar, isGroupAvt: true);
   }
 
   Widget _buildDivider() {
     return Container(
+      margin: EdgeInsets.only(left: 44 + 8),
       width: double.infinity,
       height: 1,
       color: AppColors.outlineGrayStrong200,
     );
-  }
-
-  String _convertDateTimeToString() {
-    final isToday =
-        now.year == widget.lastMessageTime.year &&
-        now.month == widget.lastMessageTime.month &&
-        now.day == widget.lastMessageTime.day;
-    if (isToday) {
-      return widget.lastMessageTime.toHourMinuteAmPm;
-    } else {
-      return widget.lastMessageTime.toRelativeString;
-    }
   }
 }
