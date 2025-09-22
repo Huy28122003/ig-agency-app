@@ -7,6 +7,7 @@ class ForwardState extends BaseState<ForwardState> {
     super.processing = false,
     this.workspaces = const [],
     this.workspacesSearch = const [],
+    this.sentGroups = const [],
     this.pagingStatus = PagingStatus.idle,
     this.searchPagingStatus = PagingStatus.idle,
     this.searchKeyWord = "",
@@ -20,6 +21,7 @@ class ForwardState extends BaseState<ForwardState> {
   final PagingStatus pagingStatus;
   final PagingStatus searchPagingStatus;
   final String searchKeyWord;
+  final List<int> sentGroups;
 
   @override
   ForwardState copyWith({
@@ -30,6 +32,7 @@ class ForwardState extends BaseState<ForwardState> {
     bool? processing,
     List<WorkspaceEntity>? workspaces,
     List<WorkspaceEntity>? workspacesSearch,
+    List<int>? sentGroups,
     PagingStatus? pagingStatus,
     PagingStatus? searchPagingStatus,
   }) {
@@ -43,6 +46,7 @@ class ForwardState extends BaseState<ForwardState> {
       pagingStatus: pagingStatus ?? this.pagingStatus,
       workspacesSearch: workspacesSearch ?? this.workspacesSearch,
       searchPagingStatus: searchPagingStatus ?? this.searchPagingStatus,
+      sentGroups: sentGroups ?? this.sentGroups,
     );
   }
 
@@ -55,5 +59,6 @@ class ForwardState extends BaseState<ForwardState> {
     workspacesSearch,
     searchStatus,
     searchPagingStatus,
+    sentGroups,
   ];
 }

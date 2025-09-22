@@ -15,11 +15,13 @@ class WSDetailPage
     required this.groupId,
     required this.groupName,
     required this.groupAvatar,
+    this.isSearchMode = false,
   });
 
   final int groupId;
   final String groupName;
   final String groupAvatar;
+  final bool isSearchMode;
 
   @override
   WSDetailBloc get buildBloc => super.buildBloc..groupId = groupId;
@@ -27,7 +29,7 @@ class WSDetailPage
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<WSDetailBloc>().add(LoadDataEvent());
+    context.read<WSDetailBloc>().add(LoadDataEvent(isSearchMode));
   }
 
   @override

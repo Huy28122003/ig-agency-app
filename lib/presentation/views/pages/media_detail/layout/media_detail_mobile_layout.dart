@@ -82,6 +82,8 @@ class _MediaDetailMobileLayoutState extends State<MediaDetailMobileLayout> {
                     ),
                   ),
                   PopupMenuButton(
+                    constraints: BoxConstraints(maxWidth: 250),
+                    padding: EdgeInsets.zero,
                     onSelected: (option) {
                       if (option == MenuOption.forward) {
                         ForwardBottomSheet.show(context, messageId: "1");
@@ -95,11 +97,10 @@ class _MediaDetailMobileLayoutState extends State<MediaDetailMobileLayout> {
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<MenuOption>>[
                           PopupMenuItem<MenuOption>(
-                            height: 44,
+                            height: 30,
                             value: MenuOption.forward,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              width: 250,
+                            child: SizedBox(
+                              width: 200,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -121,11 +122,10 @@ class _MediaDetailMobileLayoutState extends State<MediaDetailMobileLayout> {
                           ),
                           PopupMenuDivider(),
                           PopupMenuItem<MenuOption>(
-                            height: 44,
+                            height: 30,
                             value: MenuOption.copy,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              constraints: BoxConstraints(maxWidth: 250),
+                            child: SizedBox(
+                              width: 200,
                               child: Row(
                                 children: [
                                   Expanded(

@@ -4,6 +4,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/user/profile_info_entity.dart';
 import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/message/search_message_in_group_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
@@ -55,6 +56,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     this._mediaManager,
     this._fileManager,
     this._deleteConversationUseCase,
+    this._searchMessageInGroupUseCase,
   ) : super(WSDetailState()) {
     _registerHandlers();
     _initializeListener();
@@ -94,10 +96,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   final DeleteMessageForEveryoneUseCase _deleteMessageForEveryoneUseCase;
   final DeleteMessageForYouUseCase _deleteMessageForYouUseCase;
   final DeleteConversationUseCase _deleteConversationUseCase;
+  final SearchMessageInGroupUseCase _searchMessageInGroupUseCase;
 
   final MediaManager _mediaManager;
   final FileManager _fileManager;
   final RamCache _ramCache;
+  Timer? _timer;
 
   StreamSubscription<MessageEntity>? _messageSubscription;
   StreamSubscription<String>? _tagQuerySubscription;
@@ -149,6 +153,11 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<DeleteMessageForEveryoneEvent>(_onDeleteMessageForEveryone);
     handleSubEvent<DeleteMessageForYouEvent>(_onDeleteMessageForYou);
     handleSubEvent<DeleteConversationEvent>(_onDeleteConversation);
+    handleSubEvent<CancelSearchEvent>(_onCancelSearch);
+    handleSubEvent<SearchMessageEvent>(_onSearchMessage);
+    handleSubEvent<SearchMessageDebouncedEvent>(_onSearchMessageDebounced);
+    handleSubEvent<SearchKeywordChangeEvent>(_onSearchKeywordChange);
+    handleSubEvent<GoToMessageEvent>(_onGoToMessage);
   }
 
   void _initializeListener() {
@@ -234,6 +243,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         initIndex: messages.isEmpty ? 0 : messages.length - 1,
         users: users,
         usersSearch: users,
+        isSearchMode: event.isSearchMode,
       ),
     );
   }
@@ -834,6 +844,67 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
       }
     }
     return updatedMessages;
+  }
+
+  Future<void> _onCancelSearch(
+    CancelSearchEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        isSearchMode: false,
+        indexSearchMessage: 0,
+        totalSearchMessage: 0,
+      ),
+    );
+  }
+
+  Future<void> _onSearchMessage(
+    SearchMessageEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    _timer?.cancel();
+    _timer = Timer(const Duration(milliseconds: 1000), () async {
+      add(SearchMessageDebouncedEvent(value: state.searchKeyword));
+    });
+  }
+
+  Future<void> _onSearchMessageDebounced(
+    SearchMessageDebouncedEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    final result = await _searchMessageInGroupUseCase.call(
+      SearchMessageInGroupParams(
+        workspaceId: groupId,
+        searchMessage: event.value,
+      ),
+    );
+    emit(
+      state.copyWith(
+        indexSearchMessage: 0,
+        totalSearchMessage: result.length,
+        messageSearchResults: result,
+      ),
+    );
+  }
+
+  Future<void> _onSearchKeywordChange(
+    SearchKeywordChangeEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(searchKeyword: event.value));
+  }
+
+  Future<void> _onGoToMessage(
+    GoToMessageEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    final index = event.isGoUp
+        ? state.indexSearchMessage + 1
+        : state.indexSearchMessage - 1;
+    final messageId = state.messageSearchResults[index].id;
+    add(JumpToMessageEvent(messageId: messageId));
+    emit(state.copyWith(indexSearchMessage: index));
   }
 
   List<TextSegment> detectLinkTextSegment(String text) {

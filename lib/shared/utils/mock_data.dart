@@ -7,10 +7,13 @@ import 'package:ig_agency_app/domain/enums/filter_type.dart';
 import '../../domain/entities/file_entity.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/media_entity.dart';
+import '../../domain/entities/message/message_content.dart';
+import '../../domain/entities/message/message_entity.dart';
 import '../../domain/entities/search.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/entities/workspace_entity.dart';
+import '../../domain/enums/message_enums.dart';
 
 class MockData {
   final List<MediaEntity> mockMediaData = List.generate(50, (index) {
@@ -559,5 +562,64 @@ class MockData {
         bio: 'Community-driven volunteer group.',
       ),
     ];
+  }
+
+  List<MessageEntity> mockMessages() {
+    final now = DateTime.now();
+    final random = Random();
+
+    final senders = [
+      UserSummary(
+        id: "u1",
+        name: "Alice",
+        avatar: "https://i.pravatar.cc/100?img=1",
+      ),
+      UserSummary(
+        id: "u2",
+        name: "Bob",
+        avatar: "https://i.pravatar.cc/100?img=2",
+      ),
+      UserSummary(
+        id: "u3",
+        name: "Charlie",
+        avatar: "https://i.pravatar.cc/100?img=3",
+      ),
+    ];
+
+    final statuses = MessageStatus.values;
+    List<MessageEntity> messages = [];
+
+    for (int i = 0; i < 30; i++) {
+      final sender = senders[random.nextInt(senders.length)];
+      final status = statuses[random.nextInt(statuses.length)];
+      final createdAt = now.subtract(Duration(minutes: i * 5));
+
+      // 🔹 Nội dung chỉ là text
+      final content = TextMessageContent(
+        text: "This is text message $i from ${sender.name}",
+      );
+
+      // 🔹 Nếu có reply thì tham chiếu lại message trước đó
+      MessageEntity? repliedMessage;
+      if (i % 7 == 0 && messages.isNotEmpty) {
+        repliedMessage = messages[random.nextInt(messages.length)];
+      }
+
+      messages.add(
+        MessageEntity(
+          id: "msg_$i",
+          user: sender,
+          createdAt: createdAt,
+          content: content,
+          status: status,
+          groupId: 1,
+          repliedMessage: repliedMessage,
+          isPinned: i % 10 == 0,
+          pinnedAt: i % 10 == 0 ? now.subtract(Duration(minutes: i * 2)) : null,
+        ),
+      );
+    }
+
+    return messages;
   }
 }

@@ -1,14 +1,22 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
+import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 
-import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
 
 class ForwardTile extends StatelessWidget {
   final WorkspaceEntity workspaceEntity;
+  final bool isSent;
+  final VoidCallback onTap;
 
-  const ForwardTile({super.key, required this.workspaceEntity});
+  const ForwardTile({
+    super.key,
+    required this.workspaceEntity,
+    required this.isSent,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,23 +28,9 @@ class ForwardTile extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Image.network(
-                  workspaceEntity.workspaceAvatar,
-                  fit: BoxFit.cover,
-                  width: 48,
-                  height: 48,
-                  errorBuilder: (context, error, stackTrace) {
-                    return ClipOval(
-                      child: Assets.icons.icDefaultAvatar.svg(
-                        fit: BoxFit.cover,
-                        width: 48,
-                        height: 48,
-                      ),
-                    );
-                  },
-                ),
+              CircleNetworkAvatar(
+                imageUrl: workspaceEntity.workspaceAvatar,
+                isGroupAvt: true,
               ),
               SizedBox(width: 8),
               Expanded(
@@ -54,26 +48,35 @@ class ForwardTile extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.surfaceContainerSecondarySecondaryDefault,
-                ),
+              GestureDetector(
+                onTap: () {
+                  if (isSent) return;
+                  onTap.call();
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: isSent
+                        ? AppColors.surfaceContainerSecondarySecondaryDefault
+                              .withValues(alpha: 0.5)
+                        : AppColors.surfaceContainerSecondarySecondaryDefault,
+                  ),
 
-                padding: EdgeInsets.only(
-                  top: 8,
-                  right: 16,
-                  bottom: 12,
-                  left: 16,
-                ),
-                child: Text(
-                  "Send",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    height: 16 / 14,
-                    color: AppColors.textDefaultTextInverted,
-                    fontFamily: FontFamily.segoeUI,
+                  padding: EdgeInsets.only(
+                    top: 8,
+                    right: 16,
+                    bottom: 12,
+                    left: 16,
+                  ),
+                  child: Text(
+                    "general.send".tr(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      height: 16 / 14,
+                      color: AppColors.textDefaultTextInverted,
+                      fontFamily: FontFamily.segoeUI,
+                    ),
                   ),
                 ),
               ),

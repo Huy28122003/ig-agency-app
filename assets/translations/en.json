@@ -10,7 +10,9 @@
   "search": {
     "search": "Search",
     "group": "Group",
-    "message": "Message"
+    "message": "Message",
+    "search_in_conversation": "Search in conversation",
+    "show_as_list": "Show as list"
   },
   "workspace": {
     "workspace": "Workspace",
@@ -27,14 +29,16 @@
     "unmute_time_8": "For 8 hours",
     "unmute_time_24": "For 24 hours",
     "unmute_time_life": "Until I change it",
-    "hint_text_search": "Enter workspace name"
+    "hint_text_search": "Enter workspace name",
+    "new_message": "new messages"
   },
   "general": {
     "delete": "Delete",
     "cancel": "Cancel",
     "done": "Done",
     "send_to": "Send to",
-    "search": "Search"
+    "search": "Search",
+    "send": "Send"
   },
   "forgot_password": {
     "forgot_password": "Forgot Password?",
