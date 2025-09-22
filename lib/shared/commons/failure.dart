@@ -27,8 +27,16 @@ class ApiFailure extends Failure {
       'ApiFailure: $message (HTTP Code: $httpCode, Code: $code)';
 }
 
+class UnauthorizedFailure extends Failure {
+  UnauthorizedFailure() : super(message: 'Unauthorized access');
+}
+
 class UnknowFailure extends Failure {
   UnknowFailure() : super(message: 'An unknown error occurred');
+}
+
+class ValidationFailure extends Failure {
+  ValidationFailure() : super(message: 'An unknown error occurred');
 }
 
 extension FailureExtension on Failure? {

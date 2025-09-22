@@ -4,7 +4,7 @@ class UserEntity extends Equatable {
   const UserEntity({
     required this.id,
     required this.name,
-    required this.email,
+    this.email= '',
     this.avatar = 'https://placehold.co/44x44',
     this.createdAt,
     this.updatedAt,

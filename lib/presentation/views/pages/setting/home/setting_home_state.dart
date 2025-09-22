@@ -2,7 +2,7 @@ part of 'setting_home_bloc.dart';
 
 class SettingHomeState extends BaseState<SettingHomeState> {
   const SettingHomeState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing = false,
     this.isDarkMode = false,

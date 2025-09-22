@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import 'package:one_context/one_context.dart';
 
+import '../../di/di.dart';
+import '../../presentation/routers/app_router.dart';
 import '../../presentation/views/modal/confirm_dialog.dart';
 import '../../presentation/views/modal/error_dialog.dart';
 import '../../presentation/views/widgets/app_loading.dart';
@@ -18,10 +19,10 @@ class AppAlertDialog {
     VoidCallback? onConfirmBtnTap,
     VoidCallback? onCancelBtnTap,
   }) {
-    final curContext = context ?? OneContext().context;
-    if (curContext == null || !curContext.mounted) {
-      return;
-    }
+    final curContext =
+        context ?? getIt<AppRouter>().navigatorKey.currentContext;
+    if (curContext == null || !curContext.mounted) return;
+
     final Widget widget;
     switch (type) {
       case AppAlertType.loading:
@@ -59,7 +60,10 @@ class AppAlertDialog {
     );
   }
 
-  void hide(BuildContext context) {
-    Navigator.of(context).pop();
+  void hide([BuildContext? context]) {
+    final curContext =
+        context ?? getIt<AppRouter>().navigatorKey.currentContext;
+    if (curContext == null || !curContext.mounted) return;
+    Navigator.of(curContext).pop();
   }
 }
