@@ -182,6 +182,7 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
 
   Widget _buildDivider() {
     return Container(
+      margin: EdgeInsets.only(left: 44 + 8),
       width: double.infinity,
       height: 1,
       color: AppColors.outlineGrayStrong200,
