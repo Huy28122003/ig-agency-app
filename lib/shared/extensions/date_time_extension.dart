@@ -1,6 +1,17 @@
 import 'package:intl/intl.dart';
 
-extension DateTimeExtension on DateTime{
+extension DateTimeExtension on DateTime {
+  String convertDateTimeToString() {
+    final now = DateTime.now();
+
+    final isToday = now.year == year && now.month == month && now.day == day;
+    if (isToday) {
+      return toHourMinuteAmPm;
+    } else {
+      return toRelativeString;
+    }
+  }
+
   String get toHourMinuteAmPm {
     return DateFormat('h:mm a').format(this).toLowerCase();
   }
@@ -22,5 +33,18 @@ extension DateTimeExtension on DateTime{
     } else {
       return "${(diff.inDays / 365).floor()}y";
     }
+  }
+
+  String toShortDateString() {
+    final now = DateTime.now();
+    if (year == now.year) {
+      return DateFormat('MMM d').format(this);
+    } else {
+      return DateFormat('MMM d, yyyy').format(this);
+    }
+  }
+
+  String toShortTimeString() {
+    return DateFormat('h:mm a').format(this);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
-import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
+import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 import 'package:ig_agency_app/shared/extensions/duration_ext.dart';
 import 'package:ig_agency_app/shared/extensions/int_ext.dart';
 
