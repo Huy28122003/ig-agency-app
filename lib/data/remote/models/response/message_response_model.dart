@@ -25,13 +25,13 @@ class MessageResponseModel {
   factory MessageResponseModel.fromJson(Map<String, dynamic> json) =>
       _$MessageResponseModelFromJson(json);
 
-  final int id;
+  final String id;
   final String type;
   final UserSummaryResponse from;
-  final String? replyToMessage;
+  final ReplyMessageResponseModel? replyToMessage;
   final String? text;
-  final List<String>? entities;
-  final List<String?>? photo;
+  final List<EntityResponseModel>? entities;
+  final List<PhotoResponseModel>? photo;
   final FileResponseModel? video;
   final FileResponseModel? document;
   final String? caption;
@@ -56,11 +56,11 @@ class FileResponseModel {
   factory FileResponseModel.fromJson(Map<String, dynamic> json) =>
       _$FileResponseModelFromJson(json);
 
-  final int fileId;
+  final String fileId;
   final String fileUniqueId;
   final ThumbnailResponseModel? thumbnail;
-  final int fileName;
-  final int mimeType;
+  final String fileName;
+  final String mimeType;
   final int? fileSize;
 
   Map<String, dynamic> toJson() => _$FileResponseModelToJson(this);
@@ -79,7 +79,7 @@ class ThumbnailResponseModel {
   factory ThumbnailResponseModel.fromJson(Map<String, dynamic> json) =>
       _$ThumbnailResponseModelFromJson(json);
 
-  final int fileId;
+  final String fileId;
   final String fileUniqueId;
   final int? width;
   final int? height;
@@ -101,11 +101,85 @@ class StickerResponseModel {
   factory StickerResponseModel.fromJson(Map<String, dynamic> json) =>
       _$StickerResponseModelFromJson(json);
 
-  final int fileId;
+  final String fileId;
   final String fileUniqueId;
   final int? width;
   final int? height;
   final int? fileSize;
 
   Map<String, dynamic> toJson() => _$StickerResponseModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PhotoResponseModel {
+  const PhotoResponseModel({
+    required this.fileId,
+    required this.fileUniqueId,
+    this.width,
+    this.height,
+    this.fileSize,
+  });
+
+  factory PhotoResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$PhotoResponseModelFromJson(json);
+
+  final String fileId;
+  final String fileUniqueId;
+  final int? width;
+  final int? height;
+  final int? fileSize;
+
+  Map<String, dynamic> toJson() => _$PhotoResponseModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class EntityResponseModel {
+  const EntityResponseModel({
+    required this.type,
+    required this.offset,
+    required this.length,
+  });
+
+  factory EntityResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$EntityResponseModelFromJson(json);
+
+  final String type;
+  final int offset;
+  final int length;
+
+  Map<String, dynamic> toJson() => _$EntityResponseModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ReplyMessageResponseModel {
+  const ReplyMessageResponseModel({
+    required this.id,
+    required this.type,
+    required this.from,
+    this.text,
+    this.photo,
+    this.video,
+    this.document,
+    this.caption,
+    this.sticker,
+    required this.date,
+    required this.pinned,
+  });
+
+  factory ReplyMessageResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$ReplyMessageResponseModelFromJson(json);
+
+  final String id;
+  final String type;
+  final UserSummaryResponse from;
+  final String? text;
+  final List<PhotoResponseModel>? photo;
+  final FileResponseModel? video;
+  final FileResponseModel? document;
+  final String? caption;
+  final StickerResponseModel? sticker;
+  final int date;
+  final bool pinned;
+
+  Map<String, dynamic> toJson() => _$ReplyMessageResponseModelToJson(this);
 }

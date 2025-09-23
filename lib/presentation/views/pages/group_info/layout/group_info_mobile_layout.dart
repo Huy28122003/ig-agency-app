@@ -249,7 +249,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     if (workspace == null) return;
                     context.router.push(
                       WSDetailRoute(
-                        groupId: workspace.id,
+                        groupId: workspace.id.toString(),
                         groupName: workspace.workspaceName,
                         groupAvatar: workspace.workspaceAvatar,
                         isSearchMode: true,

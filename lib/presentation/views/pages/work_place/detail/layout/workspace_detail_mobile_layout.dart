@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dartx/dartx.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -602,7 +603,7 @@ class SearchResultsBar extends StatelessWidget {
                     onTap: () {
                       context.router.push(
                         MessageSearchResultsListRoute(
-                          workspaceId: bloc.groupId,
+                          workspaceId: bloc.groupId.toInt(),
                           searchMessage: bloc.state.searchKeyword,
                           workspaceName: groupName,
                         ),

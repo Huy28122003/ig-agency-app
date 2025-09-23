@@ -55,14 +55,14 @@ class VideoMessageContent extends MessageContent {
 class FileMessageContent extends MessageContent {
   final String fileUrl;
   final String fileName;
-  final String fileExtension;
+  // final String fileExtension;
   final int fileSize;
   final FileType? fileType;
   final String? path;
   const FileMessageContent({
     required this.fileUrl,
     required this.fileName,
-    required this.fileExtension,
+    // required this.fileExtension,
     required this.fileSize,
     this.fileType,
     this.path,

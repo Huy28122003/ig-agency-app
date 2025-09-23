@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/user/profile_info_entity.dart';
 import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
@@ -215,7 +216,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
     );
 
-    final messages = messagesResult;
+    final messages = messagesResult.reversed.toList();
     final pagingStatus = messages.isEmpty
         ? PagingStatus.empty
         : (messages.length < _limit
@@ -259,7 +260,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-    final messages = await _fetchMessageUseCase.call(
+    final messagesResult = await _fetchMessageUseCase.call(
       FetchMessagesInGroupParams(
         groupId: groupId,
         limit: _limit,
@@ -270,9 +271,11 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    if (messages.isEmpty || messages.length < _limit) {
+    if (messagesResult.isEmpty || messagesResult.length < _limit) {
       return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
     }
+
+    final messages = messagesResult.reversed.toList();
 
     final updatedMessages = _addMessageList(leadingMessageList: messages);
 
@@ -322,46 +325,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     dynamic content;
     if (event.type == SendMessageType.text) {
-      // final text = _textEditingController.text;
-      // final tagTextSegments = _textEditingController.tagTextSegments;
-      // final linkTextSegments = detectLinkTextSegment(text);
-      // final textSegments = [...tagTextSegments, ...linkTextSegments];
-      // content = TextMessageContent(text: text, textSegments: textSegments);
-
-      // TODO: Demo search
-      final text =
-          '''Hôm nay @minh đi dạo quanh Hồ Gươm cùng @anh và @minhchoco. 
-Cậu ấy bảo: “Tôi cho bạn xem link này: https://flutter.dev và https://dart.dev 
-rất hay, mình cho thêm ví dụ trong https://example.com/cho.” 
-Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập trình. 
-Đặc biệt, mình cho đi nhiều kinh nghiệm quý giá, cho tới tận khuya mới về. 
-''';
-
-      final textSegments = [
-        TextSegment(type: TextSegmentType.tag, start: 8, end: 13), // @minh
-        TextSegment(type: TextSegmentType.tag, start: 40, end: 44), // @anh
-        TextSegment(
-          type: TextSegmentType.tag,
-          start: 48,
-          end: 58,
-        ), // @minhchoco
-        TextSegment(
-          type: TextSegmentType.link,
-          start: 100,
-          end: 119,
-        ), // https://flutter.dev
-        TextSegment(
-          type: TextSegmentType.link,
-          start: 123,
-          end: 139,
-        ), // https://dart.dev
-        TextSegment(
-          type: TextSegmentType.link,
-          start: 176,
-          end: 199,
-        ), // https://example.com/cho
-      ];
-
+      final text = _textEditingController.text;
+      final tagTextSegments = _textEditingController.tagTextSegments;
+      final linkTextSegments = detectLinkTextSegment(text);
+      final textSegments = [...tagTextSegments, ...linkTextSegments];
       content = TextMessageContent(text: text, textSegments: textSegments);
       // Clear text editing controller
       _textEditingController.clear();
@@ -373,7 +340,6 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
       content = FileMessageContent(
         fileUrl: '',
         fileName: file.name,
-        fileExtension: file.extension ?? '',
         fileSize: file.size,
         path: file.path,
       );
@@ -505,12 +471,12 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
       // TODO hoannk: Remove delay
       await Future.delayed(const Duration(seconds: 2));
 
-      final messages = result;
+      final messages = result.reversed;
       final pagingStatus = messages.isEmpty || messages.length < _limit
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
-      final updatedMessages = _addMessageList(leadingMessageList: messages);
+      final updatedMessages = _addMessageList(leadingMessageList: messages.toList());
 
       final hasMessage = updatedMessages.any(
         (uiModel) => uiModel.message.id == event.messageId,
@@ -875,7 +841,7 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
   ) async {
     final result = await _searchMessageInGroupUseCase.call(
       SearchMessageInGroupParams(
-        workspaceId: groupId,
+        workspaceId: groupId.toInt(),
         searchMessage: event.value,
       ),
     );

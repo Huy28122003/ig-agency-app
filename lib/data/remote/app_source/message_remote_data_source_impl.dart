@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/data/remote/app/message_remote_data_source.dart';
+import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/domain/entities/message/message.dart';
 import 'package:injectable/injectable.dart';
 
@@ -49,7 +50,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
         await _apiService.sendMessage(
           groupId,
           SendMessageRequestModel(
-            type: content.messageContentType.name,
+            type: 'text',
             text: content.text,
             replyToMessageId: replyMessageId,
           ),
@@ -60,5 +61,23 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
+  }
+
+  @override
+  Future<List<MessageEntity>> fetchMessagesInGroup(
+    String groupId,
+    int limit,
+    String? oldestMessageId,
+    String? targetMessageId,
+  ) async {
+    final messages = await _apiService.getMessages(
+      groupId,
+      limit,
+      0,
+      null,
+      oldestMessageId,
+    );
+
+    return messages.map((e) => e.toEntity()).toList();
   }
 }

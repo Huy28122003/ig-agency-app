@@ -373,7 +373,7 @@ class _FileMessageContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${fileContent.fileName}.${fileContent.fileExtension}',
+                  fileContent.fileName,
                   style: const TextStyle(
                     color: AppColors.textDefaultTextDefault,
                     fontSize: 14,

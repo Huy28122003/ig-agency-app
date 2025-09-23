@@ -76,11 +76,11 @@ class MessageMockService {
   ];
 
   static final List<Map<String, dynamic>> _mockGroups = [
-    {'id': 1, 'name': 'Vaga bala blo'},
-    {'id': 2, 'name': 'Team Development'},
-    {'id': 3, 'name': 'Marketing Team'},
-    {'id': 4, 'name': 'Design Team'},
-    {'id': 5, 'name': 'Project Alpha'},
+    {'id': '1', 'name': 'Vaga bala blo'},
+    {'id': '2', 'name': 'Team Development'},
+    {'id': '3', 'name': 'Marketing Team'},
+    {'id': '4', 'name': 'Design Team'},
+    {'id': '5', 'name': 'Project Alpha'},
   ];
 
   static final List<String> _mockTexts = [
@@ -129,14 +129,12 @@ class MessageMockService {
     {
       "fileUrl": "https://example.com/file1.pdf",
       "fileName": "Tài liệu A",
-      "fileExtension": "pdf",
       "fileSize": 10240,
       "fileType": FileType.document,
     },
     {
       "fileUrl": "https://example.com/file2.zip",
       "fileName": "Source Code",
-      "fileExtension": "zip",
       "fileSize": 20480,
       "fileType": FileType.archive,
     },
@@ -301,7 +299,6 @@ class MessageMockService {
         return FileMessageContent(
           fileUrl: file['fileUrl'],
           fileName: file['fileName'],
-          fileExtension: file['fileExtension'],
           fileSize: file['fileSize'],
           fileType: file['fileType'],
         );

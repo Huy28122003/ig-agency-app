@@ -97,14 +97,12 @@ class MessageRepositoryImpl implements MessageRepository {
     String? oldestMessageId,
     String? targetMessageId,
   ) async {
-    // Todo: hoannk: rehandle this
-    // TODO: Sử dụng tạm mock tại repository
     try {
-      final messages = _messageMockService.mockFetchMessagesByGroupId(
-        groupId: groupId,
-        limit: limit,
-        oldestMessageId: oldestMessageId,
-        targetMessageId: targetMessageId,
+      final messages = _messageRemoteDataSource.fetchMessagesInGroup(
+        groupId,
+        limit,
+        oldestMessageId,
+        null,
       );
 
       return messages;

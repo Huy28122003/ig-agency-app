@@ -612,7 +612,7 @@ class MockData {
           createdAt: createdAt,
           content: content,
           status: status,
-          groupId: 1,
+          groupId: '1',
           repliedMessage: repliedMessage,
           isPinned: i % 10 == 0,
           pinnedAt: i % 10 == 0 ? now.subtract(Duration(minutes: i * 2)) : null,

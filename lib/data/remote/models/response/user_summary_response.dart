@@ -7,12 +7,16 @@ class UserSummaryResponse {
   const UserSummaryResponse({
     required this.id,
     required this.name,
-    required this.avatar,
+    required this.role,
+    required this.status,
+    this.avatar,
   });
 
   final String id;
   final String name;
-  final String avatar;
+  final String role;
+  final String status;
+  final String? avatar;
 
   factory UserSummaryResponse.fromJson(Map<String, dynamic> json) =>
       _$UserSummaryResponseFromJson(json);

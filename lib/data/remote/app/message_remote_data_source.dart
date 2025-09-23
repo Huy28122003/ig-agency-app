@@ -5,6 +5,13 @@ abstract class MessageRemoteDataSource {
 
   Future<void> unpinMessage(String messageId);
 
+  Future<List<MessageEntity>> fetchMessagesInGroup(
+    String groupId,
+    int limit,
+    String? oldestMessageId,
+    String? targetMessageId,
+  );
+
   Future<void> sendMessage(
     String userId,
     String groupId,

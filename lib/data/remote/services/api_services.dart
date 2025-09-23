@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/search_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/message_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
 import 'package:ig_agency_app/data/remote/models/response/search_result_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -46,14 +47,14 @@ abstract class ApiService {
     @Path('conversationId') String conversationId,
   );
 
-  // @GET('/conversations/{conversationId}/messages')
-  // Future<List<void>> getMessages(
-  //   @Path('conversationId') String conversationId,
-  //   @Query('limit') int limit,
-  //   @Query('offset') int offset,
-  //   @Query('search') String? search,
-  //   @Query('before') String? beforeMessageId,
-  // );
+  @GET('/conversations/{conversationId}/messages')
+  Future<List<MessageResponseModel>> getMessages(
+    @Path('conversationId') String conversationId,
+    @Query('limit') int limit,
+    @Query('offset') int offset,
+    @Query('search') String? search,
+    @Query('before') String? beforeMessageId,
+  );
 
   @POST('/conversations/{conversationId}/messages')
   Future<void> sendMessage(

@@ -8,9 +8,8 @@ class UserSummary with _$UserSummary {
     required this.id,
     required this.name,
     required this.avatar,
-    this.bio,
-    this.role,
-    this.status,
+    this.role = 'user',
+    this.status = 'active ',
   });
 
   @override
@@ -20,9 +19,7 @@ class UserSummary with _$UserSummary {
   @override
   final String avatar;
   @override
-  final String? bio;
-  @override
-  final String? role;
+  final String role;
   @override
   final String? status;
 }
