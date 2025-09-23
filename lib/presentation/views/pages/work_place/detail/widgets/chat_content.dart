@@ -13,13 +13,19 @@ import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
 import '../../../../ui_models/chat_message/chat_message_ui_model.dart';
 import '../workspace_detail_bloc.dart';
 
-const double _kMaxWidthChatBubbleContentRatio = 277 / 390;
+const double _kMaxWidthChatContentMobileRatio = 277 / 350;
+const double _kMaxWidthChatContentTabletRatio = 350 / 350;
 const double _kMaxWidthChatReplyContentRatio = 174 / 277;
 
 class ChatContent extends StatefulWidget {
-  const ChatContent({super.key, this.horizontalPadding = 12});
+  const ChatContent({
+    super.key,
+    this.horizontalPadding = 12,
+    this.isMobile = true,
+  });
 
   final double horizontalPadding;
+  final bool isMobile;
 
   @override
   State<ChatContent> createState() => _ChatContentState();
@@ -176,232 +182,248 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final maxWidth =
-        MediaQuery.sizeOf(context).width * _kMaxWidthChatBubbleContentRatio;
-    final maxWidthReply = maxWidth * _kMaxWidthChatReplyContentRatio;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth;
+        final double maxWidthChatBubble =
+            (widget.isMobile
+                ? _kMaxWidthChatContentMobileRatio
+                : _kMaxWidthChatContentTabletRatio) *
+            maxWidth;
+        final double maxWidthChatReply =
+            maxWidthChatBubble * _kMaxWidthChatReplyContentRatio;
 
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<WSDetailBloc, WSDetailState>(
-          listenWhen: (previous, current) =>
-              previous.scrollToBottom != current.scrollToBottom,
-          listener: (context, state) {
-            if (state.scrollToBottom) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _scrollToBottom();
-                _bloc.add(ResetScrollToBottomEvent());
-              });
-            }
-          },
-        ),
-        BlocListener<WSDetailBloc, WSDetailState>(
-          listenWhen: (previous, current) =>
-              previous.jumpToMessageId != current.jumpToMessageId,
-          listener: (context, state) {
-            final messageId = state.jumpToMessageId;
-            if (messageId != null) {
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                _jumpToMessage(messageId);
-              });
-            }
-          },
-        ),
-        BlocListener<WSDetailBloc, WSDetailState>(
-          listenWhen: (previous, current) =>
-              previous.pagingStatus != current.pagingStatus,
-          listener: (context, state) {
-            if (state.pagingStatus == PagingStatus.loading) return;
-            switch (state.pagingStatus) {
-              case PagingStatus.loadCompleted:
-                refreshController.refreshCompleted();
-                break;
-              default:
-                refreshController.refreshToIdle();
-                break;
-            }
-          },
-        ),
-      ],
-      child: Stack(
-        children: [
-          BlocSelector<
-            WSDetailBloc,
-            WSDetailState,
-            (List<ChatMessageUIModel>, bool, int)
-          >(
-            selector: (state) {
-              return (
-                state.chatMessages,
-                state.needLoadMoreOldMessages,
-                state.initIndex,
-              );
-            },
-            builder: (context, state) {
-              final (chatMessages, needLoadMoreOldMessages, initIndex) = state;
+        return MultiBlocListener(
+          listeners: [
+            BlocListener<WSDetailBloc, WSDetailState>(
+              listenWhen: (previous, current) =>
+                  previous.scrollToBottom != current.scrollToBottom,
+              listener: (context, state) {
+                if (state.scrollToBottom) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _scrollToBottom();
+                    _bloc.add(ResetScrollToBottomEvent());
+                  });
+                }
+              },
+            ),
+            BlocListener<WSDetailBloc, WSDetailState>(
+              listenWhen: (previous, current) =>
+                  previous.jumpToMessageId != current.jumpToMessageId,
+              listener: (context, state) {
+                final messageId = state.jumpToMessageId;
+                if (messageId != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                    _jumpToMessage(messageId);
+                  });
+                }
+              },
+            ),
+            BlocListener<WSDetailBloc, WSDetailState>(
+              listenWhen: (previous, current) =>
+                  previous.pagingStatus != current.pagingStatus,
+              listener: (context, state) {
+                if (state.pagingStatus == PagingStatus.loading) return;
+                switch (state.pagingStatus) {
+                  case PagingStatus.loadCompleted:
+                    refreshController.refreshCompleted();
+                    break;
+                  default:
+                    refreshController.refreshToIdle();
+                    break;
+                }
+              },
+            ),
+          ],
+          child: Stack(
+            children: [
+              BlocSelector<
+                WSDetailBloc,
+                WSDetailState,
+                (List<ChatMessageUIModel>, bool, int)
+              >(
+                selector: (state) {
+                  return (
+                    state.chatMessages,
+                    state.needLoadMoreOldMessages,
+                    state.initIndex,
+                  );
+                },
+                builder: (context, state) {
+                  final (chatMessages, needLoadMoreOldMessages, initIndex) =
+                      state;
 
-              if (chatMessages.isEmpty) {
-                return const SizedBox.shrink();
-              }
+                  if (chatMessages.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
 
-              return SmartRefresher(
-                enablePullDown: needLoadMoreOldMessages,
-                enablePullUp: false,
-                header: CustomHeader(
-                  completeDuration: const Duration(milliseconds: 0),
-                  builder: (context, mode) {
-                    if (mode == RefreshStatus.refreshing) {
-                      return SizedBox(
-                        height: 56,
-                        child: Center(
-                          child: const CupertinoActivityIndicator(),
-                        ),
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-                controller: refreshController,
-                onRefresh: _onRefresh,
-                child: FlutterListView(
-                  controller: listViewController,
-                  physics: const ClampingScrollPhysics(),
-                  // cacheExtent: chatMessages.length * 100,
-                  delegate: FlutterListViewDelegate(
-                    (BuildContext context, int index) {
-                      final uiModel = chatMessages[index];
-                      final bool shouldShowAvatar = uiModel.shouldShowAvatar;
-                      final bool shouldShowUserName =
-                          uiModel.shouldShowUserName;
-                      final bool isContinuation = uiModel.isContinuation;
-                      final bool shouldShowTime =
-                          uiModel.showTime || uiModel.shouldShowTime;
-
-                      final double bottomPadding =
-                          chatMessages.isNotEmpty &&
-                              index == chatMessages.length - 1
-                          ? 20
-                          : 0;
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: bottomPadding),
-                        child: ChatMessageBubble(
-                          key: ValueKey(uiModel.message.id),
-                          maxWidth: maxWidth,
-                          maxWidthReply: maxWidthReply,
-                          horizontalPadding: widget.horizontalPadding,
-                          message: uiModel.message,
-                          shouldShowTime: shouldShowTime,
-                          shouldShowAvatar: shouldShowAvatar,
-                          shouldShowUserName: shouldShowUserName,
-                          isContinuation: isContinuation,
-                          searchText: 'alabama',
-                          userId: _bloc.userId,
-                          onTap: () {
-                            final messageId = uiModel.message.id;
-                            _bloc.add(
-                              ToggleShowTimeEvent(messageId: messageId),
-                            );
-                          },
-                          onReply: () {
-                            _bloc.add(
-                              ReplyToMessageEvent(message: uiModel.message),
-                            );
-                          },
-                          onReplyTap: (messageId) {
-                            _bloc.add(JumpToMessageEvent(messageId: messageId));
-                          },
-                          onPin: () {
-                            _bloc.add(
-                              TogglePinMessageFromDetailEvent(
-                                messageId: uiModel.message.id,
-                              ),
-                            );
-                          },
-                          onDelete: () {
-                            _showDeleteOptionSheet(context, uiModel.message.id);
-                          },
-                        ),
-                      );
-                    },
-                    childCount: chatMessages.length,
-                    onItemKey: (index) => chatMessages[index].message.id,
-                    keepPosition: true,
-                    keepPositionOffset: 56,
-                    initIndex: initIndex,
-                    firstItemAlign: FirstItemAlign.end,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          Positioned(
-            top: 20,
-            right: widget.horizontalPadding,
-            child: GestureDetector(
-              child: Container(
-                height: 44,
-                width: 44,
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: CircleBorder(),
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x1E000000),
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                      spreadRadius: 0,
+                  return SmartRefresher(
+                    enablePullDown: needLoadMoreOldMessages,
+                    enablePullUp: false,
+                    header: CustomHeader(
+                      completeDuration: const Duration(milliseconds: 0),
+                      builder: (context, mode) {
+                        if (mode == RefreshStatus.refreshing) {
+                          return SizedBox(
+                            height: 56,
+                            child: Center(
+                              child: const CupertinoActivityIndicator(),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
                     ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned.fill(
-                      child: ImageFiltered(
-                        imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                    controller: refreshController,
+                    onRefresh: _onRefresh,
+                    child: FlutterListView(
+                      controller: listViewController,
+                      physics: const ClampingScrollPhysics(),
+                      // cacheExtent: chatMessages.length * 100,
+                      delegate: FlutterListViewDelegate(
+                        (BuildContext context, int index) {
+                          final uiModel = chatMessages[index];
+                          final bool shouldShowAvatar =
+                              uiModel.shouldShowAvatar;
+                          final bool shouldShowUserName =
+                              uiModel.shouldShowUserName;
+                          final bool isContinuation = uiModel.isContinuation;
+                          final bool shouldShowTime =
+                              uiModel.showTime || uiModel.shouldShowTime;
+
+                          final double bottomPadding =
+                              chatMessages.isNotEmpty &&
+                                  index == chatMessages.length - 1
+                              ? 20
+                              : 0;
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: bottomPadding),
+                            child: ChatMessageBubble(
+                              key: ValueKey(uiModel.message.id),
+                              maxWidth: maxWidthChatBubble,
+                              maxWidthReply: maxWidthChatReply,
+                              horizontalPadding: widget.horizontalPadding,
+                              message: uiModel.message,
+                              shouldShowTime: shouldShowTime,
+                              shouldShowAvatar: shouldShowAvatar,
+                              shouldShowUserName: shouldShowUserName,
+                              isContinuation: isContinuation,
+                              searchText: 'alabama',
+                              userId: _bloc.userId,
+                              onTap: () {
+                                final messageId = uiModel.message.id;
+                                _bloc.add(
+                                  ToggleShowTimeEvent(messageId: messageId),
+                                );
+                              },
+                              onReply: () {
+                                _bloc.add(
+                                  ReplyToMessageEvent(message: uiModel.message),
+                                );
+                              },
+                              onReplyTap: (messageId) {
+                                _bloc.add(
+                                  JumpToMessageEvent(messageId: messageId),
+                                );
+                              },
+                              onPin: () {
+                                _bloc.add(
+                                  TogglePinMessageFromDetailEvent(
+                                    messageId: uiModel.message.id,
+                                  ),
+                                );
+                              },
+                              onDelete: () {
+                                _showDeleteOptionSheet(
+                                  context,
+                                  uiModel.message.id,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        childCount: chatMessages.length,
+                        onItemKey: (index) => chatMessages[index].message.id,
+                        keepPosition: true,
+                        keepPositionOffset: 56,
+                        initIndex: initIndex,
+                        firstItemAlign: FirstItemAlign.end,
                       ),
                     ),
-                    Assets.icons.icTranslate.svg(width: 24, height: 24),
-                  ],
+                  );
+                },
+              ),
+
+              Positioned(
+                top: 20,
+                right: widget.horizontalPadding,
+                child: GestureDetector(
+                  child: Container(
+                    height: 44,
+                    width: 44,
+                    decoration: ShapeDecoration(
+                      color: Colors.white,
+                      shape: CircleBorder(),
+                      shadows: [
+                        BoxShadow(
+                          color: Color(0x1E000000),
+                          blurRadius: 10,
+                          offset: Offset(0, 0),
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned.fill(
+                          child: ImageFiltered(
+                            imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          ),
+                        ),
+                        Assets.icons.icTranslate.svg(width: 24, height: 24),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
 
-          BlocSelector<WSDetailBloc, WSDetailState, bool>(
-            selector: (state) => state.showScrollToBottomIcon,
-            builder: (context, showScrollToTopButton) {
-              return AnimatedPositioned(
-                bottom: showScrollToTopButton ? 10 : -44,
-                right: 0,
-                left: 0,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeInOut,
-                child: Container(
-                  height: 44,
-                  width: 44,
-                  decoration: BoxDecoration(shape: BoxShape.circle),
-                  child: GestureDetector(
-                    onTap: () {
-                      _scrollToBottom();
-                    },
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: Assets.icons.icArrowCircleSize32.svg(
-                        width: 32,
-                        height: 32,
+              BlocSelector<WSDetailBloc, WSDetailState, bool>(
+                selector: (state) => state.showScrollToBottomIcon,
+                builder: (context, showScrollToTopButton) {
+                  return AnimatedPositioned(
+                    bottom: showScrollToTopButton ? 10 : -44,
+                    right: 0,
+                    left: 0,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeInOut,
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(shape: BoxShape.circle),
+                      child: GestureDetector(
+                        onTap: () {
+                          _scrollToBottom();
+                        },
+                        child: SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: Assets.icons.icArrowCircleSize32.svg(
+                            width: 32,
+                            height: 32,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            },
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

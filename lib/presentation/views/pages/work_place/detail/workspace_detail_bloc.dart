@@ -12,7 +12,6 @@ import '../../../../../data/cache/ram_cache.dart';
 import '../../../../../dependencies/media/media_manager.dart';
 import '../../../../../dependencies/file/file_manager.dart';
 import '../../../../../domain/entities/message/message.dart';
-import '../../../../../domain/entities/user.dart';
 import '../../../../../domain/enums/message_enums.dart';
 import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/enums/send_message_type.dart';
@@ -58,27 +57,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   ) : super(WSDetailState()) {
     _registerHandlers();
     _initializeListener();
-
-    // TODO hoannk: Remove this after testing, fake user removed event
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!isClosed) {
-        add(
-          AddMessageEvent(
-            message: MessageEntity(
-              id: 'msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}',
-              groupId: groupId,
-              user: UserSummary(id: '1', name: 'Admin', avatar: ''),
-              createdAt: DateTime.now(),
-              content: SystemMessageContent(
-                systemType: SystemMessageType.userRemoved,
-                message: 'Admin removed you from the group.',
-              ),
-              status: MessageStatus.sent,
-            ),
-          ),
-        );
-      }
-    });
   }
 
   late final int groupId;

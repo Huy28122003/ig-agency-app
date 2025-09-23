@@ -33,6 +33,8 @@ class ChatMessageBubble extends StatefulWidget {
     this.onPin,
     this.onDelete,
     this.searchText,
+    this.isMobile = true,
+    this.screenSize,
   });
 
   final double maxWidth;
@@ -53,6 +55,8 @@ class ChatMessageBubble extends StatefulWidget {
   final VoidCallback? onPin;
   final VoidCallback? onDelete;
   final String? searchText;
+  final Size? screenSize;
+  final bool isMobile;
 
   factory ChatMessageBubble.system({
     required MessageEntity message,
@@ -230,7 +234,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                 style: TextStyle(
                   color: AppColors.textPrimaryTextDefault,
                   fontSize: 13,
-                  fontFamily: 'Segoe UI',
+                  fontFamily: FontFamily.segoeUI,
                   fontWeight: FontWeight.w600,
                   height: 1.54,
                 ),
@@ -261,6 +265,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   Widget _buildMainChatBubble(double value) {
     final repliedMessage = _message.repliedMessage;
     final messageContent = _message.content;
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Stack(
@@ -405,10 +410,13 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   children: [
                     if ((!isMe || (isMe && repliedMessage != null)) &&
                         _shouldShowUserName) ...[
-                      ChatBubbleSenderInfo(
-                        message: _message,
-                        userId: widget.userId,
-                        isMe: isMe,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: ChatBubbleSenderInfo(
+                          message: _message,
+                          userId: widget.userId,
+                          isMe: isMe,
+                        ),
                       ),
                     ],
                     repliedMessage != null

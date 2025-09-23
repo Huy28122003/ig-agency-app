@@ -91,7 +91,7 @@ class _TextMessageContent extends StatelessWidget {
     if (isOnlyLink) {
       return Container(
         clipBehavior: Clip.antiAlias,
-        constraints: BoxConstraints(maxWidth: maxWidth),
+        constraints: BoxConstraints(maxWidth: maxWidth * 2 / 3),
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerGrayStrong2,
           borderRadius: BorderRadius.circular(12),
@@ -102,7 +102,7 @@ class _TextMessageContent extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.antiAlias,
-      constraints: BoxConstraints(maxWidth: maxWidth),
+      constraints: BoxConstraints(maxWidth: maxWidth * 2 / 3),
       decoration: BoxDecoration(
         color: isMe
             ? AppColors.surfaceContainerSecondarySecondaryDefault
@@ -191,7 +191,6 @@ class _LinkPreview extends StatelessWidget {
                       image: imageProvider,
                       fit: BoxFit.cover,
                       height: _kMaxHeightImageLinkPreview,
-                      width: double.infinity,
                     ),
                     placeholder: (_, _) => Container(
                       height: _kMaxHeightImageLinkPreview,
@@ -206,7 +205,6 @@ class _LinkPreview extends StatelessWidget {
                 ),
               Container(
                 height: _kMaxHeightContentLinkPreview,
-                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
