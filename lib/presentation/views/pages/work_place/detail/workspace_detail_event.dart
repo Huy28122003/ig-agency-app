@@ -5,7 +5,9 @@ sealed class WSDetailEvent {
 }
 
 class LoadDataEvent extends WSDetailEvent {
-  const LoadDataEvent();
+  final bool isSearchMode;
+
+  const LoadDataEvent(this.isSearchMode);
 }
 
 class ReplyToMessageEvent extends WSDetailEvent {
@@ -102,4 +104,28 @@ class DeleteMessageForYouEvent extends WSDetailEvent {
 
 class DeleteConversationEvent extends WSDetailEvent {
   const DeleteConversationEvent();
+}
+
+class CancelSearchEvent extends WSDetailEvent {}
+
+class SearchMessageEvent extends WSDetailEvent {
+  SearchMessageEvent();
+}
+
+class SearchMessageDebouncedEvent extends WSDetailEvent {
+  final String value;
+
+  SearchMessageDebouncedEvent({required this.value});
+}
+
+class SearchKeywordChangeEvent extends WSDetailEvent {
+  final String value;
+
+  SearchKeywordChangeEvent({required this.value});
+}
+
+class GoToMessageEvent extends WSDetailEvent {
+  final bool isGoUp;
+
+  GoToMessageEvent({this.isGoUp = false});
 }

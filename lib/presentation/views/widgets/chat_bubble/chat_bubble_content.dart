@@ -1,7 +1,7 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
+import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../shared/utils/text_message_display_util.dart';

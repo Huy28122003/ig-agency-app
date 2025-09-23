@@ -11,7 +11,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<String?> getAccessToken() async {
-    return _localStorageManager.getValue<String>(LocalStorageKeys.accessToken);
+    return _localStorageManager.getValue<String>(
+      LocalStorageKeys.accessToken,
+      isSecure: true,
+    );
   }
 
   @override
@@ -22,7 +25,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> revokeTokens() async {
-    return _localStorageManager.deleteKey(LocalStorageKeys.accessToken);
+    return _localStorageManager.deleteKey(
+      LocalStorageKeys.accessToken,
+      isSecure: true,
+    );
   }
 
   @override
@@ -30,6 +36,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     return _localStorageManager.setValue<String>(
       LocalStorageKeys.accessToken,
       accessToken,
+      isSecure: true,
     );
   }
 

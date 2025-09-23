@@ -35,4 +35,11 @@ abstract class MessageRepository {
   Future<void> deleteMessageForYou(String messageId);
 
   Future<void> deleteConversation(int groupId);
+
+  Future<List<MessageEntity>> searchMessageInWorkspace({
+    required int workspaceId,
+    required String searchMessage,
+    int? limit,
+    int? offset,
+  });
 }

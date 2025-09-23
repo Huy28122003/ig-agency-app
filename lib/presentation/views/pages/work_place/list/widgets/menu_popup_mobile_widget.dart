@@ -60,7 +60,10 @@ class _SuperMenuPopupMobileWidgetState
               top: position.dy,
               left: 0,
               right: 0,
-              child: Material(child: widget.child),
+              child: Material(
+                color: AppColors.surfaceContainerGrayStrong0,
+                child: widget.child,
+              ),
             ),
 
             Positioned(
@@ -233,7 +236,7 @@ class _MenuPopupState extends State<_MenuPopup> {
               child: Text(
                 title,
                 style:
-                textStyle ??
+                    textStyle ??
                     TextStyle(
                       color: AppColors.textDefaultTextDefault,
                       fontWeight: FontWeight.w400,

@@ -29,14 +29,13 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
 
     handleSubEvent<GetDataEvent>(_onGetData);
 
-    handleSubEvent<ChangeKeyWordEvent>((event, emit) async {
-      _searchOffset = 0;
-      emit(state.copyWith(searchKeyWord: event.value, workspacesSearch: []));
-    });
+    handleSubEvent<ChangeKeyWordEvent>(_onChangKeyWord);
 
     handleSubEvent<SearchDebouncedEvent>(_onSearchDebounced);
 
     handleSubEvent<SearchEvent>(_onSearch);
+
+    handleSubEvent<SendMessageToGroupEvent>(_onSendMessageToGroup);
   }
 
   Future<void> _onSearchDebounced(
@@ -92,5 +91,23 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     List<WorkspaceEntity> currentList = List.from(state.workspaces);
     currentList.addAll(result);
     emit(state.copyWith(pagingStatus: pagingStatus, workspaces: currentList));
+  }
+
+  Future<void> _onSendMessageToGroup(
+    SendMessageToGroupEvent event,
+    Emitter<ForwardState> emit,
+  ) async {
+    List<int> sentGroups = List.from(state.sentGroups);
+    // neu thanh cong thi update
+    sentGroups.add(event.groupId);
+    emit(state.copyWith(sentGroups: sentGroups));
+  }
+
+  Future<void> _onChangKeyWord(
+    ChangeKeyWordEvent event,
+    Emitter<ForwardState> emit,
+  ) async {
+    _searchOffset = 0;
+    emit(state.copyWith(searchKeyWord: event.value, workspacesSearch: []));
   }
 }

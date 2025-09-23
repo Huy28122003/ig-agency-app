@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ig_agency_app/shared/extensions/datetime_ext.dart';
+import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';

@@ -41,7 +41,7 @@ class HeaderHomeView extends StatelessWidget {
         ),
       ),
       child: SafeArea(
-        bottom: false,
+        // bottom: false,
         child: Padding(
           padding:
               padding ??
