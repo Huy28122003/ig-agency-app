@@ -28,12 +28,12 @@ class _MessageSearchResultsListMobileLayoutState
   void initState() {
     super.initState();
     _refreshController = RefreshController(initialRefresh: false);
+    _messageSearchResultsListBloc = context
+        .read<MessageSearchResultsListBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    _messageSearchResultsListBloc = context
-        .read<MessageSearchResultsListBloc>();
     return Scaffold(
       backgroundColor: AppColors.surfaceBackgroundBackground,
       appBar: AppBar(
@@ -90,8 +90,12 @@ class _MessageSearchResultsListMobileLayoutState
                 data: state.messages,
                 builder: (_, index) {
                   return MessageResultTile(
+                    onTap: () {
+                      context.router.pop(state.messages[index].id);
+                    },
                     message: state.messages[index],
-                    messageSearch: _messageSearchResultsListBloc.searchMessage,
+                    messageSearch: "This", //todo
+                    // messageSearch: _messageSearchResultsListBloc.searchMessage,
                   );
                 },
                 separatorBuilder: (_, index) {

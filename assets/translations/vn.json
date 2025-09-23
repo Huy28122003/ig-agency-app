@@ -78,7 +78,8 @@
     "group": "Nhóm",
     "message": "Tin nhắn",
     "search_in_conversation": "Tìm kiếm trong cuộc trò chuyện",
-    "show_as_list": "Hiển thị danh sách"
+    "show_as_list": "Hiển thị danh sách",
+    "no_result": "Không có kết quả"
   },
   "pinned_message_list": {
     "title": "Tin nhắn đã ghim",

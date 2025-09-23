@@ -9,11 +9,13 @@ import '../../../widgets/circle_network_avatar.dart';
 class MessageResultTile extends StatelessWidget {
   final MessageEntity message;
   final String messageSearch;
+  final VoidCallback onTap;
 
   const MessageResultTile({
     super.key,
     required this.message,
     required this.messageSearch,
+    required this.onTap,
   });
 
   @override
@@ -21,7 +23,7 @@ class MessageResultTile extends StatelessWidget {
     final content = (message.content as TextMessageContent).text;
 
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Container(
         color: AppColors.surfaceBackgroundBackground,
         padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
@@ -47,7 +49,7 @@ class MessageResultTile extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  message.user.avatar,
+                                  message.user.name,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18,
@@ -71,6 +73,7 @@ class MessageResultTile extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Container(
+              margin: EdgeInsets.only(left: 44 + 8),
               width: double.infinity,
               height: 1,
               color: AppColors.outlineGrayStrong200,
