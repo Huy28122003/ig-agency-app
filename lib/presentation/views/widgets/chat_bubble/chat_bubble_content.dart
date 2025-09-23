@@ -102,7 +102,9 @@ class _TextMessageContent extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.antiAlias,
-      constraints: BoxConstraints(maxWidth: maxWidth * 2 / 3),
+      constraints: BoxConstraints(
+        maxWidth: link != null ? maxWidth * 2 / 3 : maxWidth,
+      ),
       decoration: BoxDecoration(
         color: isMe
             ? AppColors.surfaceContainerSecondarySecondaryDefault
@@ -191,20 +193,24 @@ class _LinkPreview extends StatelessWidget {
                       image: imageProvider,
                       fit: BoxFit.cover,
                       height: _kMaxHeightImageLinkPreview,
+                      width: double.infinity,
                     ),
                     placeholder: (_, _) => Container(
                       height: _kMaxHeightImageLinkPreview,
+                      width: double.infinity,
                       color: AppColors.surfaceContainerGrayStrong2,
                       child: const Center(child: CupertinoActivityIndicator()),
                     ),
                     errorWidget: (_, _, _) => Container(
                       height: _kMaxHeightImageLinkPreview,
+                      width: double.infinity,
                       color: Color.fromARGB(255, 195, 197, 201),
                     ),
                   ),
                 ),
               Container(
                 height: _kMaxHeightContentLinkPreview,
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,

@@ -150,6 +150,7 @@ class _WorkspaceDetailTabletLayoutState
                         key: const ValueKey('group_chat'),
                         bloc: _bloc,
                         focusNode: _focusNode,
+                        groupName: widget.groupName,
                         isMobile: true,
                       )
                     : GroupRemovedView(
