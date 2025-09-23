@@ -198,5 +198,6 @@ class SharePreferenceImpl extends LocalStorageManager {
   @override
   Future<void> deleteAll() async {
     await _secureStorage.deleteAll();
+    await _prefs.clear();
   }
 }

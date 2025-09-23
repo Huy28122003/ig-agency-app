@@ -104,7 +104,8 @@ class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    (widget.countNewMessage > 1 && !widget.isSeen)
+                                    (widget.countNewMessage > 1 &&
+                                            !widget.isSeen)
                                         ? "${widget.countNewMessage} new messages"
                                         : widget.lastMessage,
                                     style: TextStyle(
@@ -130,7 +131,8 @@ class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
                                 ),
                                 SizedBox(width: 4),
                                 Text(
-                                  _convertDateTimeToString(),
+                                  widget.lastMessageTime
+                                      .convertDateTimeToString(),
                                   style: TextStyle(
                                     fontFamily: FontFamily.segoeUI,
                                     fontSize: 14,
@@ -145,7 +147,8 @@ class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
 
                       SizedBox(width: 12),
                       if (widget.isPin) Assets.icons.icPin.svg(),
-                      if (!widget.isMute) Assets.icons.icBlockNotification.svg(),
+                      if (!widget.isMute)
+                        Assets.icons.icBlockNotification.svg(),
                       if (!widget.isSeen)
                         Container(
                           margin: EdgeInsets.only(left: 4),
@@ -172,17 +175,5 @@ class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
         ),
       ),
     );
-  }
-
-  String _convertDateTimeToString() {
-    final isToday =
-        now.year == widget.lastMessageTime.year &&
-        now.month == widget.lastMessageTime.month &&
-        now.day == widget.lastMessageTime.day;
-    if (isToday) {
-      return widget.lastMessageTime.toHourMinuteAmPm;
-    } else {
-      return widget.lastMessageTime.toRelativeString;
-    }
   }
 }

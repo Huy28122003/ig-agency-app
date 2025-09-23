@@ -23,3 +23,10 @@ class SearchEvent extends ForwardEvent {
 
   SearchEvent({required this.value});
 }
+
+class SendMessageToGroupEvent extends ForwardEvent{
+  final int groupId;
+
+  SendMessageToGroupEvent({required this.groupId});
+}
+

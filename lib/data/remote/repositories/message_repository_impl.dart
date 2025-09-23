@@ -1,3 +1,5 @@
+import 'package:dartx/dartx.dart';
+import 'package:ig_agency_app/shared/utils/mock_data.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/message/message.dart';
@@ -156,6 +158,28 @@ class MessageRepositoryImpl implements MessageRepository {
   Future<void> deleteConversation(String groupId) async {
     try {
       // Todo: hoannk: rehandle this
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<List<MessageEntity>> searchMessageInWorkspace({
+    required int workspaceId,
+    required String searchMessage,
+    int? limit,
+    int? offset,
+  }) async {
+    try {
+      final start = offset ?? 0;
+      final end = start + (limit ?? MockData().mockMessages().length);
+      await 500.milliseconds.delay;
+      return MockData().mockMessages().sublist(
+        start,
+        end > MockData().mockMessages().length
+            ? MockData().mockMessages().length
+            : (end),
+      );
     } catch (e) {
       throw FailureConverter.convert(e);
     }

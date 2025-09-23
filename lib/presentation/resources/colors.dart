@@ -45,6 +45,7 @@ abstract class AppColors {
   static const Color surfaceContainerGrayStrong0 = Color(0xFFFFFFFF);
   static const Color surfaceContainerGrayStrong1 = Color(0xFFF3F4F6);
   static const Color surfaceContainerGrayStrong2 = Color(0xFFE5E7EB);
+  static const Color surfaceContainerGrayStrong3 = Color(0xFFD1D5DC);
   static const Color surfaceContainerGrayStrong05 = Color(0xFFF8FAFB);
   static const Color surfaceContainerGrayStrong95 = Color(0xFF030712);
   static const Color surfaceContainerAlertErrorLight = Color(0xFFFEE1E1);
@@ -63,5 +64,6 @@ abstract class AppColors {
   /// Icon
   static const Color iconDefaultDefaultSub = Color(0xFF6A7282);
   static const Color iconPrimaryDefault = Color(0xFFFCB732);
+  static const Color iconPrimaryDisable = Color(0xFFFEE2AD);
   static const Color iconDefaultDefaultSub2 = Color(0xFF99A1AF);
 }

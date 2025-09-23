@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/group_info/widgets/group_info_card_widget.dart';
+import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
@@ -101,21 +102,9 @@ class GroupInfoMobileLayout extends StatelessWidget {
               return state.workspace;
             },
             builder: (context, state) {
-              return ClipOval(
-                child: Image.network(
-                  fit: BoxFit.cover,
-                  width: 80,
-                  height: 80,
-                  state?.workspaceAvatar ?? "",
-                  errorBuilder: (context, _, _) {
-                    return ClipOval(
-                      child: Assets.images.defaultAvatar.image(
-                        width: 80,
-                        height: 80,
-                      ),
-                    );
-                  },
-                ),
+              return CircleNetworkAvatar(
+                size: 80,
+                imageUrl: state?.workspaceAvatar ?? "",
               );
             },
           ),
@@ -252,6 +241,21 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   title: "group_info.search_in_conversation".tr(),
+                  onTap: () {
+                    final workspace = context
+                        .read<GroupInfoBloc>()
+                        .state
+                        .workspace;
+                    if (workspace == null) return;
+                    context.router.push(
+                      WSDetailRoute(
+                        groupId: workspace.id,
+                        groupName: workspace.workspaceName,
+                        groupAvatar: workspace.workspaceAvatar,
+                        isSearchMode: true,
+                      ),
+                    );
+                  },
                 ),
                 GroupInfoItem(
                   icon: Assets.icons.icMembers.svg(

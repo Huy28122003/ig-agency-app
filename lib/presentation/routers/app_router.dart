@@ -19,6 +19,7 @@ import '../views/pages/media_detail/media_detail_page.dart';
 import '../views/pages/media_preview/media_preview_page.dart';
 import '../views/pages/group_info/group_info_page.dart';
 import '../views/pages/members/members_page.dart';
+import '../views/pages/message_search_results_list/message_search_results_list_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
 import '../views/pages/profile/profile_page.dart';
@@ -125,5 +126,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: LinkedDeviceRoute.page),
     AutoRoute(page: DeviceDetailRoute.page),
     AutoRoute(page: LoginHistoryRoute.page),
+    AutoRoute(page: MessageSearchResultsListRoute.page),
   ];
 }
