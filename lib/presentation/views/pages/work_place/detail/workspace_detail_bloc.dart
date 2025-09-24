@@ -268,9 +268,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       ),
     );
 
-    // TODO hoannk: Remove delay
-    await Future.delayed(const Duration(seconds: 2));
-
     if (messagesResult.isEmpty || messagesResult.length < _limit) {
       return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
     }
@@ -471,12 +468,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       // TODO hoannk: Remove delay
       await Future.delayed(const Duration(seconds: 2));
 
-      final messages = result.reversed;
+      final messages = result.reversed.toList();
       final pagingStatus = messages.isEmpty || messages.length < _limit
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
-      final updatedMessages = _addMessageList(leadingMessageList: messages.toList());
+      final updatedMessages = _addMessageList(leadingMessageList: messages);
 
       final hasMessage = updatedMessages.any(
         (uiModel) => uiModel.message.id == event.messageId,

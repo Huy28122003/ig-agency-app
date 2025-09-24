@@ -102,7 +102,7 @@ class MessageRepositoryImpl implements MessageRepository {
         groupId,
         limit,
         oldestMessageId,
-        null,
+        targetMessageId,
       );
 
       return messages;
