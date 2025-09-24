@@ -41,41 +41,48 @@ class _WorkspaceDetailTabletLayoutState
         leadingWidth: 44,
         toolbarHeight: 60,
         scrolledUnderElevation: 0,
-        title: Row(
-          children: [
-            CircleNetworkAvatar(
-              imageUrl: 'https://example.com/avatar.jpg',
-              size: 40,
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Whales - IG Agency 8%',
-                    style: TextStyle(
-                      color: AppColors.textDefaultTextDefault,
-                      fontSize: 16,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                  ),
-                  Text(
-                    '99 Members, 29 Online',
-                    style: TextStyle(
-                      color: AppColors.textDefaultTextSub2,
-                      fontSize: 14,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w400,
-                      height: 1.14,
-                    ),
-                  ),
-                ],
+        title: GestureDetector(
+          onTap: () {
+            context.router.push(
+              GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),
+            );
+          },
+          child: Row(
+            children: [
+              CircleNetworkAvatar(
+                imageUrl: 'https://example.com/avatar.jpg',
+                size: 40,
               ),
-            ),
-          ],
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Whales - IG Agency 8%',
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextDefault,
+                        fontSize: 16,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w700,
+                        height: 1.50,
+                      ),
+                    ),
+                    Text(
+                      '99 Members, 29 Online',
+                      style: TextStyle(
+                        color: AppColors.textDefaultTextSub2,
+                        fontSize: 14,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: SafeArea(

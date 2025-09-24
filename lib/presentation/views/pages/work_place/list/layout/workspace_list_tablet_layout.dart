@@ -226,13 +226,13 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                 _workspaceBloc.add(
                                   SelectWorkspaceEvent(id: workspace.id),
                                 );
-                                context.router.replaceAll([
+                                context.router.push(
                                   WSDetailRoute(
                                     groupId: 1, // TODO hoannk: change id
                                     groupName: workspace.workspaceName,
                                     groupAvatar: workspace.workspaceAvatar,
                                   ),
-                                ]);
+                                );
                               },
                               isMute: workspace.isMute,
                               isPin: workspace.isPin,

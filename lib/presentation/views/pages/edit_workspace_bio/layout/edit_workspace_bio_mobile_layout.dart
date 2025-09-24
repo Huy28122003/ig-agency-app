@@ -19,18 +19,12 @@ class EditWorkspaceBioMobileLayout extends StatefulWidget {
 
 class _EditWorkspaceBioMobileLayoutState
     extends State<EditWorkspaceBioMobileLayout> {
-  late final TextEditingController _controller;
   late final EditWorkspaceBioBloc _editWorkspaceBioBloc;
 
   @override
   void initState() {
     super.initState();
     _editWorkspaceBioBloc = context.read<EditWorkspaceBioBloc>();
-    _controller = TextEditingController(text: _editWorkspaceBioBloc.state.bio);
-
-    _controller.addListener(() {
-      _editWorkspaceBioBloc.add(BioChangeEvent(value: _controller.text));
-    });
   }
 
   @override
@@ -129,7 +123,6 @@ class _EditWorkspaceBioMobileLayoutState
                   builder: (context, state) {
                     return AppTextField(
                       value: state,
-                      controller: _controller,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       maxLength: 150,
@@ -141,6 +134,9 @@ class _EditWorkspaceBioMobileLayoutState
                         fontWeight: FontWeight.w400,
                         height: 24 / 16,
                       ),
+                      onChanged: (value) {
+                        _editWorkspaceBioBloc.add(BioChangeEvent(value: value));
+                      },
                     );
                   },
                 ),
