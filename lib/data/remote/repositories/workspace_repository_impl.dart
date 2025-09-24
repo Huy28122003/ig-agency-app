@@ -1,3 +1,4 @@
+import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
@@ -7,34 +8,27 @@ import 'package:injectable/injectable.dart';
 import '../../../domain/repositories/workspace_repository.dart';
 import '../../../shared/commons/failure_converter.dart';
 import '../../../shared/utils/mock_data.dart';
+import '../app/workspace_remote_data_source.dart';
 
 @Injectable(as: WorkspaceRepository)
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
+  final WorkspaceRemoteDataSource _workspaceRemoteDataSource;
+
+  WorkspaceRepositoryImpl(this._workspaceRemoteDataSource);
   @override
   Future<List<WorkspaceEntity>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,
   }) async {
+    return [];
     try {
-      final allData = MockData.getWorkspaces();
-
-      final filtered = keyWord != null && keyWord.isNotEmpty
-          ? allData
-                .where(
-                  (e) => e.workspaceName.toLowerCase().contains(
-                    keyWord.toLowerCase(),
-                  ),
-                )
-                .toList()
-          : allData;
-
-      final pageData = filtered.sublist(
-        offset,
-        offset + limit > filtered.length ? filtered.length : offset + limit,
+      final response = await _workspaceRemoteDataSource.getWorkspaces(
+        getWorkspacesRequest: GetWorkspacesRequestModel(
+          limit: limit,
+          offset: offset,
+        ),
       );
-
-      return pageData;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -47,7 +41,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<WorkspaceEntity> getWorkspaceById({required int groupId}) async {
+  Future<WorkspaceEntity> getWorkspaceById({required String groupId}) async {
     try {
       final workspace = MockData.getWorkspaces().firstWhere(
         (element) => element.id == groupId,
@@ -60,7 +54,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<bool> updateWorkspaceBio({
-    required int groupId,
+    required String groupId,
     required String bio,
   }) async {
     try {
@@ -72,7 +66,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<bool> updateWorkspaceNotification({
-    required int groupId,
+    required String groupId,
     required bool isMute,
   }) async {
     try {
@@ -145,7 +139,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<UserEntity>> getUserInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {
@@ -163,7 +157,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<MediaEntity>> getMediasInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {
@@ -181,7 +175,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<FileEntity>> getFileInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {
@@ -199,7 +193,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<String>> getLinkInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {

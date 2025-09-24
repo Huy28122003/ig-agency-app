@@ -1,7 +1,7 @@
 class GetDataInGroupParams {
   final int limit;
   final int offset;
-  final int workspaceId;
+  final String workspaceId;
 
   GetDataInGroupParams({
     required this.limit,

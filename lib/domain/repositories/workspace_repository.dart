@@ -12,37 +12,37 @@ abstract class WorkspaceRepository {
     String? keyWord,
   });
 
-  Future<WorkspaceEntity> getWorkspaceById({required int groupId});
+  Future<WorkspaceEntity> getWorkspaceById({required String groupId});
 
   Stream<WorkspaceEntity> listenLastMessages();
 
-  Future<bool> updateWorkspaceBio({required int groupId, required String bio});
+  Future<bool> updateWorkspaceBio({required String groupId, required String bio});
 
   Future<List<UserEntity>> getUserInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   });
 
   Future<bool> updateWorkspaceNotification({
-    required int groupId,
+    required String groupId,
     required bool isMute,
   });
 
   Future<List<MediaEntity>> getMediasInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   });
 
   Future<List<FileEntity>> getFileInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   });
 
   Future<List<String>> getLinkInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   });

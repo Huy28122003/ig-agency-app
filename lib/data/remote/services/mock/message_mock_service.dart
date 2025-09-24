@@ -14,7 +14,7 @@ import '../../../../domain/enums/message_enums.dart';
 class MessageMockService {
   final _random = Random(42);
 
-  final Map<int, List<MessageEntity>> _messageMockData = {};
+  final Map<String, List<MessageEntity>> _messageMockData = {};
 
   MessageMockService(this._ramCache) {
     _initializeMockData();
@@ -25,7 +25,7 @@ class MessageMockService {
   void _initializeMockData() {
     if (_messageMockData.isEmpty) {
       for (final group in _mockGroups) {
-        final groupId = group["id"] as int;
+        final groupId = group["id"] as String;
         _messageMockData[groupId] = _createMockMessages(groupId);
       }
     }
@@ -217,7 +217,7 @@ class MessageMockService {
     return (buffer.toString(), segments);
   }
 
-  List<MessageEntity> _createMockMessages(int groupId, {int count = 50}) {
+  List<MessageEntity> _createMockMessages(String groupId, {int count = 50}) {
     DateTime current = DateTime.now();
     current = current.subtract(Duration(days: 365));
 
@@ -338,7 +338,7 @@ class MessageMockService {
 
   // Mock function call
   List<MessageEntity> mockFetchPinnedMessages({
-    int? groupId,
+    String? groupId,
     int limit = 10,
     int offset = 0,
   }) {
@@ -378,7 +378,7 @@ class MessageMockService {
 
   Future<void> mockUnpinMessage(String messageId) async {
     MessageEntity? targetMessage;
-    int? targetGroupId;
+    String? targetGroupId;
     int? targetMessageIndex;
 
     for (final entry in _messageMockData.entries) {
@@ -418,7 +418,7 @@ class MessageMockService {
 
   Future<void> mockPinMessage(String messageId) async {
     MessageEntity? targetMessage;
-    int? targetGroupId;
+    String? targetGroupId;
     int? targetMessageIndex;
 
     for (final entry in _messageMockData.entries) {
@@ -456,7 +456,7 @@ class MessageMockService {
     _messageMockData[targetGroupId] = messages;
   }
 
-  PinnedMessageSummary mockGetPinnedMessageSummary(int groupId) {
+  PinnedMessageSummary mockGetPinnedMessageSummary(String groupId) {
     final pinnedMessages = (_messageMockData[groupId] ?? [])
         .where((element) => element.isPinned)
         .toList();
@@ -472,7 +472,7 @@ class MessageMockService {
   }
 
   List<MessageEntity> mockFetchMessagesByGroupId({
-    required int groupId,
+    required String groupId,
     int limit = 10,
     String? oldestMessageId,
     String? targetMessageId,
@@ -547,7 +547,7 @@ class MessageMockService {
 
   Future<void> addMessage(
     String userId,
-    int groupId,
+      String groupId,
     String? replyMessageId,
     dynamic content,
   ) async {
@@ -593,7 +593,7 @@ class MessageMockService {
     _ramCache.saveMessage(sentMessage);
   }
 
-  List<UserEntity> mockGetMemberInGroup(int groupId) {
+  List<UserEntity> mockGetMemberInGroup(String groupId) {
     return _mockUsers
         .map(
           (e) => UserEntity(
@@ -607,7 +607,7 @@ class MessageMockService {
         .toList();
   }
 
-  List<UserEntity> mockSearchMemberInGroup(int groupId, String query) {
+  List<UserEntity> mockSearchMemberInGroup(String groupId, String query) {
     return _mockUsers
         .map(
           (e) => UserEntity(

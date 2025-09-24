@@ -83,7 +83,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     });
   }
 
-  late final int groupId;
+  late final String groupId;
   final GetProfileInfoUseCase _getProfileInfoUseCase;
   final FetchMessagesInGroupUseCase _fetchMessageUseCase;
   final GetPinnedMessageSummaryGroupUseCase

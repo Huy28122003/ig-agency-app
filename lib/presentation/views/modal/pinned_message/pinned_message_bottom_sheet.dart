@@ -23,7 +23,7 @@ class PinnedMessagesBottomSheet extends StatefulWidget {
 
   static Future<void> show(
     BuildContext context,
-    int groupId, {
+      String groupId, {
     required VoidCallback onUnpinSuccess,
     required Function(String messageId) onTap,
   }) async {

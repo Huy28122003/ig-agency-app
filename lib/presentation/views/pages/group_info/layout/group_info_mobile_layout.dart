@@ -345,7 +345,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     if (group == null) return;
                     context.router.push(
                       PinnedMessageListRoute(
-                        groupId: 5,
+                        groupId: "5",
                         groupName: group.workspaceName,
                         groupAvatar: group.workspaceAvatar,
                       ),

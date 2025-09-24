@@ -25,7 +25,7 @@ class SearchEvent extends ForwardEvent {
 }
 
 class SendMessageToGroupEvent extends ForwardEvent{
-  final int groupId;
+  final String groupId;
 
   SendMessageToGroupEvent({required this.groupId});
 }

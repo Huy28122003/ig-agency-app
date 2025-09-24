@@ -20,7 +20,7 @@ class SearchMemberInGroupUseCase
 }
 
 class SearchMemberInGroupParams {
-  final int groupId;
+  final String groupId;
   final String query;
 
   SearchMemberInGroupParams({required this.groupId, required this.query});

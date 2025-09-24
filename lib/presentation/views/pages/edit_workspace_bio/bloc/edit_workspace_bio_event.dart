@@ -4,7 +4,7 @@ class EditWorkspaceBioEvent {}
 
 class LoadDataEvent extends EditWorkspaceBioEvent {
   final String bio;
-  final int workspaceId;
+  final String workspaceId;
 
   LoadDataEvent({required this.bio, required this.workspaceId});
 }

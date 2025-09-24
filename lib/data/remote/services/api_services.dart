@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/search_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
@@ -7,6 +8,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
+import '../models/response/get_workspaces_response_model.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/change_password_response_model.dart';
 import '../models/response/profile_info_response.dart';
@@ -36,5 +38,11 @@ abstract class ApiService {
   @POST('/')
   Future<PagedResponse<SearchResultResponse>> search(
     @Body() SearchRequestModel request,
+  );
+
+  //Workspaces
+  @GET('/conversations')
+  Future<PagedResponse<GetWorkspacesResponseModel>> getWorkspaces(
+    GetWorkspacesRequestModel request,
   );
 }
