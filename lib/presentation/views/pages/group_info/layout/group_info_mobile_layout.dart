@@ -17,6 +17,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<GroupInfoBloc>();
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
@@ -66,7 +67,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
             children: [
               _buildHeaderInfo(context),
               SizedBox(height: 20),
-              _buildBody(context),
+              _buildBody(context,bloc),
               SizedBox(height: 12),
               _buildLeaveGroupButton(),
             ],
@@ -176,7 +177,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, GroupInfoBloc bloc) {
     return Column(
       children: [
         BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
@@ -215,9 +216,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     );
 
                     if (result == null) return;
-                    context.read<GroupInfoBloc>().add(
-                      UpdateWorkspaceEvent(bio: result as String),
-                    );
+                    bloc.add(UpdateWorkspaceEvent(bio: result as String));
                   },
                 ),
               ],
@@ -343,6 +342,17 @@ class GroupInfoMobileLayout extends StatelessWidget {
                       ),
                     ),
                   ),
+                  onTap: () {
+                    final group = bloc.state.workspace;
+                    if (group == null) return;
+                    context.router.push(
+                      PinnedMessageListRoute(
+                        groupId: 5,
+                        groupName: group.workspaceName,
+                        groupAvatar: group.workspaceAvatar,
+                      ),
+                    );
+                  },
                 ),
                 GroupInfoItem(
                   icon: Assets.icons.icBlockNotification.svg(
@@ -366,9 +376,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                             child: CupertinoSwitch(
                               value: workspace?.isMute ?? false,
                               onChanged: (_) {
-                                context.read<GroupInfoBloc>().add(
-                                  ToggleNotificationEvent(),
-                                );
+                                bloc.add(ToggleNotificationEvent());
                               },
                             ),
                           );

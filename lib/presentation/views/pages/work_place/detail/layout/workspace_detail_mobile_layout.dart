@@ -193,50 +193,57 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
         ),
       ),
       titleSpacing: 12,
-      title: Row(
-        children: [
-          CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.groupName,
-                  style: TextStyle(
-                    color: AppColors.textDefaultTextDefault,
-                    fontSize: 16,
-                    fontFamily: FontFamily.segoeUI,
-                    fontWeight: FontWeight.w700,
-                    height: 1.50,
+      title: GestureDetector(
+        onTap: () {
+          context.router.push(
+            GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),
+          );
+        },
+        child: Row(
+          children: [
+            CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.groupName,
+                    style: TextStyle(
+                      color: AppColors.textDefaultTextDefault,
+                      fontSize: 16,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w700,
+                      height: 1.50,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
-                  selector: (state) {
-                    return state.users;
-                  },
-                  builder: (context, users) {
-                    final onlineUsers = users
-                        .where((user) => user.isOnline)
-                        .length;
-                    return Text(
-                      '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextSub2,
-                        fontSize: 14,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w400,
-                        height: 1.14,
-                      ),
-                    );
-                  },
-                ),
-              ],
+                  BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
+                    selector: (state) {
+                      return state.users;
+                    },
+                    builder: (context, users) {
+                      final onlineUsers = users
+                          .where((user) => user.isOnline)
+                          .length;
+                      return Text(
+                        '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextSub2,
+                          fontSize: 14,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w400,
+                          height: 1.14,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -414,6 +421,11 @@ class _GroupChatView extends StatelessWidget {
                           },
                         ),
                       ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: _buildResultNavigation(),
+                      ),
                     ],
                   ),
                 ),
@@ -423,7 +435,7 @@ class _GroupChatView extends StatelessWidget {
                   },
                   builder: (context, state) {
                     if (state) {
-                      return SizedBox(height: 44);
+                      return SearchResultsBar(groupName: groupName);
                     }
                     return BlocSelector<
                       WSDetailBloc,
@@ -472,13 +484,100 @@ class _GroupChatView extends StatelessWidget {
                 ),
               ],
             ),
-            if (state)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: SearchResultsBar(groupName: groupName),
-              ),
+            // if (state)
+            //   Positioned(
+            //     bottom: 0,
+            //     left: 0,
+            //     right: 0,
+            //     child: SearchResultsBar(groupName: groupName),
+            //   ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildResultNavigation() {
+    return BlocBuilder<WSDetailBloc, WSDetailState>(
+      buildWhen: (prev, curr) =>
+          prev.indexSearchMessage != curr.indexSearchMessage ||
+          prev.messageSearchResults != curr.messageSearchResults,
+      builder: (context, state) {
+        final goToUpEnable =
+            state.indexSearchMessage <
+                bloc.state.messageSearchResults.length - 1 &&
+            bloc.state.messageSearchResults.length > 1;
+        final goToDownEnable =
+            state.indexSearchMessage > 0 &&
+            bloc.state.messageSearchResults.length > 1;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            BlocSelector<WSDetailBloc, WSDetailState, List<MessageEntity>>(
+              selector: (state) {
+                return state.messageSearchResults;
+              },
+              builder: (context, state) {
+                if (state.length < 2) {
+                  return SizedBox();
+                }
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (!goToUpEnable) return;
+                        bloc.add(GoToMessageEvent(isGoUp: true));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          margin: EdgeInsets.only(right: 12),
+                          width: 26,
+                          height: 26,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (goToUpEnable)
+                                ? AppColors.iconPrimaryDefault
+                                : AppColors.iconPrimaryDisable,
+                          ),
+                          child: RotatedBox(
+                            quarterTurns: 1,
+                            child: Assets.icons.icArrowLeft.svg(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (!goToDownEnable) return;
+                        bloc.add(GoToMessageEvent());
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          margin: EdgeInsets.only(right: 12),
+                          width: 26,
+                          height: 26,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (goToDownEnable)
+                                ? AppColors.iconPrimaryDefault
+                                : AppColors.iconPrimaryDisable,
+                          ),
+                          child: RotatedBox(
+                            quarterTurns: 3,
+                            child: Assets.icons.icArrowLeft.svg(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ],
         );
       },
@@ -499,94 +598,29 @@ class SearchResultsBar extends StatelessWidget {
           prev.indexSearchMessage != curr.indexSearchMessage ||
           prev.messageSearchResults != curr.messageSearchResults,
       builder: (context, state) {
-        final goToUpEnable =
-            state.indexSearchMessage < bloc.state.totalSearchMessage - 1 &&
-            bloc.state.totalSearchMessage != 0;
-        final goToDownEnable =
-            state.indexSearchMessage > 0 && bloc.state.totalSearchMessage != 0;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            GestureDetector(
-              onTap: () {
-                if (!goToUpEnable) return;
-                bloc.add(GoToMessageEvent(isGoUp: true));
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  margin: EdgeInsets.only(right: 12),
-                  width: 26,
-                  height: 26,
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (goToUpEnable)
-                        ? AppColors.iconPrimaryDefault
-                        : AppColors.iconPrimaryDisable,
-                  ),
-                  child: RotatedBox(
-                    quarterTurns: 1,
-                    child: Assets.icons.icArrowLeft.svg(),
-                  ),
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceContainerGrayStrong3,
+          ),
+          child: SafeArea(
+            child: Row(
+              children: [
+                Assets.icons.icSearch.svg(
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
                 ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                if (!goToDownEnable) return;
-                bloc.add(GoToMessageEvent());
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  margin: EdgeInsets.only(right: 12),
-                  width: 26,
-                  height: 26,
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (goToDownEnable)
-                        ? AppColors.iconPrimaryDefault
-                        : AppColors.iconPrimaryDisable,
-                  ),
-                  child: RotatedBox(
-                    quarterTurns: 3,
-                    child: Assets.icons.icArrowLeft.svg(),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerGrayStrong3,
-              ),
-              child: Row(
-                children: [
-                  Assets.icons.icSearch.svg(
-                    width: 24,
-                    height: 24,
-                    colorFilter: ColorFilter.mode(
-                      Colors.black,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  BlocSelector<WSDetailBloc, WSDetailState, (int, int)>(
-                    selector: (state) {
-                      return (
-                        state.indexSearchMessage,
-                        state.totalSearchMessage,
-                      );
-                    },
-                    builder: (context, state) {
-                      final index = state.$1;
-                      final total = state.$2;
+                SizedBox(width: 12),
+                BlocSelector<WSDetailBloc, WSDetailState, String>(
+                  selector: (state) {
+                    return state.searchKeyword;
+                  },
+                  builder: (context, state) {
+                    if (state.isEmpty) {
                       return Text(
                         textAlign: TextAlign.start,
-                        "${index + 1} of $total",
+                        "search.no_result".tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -595,37 +629,69 @@ class SearchResultsBar extends StatelessWidget {
                           color: AppColors.textDefaultTextSub2,
                         ),
                       );
-                    },
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      context.router.push(
-                        MessageSearchResultsListRoute(
-                          workspaceId: bloc.groupId,
-                          searchMessage: bloc.state.searchKeyword,
-                          workspaceName: groupName,
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        "search.show_as_list".tr(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: FontFamily.segoeUI,
-                          fontSize: 16,
-                          height: 24 / 16,
-                          color: AppColors.iconAlertInfo,
-                        ),
+                    }
+                    return BlocSelector<
+                      WSDetailBloc,
+                      WSDetailState,
+                      (int, List<MessageEntity>)
+                    >(
+                      selector: (state) {
+                        return (
+                          state.indexSearchMessage,
+                          state.messageSearchResults,
+                        );
+                      },
+                      builder: (context, state) {
+                        final index = state.$1;
+                        final total = state.$2.length;
+                        return Text(
+                          textAlign: TextAlign.start,
+                          "${index + 1} of $total",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            height: 20 / 14,
+                            fontFamily: FontFamily.segoeUI,
+                            color: AppColors.textDefaultTextSub2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      },
+                    );
+                  },
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () async {
+                    if (bloc.state.messageSearchResults.isEmpty) return;
+                    final messageId = await context.router.push<String>(
+                      MessageSearchResultsListRoute(
+                        workspaceId: bloc.groupId,
+                        searchMessage: bloc.state.searchKeyword,
+                        workspaceName: groupName,
+                      ),
+                    );
+                    if (messageId == null) return;
+                    bloc.add(JumpToMessageEvent(messageId: messageId));
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      "search.show_as_list".tr(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: FontFamily.segoeUI,
+                        fontSize: 16,
+                        height: 24 / 16,
+                        color: AppColors.iconAlertInfo,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );

@@ -10,12 +10,17 @@ import 'layout/group_info_tablet_layout.dart';
 @RoutePage()
 class GroupInfoPage
     extends BasePage<GroupInfoBloc, GroupInfoEvent, GroupInfoState> {
-  const GroupInfoPage({super.key});
+  const GroupInfoPage({super.key, required this.groupId});
+
+  final int groupId;
+
+  @override
+  GroupInfoBloc get buildBloc => super.buildBloc..groupId = groupId;
 
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<GroupInfoBloc>().add(LoadDataEvent(groupId: 5));
+    context.read<GroupInfoBloc>().add(LoadDataEvent(groupId: groupId));
   }
 
   @override
