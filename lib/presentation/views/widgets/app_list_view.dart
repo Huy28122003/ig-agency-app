@@ -83,13 +83,23 @@ class _AppListViewState<T> extends State<AppListView<T>> {
       scrollController: _scrollController,
       child: widget.data.safeWithPageState(
         (it) {
+          if (widget.separatorBuilder == null) {
+            return ListView.builder(
+              controller: _scrollController,
+              itemCount: it.length,
+              padding: widget.padding,
+              itemBuilder: (context, index) {
+                return widget.builder(widget.data[index], index);
+              },
+            );
+          }
+
           return ListView.separated(
             controller: _scrollController,
             itemCount: it.length,
             padding: widget.padding,
             separatorBuilder:
-                widget.separatorBuilder ??
-                (_, _) => const SizedBox(height: 16),
+                widget.separatorBuilder ?? (_, _) => const SizedBox(height: 16),
             itemBuilder: (context, index) {
               return widget.builder(widget.data[index], index);
             },

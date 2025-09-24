@@ -134,6 +134,9 @@
     "notification": "In App Alerts",
     "logout": "Logout"
   },
+  "error": {
+    "error": "Error"
+  },
   "pinned_message_list": {
     "title": "Pinned Messages",
     "content": "No pinned messages",
