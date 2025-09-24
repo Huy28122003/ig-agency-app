@@ -12,7 +12,8 @@
     "group": "Group",
     "message": "Message",
     "search_in_conversation": "Search in conversation",
-    "show_as_list": "Show as list"
+    "show_as_list": "Show as list",
+    "no_result": "No result"
   },
   "workspace": {
     "workspace": "Workspace",
@@ -136,5 +137,10 @@
   },
   "error": {
     "error": "Error"
+  },
+  "pinned_message_list": {
+    "title": "Pinned Messages",
+    "content": "No pinned messages",
+    "description": "Messages pinned from this chat\nwill appear here"
   }
 }
