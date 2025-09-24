@@ -3,7 +3,7 @@ part of 'message_search_results_list_bloc.dart';
 class MessageSearchResultsListState
     extends BaseState<MessageSearchResultsListState> {
   const MessageSearchResultsListState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage = '',
     super.processing = false,
     this.messages = const [],
