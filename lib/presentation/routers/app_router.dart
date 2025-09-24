@@ -89,6 +89,8 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: EditBioRoute.page),
             AutoRoute(page: ChangePasswordRoute.page),
             AutoRoute(page: LinkedDeviceRoute.page),
+            AutoRoute(page: DeviceDetailRoute.page),
+            AutoRoute(page: LoginHistoryRoute.page),
           ],
         ),
         AutoRoute(page: WSDetailRoute.page),
