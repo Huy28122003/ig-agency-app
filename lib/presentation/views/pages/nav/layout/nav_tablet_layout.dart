@@ -60,6 +60,9 @@ class NavTabletLayout extends StatelessWidget {
                                       AutoTabsRouter.of(
                                         context,
                                       ).setActiveIndex(index);
+                                      if (index != 0) {
+                                        context.router.replace(EmptyRoute());
+                                      }
                                     },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12),

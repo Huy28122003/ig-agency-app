@@ -9,27 +9,27 @@ import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
 import '../bloc/edit_workspace_bio_bloc.dart';
 
-class EditWorkspaceBioTabletLayout extends StatefulWidget {
-  const EditWorkspaceBioTabletLayout({super.key});
+class EditWorkspaceNameTabletLayout extends StatefulWidget {
+  const EditWorkspaceNameTabletLayout({super.key});
 
   @override
-  State<EditWorkspaceBioTabletLayout> createState() =>
-      _EditWorkspaceBioTabletLayoutState();
+  State<EditWorkspaceNameTabletLayout> createState() =>
+      _EditWorkspaceNameTabletLayoutState();
 }
 
-class _EditWorkspaceBioTabletLayoutState
-    extends State<EditWorkspaceBioTabletLayout> {
-  late final EditWorkspaceBioBloc _editWorkspaceBioBloc;
+class _EditWorkspaceNameTabletLayoutState
+    extends State<EditWorkspaceNameTabletLayout> {
+  late final EditWorkspaceNameBloc _editWorkspaceBioBloc;
 
   @override
   void initState() {
     super.initState();
-    _editWorkspaceBioBloc = context.read<EditWorkspaceBioBloc>();
+    _editWorkspaceBioBloc = context.read<EditWorkspaceNameBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditWorkspaceBioBloc, EditWorkspaceBioState>(
+    return BlocListener<EditWorkspaceNameBloc, EditWorkspaceNameState>(
       listener: (_, state) {
         if (state.updateStatus ?? false) {
           context.router.pop(state.bio);
@@ -77,7 +77,7 @@ class _EditWorkspaceBioTabletLayoutState
             child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
           actions: [
-            BlocSelector<EditWorkspaceBioBloc, EditWorkspaceBioState, String>(
+            BlocSelector<EditWorkspaceNameBloc, EditWorkspaceNameState, String>(
               selector: (state) {
                 return state.bio;
               },
@@ -113,8 +113,8 @@ class _EditWorkspaceBioTabletLayoutState
             padding: const EdgeInsets.symmetric(vertical: 20),
             child:
                 BlocSelector<
-                  EditWorkspaceBioBloc,
-                  EditWorkspaceBioState,
+                  EditWorkspaceNameBloc,
+                  EditWorkspaceNameState,
                   String
                 >(
                   selector: (state) {

@@ -71,6 +71,18 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
+  Future<bool> updateWorkspaceName({
+    required int groupId,
+    required String name,
+  }) async {
+    try {
+      return true;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<bool> updateWorkspaceNotification({
     required int groupId,
     required bool isMute,
