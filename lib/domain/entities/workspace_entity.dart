@@ -3,7 +3,7 @@ class WorkspaceEntity {
   final String workspaceAvatar;
   final String workspaceName;
   final String lastMessage;
-  final DateTime lastMessageTime;
+  final DateTime? lastMessageTime;
   final bool isSeen;
   final bool isMute;
   final bool isPin;
@@ -16,8 +16,8 @@ class WorkspaceEntity {
     required this.id,
     required this.workspaceAvatar,
     required this.workspaceName,
-    required this.lastMessage,
-    required this.lastMessageTime,
+    this.lastMessage = "",
+     this.lastMessageTime,
     required this.isSeen,
     required this.isMute,
     required this.isPin,

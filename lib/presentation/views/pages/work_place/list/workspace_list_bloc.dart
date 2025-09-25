@@ -115,7 +115,10 @@ class WorkspaceListBloc
       lastMessageTime: workspaceLastMessage.lastMessageTime,
     );
 
-    workspaces.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+    final now = DateTime.now();
+    workspaces.sort(
+      (a, b) => (b.lastMessageTime ?? now).compareTo(a.lastMessageTime ?? now),
+    );
 
     emit(state.copyWith(workspaces: workspaces));
   }
@@ -221,7 +224,8 @@ class WorkspaceListBloc
         : PagingStatus.loadCompleted;
 
     List<WorkspaceEntity> workspaces = result;
-    _sort(workspaces);
+    // api sap xep truoc khi tra ve nen se khong can sap xep nua
+    // _sort(workspaces);
     emit(
       state.copyWith(
         pageStatus: PageStatus.loaded,
@@ -238,7 +242,6 @@ class WorkspaceListBloc
     emit(state.copyWith(pagingStatus: PagingStatus.refreshing));
 
     _offset = 0;
-    await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(limit: _limit, offset: _offset),
     );
@@ -246,7 +249,7 @@ class WorkspaceListBloc
     _offset += result.length;
 
     List<WorkspaceEntity>? workspaces = result;
-    _sort(workspaces);
+    // _sort(workspaces);
     emit(
       state.copyWith(
         pagingStatus: PagingStatus.refreshCompleted,
@@ -261,7 +264,6 @@ class WorkspaceListBloc
   ) async {
     emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-    await Future.delayed(Duration(seconds: 1));
     final result = await getWorkspacesUseCase.call(
       GetWorkspacesParams(limit: _limit, offset: _offset),
     );
@@ -298,7 +300,10 @@ class WorkspaceListBloc
 
   void _sortWorkspacesByTime(List<WorkspaceEntity> workspaces) {
     if (workspaces.isEmpty) return;
-    workspaces.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+    final now = DateTime.now();
+    workspaces.sort(
+      (a, b) => (b.lastMessageTime ?? now).compareTo(a.lastMessageTime ?? now),
+    );
   }
 
   Future<void> _onSelectWorkspace(

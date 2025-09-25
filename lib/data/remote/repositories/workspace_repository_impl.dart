@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
+import 'package:ig_agency_app/data/remote/translators/workspace_translator.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
@@ -15,13 +16,13 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   final WorkspaceRemoteDataSource _workspaceRemoteDataSource;
 
   WorkspaceRepositoryImpl(this._workspaceRemoteDataSource);
+
   @override
   Future<List<WorkspaceEntity>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,
   }) async {
-    return [];
     try {
       final response = await _workspaceRemoteDataSource.getWorkspaces(
         getWorkspacesRequest: GetWorkspacesRequestModel(
@@ -29,6 +30,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
           offset: offset,
         ),
       );
+      return response.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

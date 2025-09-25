@@ -76,11 +76,11 @@ class MessageMockService {
   ];
 
   static final List<Map<String, dynamic>> _mockGroups = [
-    {'id': 1, 'name': 'Vaga bala blo'},
-    {'id': 2, 'name': 'Team Development'},
-    {'id': 3, 'name': 'Marketing Team'},
-    {'id': 4, 'name': 'Design Team'},
-    {'id': 5, 'name': 'Project Alpha'},
+    {'id': "1", 'name': 'Vaga bala blo'},
+    {'id': "2", 'name': 'Team Development'},
+    {'id': "3", 'name': 'Marketing Team'},
+    {'id': "4", 'name': 'Design Team'},
+    {'id': "5", 'name': 'Project Alpha'},
   ];
 
   static final List<String> _mockTexts = [

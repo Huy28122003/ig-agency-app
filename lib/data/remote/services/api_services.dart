@@ -42,7 +42,7 @@ abstract class ApiService {
 
   //Workspaces
   @GET('/conversations')
-  Future<PagedResponse<GetWorkspacesResponseModel>> getWorkspaces(
+  Future<List<GetWorkspacesResponseModel>> getWorkspaces(
     GetWorkspacesRequestModel request,
   );
 }

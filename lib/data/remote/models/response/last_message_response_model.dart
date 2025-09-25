@@ -6,7 +6,7 @@ part 'last_message_response_model.g.dart';
 class LastMessageResponseModel {
   const LastMessageResponseModel({
     required this.id,
-    required this.text,
+    this.text,
     required this.date,
     required this.pinned,
     required this.type,
@@ -15,7 +15,7 @@ class LastMessageResponseModel {
 
   final String id;
   final String type;
-  final String text;
+  final String? text;
   final int date;
   final bool pinned;
   final MessageSenderResponse? from;

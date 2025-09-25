@@ -11,7 +11,7 @@ class WorkspaceTileTabletWidget extends StatefulWidget {
     required this.workspaceAvatar,
     required this.workspaceName,
     required this.lastMessage,
-    required this.lastMessageTime,
+    this.lastMessageTime,
     required this.isSeen,
     required this.isMute,
     required this.isPin,
@@ -23,7 +23,7 @@ class WorkspaceTileTabletWidget extends StatefulWidget {
   final String workspaceAvatar;
   final String workspaceName;
   final String lastMessage;
-  final DateTime lastMessageTime;
+  final DateTime? lastMessageTime;
   final bool isSeen;
   final bool isMute;
   final bool isPin;
@@ -120,25 +120,28 @@ class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
                                     maxLines: 1,
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.textDefaultTextSub2,
+
+                                if (widget.lastMessageTime != null) ...[
+                                  SizedBox(width: 4),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.textDefaultTextSub2,
+                                    ),
+                                    width: 4,
+                                    height: 4,
                                   ),
-                                  width: 4,
-                                  height: 4,
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  widget.lastMessageTime
-                                      .convertDateTimeToString(),
-                                  style: TextStyle(
-                                    fontFamily: FontFamily.segoeUI,
-                                    fontSize: 14,
-                                    height: 20 / 14,
+                                  SizedBox(width: 4),
+                                  Text(
+                                    widget.lastMessageTime!
+                                        .convertDateTimeToString(),
+                                    style: TextStyle(
+                                      fontFamily: FontFamily.segoeUI,
+                                      fontSize: 14,
+                                      height: 20 / 14,
+                                    ),
                                   ),
-                                ),
+                                ],
                               ],
                             ),
                           ],
