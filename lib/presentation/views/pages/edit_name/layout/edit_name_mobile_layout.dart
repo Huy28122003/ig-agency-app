@@ -17,17 +17,11 @@ class EditNameMobileLayout extends StatefulWidget {
 
 class _EditNameMobileLayoutState extends State<EditNameMobileLayout> {
   late final EditNameBloc _editNameBloc;
-  late final TextEditingController _nameController;
 
   @override
   void initState() {
     super.initState();
     _editNameBloc = context.read<EditNameBloc>();
-    _nameController = TextEditingController(text: _editNameBloc.state.name);
-
-    _nameController.addListener(() {
-      _editNameBloc.add(NameChangedEvent(_nameController.text));
-    });
   }
 
   @override
@@ -77,11 +71,10 @@ class _EditNameMobileLayoutState extends State<EditNameMobileLayout> {
             ),
           ),
           actions: [
-            BlocSelector<EditNameBloc, EditNameState, bool>(
-              selector: (state) {
-                return state.isNameChanged;
-              },
-              builder: (context, isNameChanged) {
+            BlocSelector<EditNameBloc, EditNameState, String>(
+              selector: (state) => state.name,
+              builder: (context, name) {
+                final isNameChanged = name != _editNameBloc.name;
                 return Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: GestureDetector(
@@ -116,46 +109,50 @@ class _EditNameMobileLayoutState extends State<EditNameMobileLayout> {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
-            child: AppTextField(
-              controller: _nameController,
-              labelText: 'Name',
-              keyboardType: TextInputType.name,
-              style: TextStyle(
-                color: AppColors.textDefaultTextDefault,
-                fontSize: 16,
-                fontFamily: FontFamily.segoeUI,
-                fontWeight: FontWeight.w600,
-                height: 1.50,
-              ),
-              suffixIcon: BlocSelector<EditNameBloc, EditNameState, bool>(
-                selector: (state) {
-                  return state.name.isNotEmpty;
-                },
-                builder: (context, isNameNotEmpty) {
-                  if (isNameNotEmpty) {
-                    return GestureDetector(
-                      onTap: () => _nameController.clear(),
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: Assets.icons.icCloseSize20.svg(),
-                      ),
-                    );
-                  }
+            child: BlocSelector<EditNameBloc, EditNameState, String>(
+              selector: (state) => state.name,
+              builder: (context, name) {
+                return AppTextField(
+                  labelText: 'Name',
+                  value: name,
+                  keyboardType: TextInputType.name,
+                  style: TextStyle(
+                    color: AppColors.textDefaultTextDefault,
+                    fontSize: 16,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w600,
+                    height: 1.50,
+                  ),
+                  onChanged: (value) {
+                    _editNameBloc.add(NameChangedEvent(value));
+                  },
+                  suffixIcon: BlocSelector<EditNameBloc, EditNameState, bool>(
+                    selector: (state) {
+                      return state.name.isNotEmpty;
+                    },
+                    builder: (context, isNameNotEmpty) {
+                      if (isNameNotEmpty) {
+                        return GestureDetector(
+                          onTap: () {
+                            _editNameBloc.add(NameChangedEvent(''));
+                          },
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: Assets.icons.icCloseSize20.svg(),
+                          ),
+                        );
+                      }
 
-                  return const SizedBox();
-                },
-              ),
+                      return const SizedBox();
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
   }
 }

@@ -9,7 +9,12 @@ import 'edit_bio_bloc.dart';
 
 @RoutePage()
 class EditBioPage extends BasePage<EditBioBloc, EditBioEvent, EditBioState> {
-  const EditBioPage({super.key});
+  const EditBioPage(this.bio, {super.key});
+
+  final String bio;
+
+  @override
+  EditBioBloc get buildBloc => super.buildBloc..bio = bio;
 
   @override
   void onInitState(BuildContext context) {

@@ -10,7 +10,11 @@ import 'edit_name_bloc.dart';
 @RoutePage()
 class EditNamePage
     extends BasePage<EditNameBloc, EditNameEvent, EditNameState> {
-  const EditNamePage({super.key});
+  const EditNamePage(this.name, {super.key});
+  final String name;
+
+  @override
+  EditNameBloc get buildBloc => super.buildBloc..name = name;
 
   @override
   void onInitState(BuildContext context) {

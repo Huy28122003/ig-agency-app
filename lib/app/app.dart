@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/di/di.dart';
+import 'package:ig_agency_app/presentation/resources/themes.dart';
 
 import '../presentation/routers/app_router.dart';
 
@@ -26,13 +27,17 @@ class _MyAppState extends State<MyApp> {
       routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
       routeInformationProvider: _appRouter.routeInfoProvider(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       // builder: OneContext().builder,
       debugShowCheckedModeBanner: false,
       supportedLocales: context.supportedLocales,
       localizationsDelegates: context.localizationDelegates,
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(1.0)),
           child: child!,
         );
       },
