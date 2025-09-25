@@ -5,18 +5,21 @@ import '../../shared/commons/models/pagination.dart';
 
 import '../entities/file_entity.dart';
 
-abstract class WorkspaceRepository {
-  Future<List<WorkspaceEntity>> getWorkspaces({
+abstract class GroupRepository {
+  Future<List<GroupEntity>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,
   });
 
-  Future<WorkspaceEntity> getWorkspaceById({required String groupId});
+  Future<GroupEntity> getWorkspaceById({required String groupId});
 
-  Stream<WorkspaceEntity> listenLastMessages();
+  Stream<GroupEntity> listenLastMessages();
 
-  Future<bool> updateWorkspaceBio({required String groupId, required String bio});
+  Future<bool> updateWorkspaceBio({
+    required String groupId,
+    required String bio,
+  });
 
   Future<List<UserEntity>> getUserInGroup({
     required String workspaceId,
@@ -53,12 +56,18 @@ abstract class WorkspaceRepository {
   });
 
   // TODO: tương tự hàm getWorkspaces => quy về dùng chung 1 hàm
-  Future<List<WorkspaceEntity>> getListGroup({
+  Future<List<GroupEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
   });
 
   Future<bool> createGroup(String groupName, List<UserEntity> members);
 
-  Future<bool> addUserToGroups(UserEntity user, List<WorkspaceEntity> groups);
+  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups);
+
+  Future<void> pinWorkspace(String workspaceId);
+
+  Future<void> unpinWorkspace(String workspaceId);
+
+  Future<void> deleteWorkspace(String workspaceId);
 }

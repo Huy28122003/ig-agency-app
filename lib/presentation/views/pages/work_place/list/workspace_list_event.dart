@@ -29,7 +29,7 @@ class SearchKeyWorkChangeEvent extends WorkspaceListEvent {
 class SearchLoadMoreEvent extends WorkspaceListEvent {}
 
 class UpdateWorkspaceLastMessageEvent extends WorkspaceListEvent {
-  final WorkspaceEntity workspaceLastMessage;
+  final GroupEntity workspaceLastMessage;
 
   UpdateWorkspaceLastMessageEvent({required this.workspaceLastMessage});
 }
@@ -40,6 +40,12 @@ class PinWorkspaceEvent extends WorkspaceListEvent {
   final String workspaceId;
 
   PinWorkspaceEvent({required this.workspaceId});
+}
+
+class UnpinWorkspaceEvent extends WorkspaceListEvent {
+  final String workspaceId;
+
+  UnpinWorkspaceEvent({required this.workspaceId});
 }
 
 class MuteWorkspaceEvent extends WorkspaceListEvent {

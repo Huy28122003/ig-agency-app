@@ -7,7 +7,7 @@ class UpdateWorkspaceBioUseCase
     extends UseCase<bool, UpdateWorkspaceBioParams> {
   UpdateWorkspaceBioUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
   Future<bool> call(UpdateWorkspaceBioParams param) async {

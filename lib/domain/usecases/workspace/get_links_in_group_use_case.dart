@@ -8,7 +8,7 @@ class GetLinksInGroupUseCase
     extends UseCase<List<String>, GetDataInGroupParams> {
   GetLinksInGroupUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
   Future<List<String>> call(GetDataInGroupParams param) async {

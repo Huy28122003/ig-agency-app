@@ -5,4 +5,10 @@ abstract class WorkspaceRemoteDataSource {
   Future<List<GetWorkspacesResponseModel>> getWorkspaces({
     required GetWorkspacesRequestModel getWorkspacesRequest,
   });
+
+  Future<void> pinWorkspace(String groupId);
+
+  Future<void> unpinWorkspace(String groupId);
+
+  Future<void> deleteGroup(String groupId);
 }

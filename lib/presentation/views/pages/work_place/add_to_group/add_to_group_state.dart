@@ -7,8 +7,8 @@ class AddToGroupState extends BaseState<AddToGroupState> {
   final Pagination pagination;
   final String searchKeyWord;
 
-  final List<WorkspaceEntity> listGroup;
-  final List<WorkspaceEntity> listSelectedGroup;
+  final List<GroupEntity> listGroup;
+  final List<GroupEntity> listSelectedGroup;
   final bool addToGroupSuccess;
 
   const AddToGroupState({
@@ -32,8 +32,8 @@ class AddToGroupState extends BaseState<AddToGroupState> {
     int? totalMember,
     Pagination? pagination,
     String? searchKeyWord,
-    List<WorkspaceEntity>? listGroup,
-    List<WorkspaceEntity>? listSelectedGroup,
+    List<GroupEntity>? listGroup,
+    List<GroupEntity>? listSelectedGroup,
     bool? addToGroupSuccess,
   }) {
     return AddToGroupState(

@@ -18,9 +18,9 @@ part 'create_group_state.dart';
 
 @injectable
 class CreateGroupBloc extends BaseBloc<CreateGroupEvent, CreateGroupState> {
-  final WorkspaceRepository _repo;
+  final GroupRepository _repo;
 
-  CreateGroupBloc({required WorkspaceRepository repo})
+  CreateGroupBloc({required GroupRepository repo})
     : _repo = repo,
       super(CreateGroupState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);

@@ -18,7 +18,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
   final int _limit = 15;
   int _offset = 0;
   int _searchOffset = 0;
-  final GetWorkspacesUseCase getWorkspacesUseCase;
+  final GetGroupUseCase getWorkspacesUseCase;
   Timer? _timer;
 
   ForwardBloc({required this.getWorkspacesUseCase}) : super(ForwardState()) {
@@ -57,7 +57,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
-    List<WorkspaceEntity> currentList = List.from(state.workspacesSearch);
+    List<GroupEntity> currentList = List.from(state.workspacesSearch);
     currentList.addAll(result);
     emit(
       state.copyWith(
@@ -88,7 +88,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
-    List<WorkspaceEntity> currentList = List.from(state.workspaces);
+    List<GroupEntity> currentList = List.from(state.workspaces);
     currentList.addAll(result);
     emit(state.copyWith(pagingStatus: pagingStatus, workspaces: currentList));
   }

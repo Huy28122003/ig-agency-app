@@ -19,9 +19,9 @@ part 'add_to_group_state.dart';
 
 @injectable
 class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
-  final WorkspaceRepository _repo;
+  final GroupRepository _repo;
 
-  AddToGroupBloc({required WorkspaceRepository repo})
+  AddToGroupBloc({required GroupRepository repo})
     : _repo = repo,
       super(AddToGroupState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -47,7 +47,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
       ),
     );
 
-    final List<WorkspaceEntity> listGroup = await _repo.getListGroup(
+    final List<GroupEntity> listGroup = await _repo.getListGroup(
       pagination: state.pagination,
       keySearch: state.searchKeyWord,
     );
@@ -81,7 +81,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
       page: state.pagination.page + 1,
     );
 
-    final List<WorkspaceEntity> listGroup = await _repo.getListGroup(
+    final List<GroupEntity> listGroup = await _repo.getListGroup(
       pagination: pagination,
       keySearch: state.searchKeyWord,
     );
@@ -108,7 +108,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
     SelectGroupEvent event,
     Emitter<AddToGroupState> emit,
   ) async {
-    final List<WorkspaceEntity> listSelectedGroup = [
+    final List<GroupEntity> listSelectedGroup = [
       ...state.listSelectedGroup,
     ];
     if (event.isSelected) {

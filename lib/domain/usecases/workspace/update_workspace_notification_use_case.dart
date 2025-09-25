@@ -7,7 +7,7 @@ class UpdateWorkspaceNotificationUseCase
     extends UseCase<bool, UpdateWorkspaceNotificationParams> {
   UpdateWorkspaceNotificationUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
   Future<bool> call(UpdateWorkspaceNotificationParams param) async {

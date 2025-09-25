@@ -40,7 +40,7 @@ late final String groupId;
       if (current == null) return;
 
       final updated = current.copyWith(
-        workspaceName: event.workspaceName,
+        groupName: event.workspaceName,
         bio: event.bio,
         isMute: event.isMute,
         countMember: event.countMember,

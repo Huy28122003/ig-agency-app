@@ -7,7 +7,7 @@ import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.d
 import '../../../../resources/colors.dart';
 
 class ForwardTile extends StatelessWidget {
-  final WorkspaceEntity workspaceEntity;
+  final GroupEntity workspaceEntity;
   final bool isSent;
   final VoidCallback onTap;
 
@@ -29,13 +29,13 @@ class ForwardTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleNetworkAvatar(
-                imageUrl: workspaceEntity.workspaceAvatar,
+                imageUrl: workspaceEntity.groupAvatar,
                 isGroupAvt: true,
               ),
               SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  workspaceEntity.workspaceName,
+                  workspaceEntity.groupName,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,

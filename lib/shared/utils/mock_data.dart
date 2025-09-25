@@ -142,12 +142,12 @@ class MockData {
     ),
   );
 
-  static List<WorkspaceEntity> getWorkspaces() {
+  static List<GroupEntity> getWorkspaces() {
     return [
-      WorkspaceEntity(
+      GroupEntity(
         id: '1',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=1',
-        workspaceName: 'Design Team',
+        groupAvatar: 'https://i.pravatar.cc/150?img=1',
+        groupName: 'Design Team',
         lastMessage: 'Please review the latest designs.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 1)),
         isSeen: false,
@@ -158,10 +158,10 @@ class MockData {
         countPin: 2,
         bio: 'Creative group focusing on UI/UX.',
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '2',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=2',
-        workspaceName: 'Marketing Team',
+        groupAvatar: 'https://i.pravatar.cc/150?img=2',
+        groupName: 'Marketing Team',
         lastMessage: 'Campaign report updated.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 2)),
         isSeen: true,
@@ -171,10 +171,10 @@ class MockData {
         countMember: 12,
         countPin: 1,
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '3',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=3',
-        workspaceName: 'Developers',
+        groupAvatar: 'https://i.pravatar.cc/150?img=3',
+        groupName: 'Developers',
         lastMessage: 'Bug in payment flow fixed.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 3)),
         isSeen: false,
@@ -184,10 +184,10 @@ class MockData {
         countMember: 15,
         countPin: 4,
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '4',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=4',
-        workspaceName: 'HR Department',
+        groupAvatar: 'https://i.pravatar.cc/150?img=4',
+        groupName: 'HR Department',
         lastMessage: 'New leave policy announced.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 4)),
         isSeen: true,
@@ -197,10 +197,10 @@ class MockData {
         countMember: 6,
         countPin: 0,
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '5',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=5',
-        workspaceName: 'Finance',
+        groupAvatar: 'https://i.pravatar.cc/150?img=5',
+        groupName: 'Finance',
         lastMessage: 'Invoice #123 approved.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 5)),
         isSeen: false,
@@ -211,10 +211,10 @@ class MockData {
         countPin: 3,
         bio: 'Manages budgets and financial planning.',
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '6',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=6',
-        workspaceName: 'Operations',
+        groupAvatar: 'https://i.pravatar.cc/150?img=6',
+        groupName: 'Operations',
         lastMessage: 'Warehouse restocked successfully.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 6)),
         isSeen: true,
@@ -225,10 +225,10 @@ class MockData {
         countPin: 0,
         bio: 'Oversees daily business operations.',
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '7',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=7',
-        workspaceName: 'Legal Team',
+        groupAvatar: 'https://i.pravatar.cc/150?img=7',
+        groupName: 'Legal Team',
         lastMessage: 'Contract draft ready.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 7)),
         isSeen: false,
@@ -239,10 +239,10 @@ class MockData {
         countPin: 1,
         bio: 'Ensures compliance and contracts.',
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '8',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=8',
-        workspaceName: 'QA Team',
+        groupAvatar: 'https://i.pravatar.cc/150?img=8',
+        groupName: 'QA Team',
         lastMessage: 'Regression test completed.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 8)),
         isSeen: true,
@@ -253,10 +253,10 @@ class MockData {
         countPin: 0,
         bio: 'Testing and quality assurance.',
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '9',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=9',
-        workspaceName: 'Support',
+        groupAvatar: 'https://i.pravatar.cc/150?img=9',
+        groupName: 'Support',
         lastMessage: 'Ticket #987 resolved.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 9)),
         isSeen: false,
@@ -267,10 +267,10 @@ class MockData {
         countPin: 2,
         bio: 'Customer support and helpdesk.',
       ),
-      WorkspaceEntity(
+      GroupEntity(
         id: '10',
-        workspaceAvatar: 'https://i.pravatar.cc/150?img=10',
-        workspaceName: 'Product Team',
+        groupAvatar: 'https://i.pravatar.cc/150?img=10',
+        groupName: 'Product Team',
         lastMessage: 'Specs document updated.',
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 10)),
         isSeen: true,

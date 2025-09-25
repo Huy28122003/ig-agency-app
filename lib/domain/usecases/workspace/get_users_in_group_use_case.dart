@@ -9,7 +9,7 @@ class GetUsersInGroupUseCase
     extends UseCase<List<UserEntity>, GetDataInGroupParams> {
   GetUsersInGroupUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
   Future<List<UserEntity>> call(

@@ -10,7 +10,7 @@ class GetFilesInGroupUseCase
     extends UseCase<List<FileEntity>, GetDataInGroupParams> {
   GetFilesInGroupUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
   Future<List<FileEntity>> call(GetDataInGroupParams param) async {

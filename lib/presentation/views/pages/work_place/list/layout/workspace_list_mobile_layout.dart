@@ -26,13 +26,13 @@ class WorkspaceListMobileLayout extends StatefulWidget {
 }
 
 class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
-  late WorkspaceListBloc _workspaceBloc;
+  late GroupListBloc _workspaceBloc;
 
   @override
   void initState() {
     super.initState();
 
-    _workspaceBloc = context.read<WorkspaceListBloc>();
+    _workspaceBloc = context.read<GroupListBloc>();
   }
 
   @override
@@ -49,7 +49,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+    return BlocSelector<GroupListBloc, WorkspaceListState, String>(
       selector: (state) {
         return state.searchKeyWord;
       },
@@ -82,7 +82,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildNormalModel() {
-    return BlocBuilder<WorkspaceListBloc, WorkspaceListState>(
+    return BlocBuilder<GroupListBloc, WorkspaceListState>(
       buildWhen: (pre, cur) {
         return pre.pagingStatus != cur.pagingStatus ||
             pre.workspaces != cur.workspaces;
@@ -142,15 +142,15 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                   context.router.push(
                     WSDetailRoute(
                       groupId: '1', // TODO hoannk: change id
-                      groupName: workspace.workspaceName,
-                      groupAvatar: workspace.workspaceAvatar,
+                      groupName: workspace.groupName,
+                      groupAvatar: workspace.groupAvatar,
                     ),
                   );
                 },
                 isMute: workspace.isMute,
                 isPin: workspace.isPin,
-                workspaceAvatar: workspace.workspaceAvatar,
-                workspaceName: workspace.workspaceName,
+                workspaceAvatar: workspace.groupAvatar,
+                workspaceName: workspace.groupName,
                 lastMessage: workspace.lastMessage,
                 lastMessageTime: workspace.lastMessageTime,
                 isSeen: workspace.isSeen,
@@ -165,9 +165,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
 
   Widget _buildSearchMode() {
     return BlocSelector<
-      WorkspaceListBloc,
+      GroupListBloc,
       WorkspaceListState,
-      (List<WorkspaceEntity>, PageStatus, PagingStatus)
+      (List<GroupEntity>, PageStatus, PagingStatus)
     >(
       selector: (state) {
         return (
@@ -212,8 +212,8 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                     isSearchMode: true,
                     isMute: workspace.isMute,
                     isPin: workspace.isPin,
-                    workspaceAvatar: workspace.workspaceAvatar,
-                    workspaceName: workspace.workspaceName,
+                    workspaceAvatar: workspace.groupAvatar,
+                    workspaceName: workspace.groupName,
                     lastMessage: workspace.lastMessage,
                     lastMessageTime: workspace.lastMessageTime,
                     isSeen: workspace.isSeen,
@@ -238,7 +238,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(100),
         ),
-        child: BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+        child: BlocSelector<GroupListBloc, WorkspaceListState, String>(
           selector: (state) {
             return state.searchKeyWord;
           },

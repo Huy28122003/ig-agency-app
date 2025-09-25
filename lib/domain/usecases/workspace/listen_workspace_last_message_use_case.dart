@@ -5,13 +5,13 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class ListenWorkspaceLastMessageUseCase
-    extends StreamUseCase<WorkspaceEntity, NoParam> {
-  final WorkspaceRepository _workspaceRepository;
+    extends StreamUseCase<GroupEntity, NoParam> {
+  final GroupRepository _workspaceRepository;
 
   ListenWorkspaceLastMessageUseCase(this._workspaceRepository);
 
   @override
-  Stream<WorkspaceEntity> call([NoParam? param]) {
+  Stream<GroupEntity> call([NoParam? param]) {
     return _workspaceRepository.listenLastMessages();
   }
 }

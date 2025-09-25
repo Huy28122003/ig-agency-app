@@ -195,7 +195,7 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
     return BlocSelector<
       AddToGroupBloc,
       AddToGroupState,
-      (List<WorkspaceEntity>, List<WorkspaceEntity>)
+      (List<GroupEntity>, List<GroupEntity>)
     >(
       selector: (state) {
         return (state.listGroup, state.listSelectedGroup);
@@ -222,8 +222,8 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
             final isSelected =
                 listUser.$2.firstOrNullWhere((e) => e.id == item.id) != null;
             return AvatarTitleCheckboxRow(
-              imageUrl: item.workspaceAvatar,
-              title: item.workspaceName,
+              imageUrl: item.groupAvatar,
+              title: item.groupName,
               isSelected: isSelected,
               onTap: () {
                 context.read<AddToGroupBloc>().add(
@@ -238,7 +238,7 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
   }
 
   Widget _buildButtonCreate() {
-    return BlocSelector<AddToGroupBloc, AddToGroupState, List<WorkspaceEntity>>(
+    return BlocSelector<AddToGroupBloc, AddToGroupState, List<GroupEntity>>(
       selector: (state) {
         return state.listSelectedGroup;
       },

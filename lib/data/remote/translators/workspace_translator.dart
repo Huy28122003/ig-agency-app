@@ -4,7 +4,7 @@ import 'package:ig_agency_app/domain/enums/message_enums.dart';
 import '../../../domain/entities/workspace_entity.dart';
 
 extension WorkspaceTranslator on GetWorkspacesResponseModel {
-  WorkspaceEntity toEntity() {
+  GroupEntity toEntity() {
     final lastMsg = lastMessage;
     final messageType = MessageContentType.fromString(lastMsg?.type ?? '');
 
@@ -16,14 +16,14 @@ extension WorkspaceTranslator on GetWorkspacesResponseModel {
         ? ''
         : _mapLastMessageContent(messageType, lastMsg.text);
 
-    return WorkspaceEntity(
+    return GroupEntity(
       id: id,
-      workspaceName: title,
+      groupName: title,
       lastMessage: lastMessageContent,
       lastMessageTime: lastMessageTime,
       isPin: pinned,
       //todo
-      workspaceAvatar: "https://i.pravatar.cc/150?img=1",
+      groupAvatar: "https://i.pravatar.cc/150?img=1",
       isSeen: true,
       isMute: true,
     );

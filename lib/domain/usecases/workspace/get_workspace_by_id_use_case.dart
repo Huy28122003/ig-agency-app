@@ -4,13 +4,13 @@ import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class GetWorkspaceByIdUseCase extends UseCase<WorkspaceEntity, String> {
+class GetWorkspaceByIdUseCase extends UseCase<GroupEntity, String> {
   GetWorkspaceByIdUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
-  Future<WorkspaceEntity> call(String param) async {
+  Future<GroupEntity> call(String param) async {
     return await _workspaceRepository.getWorkspaceById(groupId: param);
   }
 }

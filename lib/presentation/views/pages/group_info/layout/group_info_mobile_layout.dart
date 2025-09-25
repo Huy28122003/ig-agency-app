@@ -98,14 +98,14 @@ class GroupInfoMobileLayout extends StatelessWidget {
           onTap: () {
             //todo
           },
-          child: BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+          child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
             },
             builder: (context, state) {
               return CircleNetworkAvatar(
                 size: 80,
-                imageUrl: state?.workspaceAvatar ?? "",
+                imageUrl: state?.groupAvatar ?? "",
               );
             },
           ),
@@ -139,7 +139,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
       onTap: () {
         context.router.push(EditNameRoute());
       },
-      child: BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+      child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
         selector: (state) {
           return state.workspace;
         },
@@ -149,7 +149,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  state?.workspaceName ?? "",
+                  state?.groupName ?? "",
                   style: TextStyle(
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w700,
@@ -178,7 +178,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
   Widget _buildBody(BuildContext context, GroupInfoBloc bloc) {
     return Column(
       children: [
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -223,7 +223,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
         ),
 
         SizedBox(height: 12),
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -249,8 +249,8 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     context.router.push(
                       WSDetailRoute(
                         groupId: workspace.id,
-                        groupName: workspace.workspaceName,
-                        groupAvatar: workspace.workspaceAvatar,
+                        groupName: workspace.groupName,
+                        groupAvatar: workspace.groupAvatar,
                         isSearchMode: true,
                       ),
                     );
@@ -289,7 +289,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
         ),
         SizedBox(height: 12),
 
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -346,8 +346,8 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     context.router.push(
                       PinnedMessageListRoute(
                         groupId: "5",
-                        groupName: group.workspaceName,
-                        groupAvatar: group.workspaceAvatar,
+                        groupName: group.groupName,
+                        groupAvatar: group.groupAvatar,
                       ),
                     );
                   },
@@ -364,7 +364,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                       BlocSelector<
                         GroupInfoBloc,
                         GroupInfoState,
-                        WorkspaceEntity?
+                        GroupEntity?
                       >(
                         selector: (state) => state.workspace,
                         builder: (context, workspace) {

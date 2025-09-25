@@ -11,14 +11,14 @@ import '../../../shared/commons/failure_converter.dart';
 import '../../../shared/utils/mock_data.dart';
 import '../app/workspace_remote_data_source.dart';
 
-@Injectable(as: WorkspaceRepository)
-class WorkspaceRepositoryImpl implements WorkspaceRepository {
+@Injectable(as: GroupRepository)
+class Group implements GroupRepository {
   final WorkspaceRemoteDataSource _workspaceRemoteDataSource;
 
-  WorkspaceRepositoryImpl(this._workspaceRemoteDataSource);
+  Group(this._workspaceRemoteDataSource);
 
   @override
-  Future<List<WorkspaceEntity>> getWorkspaces({
+  Future<List<GroupEntity>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,
@@ -37,13 +37,13 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Stream<WorkspaceEntity> listenLastMessages() {
+  Stream<GroupEntity> listenLastMessages() {
     // TODO: implement listenLastMessages
     throw UnimplementedError();
   }
 
   @override
-  Future<WorkspaceEntity> getWorkspaceById({required String groupId}) async {
+  Future<GroupEntity> getWorkspaceById({required String groupId}) async {
     try {
       final workspace = MockData.getWorkspaces().firstWhere(
         (element) => element.id == groupId,
@@ -111,12 +111,12 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<bool> addUserToGroups(UserEntity user, List<WorkspaceEntity> groups) {
+  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups) {
     return Future.value(true);
   }
 
   @override
-  Future<List<WorkspaceEntity>> getListGroup({
+  Future<List<GroupEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
   }) {
@@ -126,7 +126,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       final filtered = keySearch != null && keySearch.isNotEmpty
           ? allData
                 .where(
-                  (e) => e.workspaceName.toLowerCase().contains(
+                  (e) => e.groupName.toLowerCase().contains(
                     keySearch.toLowerCase(),
                   ),
                 )
@@ -206,6 +206,33 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
             ? MockData().mockLinks.length
             : offset + limit,
       );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> pinWorkspace(String workspaceId) async {
+    try {
+      await _workspaceRemoteDataSource.pinWorkspace(workspaceId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> unpinWorkspace(String workspaceId) async {
+    try {
+      await _workspaceRemoteDataSource.pinWorkspace(workspaceId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteWorkspace(String workspaceId) async {
+    try {
+      await _workspaceRemoteDataSource.deleteGroup(workspaceId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

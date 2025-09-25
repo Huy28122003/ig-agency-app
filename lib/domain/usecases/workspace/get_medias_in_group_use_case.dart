@@ -9,7 +9,7 @@ class GetMediasInGroupUseCase
     extends UseCase<List<MediaEntity>, GetDataInGroupParams> {
   GetMediasInGroupUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
   Future<List<MediaEntity>> call(

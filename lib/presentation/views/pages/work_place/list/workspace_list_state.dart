@@ -19,8 +19,8 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
 
   final PagingStatus pagingStatus;
   final PagingStatus pagingStatusSearch;
-  final List<WorkspaceEntity> workspaces;
-  final List<WorkspaceEntity> workspacesSearch;
+  final List<GroupEntity> workspaces;
+  final List<GroupEntity> workspacesSearch;
   // final int indexPage;
   // final int indexPageSearch;
   final String searchKeyWord;
@@ -38,8 +38,8 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
     PagingStatus? pagingStatusSearch,
     int? indexPage,
     int? indexPageSearch,
-    List<WorkspaceEntity>? workspaces,
-    List<WorkspaceEntity>? workspacesSearch,
+    List<GroupEntity>? workspaces,
+    List<GroupEntity>? workspacesSearch,
     String? searchKeyWord,
     bool? isSearchMode,
     String? workspaceSelectedId,

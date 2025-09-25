@@ -9,10 +9,10 @@ import '../app/workspace_remote_data_source.dart';
 import '../services/api_services.dart';
 
 @Injectable(as: WorkspaceRemoteDataSource)
-class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
+class GroupRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   final ApiService _apiService;
 
-  WorkspaceRemoteDataSourceImpl(this._apiService);
+  GroupRemoteDataSourceImpl(this._apiService);
 
   @override
   Future<List<GetWorkspacesResponseModel>> getWorkspaces({
@@ -20,6 +20,33 @@ class WorkspaceRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   }) async {
     try {
       return await _apiService.getWorkspaces(getWorkspacesRequest);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> pinWorkspace(String groupId) async {
+    try {
+      return await _apiService.pinWorkspace(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> unpinWorkspace(String groupId) async {
+    try {
+      return await _apiService.unpinWorkspace(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteGroup(String groupId) async {
+    try {
+      return await _apiService.deleteGroup(groupId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
