@@ -23,4 +23,8 @@ class LoginPage extends BasePage<LoginBloc, LoginEvent, LoginState> {
   Widget? tabletBuilder(BuildContext context) {
     return LoginTabletLayout();
   }
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return LoginTabletLayout();
+  }
 }

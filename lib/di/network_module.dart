@@ -51,7 +51,7 @@ abstract class NetworkModule {
   ) {
     final dio = Dio();
     dio.options = BaseOptions(
-      // contentType: 'application/json',
+      contentType: 'application/json',
       connectTimeout: const Duration(seconds: 5),
       sendTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),

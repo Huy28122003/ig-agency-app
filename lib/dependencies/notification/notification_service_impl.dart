@@ -53,75 +53,79 @@ class FirebaseNotificationService extends NotificationService {
 
   @override
   Future init() async {
-    final List<DarwinNotificationCategory> darwinNotificationCategories =
-        <DarwinNotificationCategory>[
-          DarwinNotificationCategory(
-            darwinNotificationCategoryText,
-            actions: <DarwinNotificationAction>[
-              DarwinNotificationAction.text(
-                'text_1',
-                'Action 1',
-                buttonTitle: 'Send',
-                placeholder: 'Placeholder',
-              ),
-            ],
-          ),
-        ];
+    try{
+      final List<DarwinNotificationCategory> darwinNotificationCategories =
+          <DarwinNotificationCategory>[
+            DarwinNotificationCategory(
+              darwinNotificationCategoryText,
+              actions: <DarwinNotificationAction>[
+                DarwinNotificationAction.text(
+                  'text_1',
+                  'Action 1',
+                  buttonTitle: 'Send',
+                  placeholder: 'Placeholder',
+                ),
+              ],
+            ),
+          ];
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('mipmap/ic_launcher');
+      const AndroidInitializationSettings initializationSettingsAndroid =
+          AndroidInitializationSettings('mipmap/ic_launcher');
 
-    /// Note: permissions aren't requested here just to demonstrate that can be
-    /// done later
-    final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-          notificationCategories: darwinNotificationCategories,
-        );
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-          android: initializationSettingsAndroid,
-          iOS: initializationSettingsDarwin,
-          macOS: initializationSettingsDarwin,
-        );
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse:
-          (NotificationResponse notificationResponse) {
-            ReceivedNotificationEntity? data;
-            if (notificationResponse.payload.isNotNullOrEmpty()) {
-              data = ReceivedNotificationEntity.fromJson(
-                jsonDecode(notificationResponse.payload!),
-              );
-            }
-            if (notificationResponse.notificationResponseType ==
-                NotificationResponseType.selectedNotification) {
-              if (data != null) {
-                selectNotificationStream.add(data);
+      /// Note: permissions aren't requested here just to demonstrate that can be
+      /// done later
+      final DarwinInitializationSettings initializationSettingsDarwin =
+          DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+            notificationCategories: darwinNotificationCategories,
+          );
+      final InitializationSettings initializationSettings =
+          InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsDarwin,
+            macOS: initializationSettingsDarwin,
+          );
+      await flutterLocalNotificationsPlugin.initialize(
+        initializationSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) {
+              ReceivedNotificationEntity? data;
+              if (notificationResponse.payload.isNotNullOrEmpty()) {
+                data = ReceivedNotificationEntity.fromJson(
+                  jsonDecode(notificationResponse.payload!),
+                );
               }
-            }
-          },
-      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-    );
-    FirebaseMessaging.onMessage.listen((message) {
-      onMessageStream.sink.add(
-        message.data.toEntity(
-          title: message.notification?.title,
-          body: message.notification?.body,
-        ),
+              if (notificationResponse.notificationResponseType ==
+                  NotificationResponseType.selectedNotification) {
+                if (data != null) {
+                  selectNotificationStream.add(data);
+                }
+              }
+            },
+        onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
       );
-    });
+      FirebaseMessaging.onMessage.listen((message) {
+        onMessageStream.sink.add(
+          message.data.toEntity(
+            title: message.notification?.title,
+            body: message.notification?.body,
+          ),
+        );
+      });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      onMessageOpenedAppStream.sink.add(
-        message.data.toEntity(
-          title: message.notification?.title,
-          body: message.notification?.body,
-        ),
-      );
-    });
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        onMessageOpenedAppStream.sink.add(
+          message.data.toEntity(
+            title: message.notification?.title,
+            body: message.notification?.body,
+          ),
+        );
+      });
+    }catch(e){
+      return;
+    }
   }
 
   @override
