@@ -106,7 +106,11 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
               isMute: workspace.isMute,
               isPin: workspace.isPin,
               isSeen: workspace.isSeen,
-              onTapDelete: () async {},
+              onTapDelete: () async {
+                _workspaceBloc.add(
+                  DeleteWorkspaceEvent(workspaceId: workspace.id),
+                );
+              },
               onTapMask: () {
                 _workspaceBloc.add(
                   SeenWorkspaceEvent(workspaceId: workspace.id),

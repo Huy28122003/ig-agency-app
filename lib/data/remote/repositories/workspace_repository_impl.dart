@@ -223,7 +223,7 @@ class Group implements GroupRepository {
   @override
   Future<void> unpinWorkspace(String workspaceId) async {
     try {
-      await _workspaceRemoteDataSource.pinWorkspace(workspaceId);
+      await _workspaceRemoteDataSource.unpinWorkspace(workspaceId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
