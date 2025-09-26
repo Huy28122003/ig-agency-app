@@ -222,8 +222,6 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                     _workspaceBloc.add(
                       PinWorkspaceEvent(workspaceId: workspace.id),
                     );
-                    // can fetch lai normal mode vi neu group nay khong co
-                    // trong normal mode thi khong the cap nhat ui
                   },
                   child: WorkspaceTileMobileWidget(
                     onTap: () {},
