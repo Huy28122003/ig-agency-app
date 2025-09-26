@@ -49,7 +49,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<GroupListBloc, WorkspaceListState, String>(
+    return BlocSelector<GroupListBloc, GroupListState, String>(
       selector: (state) {
         return state.searchKeyWord;
       },
@@ -82,7 +82,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildNormalModel() {
-    return BlocBuilder<GroupListBloc, WorkspaceListState>(
+    return BlocBuilder<GroupListBloc, GroupListState>(
       buildWhen: (pre, cur) {
         return pre.pagingStatus != cur.pagingStatus ||
             pre.workspaces != cur.workspaces;
@@ -145,7 +145,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 onTap: () {
                   context.router.push(
                     WSDetailRoute(
-                      groupId: '1', // TODO hoannk: change id
+                      groupId: workspace.id,
                       groupName: workspace.groupName,
                       groupAvatar: workspace.groupAvatar,
                     ),
@@ -170,7 +170,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   Widget _buildSearchMode() {
     return BlocSelector<
       GroupListBloc,
-      WorkspaceListState,
+      GroupListState,
       (List<GroupEntity>, PageStatus, PagingStatus)
     >(
       selector: (state) {
@@ -207,10 +207,24 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                   isMute: workspace.isMute,
                   isPin: workspace.isPin,
                   isSeen: workspace.isSeen,
-                  onTapDelete: () {},
+                  onTapDelete: () {
+                    _workspaceBloc.add(
+                      DeleteWorkspaceEvent(workspaceId: workspace.id),
+                    );
+                  },
                   onTapMask: () {},
-                  onTapMute: () {},
-                  onTapPin: () {},
+                  onTapMute: () {
+                    _workspaceBloc.add(
+                      MuteWorkspaceEvent(workspaceId: workspace.id),
+                    );
+                  },
+                  onTapPin: () {
+                    _workspaceBloc.add(
+                      PinWorkspaceEvent(workspaceId: workspace.id),
+                    );
+                    // can fetch lai normal mode vi neu group nay khong co
+                    // trong normal mode thi khong the cap nhat ui
+                  },
                   child: WorkspaceTileMobileWidget(
                     onTap: () {},
                     isSearchMode: true,
@@ -242,7 +256,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(100),
         ),
-        child: BlocSelector<GroupListBloc, WorkspaceListState, String>(
+        child: BlocSelector<GroupListBloc, GroupListState, String>(
           selector: (state) {
             return state.searchKeyWord;
           },

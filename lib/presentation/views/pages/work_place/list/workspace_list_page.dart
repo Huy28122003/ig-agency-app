@@ -10,7 +10,7 @@ import 'workspace_list_bloc.dart';
 @RoutePage()
 class WorkspaceListPage
     extends
-        BasePage<GroupListBloc, WorkspaceListEvent, WorkspaceListState> {
+        BasePage<GroupListBloc, GroupListEvent, GroupListState> {
   const WorkspaceListPage({super.key});
 
   @override

@@ -42,12 +42,12 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<GroupListBloc, WorkspaceListState>(
+    return BlocListener<GroupListBloc, GroupListState>(
       listener: (_, state) {
         _refreshController.refresh(state.pagingStatus);
       },
       listenWhen: (prev, curr) => prev.pagingStatus != curr.pagingStatus,
-      child: BlocListener<GroupListBloc, WorkspaceListState>(
+      child: BlocListener<GroupListBloc, GroupListState>(
         listener: (_, state) {
           if (state.pageStatus == PageStatus.failure) {
             // todo
@@ -119,7 +119,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                 borderRadius: BorderRadius.circular(100),
               ),
               child:
-                  BlocSelector<GroupListBloc, WorkspaceListState, String>(
+                  BlocSelector<GroupListBloc, GroupListState, String>(
                     selector: (state) {
                       return state.searchKeyWord;
                     },
@@ -145,7 +145,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<GroupListBloc, WorkspaceListState, bool>(
+    return BlocSelector<GroupListBloc, GroupListState, bool>(
       selector: (searchModeState) {
         return searchModeState.isSearchMode;
       },
@@ -154,7 +154,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
           children: [
             BlocSelector<
               GroupListBloc,
-              WorkspaceListState,
+              GroupListState,
               List<GroupEntity>
             >(
               selector: (state) {
@@ -179,7 +179,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                       final workspace = state[index];
                       return BlocSelector<
                         GroupListBloc,
-                        WorkspaceListState,
+                        GroupListState,
                         String?
                       >(
                         selector: (state) {
@@ -255,7 +255,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
               },
             ),
             if (searchModeState)
-              BlocListener<GroupListBloc, WorkspaceListState>(
+              BlocListener<GroupListBloc, GroupListState>(
                 listener: (_, state) {
                   _searchRefreshController.refresh(state.pagingStatusSearch);
                 },
@@ -264,7 +264,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                 child:
                     BlocSelector<
                       GroupListBloc,
-                      WorkspaceListState,
+                      GroupListState,
                       (List<GroupEntity>, PageStatus)
                     >(
                       selector: (state) {
@@ -293,7 +293,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
 
                                   return BlocSelector<
                                     GroupListBloc,
-                                    WorkspaceListState,
+                                    GroupListState,
                                     String?
                                   >(
                                     selector: (state) {

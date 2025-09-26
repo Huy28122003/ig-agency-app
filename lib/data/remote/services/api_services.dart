@@ -40,7 +40,7 @@ abstract class ApiService {
     @Body() SearchRequestModel request,
   );
 
-  //Workspaces
+  //Group
   @GET('/conversations')
   Future<List<GetWorkspacesResponseModel>> getGroups(
     @Queries() GetWorkspacesRequestModel request,

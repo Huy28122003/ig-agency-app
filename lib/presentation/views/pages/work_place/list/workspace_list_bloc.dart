@@ -16,7 +16,7 @@ part 'workspace_list_event.dart';
 part 'workspace_list_state.dart';
 
 @injectable
-class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
+class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   final GetGroupUseCase getWorkspacesUseCase;
   final ListenWorkspaceLastMessageUseCase listenWorkspaceLastMessageUseCase;
   final PinGroupUseCase pinGroupUseCase;
@@ -36,7 +36,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
     required this.pinGroupUseCase,
     required this.unpinGroupUseCase,
     required this.deleteGroupUseCase,
-  }) : super(WorkspaceListState()) {
+  }) : super(GroupListState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
     handleSubEvent<LoadMoreDataEvent>(_onLoadMoreData);
@@ -60,7 +60,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onMuteWorkspace(
     MuteWorkspaceEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     List<GroupEntity> workspaces = List.from(state.workspaces);
     int indexWorkspace = workspaces.indexWhere(
@@ -76,7 +76,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onPinWorkspace(
     PinWorkspaceEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     try {
       await pinGroupUseCase.call(event.workspaceId);
@@ -97,7 +97,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onUnpinWorkspace(
     UnpinWorkspaceEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     try {
       await unpinGroupUseCase.call(event.workspaceId);
@@ -134,7 +134,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onSeenWorkspace(
     SeenWorkspaceEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     List<GroupEntity> workspaces = List.from(state.workspaces);
     int indexWorkspace = workspaces.indexWhere(
@@ -150,7 +150,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onUpdateWorkspaceLastMessage(
     UpdateWorkspaceLastMessageEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     List<GroupEntity> workspaces = List.from(state.workspaces);
 
@@ -176,7 +176,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onListenWorkspaceLastMessage(
     ListenWorkspaceLastMessageEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     _streamSubscription?.cancel();
     _streamSubscription = listenWorkspaceLastMessageUseCase.call().listen((
@@ -188,7 +188,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onSearch(
     SearchEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     _timer?.cancel();
     _timer = Timer(const Duration(milliseconds: 1000), () async {
@@ -198,7 +198,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onSearchDebounced(
     SearchDebouncedEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     emit(state.copyWith(searchStatus: PageStatus.loading));
     _searchOffset = 0;
@@ -226,14 +226,14 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onSearchKeyWordChange(
     SearchKeyWorkChangeEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     emit(state.copyWith(searchKeyWord: event.value));
   }
 
   Future<void> _onSearchLoadMore(
     SearchLoadMoreEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     emit(state.copyWith(pagingStatusSearch: PagingStatus.loading));
 
@@ -259,7 +259,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onLoadData(
     LoadDataEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     try {
       emit(state.copyWith(pageStatus: PageStatus.loaded));
@@ -290,7 +290,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onRefreshData(
     RefreshDataEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     try {
       emit(state.copyWith(pagingStatus: PagingStatus.refreshing));
@@ -317,7 +317,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onLoadMoreData(
     LoadMoreDataEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     try {
       emit(state.copyWith(pagingStatus: PagingStatus.loading));
@@ -339,13 +339,19 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onDeleteWorkspace(
     DeleteWorkspaceEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     try {
       await deleteGroupUseCase.call(event.workspaceId);
       _offset -= 1;
       List<GroupEntity> workspaces = List.from(state.workspaces);
       workspaces.removeWhere((e) => e.id == event.workspaceId);
+
+      if (state.isSearchMode) {
+        List<GroupEntity> workspacesSearch = List.from(state.workspacesSearch);
+        workspacesSearch.removeWhere((e) => e.id == event.workspaceId);
+        emit(state.copyWith(workspacesSearch: workspacesSearch));
+      }
       emit(state.copyWith(workspaces: workspaces));
     } catch (e) {
       handleError(emit, e);
@@ -379,7 +385,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
 
   Future<void> _onSelectWorkspace(
     SelectWorkspaceEvent event,
-    Emitter<WorkspaceListState> emit,
+    Emitter<GroupListState> emit,
   ) async {
     emit(state.copyWith(workspaceSelectedId: event.id));
   }
@@ -392,7 +398,7 @@ class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
   }
 
   @override
-  void handleError(Emitter<WorkspaceListState> emit, Object error) {
+  void handleError(Emitter<GroupListState> emit, Object error) {
     super.handleError(emit, error);
   }
 }
