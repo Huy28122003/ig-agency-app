@@ -42,15 +42,15 @@ abstract class ApiService {
 
   //Workspaces
   @GET('/conversations')
-  Future<List<GetWorkspacesResponseModel>> getWorkspaces(
-    GetWorkspacesRequestModel request,
+  Future<List<GetWorkspacesResponseModel>> getGroups(
+    @Queries() GetWorkspacesRequestModel request,
   );
 
   @POST('/pinned-conversations/{conversationId}')
-  Future<void> pinWorkspace(@Path('conversationId') String groupId);
+  Future<void> pinGroup(@Path('conversationId') String groupId);
 
   @DELETE('/pinned-conversations/{conversationId}')
-  Future<void> unpinWorkspace(@Path('conversationId') String groupId);
+  Future<void> unpinGroup(@Path('conversationId') String groupId);
 
   @DELETE('/conversations/{conversationId}')
   Future<void> deleteGroup(@Path('conversationId') String groupId);

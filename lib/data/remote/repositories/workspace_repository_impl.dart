@@ -28,6 +28,7 @@ class Group implements GroupRepository {
         getWorkspacesRequest: GetWorkspacesRequestModel(
           limit: limit,
           offset: offset,
+          search: keyWord,
         ),
       );
       return response.map((e) => e.toEntity()).toList();

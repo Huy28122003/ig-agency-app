@@ -16,8 +16,7 @@ part 'workspace_list_event.dart';
 part 'workspace_list_state.dart';
 
 @injectable
-class GroupListBloc
-    extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
+class GroupListBloc extends BaseBloc<WorkspaceListEvent, WorkspaceListState> {
   final GetGroupUseCase getWorkspacesUseCase;
   final ListenWorkspaceLastMessageUseCase listenWorkspaceLastMessageUseCase;
   final PinGroupUseCase pinGroupUseCase;
@@ -252,8 +251,7 @@ class GroupListBloc
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
 
-    final next = List<GroupEntity>.from(state.workspacesSearch)
-      ..addAll(result);
+    final next = List<GroupEntity>.from(state.workspacesSearch)..addAll(result);
     emit(
       state.copyWith(pagingStatusSearch: pagingStatus, workspacesSearch: next),
     );

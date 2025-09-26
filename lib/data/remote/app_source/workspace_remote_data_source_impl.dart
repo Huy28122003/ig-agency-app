@@ -19,7 +19,7 @@ class GroupRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
     required GetWorkspacesRequestModel getWorkspacesRequest,
   }) async {
     try {
-      return await _apiService.getWorkspaces(getWorkspacesRequest);
+      return await _apiService.getGroups(getWorkspacesRequest);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -28,7 +28,7 @@ class GroupRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<void> pinWorkspace(String groupId) async {
     try {
-      return await _apiService.pinWorkspace(groupId);
+      return await _apiService.pinGroup(groupId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -37,7 +37,7 @@ class GroupRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   @override
   Future<void> unpinWorkspace(String groupId) async {
     try {
-      return await _apiService.unpinWorkspace(groupId);
+      return await _apiService.unpinGroup(groupId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
