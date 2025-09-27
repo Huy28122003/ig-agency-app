@@ -16,8 +16,8 @@ class ToggleDarkModeEvent extends SettingHomeEvent {
   const ToggleDarkModeEvent();
 }
 
-class ToggleInAppAlertsEvent extends SettingHomeEvent {
-  const ToggleInAppAlertsEvent();
+class ToggleNotificationEvent extends SettingHomeEvent {
+  const ToggleNotificationEvent();
 }
 
 class UpdateUserEvent extends SettingHomeEvent {

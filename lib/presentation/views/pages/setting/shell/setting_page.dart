@@ -19,4 +19,9 @@ class SettingPage extends BasePage<SettingBloc, SettingEvent, SettingState> {
   Widget? tabletBuilder(BuildContext context) {
     return SettingTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return SettingTabletLayout();
+  }
 }

@@ -117,6 +117,11 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
         ),
       ],
       child: ResponsiveBuilder(
+        breakpoints: const ScreenBreakpoints(
+          desktop: 1300, // >1200 mới coi là desktop
+          tablet: 600,   // từ 600 → 1199 coi là tablet
+          watch: 200,    // dưới 200 coi là watch
+        ),
         builder: (context, sizingInfo) {
           return BlocBuilder<B, S>(
             buildWhen: (pre, cur) => cur.pageStatus != pre.pageStatus,
@@ -170,8 +175,7 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
       case DeviceScreenType.tablet:
         builder = widget.tabletBuilder(context);
       default:
-        builder = widget.tabletBuilder(context);
-      // builder = widget.desktopBuilder(context);
+        builder = widget.desktopBuilder(context);
     }
     if (sizingInformation.isMobile || sizingInformation.isTablet) {
       return GestureDetector(

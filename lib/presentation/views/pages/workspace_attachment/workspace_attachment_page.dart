@@ -37,4 +37,9 @@ class WorkspaceAttachmentPage
   Widget? tabletBuilder(BuildContext context) {
     return WorkspaceAttachmentTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return WorkspaceAttachmentTabletLayout();
+  }
 }

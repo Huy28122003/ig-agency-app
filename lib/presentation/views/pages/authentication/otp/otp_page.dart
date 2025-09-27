@@ -27,4 +27,9 @@ class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
   Widget? tabletBuilder(BuildContext context) {
     return OtpTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return OtpTabletLayout();
+  }
 }

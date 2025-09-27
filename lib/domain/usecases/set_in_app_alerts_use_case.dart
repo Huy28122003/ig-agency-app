@@ -11,12 +11,12 @@ class SetInAppAlertsUseCase extends UseCase<void, SetInAppAlertsParam> {
 
   @override
   Future call(SetInAppAlertsParam param) async {
-    return await _settingsRepository.setInAppAlerts(param.isInAppAlerts);
+    return await _settingsRepository.setInAppAlerts(param.enableNotification);
   }
 }
 
 class SetInAppAlertsParam {
-  SetInAppAlertsParam({required this.isInAppAlerts});
+  SetInAppAlertsParam({required this.enableNotification});
 
-  final bool isInAppAlerts;
+  final bool enableNotification;
 }

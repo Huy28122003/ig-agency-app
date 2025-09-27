@@ -158,6 +158,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<SearchMessageDebouncedEvent>(_onSearchMessageDebounced);
     handleSubEvent<SearchKeywordChangeEvent>(_onSearchKeywordChange);
     handleSubEvent<GoToMessageEvent>(_onGoToMessage);
+    handleSubEvent<OnShowGroupInfoEvent>(_onShowGroupInfo);
   }
 
   void _initializeListener() {
@@ -918,6 +919,13 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
           ),
         )
         .toList();
+  }
+
+  Future<void> _onShowGroupInfo(
+    OnShowGroupInfoEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(state.copyWith(showGroupInfo: !state.showGroupInfo));
   }
 
   @override

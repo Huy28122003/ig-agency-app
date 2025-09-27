@@ -40,6 +40,7 @@ class _WorkspaceDetailTabletLayoutState
         elevation: 0,
         leadingWidth: 44,
         toolbarHeight: 60,
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         title: GestureDetector(
           onTap: () {

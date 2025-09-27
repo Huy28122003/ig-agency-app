@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
 
+import 'layout/setting_home_desktop_layout.dart';
 import 'layout/setting_home_mobile_layout.dart';
 import 'layout/setting_home_tablet_layout.dart';
 import 'setting_home_bloc.dart';
@@ -26,5 +27,10 @@ class SettingHomePage
   @override
   Widget? tabletBuilder(BuildContext context) {
     return SettingHomeTabletLayout();
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return SettingHomeDesktopLayout();
   }
 }
