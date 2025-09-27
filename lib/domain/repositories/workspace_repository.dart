@@ -18,6 +18,11 @@ abstract class WorkspaceRepository {
 
   Future<bool> updateWorkspaceBio({required int groupId, required String bio});
 
+  Future<bool> updateWorkspaceName({
+    required int groupId,
+    required String name,
+  });
+
   Future<List<UserEntity>> getUserInGroup({
     required int workspaceId,
     required int offset,

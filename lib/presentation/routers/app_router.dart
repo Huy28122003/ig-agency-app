@@ -10,8 +10,8 @@ import '../views/pages/authentication/forgot_password/forgot_password_page.dart'
 import '../views/pages/authentication/login/login_page.dart';
 import '../views/pages/authentication/otp/otp_page.dart';
 import '../views/pages/camera/camera_page.dart';
-import '../views/pages/chat_info/chat_info_page.dart';
 import '../views/pages/edit_workspace_bio/edit_workspace_bio_page.dart';
+import '../views/pages/edit_workspace_name/edit_workspace_name_page.dart';
 import '../views/pages/empty_page.dart';
 import '../views/pages/authentication/registration/registration_page.dart';
 import '../views/pages/authentication/reset_password/reset_password_page.dart';
@@ -22,6 +22,7 @@ import '../views/pages/members/members_page.dart';
 import '../views/pages/message_search_results_list/message_search_results_list_page.dart';
 import '../views/pages/nav/nav_page.dart';
 import '../views/pages/pinned_message/pinned_message_page.dart';
+import '../views/pages/pinned_message_list/pinned_message_list_page.dart';
 import '../views/pages/profile/profile_page.dart';
 import '../views/pages/edit_name/edit_name_page.dart';
 import '../views/pages/edit_bio/edit_bio_page.dart';
@@ -89,12 +90,33 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: EditBioRoute.page),
             AutoRoute(page: ChangePasswordRoute.page),
             AutoRoute(page: LinkedDeviceRoute.page),
+            AutoRoute(page: DeviceDetailRoute.page),
+            AutoRoute(page: LoginHistoryRoute.page),
           ],
         ),
-        AutoRoute(page: WSDetailRoute.page),
-        AutoRoute(page: ChatInfoRoute.page),
+        AutoRoute(
+          page: WSDetailRoute.page,
+          children: [
+            AutoRoute(page: EditWorkspaceNameRoute.page),
+            AutoRoute(page: EditWorkspaceBioRoute.page),
+            AutoRoute(page: GroupInfoRoute.page),
+            AutoRoute(page: PinnedMessageListRoute.page),
+            AutoRoute(page: WorkspaceAttachmentRoute.page),
+            AutoRoute(page: MembersRoute.page),
+          ],
+        ),
+        AutoRoute(page: GroupInfoRoute.page),
+        AutoRoute(page: EditWorkspaceNameRoute.page),
+        AutoRoute(page: EditWorkspaceBioRoute.page),
+        AutoRoute(page: PinnedMessageListRoute.page),
+        AutoRoute(page: WorkspaceAttachmentRoute.page),
+        AutoRoute(page: MembersRoute.page),
         AutoRoute(page: SharedContentRoute.page),
-        AutoRoute(page: EmptyRoute.page),
+        CustomRoute(
+          page: EmptyRoute.page,
+          initial: true,
+          transitionsBuilder: TransitionsBuilders.noTransition,
+        ),
 
         /// Mobile
         CustomRoute(
@@ -111,7 +133,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: EditNameRoute.page),
     AutoRoute(page: EditBioRoute.page),
     AutoRoute(page: ChangePasswordRoute.page),
-    AutoRoute(page: ChatInfoRoute.page),
     AutoRoute(page: SharedContentRoute.page),
     AutoRoute(page: CameraRoute.page),
     AutoRoute(page: MediaPreviewRoute.page),
@@ -119,6 +140,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: UserProfileRoute.page),
     AutoRoute(page: AddToGroupRoute.page),
     AutoRoute(page: GroupInfoRoute.page),
+    AutoRoute(page: EditWorkspaceNameRoute.page),
     AutoRoute(page: EditWorkspaceBioRoute.page),
     AutoRoute(page: MembersRoute.page),
     AutoRoute(page: WorkspaceAttachmentRoute.page),
@@ -127,5 +149,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: DeviceDetailRoute.page),
     AutoRoute(page: LoginHistoryRoute.page),
     AutoRoute(page: MessageSearchResultsListRoute.page),
+    AutoRoute(page: PinnedMessageListRoute.page),
   ];
 }

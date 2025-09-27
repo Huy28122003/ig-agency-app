@@ -10,9 +10,9 @@ import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/layout
 class EditWorkspaceBioPage
     extends
         BasePage<
-          EditWorkspaceBioBloc,
-          EditWorkspaceBioEvent,
-          EditWorkspaceBioState
+          EditWorkspaceNameBloc,
+          EditWorkspaceNameEvent,
+          EditWorkspaceNameState
         > {
   const EditWorkspaceBioPage({
     super.key,
@@ -26,18 +26,23 @@ class EditWorkspaceBioPage
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<EditWorkspaceBioBloc>().add(
+    context.read<EditWorkspaceNameBloc>().add(
       LoadDataEvent(bio: bio, workspaceId: workspaceId),
     );
   }
 
   @override
   Widget mobileBuilder(BuildContext context) {
-    return EditWorkspaceBioMobileLayout();
+    return EditWorkspaceNameMobileLayout();
   }
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return EditWorkspaceBioTabletLayout();
+    return EditWorkspaceNameTabletLayout();
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return EditWorkspaceNameTabletLayout();
   }
 }

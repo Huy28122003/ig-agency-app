@@ -63,3 +63,4 @@ GeneratedPluginRegistrant.java
 *.gr.dart
 *.freezed.dart
 pubspec.lock
+devtools_options.yaml

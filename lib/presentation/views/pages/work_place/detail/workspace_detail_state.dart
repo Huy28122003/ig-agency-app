@@ -26,9 +26,10 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.profile,
     this.isSearchMode = false,
     this.indexSearchMessage = 0,
-    this.totalSearchMessage = 0,
+    // this.totalSearchMessage = 0,
     this.searchKeyword = "",
     this.messageSearchResults = const [],
+    this.showGroupInfo = false,
   });
 
   final List<ChatMessageUIModel> chatMessages;
@@ -52,9 +53,11 @@ class WSDetailState extends BaseState<WSDetailState> {
   final ProfileInfoEntity? profile;
   final bool isSearchMode;
   final int indexSearchMessage;
-  final int totalSearchMessage;
+
+  // final int totalSearchMessage;
   final String searchKeyword;
   final List<MessageEntity> messageSearchResults;
+  final bool showGroupInfo;
 
   bool get needLoadMoreOldMessages =>
       pagingStatus != PagingStatus.empty &&
@@ -82,7 +85,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
     int? initIndex,
-    int? totalSearchMessage,
+    // int? totalSearchMessage,
     int? indexSearchMessage,
     bool? showTagOverlay,
     GroupMemberStatus? groupMemberStatus,
@@ -91,6 +94,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     ProfileInfoEntity? profile,
     String? searchKeyword,
     List<MessageEntity>? messageSearchResults,
+    bool? showGroupInfo,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -122,9 +126,11 @@ class WSDetailState extends BaseState<WSDetailState> {
       profile: profile ?? this.profile,
       isSearchMode: isSearchMode ?? this.isSearchMode,
       indexSearchMessage: indexSearchMessage ?? this.indexSearchMessage,
-      totalSearchMessage: totalSearchMessage ?? this.totalSearchMessage,
+      // totalSearchMessage: totalSearchMessage ?? this.totalSearchMessage,
       searchKeyword: searchKeyword ?? this.searchKeyword,
       messageSearchResults: messageSearchResults ?? this.messageSearchResults,
+      groupSearchStatus: groupSearchStatus ?? this.groupSearchStatus,
+      showGroupInfo: showGroupInfo ?? this.showGroupInfo,
     );
   }
 
@@ -150,9 +156,10 @@ class WSDetailState extends BaseState<WSDetailState> {
     isDeletedConversationSuccess,
     profile,
     isSearchMode,
-    totalSearchMessage,
+    // totalSearchMessage,
     indexSearchMessage,
     searchKeyword,
     messageSearchResults,
+    showGroupInfo,
   ];
 }

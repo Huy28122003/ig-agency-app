@@ -29,4 +29,9 @@ class ResetPasswordPage
   Widget? tabletBuilder(BuildContext context) {
     return ResetPasswordTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return ResetPasswordTabletLayout();
+  }
 }

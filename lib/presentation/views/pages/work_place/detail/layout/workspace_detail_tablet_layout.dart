@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
@@ -6,7 +7,9 @@ import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspa
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../resources/colors.dart';
+import '../../../../../routers/app_router.dart';
 import '../../../../widgets/circle_network_avatar.dart';
+
 import '../widgets/group_chat_view.dart';
 import '../widgets/group_removed_view.dart';
 
@@ -65,14 +68,18 @@ class _WorkspaceDetailTabletLayoutState
             elevation: 0,
             leadingWidth: 44,
             toolbarHeight: 60,
-            scrolledUnderElevation: 0,
             automaticallyImplyLeading: false,
+            scrolledUnderElevation: 0,
             titleSpacing: 0,
             title: Padding(
               padding: const EdgeInsets.only(left: 16, right: 8),
               child: GestureDetector(
                 onTap: () {
-                  // TODO hoannk:Route to group info
+                  context.router.push(
+                    GroupInfoRoute(
+                      groupId: context.read<WSDetailBloc>().groupId,
+                    ),
+                  );
                 },
                 child: Row(
                   children: [
