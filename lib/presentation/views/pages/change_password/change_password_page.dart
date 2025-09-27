@@ -28,4 +28,9 @@ class ChangePasswordPage
   Widget? tabletBuilder(BuildContext context) {
     return ChangePasswordTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return ChangePasswordTabletLayout();
+  }
 }

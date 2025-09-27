@@ -40,4 +40,9 @@ class EditWorkspaceBioPage
   Widget? tabletBuilder(BuildContext context) {
     return EditWorkspaceNameTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return EditWorkspaceNameTabletLayout();
+  }
 }

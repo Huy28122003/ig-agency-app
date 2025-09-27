@@ -31,4 +31,9 @@ class EditBioPage extends BasePage<EditBioBloc, EditBioEvent, EditBioState> {
   Widget? tabletBuilder(BuildContext context) {
     return EditBioTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return EditBioTabletLayout();
+  }
 }
