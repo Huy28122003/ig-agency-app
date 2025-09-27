@@ -12,7 +12,7 @@ part 'group_info_state.dart';
 
 @injectable
 class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
-  final GetWorkspaceByIdUseCase getWorkspaceByIdUseCase;
+  final GetGroupInfoUseCase getWorkspaceByIdUseCase;
   final UpdateWorkspaceNotificationUseCase updateWorkspaceNotificationUseCase;
 late final String groupId;
   GroupInfoBloc({
@@ -20,6 +20,7 @@ late final String groupId;
     required this.updateWorkspaceNotificationUseCase,
   }) : super(GroupInfoState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
+      emit(state.copyWith(pageStatus: PageStatus.loading));
       final result = await getWorkspaceByIdUseCase.call(event.groupId);
       emit(state.copyWith(pageStatus: PageStatus.loaded, workspace: result));
     });

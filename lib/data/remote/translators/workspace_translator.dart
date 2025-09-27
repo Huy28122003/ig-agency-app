@@ -3,7 +3,7 @@ import 'package:ig_agency_app/domain/enums/message_enums.dart';
 
 import '../../../domain/entities/workspace_entity.dart';
 
-extension WorkspaceTranslator on GetWorkspacesResponseModel {
+extension GroupTranslator on GroupResponse {
   GroupEntity toEntity() {
     final lastMsg = lastMessage;
     final messageType = MessageContentType.fromString(lastMsg?.type ?? '');

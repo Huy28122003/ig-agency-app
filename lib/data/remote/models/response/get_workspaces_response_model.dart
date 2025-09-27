@@ -4,8 +4,8 @@ import 'package:json_annotation/json_annotation.dart';
 part 'get_workspaces_response_model.g.dart';
 
 @JsonSerializable()
-class GetWorkspacesResponseModel {
-  const GetWorkspacesResponseModel({
+class GroupResponse {
+  const GroupResponse({
     required this.id,
     required this.title,
     this.lastMessageDate,
@@ -23,8 +23,8 @@ class GetWorkspacesResponseModel {
   final String status;
   final LastMessageResponseModel? lastMessage;
 
-  factory GetWorkspacesResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$GetWorkspacesResponseModelFromJson(json);
+  factory GroupResponse.fromJson(Map<String, dynamic> json) =>
+      _$GroupResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$GetWorkspacesResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$GroupResponseToJson(this);
 }

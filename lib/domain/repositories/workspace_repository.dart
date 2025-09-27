@@ -12,7 +12,7 @@ abstract class GroupRepository {
     String? keyWord,
   });
 
-  Future<GroupEntity> getWorkspaceById({required String groupId});
+  Future<GroupEntity> getGroupInfo({required String groupId});
 
   Stream<GroupEntity> listenLastMessages();
 

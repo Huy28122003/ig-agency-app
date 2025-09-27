@@ -1,6 +1,8 @@
+import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
 
 import 'package:ig_agency_app/data/remote/models/response/get_workspaces_response_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
 
 import 'package:injectable/injectable.dart';
 
@@ -15,7 +17,7 @@ class GroupRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   GroupRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<List<GetWorkspacesResponseModel>> getWorkspaces({
+  Future<List<GroupResponse>> getWorkspaces({
     required GetWorkspacesRequestModel getWorkspacesRequest,
   }) async {
     try {
@@ -47,6 +49,30 @@ class GroupRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
   Future<void> deleteGroup(String groupId) async {
     try {
       return await _apiService.deleteGroup(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<GroupResponse> getGroupInfo(String groupId) async {
+    try {
+      return await _apiService.getGroupInfo(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<List<UserProfileResponseModel>> getUserInGroup(
+    GetDataInGroupRequest request,
+  ) async {
+    try {
+      return await _apiService.getUserInGroup(
+        request.groupId,
+        request.limit,
+        request.offset,
+      );
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

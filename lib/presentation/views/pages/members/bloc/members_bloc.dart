@@ -20,9 +20,31 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
   MembersBloc({required this.getUsersByWorkspaceIdUseCase})
     : super(MembersState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
+      emit(state.copyWith(pageStatus: PageStatus.loading));
       _workspaceId = event.workspaceId;
-      emit(state.copyWith(pageStatus: PageStatus.loaded));
-      add(GetDataEvent());
+      final result = await getUsersByWorkspaceIdUseCase.call(
+        GetDataInGroupParams(
+          limit: _limit,
+          offset: _offset,
+          workspaceId: _workspaceId,
+        ),
+      );
+      _offset += result.length;
+
+      List<UserEntity> currentList = List.from(state.members);
+      currentList.addAll(result);
+
+      final pagingStatus = _limit > result.length
+          ? PagingStatus.noMoreData
+          : PagingStatus.loadCompleted;
+
+      emit(
+        state.copyWith(
+          members: currentList,
+          pagingStatus: pagingStatus,
+          pageStatus: PageStatus.loaded,
+        ),
+      );
     });
 
     handleLoadData<RefreshDataEvent>((event, emit) async {

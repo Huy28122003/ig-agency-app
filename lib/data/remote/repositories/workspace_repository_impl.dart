@@ -1,4 +1,6 @@
+import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
+import 'package:ig_agency_app/data/remote/translators/user_profile_translator.dart';
 import 'package:ig_agency_app/data/remote/translators/workspace_translator.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
@@ -12,10 +14,10 @@ import '../../../shared/utils/mock_data.dart';
 import '../app/workspace_remote_data_source.dart';
 
 @Injectable(as: GroupRepository)
-class Group implements GroupRepository {
+class GroupRepositoryImpl implements GroupRepository {
   final WorkspaceRemoteDataSource _workspaceRemoteDataSource;
 
-  Group(this._workspaceRemoteDataSource);
+  GroupRepositoryImpl(this._workspaceRemoteDataSource);
 
   @override
   Future<List<GroupEntity>> getWorkspaces({
@@ -44,12 +46,10 @@ class Group implements GroupRepository {
   }
 
   @override
-  Future<GroupEntity> getWorkspaceById({required String groupId}) async {
+  Future<GroupEntity> getGroupInfo({required String groupId}) async {
     try {
-      final workspace = MockData.getWorkspaces().firstWhere(
-        (element) => element.id == groupId,
-      );
-      return workspace;
+      final response = await _workspaceRemoteDataSource.getGroupInfo(groupId);
+      return response.toEntity();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -159,12 +159,14 @@ class Group implements GroupRepository {
     required int limit,
   }) async {
     try {
-      return MockData().users.sublist(
-        offset,
-        offset + limit > MockData().users.length
-            ? MockData().users.length
-            : offset + limit,
+      final response = await _workspaceRemoteDataSource.getUserInGroup(
+        GetDataInGroupRequest(
+          limit: limit,
+          offset: offset,
+          groupId: workspaceId,
+        ),
       );
+      return response.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

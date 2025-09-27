@@ -4,6 +4,7 @@ import 'package:ig_agency_app/data/remote/models/requests/login_request_model.da
 import 'package:ig_agency_app/data/remote/models/requests/search_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
 import 'package:ig_agency_app/data/remote/models/response/search_result_response.dart';
+import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/requests/registration_request_model.dart';
@@ -42,7 +43,7 @@ abstract class ApiService {
 
   //Group
   @GET('/conversations')
-  Future<List<GetWorkspacesResponseModel>> getGroups(
+  Future<List<GroupResponse>> getGroups(
     @Queries() GetWorkspacesRequestModel request,
   );
 
@@ -54,4 +55,14 @@ abstract class ApiService {
 
   @DELETE('/conversations/{conversationId}')
   Future<void> deleteGroup(@Path('conversationId') String groupId);
+
+  @GET('/conversations/{conversationId}')
+  Future<GroupResponse> getGroupInfo(@Path('conversationId') String groupId);
+
+  @GET('/conversations/{conversationId}/members')
+  Future<List<UserProfileResponseModel>> getUserInGroup(
+    @Path("conversationId") String groupId,
+    @Query("limit") int limit,
+    @Query("offset") int offset,
+  );
 }

@@ -1,6 +1,7 @@
 enum RoleSystem {
   admin("admin"),
   user("user"),
+  telegramUser("telegram_user"),
   guest("guest");
 
   final String code;
@@ -13,6 +14,8 @@ enum RoleSystem {
         return RoleSystem.admin;
       case 'user':
         return RoleSystem.user;
+      case 'telegram_user':
+        return RoleSystem.telegramUser;
       default:
         throw RoleSystem.guest;
     }
@@ -25,4 +28,6 @@ extension RoleSystemExtension on RoleSystem {
   bool get isUser => this == RoleSystem.user;
 
   bool get isGuest => this == RoleSystem.guest;
+
+  bool get isTelegramUset => this == RoleSystem.telegramUser;
 }

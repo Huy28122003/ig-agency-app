@@ -4,7 +4,20 @@ part 'user_profile_response_model.g.dart';
 
 @JsonSerializable()
 class UserProfileResponseModel {
-  const UserProfileResponseModel(
+  const UserProfileResponseModel(this.user, this.status);
+
+  final UserResponse user;
+  final String status;
+
+  factory UserProfileResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$UserProfileResponseModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserProfileResponseModelToJson(this);
+}
+
+@JsonSerializable()
+class UserResponse {
+  const UserResponse(
     this.id,
     this.name,
     this.avatar,
@@ -20,8 +33,8 @@ class UserProfileResponseModel {
   final String? role;
   final String? status;
 
-  factory UserProfileResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$UserProfileResponseModelFromJson(json);
+  factory UserResponse.fromJson(Map<String, dynamic> json) =>
+      _$UserResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserProfileResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$UserResponseToJson(this);
 }
