@@ -84,14 +84,14 @@ class GeneralSettingHomeSection extends StatelessWidget {
                     child: CupertinoSwitch(
                       value: isInAppAlerts,
                       onChanged: (_) {
-                        settingHomeBloc.add(ToggleInAppAlertsEvent());
+                        settingHomeBloc.add(ToggleNotificationEvent());
                       },
                     ),
                   );
                 },
               ),
               onTap: () {
-                settingHomeBloc.add(ToggleInAppAlertsEvent());
+                settingHomeBloc.add(ToggleNotificationEvent());
               },
             ),
           ],

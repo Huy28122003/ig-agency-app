@@ -129,3 +129,7 @@ class GoToMessageEvent extends WSDetailEvent {
 
   GoToMessageEvent({this.isGoUp = false});
 }
+
+class OnShowGroupInfoEvent extends WSDetailEvent {
+  OnShowGroupInfoEvent();
+}

@@ -51,6 +51,12 @@
     "description": "Please enter the OTP sent on your\nregistered email address",
     "continue": "Continue"
   },
+  "reset_password": {
+    "title": "OTP Verification",
+    "hint_text_new_password": "New password",
+    "hint_text_confirm_password": "Confirm New Password",
+    "reset_password": "Reset Password"
+  },
   "camera": {
     "send": "Send"
   },

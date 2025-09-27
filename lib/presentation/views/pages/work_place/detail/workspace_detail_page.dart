@@ -44,4 +44,9 @@ class WSDetailPage
   Widget? tabletBuilder(BuildContext context) {
     return WorkspaceDetailTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return WorkspaceDetailTabletLayout();
+  }
 }
