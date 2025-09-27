@@ -57,8 +57,8 @@ android {
         }
         create("staging") {
             dimension = "app"
-            applicationId = "com.anhtran.agency.stag"
-            resValue("string", "app_name", "IG Agency Stag")
+            applicationId = "com.anhtran.agency.stg"
+            resValue("string", "app_name", "IG Agency Stg")
             versionName = "1.0.0-stag"
             versionCode = 1
         }

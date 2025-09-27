@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:js_interop';
-import 'package:web/web.dart' as web;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +14,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/notification/received_notification_entity.dart';
 import 'notification_service.dart';
+import 'package:ig_agency_app/dependencies/notification/notification_web_services_stub.dart'
+    if (dart.library.js_interop) 'package:ig_agency_app/dependencies/notification/notification_web_services_web.dart';
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {}
@@ -158,14 +158,7 @@ class FirebaseNotificationService extends NotificationService {
   Future<bool?> requestPermission() async {
     try {
       if (kIsWeb) {
-        // permission: 'default' | 'granted' | 'denied'
-        final String current = web.Notification.permission;
-        if (current == 'granted') return true;
-
-        // requestPermission(): Promise<'default' | 'granted' | 'denied'>
-        final jsResult = await web.Notification.requestPermission().toDart;
-        final String result = jsResult.toDart; // convert JSString -> String
-        return result == 'granted';
+        await NotificationWebServices.requestPermission();
       }
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
           FlutterLocalNotificationsPlugin();
