@@ -19,6 +19,8 @@ class FetchPinnedMessageInGroupUseCase
       params.groupId,
       params.limit,
       params.offset,
+      params.search,
+      params.beforeMessageId,
     );
   }
 }
@@ -27,10 +29,14 @@ class FetchPinnedMessageInGroupParams {
   final String groupId;
   final int limit;
   final int offset;
+  final String? search;
+  final String? beforeMessageId;
 
   FetchPinnedMessageInGroupParams({
     required this.groupId,
     required this.limit,
-    required this.offset,
+    this.offset = 0,
+    this.search,
+    this.beforeMessageId,
   });
 }

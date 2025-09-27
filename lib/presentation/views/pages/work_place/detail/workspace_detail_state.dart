@@ -18,7 +18,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.jumpToMessageId,
     this.scrollToTop = false,
     this.showTimeMessageId,
-    this.initIndex = 0,
+    this.initIndex = 0.0,
     this.showTagOverlay = false,
     this.groupMemberStatus = GroupMemberStatus.joined,
     this.groupSearchStatus = GroupSearchStatus.idle,
@@ -44,7 +44,7 @@ class WSDetailState extends BaseState<WSDetailState> {
   final String? jumpToMessageId;
   final bool scrollToTop;
   final String? showTimeMessageId;
-  final int initIndex;
+  final double initIndex;
   final bool showTagOverlay;
   final GroupMemberStatus groupMemberStatus;
   final GroupSearchStatus groupSearchStatus;
@@ -81,7 +81,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? scrollToTop,
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
-    int? initIndex,
+    double? initIndex,
     int? totalSearchMessage,
     int? indexSearchMessage,
     bool? showTagOverlay,

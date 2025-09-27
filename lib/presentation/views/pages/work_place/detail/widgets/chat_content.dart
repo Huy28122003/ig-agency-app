@@ -50,7 +50,9 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
     super.didChangeMetrics();
     final bottomInset = View.of(context).viewInsets.bottom;
     if (bottomInset > 0) {
-      _scrollToBottom();
+      if (mounted) {
+        _scrollToBottom();
+      }
     }
   }
 
@@ -188,8 +190,10 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
           listener: (context, state) {
             if (state.scrollToBottom) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                _scrollToBottom();
-                _bloc.add(ResetScrollToBottomEvent());
+                if (mounted) {
+                  _scrollToBottom();
+                  _bloc.add(ResetScrollToBottomEvent());
+                }
               });
             }
           },
@@ -201,7 +205,9 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
             final messageId = state.jumpToMessageId;
             if (messageId != null) {
               WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                _jumpToMessage(messageId);
+                if (mounted) {
+                  _jumpToMessage(messageId);
+                }
               });
             }
           },
@@ -227,7 +233,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
           BlocSelector<
             WSDetailBloc,
             WSDetailState,
-            (List<ChatMessageUIModel>, bool, int)
+            (List<ChatMessageUIModel>, bool, double)
           >(
             selector: (state) {
               return (
@@ -327,7 +333,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                     onItemKey: (index) => chatMessages[index].message.id,
                     keepPosition: true,
                     keepPositionOffset: 56,
-                    initIndex: initIndex,
+                    initIndex: initIndex.round(),
                     firstItemAlign: FirstItemAlign.end,
                   ),
                 ),

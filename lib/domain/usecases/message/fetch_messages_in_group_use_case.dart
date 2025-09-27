@@ -16,7 +16,7 @@ class FetchMessagesInGroupUseCase
     return await _messageRepository.fetchMessagesInGroup(
       params.groupId,
       params.limit,
-      params.oldestMessageId,
+      params.beforeMessageId,
       params.targetMessageId,
     );
   }
@@ -25,13 +25,13 @@ class FetchMessagesInGroupUseCase
 class FetchMessagesInGroupParams {
   final String groupId;
   final int limit;
-  final String? oldestMessageId;
+  final String? beforeMessageId;
   final String? targetMessageId;
 
   FetchMessagesInGroupParams({
     required this.groupId,
     required this.limit,
-    this.oldestMessageId,
+    this.beforeMessageId,
     this.targetMessageId,
   });
 }

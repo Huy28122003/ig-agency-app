@@ -68,14 +68,14 @@ abstract class ApiService {
     @Path('messageId') String messageId,
   );
 
-  // @GET('/conversations/{conversationId}/pinned-messages')
-  // Future<List<void>> getPinnedMessages(
-  //   @Path('conversationId') String conversationId,
-  //   @Query('limit') int limit,
-  //   @Query('offset') int offset,
-  //   @Query('search') String? search,
-  //   @Query('before') String? beforeMessageId,
-  // );
+  @GET('/conversations/{conversationId}/pinned-messages')
+  Future<List<MessageResponseModel>> getPinnedMessages(
+    @Path('conversationId') String conversationId,
+    @Query('limit') int limit,
+    @Query('offset') int offset,
+    @Query('search') String? search,
+    @Query('before') String? beforeMessageId,
+  );
 
   @POST('/conversations/{conversationId}/pinned-messages')
   Future<void> pinMessage(

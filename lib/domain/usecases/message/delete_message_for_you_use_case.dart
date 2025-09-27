@@ -12,12 +12,16 @@ class DeleteMessageForYouUseCase
 
   @override
   Future<void> call(DeleteMessageForYouParams params) async {
-    return await _messageRepository.deleteMessageForYou(params.messageId);
+    return await _messageRepository.deleteMessageForYou(
+      params.groupId,
+      params.messageId,
+    );
   }
 }
 
 class DeleteMessageForYouParams {
+  final String groupId;
   final String messageId;
 
-  DeleteMessageForYouParams({required this.messageId});
+  DeleteMessageForYouParams({required this.groupId, required this.messageId});
 }

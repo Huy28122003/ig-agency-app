@@ -1,14 +1,22 @@
 import '../../../domain/entities/message/message.dart';
 
 abstract class MessageRemoteDataSource {
-  Future<List<MessageEntity>> fetchPinnedMessage(int limit, int offset);
+  Future<List<MessageEntity>> fetchPinnedMessage(
+    String groupId,
+    int limit,
+    int offset,
+    String? search,
+    String? before,
+  );
 
-  Future<void> unpinMessage(String messageId);
+  Future<void> unpinMessage(String groupId, String messageId);
+
+  Future<void> pinMessage(String groupId, String messageId);
 
   Future<List<MessageEntity>> fetchMessagesInGroup(
     String groupId,
     int limit,
-    String? oldestMessageId,
+    String? beforeMessageId,
     String? targetMessageId,
   );
 
@@ -18,4 +26,8 @@ abstract class MessageRemoteDataSource {
     String? replyMessageId,
     MessageContent content,
   );
+
+  Future<void> deleteMessageForEveryone(String groupId, String messageId);
+
+  Future<void> deleteMessageForYou(String groupId, String messageId);
 }

@@ -234,6 +234,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       FetchMemberInGroupParams(groupId: groupId),
     );
 
+    final initialIndex = messages.isEmpty ? 0 : messages.length - 1;
+
     emit(
       state.copyWith(
         profile: profile,
@@ -241,13 +243,15 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
         pagingStatus: pagingStatus,
         pinnedMessageSummary: pinnedMessageSummary,
-        initIndex: messages.isEmpty ? 0 : messages.length - 1,
+        initIndex: initialIndex.toDouble(),
         users: users,
         usersSearch: users,
         isSearchMode: event.isSearchMode,
       ),
     );
   }
+
+  bool isAdd = false;
 
   Future<void> _onLoadMoreMessages(
     LoadMoreChatMessagesEvent event,
@@ -260,29 +264,38 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
+    // Thêm delay để mô phỏng thời gian fetch API
+    await Future.delayed(const Duration(seconds: 2));
+
     final messagesResult = await _fetchMessageUseCase.call(
       FetchMessagesInGroupParams(
         groupId: groupId,
         limit: _limit,
-        oldestMessageId: state.chatMessages.first.message.id,
+        beforeMessageId: state.chatMessages.first.message.id,
       ),
     );
 
-    if (messagesResult.isEmpty || messagesResult.length < _limit) {
-      return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+    if (messagesResult.isEmpty) {
+      return emit(
+        state.copyWith(
+          pagingStatus: PagingStatus.noMoreData,
+          initIndex: state.initIndex,
+        ), // Giữ nguyên initIndex cũ nếu không có thêm tin nhắn
+      );
     }
 
     final messages = messagesResult.reversed.toList();
-
     final updatedMessages = _addMessageList(leadingMessageList: messages);
+
+    final initIndex = messages.length - 1;
 
     emit(
       state.copyWith(
         chatMessages: updatedMessages,
-        pagingStatus: PagingStatus.loadCompleted,
-        // Giữ vị trí là ví trị của message cuối cùng của list vừa được thêm để
-        // tạo thêm cảm giác được scroll tiếp cho load more kế tiếp
-        initIndex: messages.isEmpty ? 0 : messages.length - 1,
+        pagingStatus: messages.length < _limit
+            ? PagingStatus.noMoreData
+            : PagingStatus.loadCompleted,
+        initIndex: initIndex + (isAdd ? -0.1 : 0.1),
       ),
     );
   }
@@ -368,6 +381,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         content: content,
       ),
     );
+
+    // TODO hoannk: Add message to list
   }
 
   Future<void> _onResetScrollToBottom(
@@ -460,7 +475,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         FetchMessagesInGroupParams(
           groupId: groupId,
           limit: _limit,
-          oldestMessageId: state.chatMessages.first.message.id,
+          beforeMessageId: state.chatMessages.first.message.id,
           targetMessageId: event.messageId,
         ),
       );
@@ -560,11 +575,11 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     if (isPinned) {
       await _unpinMessageUseCase.call(
-        UnpinMessageParams(messageId: event.messageId),
+        UnpinMessageParams(groupId: groupId, messageId: event.messageId),
       );
     } else {
       await _pinMessageUseCase.call(
-        PinMessageParams(messageId: event.messageId),
+        PinMessageParams(groupId: groupId, messageId: event.messageId),
       );
     }
 
@@ -611,7 +626,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     try {
       await _deleteMessageForEveryoneUseCase.call(
-        DeleteMessageForEveryoneParams(messageId: event.messageId),
+        DeleteMessageForEveryoneParams(
+          groupId: groupId,
+          messageId: event.messageId,
+        ),
       );
 
       await Future.delayed(const Duration(seconds: 2));
@@ -635,7 +653,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     try {
       await _deleteMessageForYouUseCase.call(
-        DeleteMessageForYouParams(messageId: event.messageId),
+        DeleteMessageForYouParams(groupId: groupId, messageId: event.messageId),
       );
 
       await Future.delayed(const Duration(seconds: 2));

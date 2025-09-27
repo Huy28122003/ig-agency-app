@@ -158,9 +158,9 @@ class PinnedMessageBloc
   ) async {
     emit(state.copyWith(processing: true));
 
-    await _unpinMessageUseCase.call(
-      UnpinMessageParams(messageId: event.messageId),
-    );
+    // await _unpinMessageUseCase.call(
+    //   UnpinMessageParams(messageId: event.messageId),
+    // );
 
     final messages = List<PinnedMessageUIModel>.from(state.messages)
       ..removeWhere((e) => e.id == event.messageId);

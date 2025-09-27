@@ -36,20 +36,18 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future unpinMessage(String messageId) async {
+  Future unpinMessage(String groupId, String messageId) async {
     try {
-      return await _messageRemoteDataSource.unpinMessage(messageId);
+      return await _messageRemoteDataSource.unpinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future pinMessage(String messageId) async {
+  Future pinMessage(String groupId, String messageId) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
-      return await _messageMockService.mockPinMessage(messageId);
+      return await _messageRemoteDataSource.pinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -60,14 +58,18 @@ class MessageRepositoryImpl implements MessageRepository {
     String groupId,
     int limit,
     int offset,
+    String? search,
+    String? beforeMessageId,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
     try {
-      final pinnedMessages = _messageMockService.mockFetchPinnedMessages(
-        groupId: groupId,
-        limit: limit,
-        offset: offset,
+      final pinnedMessages = await _messageRemoteDataSource.fetchPinnedMessage(
+        groupId,
+        limit,
+        offset,
+        search,
+        beforeMessageId,
       );
 
       return pinnedMessages;
@@ -94,14 +96,14 @@ class MessageRepositoryImpl implements MessageRepository {
   Future<List<MessageEntity>> fetchMessagesInGroup(
     String groupId,
     int limit,
-    String? oldestMessageId,
+    String? beforeMessageId,
     String? targetMessageId,
   ) async {
     try {
       final messages = _messageRemoteDataSource.fetchMessagesInGroup(
         groupId,
         limit,
-        oldestMessageId,
+        beforeMessageId,
         targetMessageId,
       );
 
@@ -131,22 +133,28 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<void> deleteMessageForEveryone(String messageId) async {
+  Future<void> deleteMessageForEveryone(
+    String groupId,
+    String messageId,
+  ) async {
     try {
       // Todo: hoannk: rehandle this
       // TODO: Sử dụng tạm mock tại repository
-      await _messageMockService.mockDeleteMessageForEveryone(messageId);
+      await _messageRemoteDataSource.deleteMessageForEveryone(
+        groupId,
+        messageId,
+      );
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<void> deleteMessageForYou(String messageId) async {
+  Future<void> deleteMessageForYou(String groupId, String messageId) async {
     try {
       // Todo: hoannk: rehandle this
       // TODO: Sử dụng tạm mock tại repository
-      await _messageMockService.mockDeleteMessageForYou(messageId);
+      await _messageRemoteDataSource.deleteMessageForYou(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
