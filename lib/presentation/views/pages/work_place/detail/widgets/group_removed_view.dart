@@ -9,10 +9,10 @@ import '../../../../widgets/app_button.dart';
 import '../../../../widgets/chat_bubble/chat_message_bubble.dart';
 
 class GroupRemovedView extends StatelessWidget {
-  const GroupRemovedView({super.key, required this.bloc, this.isMobile = true});
+  const GroupRemovedView({super.key, required WSDetailBloc bloc})
+    : _bloc = bloc;
 
-  final WSDetailBloc bloc;
-  final bool isMobile;
+  final WSDetailBloc _bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class GroupRemovedView extends StatelessWidget {
                     minimumSize: const Size(double.infinity, 48),
                     backgroundColor: AppColors.surfaceContainerAlertError,
                     onPressed: () {
-                      bloc.add(DeleteConversationEvent());
+                      _bloc.add(DeleteConversationEvent());
                     },
                     child: Text(
                       'Delete conversation',

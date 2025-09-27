@@ -5,6 +5,8 @@ import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspa
 
 import '../../../../../../domain/entities/message/message_entity.dart';
 import '../../../../../../domain/enums/send_message_type.dart';
+import '../../../../../../gen/assets.gen.dart';
+import '../../../../../resources/colors.dart';
 import '../../../../../routers/app_router.dart';
 import '../../../../modal/pinned_message/pinned_message_bottom_sheet.dart';
 import '../../../../ui_models/pinned_message_summary_ui_model.dart';
@@ -12,7 +14,7 @@ import '../../../../widgets/chat/pinned_message_section.dart';
 import '../../../../widgets/chat_input/chat_input_bar.dart';
 import '../../../../widgets/chat_input/tag_user_list_view.dart';
 import 'chat_content.dart';
-import 'search.dart';
+import 'search_result_bar.dart';
 
 class GroupChatView extends StatelessWidget {
   const GroupChatView({
@@ -20,13 +22,11 @@ class GroupChatView extends StatelessWidget {
     required this.bloc,
     required this.focusNode,
     required this.groupName,
-    this.isMobile = true,
   });
 
   final WSDetailBloc bloc;
   final FocusNode focusNode;
   final String groupName;
-  final bool isMobile;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +116,11 @@ class GroupChatView extends StatelessWidget {
                           },
                         ),
                       ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: _buildResultNavigation(),
+                      ),
                     ],
                   ),
                 ),
@@ -125,7 +130,7 @@ class GroupChatView extends StatelessWidget {
                   },
                   builder: (context, state) {
                     if (state) {
-                      return SizedBox(height: 44);
+                      return SearchResultsBar(groupName: groupName);
                     }
                     return BlocSelector<
                         WSDetailBloc,
@@ -174,13 +179,100 @@ class GroupChatView extends StatelessWidget {
                 ),
               ],
             ),
-            if (state)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: SearchResultsBar(groupName: groupName),
-              ),
+            // if (state)
+            //   Positioned(
+            //     bottom: 0,
+            //     left: 0,
+            //     right: 0,
+            //     child: SearchResultsBar(groupName: groupName),
+            //   ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildResultNavigation() {
+    return BlocBuilder<WSDetailBloc, WSDetailState>(
+      buildWhen: (prev, curr) =>
+      prev.indexSearchMessage != curr.indexSearchMessage ||
+          prev.messageSearchResults != curr.messageSearchResults,
+      builder: (context, state) {
+        final goToUpEnable =
+            state.indexSearchMessage <
+                bloc.state.messageSearchResults.length - 1 &&
+                bloc.state.messageSearchResults.length > 1;
+        final goToDownEnable =
+            state.indexSearchMessage > 0 &&
+                bloc.state.messageSearchResults.length > 1;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            BlocSelector<WSDetailBloc, WSDetailState, List<MessageEntity>>(
+              selector: (state) {
+                return state.messageSearchResults;
+              },
+              builder: (context, state) {
+                if (state.length < 2) {
+                  return SizedBox();
+                }
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (!goToUpEnable) return;
+                        bloc.add(GoToMessageEvent(isGoUp: true));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          margin: EdgeInsets.only(right: 12),
+                          width: 26,
+                          height: 26,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (goToUpEnable)
+                                ? AppColors.iconPrimaryDefault
+                                : AppColors.iconPrimaryDisable,
+                          ),
+                          child: RotatedBox(
+                            quarterTurns: 1,
+                            child: Assets.icons.icArrowLeft.svg(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (!goToDownEnable) return;
+                        bloc.add(GoToMessageEvent());
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          margin: EdgeInsets.only(right: 12),
+                          width: 26,
+                          height: 26,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (goToDownEnable)
+                                ? AppColors.iconPrimaryDefault
+                                : AppColors.iconPrimaryDisable,
+                          ),
+                          child: RotatedBox(
+                            quarterTurns: 3,
+                            child: Assets.icons.icArrowLeft.svg(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ],
         );
       },

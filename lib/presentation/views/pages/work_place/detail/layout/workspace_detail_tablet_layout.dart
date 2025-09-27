@@ -158,12 +158,10 @@ class _WorkspaceDetailTabletLayoutState
                         bloc: _bloc,
                         focusNode: _focusNode,
                         groupName: widget.groupName,
-                        isMobile: true,
                       )
                     : GroupRemovedView(
                         key: const ValueKey('group_removed'),
                         bloc: _bloc,
-                        isMobile: true,
                       ),
               );
             },
