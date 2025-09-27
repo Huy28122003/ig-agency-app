@@ -7,7 +7,7 @@ class UpdateWorkspaceNameUseCase
     extends UseCase<bool, UpdateWorkspaceNameParams> {
   UpdateWorkspaceNameUseCase(this._workspaceRepository);
 
-  final WorkspaceRepository _workspaceRepository;
+  final GroupRepository _workspaceRepository;
 
   @override
   Future<bool> call(UpdateWorkspaceNameParams param) async {

@@ -138,7 +138,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final name =
-            context.read<GroupInfoBloc>().state.workspace?.workspaceName ?? "";
+            context.read<GroupInfoBloc>().state.workspace?.groupName ?? "";
         context.router.push(EditNameRoute(name: name));
       },
       child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(

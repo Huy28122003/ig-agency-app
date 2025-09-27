@@ -99,14 +99,14 @@ class GroupInfoTabletLayout extends StatelessWidget {
           onTap: () {
             //todo
           },
-          child: BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+          child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
             },
             builder: (context, state) {
               return CircleNetworkAvatar(
                 size: 80,
-                imageUrl: state?.workspaceAvatar ?? "",
+                imageUrl: state?.groupAvatar ?? "",
               );
             },
           ),
@@ -139,13 +139,14 @@ class GroupInfoTabletLayout extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final group = context.read<GroupInfoBloc>().state.workspace;
-        final name = group?.workspaceName ?? "";
-        final id = group?.id ?? 0;
+        if (group == null) return;
+        final name = group.groupName;
+        final id = group.id;
         context.router.push(
           EditWorkspaceNameRoute(name: name, workspaceId: id),
         );
       },
-      child: BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+      child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
         selector: (state) {
           return state.workspace;
         },
@@ -155,7 +156,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  state?.workspaceName ?? "",
+                  state?.groupName ?? "",
                   style: TextStyle(
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w700,
@@ -184,7 +185,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
   Widget _buildBody(BuildContext context, GroupInfoBloc bloc) {
     return Column(
       children: [
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -229,7 +230,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
         ),
 
         SizedBox(height: 12),
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -255,8 +256,8 @@ class GroupInfoTabletLayout extends StatelessWidget {
                     context.router.push(
                       WSDetailRoute(
                         groupId: workspace.id,
-                        groupName: workspace.workspaceName,
-                        groupAvatar: workspace.workspaceAvatar,
+                        groupName: workspace.groupName,
+                        groupAvatar: workspace.groupAvatar,
                         isSearchMode: true,
                       ),
                     );
@@ -295,7 +296,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
         ),
         SizedBox(height: 12),
 
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -351,9 +352,9 @@ class GroupInfoTabletLayout extends StatelessWidget {
                     if (group == null) return;
                     context.router.push(
                       PinnedMessageListRoute(
-                        groupId: 5,
-                        groupName: group.workspaceName,
-                        groupAvatar: group.workspaceAvatar,
+                        groupId: '5',
+                        groupName: group.groupName,
+                        groupAvatar: group.groupAvatar,
                       ),
                     );
                   },
@@ -367,11 +368,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
                   ),
                   title: "group_info.mute_notification".tr(),
                   trailing:
-                      BlocSelector<
-                        GroupInfoBloc,
-                        GroupInfoState,
-                        WorkspaceEntity?
-                      >(
+                      BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
                         selector: (state) => state.workspace,
                         builder: (context, workspace) {
                           return SizedBox(
