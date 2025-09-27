@@ -188,6 +188,7 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
       ),
       titleSpacing: 12,
       title: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           context.router.push(
             GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),

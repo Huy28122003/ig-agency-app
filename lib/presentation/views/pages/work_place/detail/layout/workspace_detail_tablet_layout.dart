@@ -59,115 +59,113 @@ class _WorkspaceDetailTabletLayoutState
           _bloc.add(ToggleHasOptionsEvent(showOptions: true));
         }
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Scaffold(
-          resizeToAvoidBottomInset: true,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leadingWidth: 44,
-            toolbarHeight: 60,
-            automaticallyImplyLeading: false,
-            scrolledUnderElevation: 0,
-            titleSpacing: 0,
-            title: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 8),
-              child: GestureDetector(
-                onTap: () {
-                  context.router.push(
-                    GroupInfoRoute(
-                      groupId: context.read<WSDetailBloc>().groupId,
-                    ),
-                  );
-                },
-                child: Row(
-                  children: [
-                    CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.groupName,
-                            style: TextStyle(
-                              color: AppColors.textDefaultTextDefault,
-                              fontSize: 16,
-                              fontFamily: FontFamily.segoeUI,
-                              fontWeight: FontWeight.w700,
-                              height: 1.50,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+          elevation: 0,
+          leadingWidth: 44,
+          toolbarHeight: 60,
+          automaticallyImplyLeading: false,
+          scrolledUnderElevation: 0,
+          titleSpacing: 0,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 16, right: 8),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                context.router.push(
+                  GroupInfoRoute(
+                    groupId: context.read<WSDetailBloc>().groupId,
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.groupName,
+                          style: TextStyle(
+                            color: AppColors.textDefaultTextDefault,
+                            fontSize: 16,
+                            fontFamily: FontFamily.segoeUI,
+                            fontWeight: FontWeight.w700,
+                            height: 1.50,
                           ),
-                          BlocSelector<
-                            WSDetailBloc,
-                            WSDetailState,
-                            List<UserEntity>
-                          >(
-                            selector: (state) {
-                              return state.users;
-                            },
-                            builder: (context, users) {
-                              final onlineUsers = users
-                                  .where((user) => user.isOnline)
-                                  .length;
-                              return Text(
-                                '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
-                                style: TextStyle(
-                                  color: AppColors.textDefaultTextSub2,
-                                  fontSize: 14,
-                                  fontFamily: FontFamily.segoeUI,
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.14,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        BlocSelector<
+                          WSDetailBloc,
+                          WSDetailState,
+                          List<UserEntity>
+                        >(
+                          selector: (state) {
+                            return state.users;
+                          },
+                          builder: (context, users) {
+                            final onlineUsers = users
+                                .where((user) => user.isOnline)
+                                .length;
+                            return Text(
+                              '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                              style: TextStyle(
+                                color: AppColors.textDefaultTextSub2,
+                                fontSize: 14,
+                                fontFamily: FontFamily.segoeUI,
+                                fontWeight: FontWeight.w400,
+                                height: 1.14,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(
-                color: AppColors.outlineGrayStrong200,
-                height: 1,
+                  ),
+                ],
               ),
             ),
           ),
-          body: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(
-            selector: (state) {
-              return state.groupMemberStatus;
-            },
-            builder: (context, state) {
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 1200),
-                switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeInCubic,
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                child: state == GroupMemberStatus.joined
-                    ? GroupChatView(
-                        key: const ValueKey('group_chat'),
-                        bloc: _bloc,
-                        focusNode: _focusNode,
-                        groupName: widget.groupName,
-                        screenType: DeviceScreenType.tablet,
-                      )
-                    : GroupRemovedView(
-                        key: const ValueKey('group_removed'),
-                        bloc: _bloc,
-                      ),
-              );
-            },
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(
+              color: AppColors.outlineGrayStrong200,
+              height: 1,
+            ),
           ),
+        ),
+        body: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(
+          selector: (state) {
+            return state.groupMemberStatus;
+          },
+          builder: (context, state) {
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 1200),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: state == GroupMemberStatus.joined
+                  ? GroupChatView(
+                      key: const ValueKey('group_chat'),
+                      bloc: _bloc,
+                      focusNode: _focusNode,
+                      groupName: widget.groupName,
+                      screenType: DeviceScreenType.tablet,
+                    )
+                  : GroupRemovedView(
+                      key: const ValueKey('group_removed'),
+                      bloc: _bloc,
+                    ),
+            );
+          },
         ),
       ),
     );
