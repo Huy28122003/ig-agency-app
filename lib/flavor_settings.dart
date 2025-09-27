@@ -17,7 +17,7 @@ enum FlavorEnvironment {
 
   String get baseUrl {
     return switch (this) {
-      FlavorEnvironment.development => 'https://namnt.site/register',
+      FlavorEnvironment.development => 'https://namnt.site',
       FlavorEnvironment.staging => '',
       FlavorEnvironment.production => '',
     };
@@ -104,7 +104,7 @@ enum FlavorEnvironment {
 class FlavorSettings {
   const FlavorSettings();
 
-  FlavorSettings.develop() {
+  FlavorSettings.development() {
     env = FlavorEnvironment.development;
   }
 
@@ -112,7 +112,7 @@ class FlavorSettings {
     env = FlavorEnvironment.production;
   }
 
-  FlavorSettings.poc() {
+  FlavorSettings.staging() {
     env = FlavorEnvironment.staging;
   }
 

@@ -52,6 +52,7 @@ android {
             dimension = "app"
             applicationId = "com.anhtran.agency.dev"
             resValue("string", "app_name", "IG Agency Dev")
+            resValue("string", "app_flavor", "development")
             versionName = "1.0.0-dev"
             versionCode = 1
         }
@@ -59,6 +60,7 @@ android {
             dimension = "app"
             applicationId = "com.anhtran.agency.stg"
             resValue("string", "app_name", "IG Agency Stg")
+            resValue("string", "app_flavor", "staging")
             versionName = "1.0.0-stag"
             versionCode = 1
         }
@@ -66,6 +68,7 @@ android {
             dimension = "app"
             applicationId = "com.anhtran.agency"
             resValue("string", "app_name", "IG Agency")
+            resValue("string", "app_flavor", "production")
             versionName = "1.0.0"
             versionCode = 1
         }
