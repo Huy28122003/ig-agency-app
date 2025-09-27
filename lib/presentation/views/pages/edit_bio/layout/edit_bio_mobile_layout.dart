@@ -17,17 +17,11 @@ class EditBioMobileLayout extends StatefulWidget {
 
 class _EditBioMobileLayoutState extends State<EditBioMobileLayout> {
   late final EditBioBloc _editBioBloc;
-  late final TextEditingController _bioController;
 
   @override
   void initState() {
     super.initState();
     _editBioBloc = context.read<EditBioBloc>();
-    _bioController = TextEditingController(text: _editBioBloc.state.bio);
-
-    _bioController.addListener(() {
-      _editBioBloc.add(BioChangedEvent(_bioController.text));
-    });
   }
 
   @override
@@ -77,11 +71,10 @@ class _EditBioMobileLayoutState extends State<EditBioMobileLayout> {
             ),
           ),
           actions: [
-            BlocSelector<EditBioBloc, EditBioState, bool>(
-              selector: (state) {
-                return state.isBioChanged;
-              },
-              builder: (context, isBioChanged) {
+            BlocSelector<EditBioBloc, EditBioState, String>(
+              selector: (state) => state.bio,
+              builder: (context, bio) {
+                final isBioChanged = bio != _editBioBloc.bio;
                 return Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: GestureDetector(
@@ -121,47 +114,51 @@ class _EditBioMobileLayoutState extends State<EditBioMobileLayout> {
               right: 20,
               bottom: 20,
             ),
-            child: AppTextField(
-              controller: _bioController,
-              labelText: 'Bio',
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              style: TextStyle(
-                color: AppColors.textDefaultTextDefault,
-                fontSize: 16,
-                fontFamily: FontFamily.segoeUI,
-                fontWeight: FontWeight.w600,
-                height: 1.50,
-              ),
-              suffixIcon: BlocSelector<EditBioBloc, EditBioState, bool>(
-                selector: (state) {
-                  return state.bio.isNotEmpty;
-                },
-                builder: (context, isBioNotEmpty) {
-                  if (isBioNotEmpty) {
-                    return GestureDetector(
-                      onTap: () => _bioController.clear(),
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: Assets.icons.icCloseSize20.svg(),
-                      ),
-                    );
-                  }
+            child: BlocSelector<EditBioBloc, EditBioState, String>(
+              selector: (state) => state.bio,
+              builder: (context, bio) {
+                return AppTextField(
+                  value: bio,
+                  labelText: 'Bio',
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  style: TextStyle(
+                    color: AppColors.textDefaultTextDefault,
+                    fontSize: 16,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w600,
+                    height: 1.50,
+                  ),
+                  onChanged: (value) {
+                    _editBioBloc.add(BioChangedEvent(value));
+                  },
+                  suffixIcon: BlocSelector<EditBioBloc, EditBioState, bool>(
+                    selector: (state) {
+                      return state.bio.isNotEmpty;
+                    },
+                    builder: (context, isBioNotEmpty) {
+                      if (isBioNotEmpty) {
+                        return GestureDetector(
+                          onTap: () {
+                            _editBioBloc.add(BioChangedEvent(''));
+                          },
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: Assets.icons.icCloseSize20.svg(),
+                          ),
+                        );
+                      }
 
-                  return const SizedBox();
-                },
-              ),
+                      return const SizedBox();
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _bioController.dispose();
-    super.dispose();
   }
 }

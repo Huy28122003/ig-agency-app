@@ -12,7 +12,8 @@
     "group": "Group",
     "message": "Message",
     "search_in_conversation": "Search in conversation",
-    "show_as_list": "Show as list"
+    "show_as_list": "Show as list",
+    "no_result": "No result"
   },
   "workspace": {
     "workspace": "Workspace",

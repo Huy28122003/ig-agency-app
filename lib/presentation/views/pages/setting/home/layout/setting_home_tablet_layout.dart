@@ -37,8 +37,8 @@ class SettingHomeTabletLayout extends StatelessWidget {
                   bottom: 30,
                 ),
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20),
-                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(12),
+                  topLeft: Radius.circular(12),
                 ),
               ),
               Expanded(

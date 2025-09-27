@@ -9,15 +9,15 @@ part 'edit_workspace_bio_event.dart';
 part 'edit_workspace_bio_state.dart';
 
 @injectable
-class EditWorkspaceBioBloc
-    extends BaseBloc<EditWorkspaceBioEvent, EditWorkspaceBioState> {
+class EditWorkspaceNameBloc
+    extends BaseBloc<EditWorkspaceNameEvent, EditWorkspaceNameState> {
   String initBio = "";
   late final String workspaceId;
 
   final UpdateWorkspaceBioUseCase updateWorkspaceBioUseCase;
 
-  EditWorkspaceBioBloc({required this.updateWorkspaceBioUseCase})
-    : super(EditWorkspaceBioState()) {
+  EditWorkspaceNameBloc({required this.updateWorkspaceBioUseCase})
+    : super(EditWorkspaceNameState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       initBio = event.bio;
       workspaceId = event.workspaceId;

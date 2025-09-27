@@ -106,7 +106,7 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
     return MultiBlocListener(
       listeners: [
         BlocListener<B, S>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state.processing) {
               _appDialog.show(context, type: AppAlertType.loading);
             } else {

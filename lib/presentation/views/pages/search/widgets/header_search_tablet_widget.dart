@@ -8,7 +8,9 @@ import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.d
 import '../../../../../../gen/fonts.gen.dart';
 
 class HeaderSearchTabletWidget extends StatelessWidget {
-  const HeaderSearchTabletWidget({super.key});
+  const HeaderSearchTabletWidget({super.key, this.borderRadius = 20});
+
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,8 @@ class HeaderSearchTabletWidget extends StatelessWidget {
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(borderRadius),
+            topRight: Radius.circular(borderRadius),
           ),
         ),
       ),

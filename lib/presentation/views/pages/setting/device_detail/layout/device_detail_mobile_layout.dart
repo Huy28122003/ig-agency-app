@@ -21,11 +21,6 @@ class DeviceDetailMobileLayout extends StatefulWidget {
 
 class _DeviceDetailMobileLayoutState extends State<DeviceDetailMobileLayout> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [

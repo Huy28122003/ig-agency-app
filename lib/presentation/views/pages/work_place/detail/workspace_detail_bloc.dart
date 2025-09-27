@@ -854,7 +854,7 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
       state.copyWith(
         isSearchMode: false,
         indexSearchMessage: 0,
-        totalSearchMessage: 0,
+        messageSearchResults: const [],
       ),
     );
   }
@@ -873,19 +873,14 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     SearchMessageDebouncedEvent event,
     Emitter<WSDetailState> emit,
   ) async {
+    emit(state.copyWith(messageSearchResults: const [], indexSearchMessage: 0));
     final result = await _searchMessageInGroupUseCase.call(
       SearchMessageInGroupParams(
         workspaceId: groupId,
         searchMessage: event.value,
       ),
     );
-    emit(
-      state.copyWith(
-        indexSearchMessage: 0,
-        totalSearchMessage: result.length,
-        messageSearchResults: result,
-      ),
-    );
+    emit(state.copyWith(indexSearchMessage: 0, messageSearchResults: result));
   }
 
   Future<void> _onSearchKeywordChange(

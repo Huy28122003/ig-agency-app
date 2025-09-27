@@ -16,22 +16,13 @@ class SearchTabletLayout extends StatefulWidget {
 class _SearchTabletLayoutState extends State<SearchTabletLayout> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          HeaderSearchTabletWidget(),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: ShapeDecoration(
-                color: AppColors.surfaceContainerGrayStrong0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
-              ),
+    return Scaffold(
+      backgroundColor: AppColors.surfaceContainerGrayStrong0,
+      body: SafeArea(
+        child: Column(
+          children: [
+            HeaderSearchTabletWidget(borderRadius: 12),
+            Expanded(
               child: BlocBuilder<SearchBloc, SearchState>(
                 buildWhen: (pre, cur) {
                   return pre.textSearch.isEmpty && cur.textSearch.isNotEmpty ||
@@ -45,8 +36,8 @@ class _SearchTabletLayoutState extends State<SearchTabletLayout> {
                 },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

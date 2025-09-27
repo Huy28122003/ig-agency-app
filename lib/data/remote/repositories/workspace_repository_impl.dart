@@ -68,6 +68,18 @@ class Group implements GroupRepository {
   }
 
   @override
+  Future<bool> updateWorkspaceName({
+    required int groupId,
+    required String name,
+  }) async {
+    try {
+      return true;
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<bool> updateWorkspaceNotification({
     required String groupId,
     required bool isMute,

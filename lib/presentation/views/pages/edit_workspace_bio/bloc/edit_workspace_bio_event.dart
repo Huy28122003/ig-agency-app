@@ -1,18 +1,18 @@
 part of 'edit_workspace_bio_bloc.dart';
 
-class EditWorkspaceBioEvent {}
+class EditWorkspaceNameEvent {}
 
-class LoadDataEvent extends EditWorkspaceBioEvent {
+class LoadDataEvent extends EditWorkspaceNameEvent {
   final String bio;
   final String workspaceId;
 
   LoadDataEvent({required this.bio, required this.workspaceId});
 }
 
-class BioChangeEvent extends EditWorkspaceBioEvent {
+class BioChangeEvent extends EditWorkspaceNameEvent {
   final String value;
 
   BioChangeEvent({required this.value});
 }
 
-class SubmitBioEvent extends EditWorkspaceBioEvent {}
+class SubmitBioEvent extends EditWorkspaceNameEvent {}

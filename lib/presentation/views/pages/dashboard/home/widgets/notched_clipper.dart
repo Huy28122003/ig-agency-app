@@ -11,26 +11,6 @@ class NotchedClipper extends CustomClipper<Path> {
 
     final path = Path()
       ..moveTo(cornerRadius, 0)
-      // Trước notch
-      ..lineTo(centerX - notchRadius - notchCorner, 0)
-      // Mép trái notch
-      ..arcToPoint(
-        Offset(centerX - notchRadius, notchCorner),
-        radius: const Radius.circular(notchCorner),
-        clockwise: true,
-      )
-      // Đường lõm chính
-      ..arcToPoint(
-        Offset(centerX + notchRadius, notchCorner),
-        radius: const Radius.circular(notchRadius),
-        clockwise: false,
-      )
-      // Mép phải notch
-      ..arcToPoint(
-        Offset(centerX + notchRadius + notchCorner, 0),
-        radius: const Radius.circular(notchCorner),
-        clockwise: true,
-      )
       // Góc trên phải
       ..lineTo(size.width - cornerRadius, 0)
       ..arcToPoint(
@@ -43,6 +23,13 @@ class NotchedClipper extends CustomClipper<Path> {
         Offset(size.width - cornerRadius, size.height),
         radius: const Radius.circular(cornerRadius),
       )
+      ..lineTo(centerX + notchRadius + notchCorner, size.height)
+      ..arcToPoint(
+        Offset(centerX - notchRadius, size.height),
+        radius: const Radius.circular(notchRadius),
+        clockwise: false,
+      )
+      // Mép
       // Góc dưới trái
       ..lineTo(cornerRadius, size.height)
       ..arcToPoint(
@@ -61,5 +48,5 @@ class NotchedClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
 }
