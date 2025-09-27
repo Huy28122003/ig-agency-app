@@ -46,4 +46,9 @@ class PinnedMessageListPage
   Widget? tabletBuilder(BuildContext context) {
     return PinnedMessageListTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return PinnedMessageListTabletLayout();
+  }
 }

@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ig_agency_app/domain/translators/received_notification_translator.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
+import 'package:ig_agency_app/shared/utils/logger.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/notification/received_notification_entity.dart';
@@ -53,7 +57,29 @@ class FirebaseNotificationService extends NotificationService {
 
   @override
   Future init() async {
-    try{
+    if (!kIsWeb) {
+      return await _initializeMobileApplication();
+    }
+    await _initializeWebApplication();
+  }
+
+  Future _initializeWebApplication() async {
+    try {
+      FirebaseMessaging.onMessage.listen((message) {
+        onMessageStream.sink.add(
+          message.data.toEntity(
+            title: message.notification?.title,
+            body: message.notification?.body,
+          ),
+        );
+      });
+    } catch (e) {
+      return;
+    }
+  }
+
+  Future _initializeMobileApplication() async {
+    try {
       final List<DarwinNotificationCategory> darwinNotificationCategories =
           <DarwinNotificationCategory>[
             DarwinNotificationCategory(
@@ -123,29 +149,45 @@ class FirebaseNotificationService extends NotificationService {
           ),
         );
       });
-    }catch(e){
+    } catch (e) {
       return;
     }
   }
 
   @override
   Future<bool?> requestPermission() async {
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    try {
+      if (kIsWeb) {
+        // permission: 'default' | 'granted' | 'denied'
+        final String current = web.Notification.permission;
+        if (current == 'granted') return true;
 
-    if (Platform.isIOS) {
-      return await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >()
-          ?.requestPermissions(alert: true, badge: true, sound: true);
-    } else {
-      final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      return flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
-          >()
-          ?.requestNotificationsPermission();
+        // requestPermission(): Promise<'default' | 'granted' | 'denied'>
+        final jsResult = await web.Notification.requestPermission().toDart;
+        final String result = jsResult.toDart; // convert JSString -> String
+        return result == 'granted';
+      }
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          FlutterLocalNotificationsPlugin();
+
+      if (Platform.isIOS) {
+        return await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >()
+            ?.requestPermissions(alert: true, badge: true, sound: true);
+      } else {
+        final flutterLocalNotificationsPlugin =
+            FlutterLocalNotificationsPlugin();
+        return flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.requestNotificationsPermission();
+      }
+    } catch (e, s) {
+      logger.e(e, stackTrace: s);
+      return null;
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
 import 'package:ig_agency_app/presentation/views/pages/group_info/bloc/group_info_bloc.dart';
 
+import 'layout/group_info_desktop_layout.dart';
 import 'layout/group_info_mobile_layout.dart';
 import 'layout/group_info_tablet_layout.dart';
 
@@ -31,5 +32,11 @@ class GroupInfoPage
   @override
   Widget? tabletBuilder(BuildContext context) {
     return GroupInfoTabletLayout();
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    // TODO: implement
+    return GroupInfoDesktopLayout();
   }
 }

@@ -94,12 +94,16 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: LoginHistoryRoute.page),
           ],
         ),
-        AutoRoute(page: WSDetailRoute.page),
-        AutoRoute(page: GroupInfoRoute.page),
+        AutoRoute(
+          page: WSDetailRoute.page,
+          children: [
+            AutoRoute(page: GroupInfoRoute.page),
+            AutoRoute(page: PinnedMessageListRoute.page),
+            AutoRoute(page: WorkspaceAttachmentRoute.page),
+            AutoRoute(page: MembersRoute.page),
+          ],
+        ),
         AutoRoute(page: EditWorkspaceNameRoute.page),
-        AutoRoute(page: PinnedMessageListRoute.page),
-        AutoRoute(page: WorkspaceAttachmentRoute.page),
-        AutoRoute(page: MembersRoute.page),
         AutoRoute(page: EditWorkspaceBioRoute.page),
         AutoRoute(page: SharedContentRoute.page),
         CustomRoute(
@@ -128,15 +132,11 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CreateGroupRoute.page),
     AutoRoute(page: UserProfileRoute.page),
     AutoRoute(page: AddToGroupRoute.page),
-    AutoRoute(page: GroupInfoRoute.page),
     AutoRoute(page: EditWorkspaceBioRoute.page),
-    AutoRoute(page: MembersRoute.page),
-    AutoRoute(page: WorkspaceAttachmentRoute.page),
     AutoRoute(page: MediaDetailRoute.page),
     AutoRoute(page: LinkedDeviceRoute.page),
     AutoRoute(page: DeviceDetailRoute.page),
     AutoRoute(page: LoginHistoryRoute.page),
     AutoRoute(page: MessageSearchResultsListRoute.page),
-    AutoRoute(page: PinnedMessageListRoute.page),
   ];
 }
