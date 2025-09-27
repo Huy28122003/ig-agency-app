@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../../../../../domain/entities/user_entity.dart';
 import '../../../../../../gen/assets.gen.dart';
@@ -85,6 +86,7 @@ class _WorkspaceDetailMobileLayoutState
                       bloc: _bloc,
                       focusNode: _focusNode,
                       groupName: widget.groupName,
+                      screenType: DeviceScreenType.mobile,
                     )
                   : GroupRemovedView(
                       key: const ValueKey('group_removed'),
@@ -312,6 +314,3 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
     );
   }
 }
-
-
-

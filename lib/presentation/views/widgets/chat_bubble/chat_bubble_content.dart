@@ -119,7 +119,7 @@ class _TextMessageContent extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4, bottom: 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -127,22 +127,17 @@ class _TextMessageContent extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        createdAt,
-                        style: TextStyle(
-                          color: isMe
-                              ? AppColors.textDefaultTextInverted
-                              : AppColors.textDefaultTextSub2,
-                          fontSize: 12,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w400,
-                          height: 1.33,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    createdAt,
+                    style: TextStyle(
+                      color: isMe
+                          ? AppColors.textDefaultTextInverted
+                          : AppColors.textDefaultTextSub2,
+                      fontSize: 12,
+                      fontFamily: FontFamily.segoeUI,
+                      fontWeight: FontWeight.w400,
+                      height: 1.33,
+                    ),
                   ),
                 ),
               ],

@@ -33,8 +33,6 @@ class ChatMessageBubble extends StatefulWidget {
     this.onPin,
     this.onDelete,
     this.searchText,
-    this.isMobile = true,
-    this.screenSize,
   });
 
   final double maxWidth;
@@ -55,8 +53,6 @@ class ChatMessageBubble extends StatefulWidget {
   final VoidCallback? onPin;
   final VoidCallback? onDelete;
   final String? searchText;
-  final Size? screenSize;
-  final bool isMobile;
 
   factory ChatMessageBubble.system({
     required MessageEntity message,
@@ -96,7 +92,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     _shouldShowAvatar = widget.shouldShowAvatar;
     _shouldShowUserName = widget.shouldShowUserName;
     _isContinuation = widget.isContinuation;
-    _searchText = 'https://flutter.dev'; // TODO hoannk: test search
+    _searchText = widget.searchText;
     _animationHelper = ChatBubbleAnimationHelper(
       isMe: isMe,
       horizontalPadding: widget.horizontalPadding,

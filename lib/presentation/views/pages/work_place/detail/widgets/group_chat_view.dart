@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../../../../../domain/entities/message/message_entity.dart';
 import '../../../../../../domain/enums/send_message_type.dart';
@@ -22,11 +23,13 @@ class GroupChatView extends StatelessWidget {
     required this.bloc,
     required this.focusNode,
     required this.groupName,
+    this.screenType = DeviceScreenType.mobile,
   });
 
   final WSDetailBloc bloc;
   final FocusNode focusNode;
   final String groupName;
+  final DeviceScreenType screenType;
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +48,9 @@ class GroupChatView extends StatelessWidget {
                       Column(
                         children: [
                           BlocSelector<
-                              WSDetailBloc,
-                              WSDetailState,
-                              PinnedMessageSummaryUiModel?
+                            WSDetailBloc,
+                            WSDetailState,
+                            PinnedMessageSummaryUiModel?
                           >(
                             selector: (state) {
                               return state.pinnedMessageSummary;
@@ -82,7 +85,7 @@ class GroupChatView extends StatelessWidget {
                               );
                             },
                           ),
-                          Expanded(child: ChatContent()),
+                          Expanded(child: ChatContent(screenType: screenType)),
                         ],
                       ),
                       Positioned(
@@ -91,7 +94,7 @@ class GroupChatView extends StatelessWidget {
                         right: 0,
                         child: BlocBuilder<WSDetailBloc, WSDetailState>(
                           buildWhen: (previous, current) =>
-                          previous.usersSearch != current.usersSearch ||
+                              previous.usersSearch != current.usersSearch ||
                               previous.showTagOverlay != current.showTagOverlay,
                           builder: (context, state) {
                             if (state.usersSearch.isEmpty ||
@@ -133,9 +136,9 @@ class GroupChatView extends StatelessWidget {
                       return SearchResultsBar(groupName: groupName);
                     }
                     return BlocSelector<
-                        WSDetailBloc,
-                        WSDetailState,
-                        MessageEntity?
+                      WSDetailBloc,
+                      WSDetailState,
+                      MessageEntity?
                     >(
                       selector: (state) {
                         return state.messageReply;
@@ -195,16 +198,16 @@ class GroupChatView extends StatelessWidget {
   Widget _buildResultNavigation() {
     return BlocBuilder<WSDetailBloc, WSDetailState>(
       buildWhen: (prev, curr) =>
-      prev.indexSearchMessage != curr.indexSearchMessage ||
+          prev.indexSearchMessage != curr.indexSearchMessage ||
           prev.messageSearchResults != curr.messageSearchResults,
       builder: (context, state) {
         final goToUpEnable =
             state.indexSearchMessage <
                 bloc.state.messageSearchResults.length - 1 &&
-                bloc.state.messageSearchResults.length > 1;
+            bloc.state.messageSearchResults.length > 1;
         final goToDownEnable =
             state.indexSearchMessage > 0 &&
-                bloc.state.messageSearchResults.length > 1;
+            bloc.state.messageSearchResults.length > 1;
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,

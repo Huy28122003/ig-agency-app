@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/group_chat_status.dart';
@@ -158,6 +159,7 @@ class _WorkspaceDetailTabletLayoutState
                         bloc: _bloc,
                         focusNode: _focusNode,
                         groupName: widget.groupName,
+                        screenType: DeviceScreenType.tablet,
                       )
                     : GroupRemovedView(
                         key: const ValueKey('group_removed'),

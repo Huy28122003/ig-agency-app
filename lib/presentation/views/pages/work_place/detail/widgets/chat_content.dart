@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
@@ -14,18 +15,19 @@ import '../../../../ui_models/chat_message/chat_message_ui_model.dart';
 import '../workspace_detail_bloc.dart';
 
 const double _kMaxWidthChatContentMobileRatio = 277 / 350;
-const double _kMaxWidthChatContentTabletRatio = 350 / 350;
+const double _kMaxWidthChatContentTabletRatio = 445 / 598;
+const double _kMaxWidthChatContentWebRatio = 717 / 954;
 const double _kMaxWidthChatReplyContentRatio = 174 / 277;
 
 class ChatContent extends StatefulWidget {
   const ChatContent({
     super.key,
     this.horizontalPadding = 12,
-    this.isMobile = true,
+    this.screenType = DeviceScreenType.mobile,
   });
 
   final double horizontalPadding;
-  final bool isMobile;
+  final DeviceScreenType screenType;
 
   @override
   State<ChatContent> createState() => _ChatContentState();
@@ -185,11 +187,14 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxWidth = constraints.maxWidth;
-        final double maxWidthChatBubble =
-            (widget.isMobile
-                ? _kMaxWidthChatContentMobileRatio
-                : _kMaxWidthChatContentTabletRatio) *
-            maxWidth;
+        final double maxWidthChatBubble = switch (widget.screenType) {
+          DeviceScreenType.mobile =>
+            _kMaxWidthChatContentMobileRatio * maxWidth,
+          DeviceScreenType.tablet =>
+            _kMaxWidthChatContentTabletRatio * maxWidth,
+          DeviceScreenType.desktop => _kMaxWidthChatContentWebRatio * maxWidth,
+          _ => maxWidth,
+        };
         final double maxWidthChatReply =
             maxWidthChatBubble * _kMaxWidthChatReplyContentRatio;
 
@@ -344,11 +349,11 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                           );
                         },
                         childCount: chatMessages.length,
-                        onItemKey: (index) => chatMessages[index].message.id,
-                        keepPosition: true,
-                        keepPositionOffset: 56,
-                        initIndex: initIndex,
-                        firstItemAlign: FirstItemAlign.end,
+                        // onItemKey: (index) => chatMessages[index].message.id,
+                        // keepPosition: true,
+                        // keepPositionOffset: 56,
+                        // initIndex: initIndex,
+                        // firstItemAlign: FirstItemAlign.end,
                       ),
                     ),
                   );
