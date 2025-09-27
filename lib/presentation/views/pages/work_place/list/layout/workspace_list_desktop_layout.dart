@@ -26,10 +26,11 @@ class WorkspaceListDesktopLayout extends StatefulWidget {
       _WorkspaceListDesktopLayoutState();
 }
 
-class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout> {
+class _WorkspaceListDesktopLayoutState
+    extends State<WorkspaceListDesktopLayout> {
   late RefreshController _searchRefreshController;
   late RefreshController _refreshController;
-  late WorkspaceListBloc _workspaceBloc;
+  late GroupListBloc _workspaceBloc;
 
   @override
   void initState() {
@@ -37,17 +38,17 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
     _refreshController = RefreshController();
     _searchRefreshController = RefreshController();
 
-    _workspaceBloc = context.read<WorkspaceListBloc>();
+    _workspaceBloc = context.read<GroupListBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<WorkspaceListBloc, WorkspaceListState>(
+    return BlocListener<GroupListBloc, GroupListState>(
       listener: (_, state) {
         _refreshController.refresh(state.pagingStatus);
       },
       listenWhen: (prev, curr) => prev.pagingStatus != curr.pagingStatus,
-      child: BlocListener<WorkspaceListBloc, WorkspaceListState>(
+      child: BlocListener<GroupListBloc, GroupListState>(
         listener: (_, state) {
           if (state.pageStatus == PageStatus.failure) {
             // todo
@@ -118,25 +119,24 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child:
-                  BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
-                    selector: (state) {
-                      return state.searchKeyWord;
-                    },
-                    builder: (_, state) {
-                      return AppSearchTextField(
-                        value: state,
-                        onSearchEnable: (value) {},
-                        onChanged: (value) {
-                          _workspaceBloc.add(
-                            SearchKeyWorkChangeEvent(value: value),
-                          );
-                          _workspaceBloc.add(SearchEvent(value: value));
-                        },
-                        hintText: "workspace.hint_text_search".tr(),
+              child: BlocSelector<GroupListBloc, GroupListState, String>(
+                selector: (state) {
+                  return state.searchKeyWord;
+                },
+                builder: (_, state) {
+                  return AppSearchTextField(
+                    value: state,
+                    onSearchEnable: (value) {},
+                    onChanged: (value) {
+                      _workspaceBloc.add(
+                        SearchKeyWorkChangeEvent(value: value),
                       );
+                      _workspaceBloc.add(SearchEvent(value: value));
                     },
-                  ),
+                    hintText: "workspace.hint_text_search".tr(),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -145,18 +145,14 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceListBloc, WorkspaceListState, bool>(
+    return BlocSelector<GroupListBloc, GroupListState, bool>(
       selector: (searchModeState) {
         return searchModeState.isSearchMode;
       },
       builder: (_, searchModeState) {
         return Stack(
           children: [
-            BlocSelector<
-              WorkspaceListBloc,
-              WorkspaceListState,
-              List<WorkspaceEntity>
-            >(
+            BlocSelector<GroupListBloc, GroupListState, List<GroupEntity>>(
               selector: (state) {
                 return state.workspaces;
               },
@@ -178,9 +174,9 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                     itemBuilder: (_, index) {
                       final workspace = state[index];
                       return BlocSelector<
-                        WorkspaceListBloc,
-                        WorkspaceListState,
-                        int?
+                        GroupListBloc,
+                        GroupListState,
+                        String?
                       >(
                         selector: (state) {
                           return state.workspaceSelectedId;
@@ -228,16 +224,16 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: 1, // TODO hoannk: change id
-                                    groupName: workspace.workspaceName,
-                                    groupAvatar: workspace.workspaceAvatar,
+                                    groupId: '1', // TODO hoannk: change id
+                                    groupName: workspace.groupName,
+                                    groupAvatar: workspace.groupAvatar,
                                   ),
                                 ]);
                               },
                               isMute: workspace.isMute,
                               isPin: workspace.isPin,
-                              workspaceAvatar: workspace.workspaceAvatar,
-                              workspaceName: workspace.workspaceName,
+                              workspaceAvatar: workspace.groupAvatar,
+                              workspaceName: workspace.groupName,
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
@@ -255,7 +251,7 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
               },
             ),
             if (searchModeState)
-              BlocListener<WorkspaceListBloc, WorkspaceListState>(
+              BlocListener<GroupListBloc, GroupListState>(
                 listener: (_, state) {
                   _searchRefreshController.refresh(state.pagingStatusSearch);
                 },
@@ -263,9 +259,9 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                     prev.pagingStatusSearch != curr.pagingStatusSearch,
                 child:
                     BlocSelector<
-                      WorkspaceListBloc,
-                      WorkspaceListState,
-                      (List<WorkspaceEntity>, PageStatus)
+                      GroupListBloc,
+                      GroupListState,
+                      (List<GroupEntity>, PageStatus)
                     >(
                       selector: (state) {
                         return (state.workspacesSearch, state.searchStatus);
@@ -292,9 +288,9 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                                   final workspace = workspaces[index];
 
                                   return BlocSelector<
-                                    WorkspaceListBloc,
-                                    WorkspaceListState,
-                                    int?
+                                    GroupListBloc,
+                                    GroupListState,
+                                    String?
                                   >(
                                     selector: (state) {
                                       return state.workspaceSelectedId;
@@ -319,9 +315,8 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                                           isMute: workspace.isMute,
                                           isPin: workspace.isPin,
                                           workspaceAvatar:
-                                              workspace.workspaceAvatar,
-                                          workspaceName:
-                                              workspace.workspaceName,
+                                              workspace.groupAvatar,
+                                          workspaceName: workspace.groupName,
                                           lastMessage: workspace.lastMessage,
                                           lastMessageTime:
                                               workspace.lastMessageTime,
