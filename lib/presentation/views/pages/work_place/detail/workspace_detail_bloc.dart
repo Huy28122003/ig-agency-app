@@ -263,7 +263,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
             : PagingStatus.loadCompleted,
         // Giữ vị trí là ví trị của message cuối cùng của list vừa được thêm để
         // tạo thêm cảm giác được scroll tiếp cho load more kế tiếp
-        initIndex: messages.isEmpty ? 0 : messages.length - 1,
+        // initIndex: messages.isEmpty ? 0 : messages.length - 1,
       ),
     );
   }
@@ -451,7 +451,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       await Future.delayed(const Duration(seconds: 2));
 
       final messages = result;
-      final pagingStatus = messages.isEmpty || messages.length < _limit
+
+      if (messages.isEmpty) {
+        return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+      }
+
+      final pagingStatus = messages.length < _limit
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 

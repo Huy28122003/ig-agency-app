@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
+import 'package:responsive_builder/responsive_builder.dart';
+
+import '../pages/nav/layout/nav_tablet_layout.dart';
 
 // Menu
 const _kDividerHeight = 0.5;
@@ -36,20 +39,25 @@ class _PositionCalculator {
     required double horizontalPadding,
     required double safeAreaLeft,
     required double safeAreaRight,
+    required double leftMargin,
+    required double rightMargin,
   }) {
     double calculatedLeft;
+
     switch (alignment) {
       case MenuAlignment.left:
         calculatedLeft = horizontalPadding > 0
-            ? horizontalPadding
+            ? horizontalPadding + leftMargin
             : childOffsetX;
         break;
       case MenuAlignment.center:
-        calculatedLeft = screenWidth / 2 - (menuWidth / 2);
+        calculatedLeft = leftMargin > 0
+            ? screenWidth / 2 - (menuWidth / 2) + leftMargin
+            : screenWidth / 2 - (menuWidth / 2);
         break;
       case MenuAlignment.right:
         calculatedLeft = horizontalPadding > 0
-            ? (screenWidth - horizontalPadding - menuWidth)
+            ? (screenWidth - horizontalPadding - menuWidth - rightMargin)
             : (childOffsetX + childWidth - menuWidth);
         break;
     }
@@ -68,20 +76,25 @@ class _PositionCalculator {
     required double horizontalPadding,
     required double safeAreaLeft,
     required double safeAreaRight,
+    required double leftMargin,
+    required double rightMargin,
   }) {
     double calculatedLeft;
+
     switch (alignment) {
       case MenuAlignment.left:
         calculatedLeft = horizontalPadding > 0
-            ? horizontalPadding
+            ? horizontalPadding + leftMargin
             : childOffsetX;
         break;
       case MenuAlignment.center:
-        calculatedLeft = screenWidth / 2 - (childWidth / 2);
+        calculatedLeft = leftMargin > 0
+            ? screenWidth / 2 - (childWidth / 2) + leftMargin
+            : screenWidth / 2 - (childWidth / 2);
         break;
       case MenuAlignment.right:
         calculatedLeft = horizontalPadding > 0
-            ? (screenWidth - horizontalPadding - childWidth)
+            ? (screenWidth - horizontalPadding - childWidth - rightMargin)
             : childOffsetX;
         break;
     }
@@ -181,6 +194,8 @@ class CustomContextMenu extends StatefulWidget {
     this.menuAlignment = MenuAlignment.center,
     this.childAlignment = MenuAlignment.left,
     this.horizontalPadding,
+    this.maxWidth,
+    this.deviceScreenType = DeviceScreenType.mobile,
   });
 
   final Widget child;
@@ -188,6 +203,8 @@ class CustomContextMenu extends StatefulWidget {
   final MenuAlignment menuAlignment;
   final MenuAlignment childAlignment;
   final double? horizontalPadding;
+  final double? maxWidth;
+  final DeviceScreenType deviceScreenType;
 
   @override
   State<CustomContextMenu> createState() => _CustomContextMenuState();
@@ -227,8 +244,12 @@ class _CustomContextMenuState extends State<CustomContextMenu>
       return;
     }
 
+    final maxWidth = widget.maxWidth ?? MediaQuery.of(context).size.width;
+
     final Size childSize = renderBox.size;
     final Offset childOffset = renderBox.localToGlobal(Offset.zero);
+
+    final overlay = Overlay.of(context, rootOverlay: true);
 
     _overlayEntry = OverlayEntry(
       builder: (context) {
@@ -256,6 +277,8 @@ class _CustomContextMenuState extends State<CustomContextMenu>
                 menuAlignment: widget.menuAlignment,
                 childAlignment: widget.childAlignment,
                 horizontalPadding: widget.horizontalPadding,
+                maxWidth: maxWidth,
+                deviceScreenType: widget.deviceScreenType,
                 onHideMenu: _hideContextMenu,
                 child: widget.child,
               ),
@@ -265,7 +288,7 @@ class _CustomContextMenuState extends State<CustomContextMenu>
       },
     );
 
-    Overlay.of(context).insert(_overlayEntry!);
+    overlay.insert(_overlayEntry!);
     _animationController.forward(from: 0.0);
   }
 
@@ -306,6 +329,8 @@ class _ContextMenuContent extends StatelessWidget {
     this.menuAlignment = MenuAlignment.center,
     this.childAlignment = MenuAlignment.left,
     this.horizontalPadding,
+    this.maxWidth = 0,
+    this.deviceScreenType = DeviceScreenType.mobile,
   });
 
   final AnimationController animation;
@@ -320,6 +345,8 @@ class _ContextMenuContent extends StatelessWidget {
   final MenuAlignment menuAlignment;
   final MenuAlignment childAlignment;
   final double? horizontalPadding;
+  final double maxWidth;
+  final DeviceScreenType deviceScreenType;
 
   @override
   Widget build(BuildContext context) {
@@ -329,9 +356,16 @@ class _ContextMenuContent extends StatelessWidget {
     final safeAreaPadding = mediaQuery.padding;
     final viewInsets = mediaQuery.viewInsets;
 
+    final horizontalPadding = this.horizontalPadding ?? 0;
+
     final double menuHeight =
         actions.length * actionHeight +
         (actions.length > 1 ? (actions.length - 1) * _kDividerHeight : 0);
+
+    final double rightMargin = (deviceScreenType == DeviceScreenType.tablet
+        ? kPaddingTablet
+        : 0);
+    final double leftMargin = screenWidth - maxWidth - rightMargin;
 
     final double menuCalculatedLeft = _PositionCalculator.calculateMenuLeft(
       alignment: menuAlignment,
@@ -339,9 +373,11 @@ class _ContextMenuContent extends StatelessWidget {
       menuWidth: menuWidth,
       childOffsetX: childOffset.dx,
       childWidth: childSize.width,
-      horizontalPadding: horizontalPadding ?? 0,
+      horizontalPadding: horizontalPadding,
       safeAreaLeft: safeAreaPadding.left,
       safeAreaRight: safeAreaPadding.right,
+      leftMargin: leftMargin,
+      rightMargin: rightMargin,
     );
 
     final double childCalculatedLeft = _PositionCalculator.calculateChildLeft(
@@ -349,9 +385,11 @@ class _ContextMenuContent extends StatelessWidget {
       screenWidth: screenWidth,
       childWidth: childSize.width,
       childOffsetX: childOffset.dx,
-      horizontalPadding: horizontalPadding ?? 0,
+      horizontalPadding: horizontalPadding,
       safeAreaLeft: safeAreaPadding.left,
       safeAreaRight: safeAreaPadding.right,
+      leftMargin: leftMargin,
+      rightMargin: rightMargin,
     );
 
     final double deltaX = childCalculatedLeft - childOffset.dx;
