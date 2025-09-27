@@ -107,6 +107,7 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
             builder: (context, index) {
               final member = state.members[index];
               return MemberTileWidget(
+                onTap: (){},
                 avatar: member.avatar,
                 name: member.name,
                 isAdmin: member.isAdmin,

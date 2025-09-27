@@ -107,6 +107,7 @@ class _MembersTabletLayoutState extends State<MembersTabletLayout> {
             builder: (context, index) {
               final member = state.members[index];
               return MemberTileWidget(
+                onTap: (){},
                 avatar: member.avatar,
                 name: member.name,
                 isAdmin: member.isAdmin,
