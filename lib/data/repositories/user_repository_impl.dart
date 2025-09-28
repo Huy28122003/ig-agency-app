@@ -5,10 +5,10 @@ import 'package:ig_agency_app/data/remote/translators/profile_info_translator.da
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../domain/entities/user/profile_info_entity.dart';
-import '../../../domain/repositories/user_repository.dart';
-import '../../../shared/commons/failure_converter.dart';
-import '../../cache/ram_cache.dart';
+import '../../domain/entities/user/profile_info_entity.dart';
+import '../../domain/repositories/user_repository.dart';
+import '../../shared/commons/failure_converter.dart';
+import '../cache/ram_cache.dart';
 
 @Injectable(as: UserRepository)
 class UserRepositoryImpl implements UserRepository {

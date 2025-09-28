@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -45,9 +46,7 @@ class FirebaseNotificationService extends NotificationService {
   final String darwinNotificationCategoryText = 'textCategory';
 
   @override
-  Stream<String> deviceTokenRefresh() {
-    return _firebaseMessaging.onTokenRefresh;
-  }
+  Stream<String> get onTokenRefresh => _firebaseMessaging.onTokenRefresh;
 
   @override
   Future<String?> getDeviceToken() {
@@ -65,6 +64,7 @@ class FirebaseNotificationService extends NotificationService {
   Future _initializeWebApplication() async {
     try {
       FirebaseMessaging.onMessage.listen((message) {
+        print('sjhdgfhjdg    $message');
         onMessageStream.sink.add(
           message.data.toEntity(
             title: message.notification?.title,
@@ -79,38 +79,40 @@ class FirebaseNotificationService extends NotificationService {
 
   Future _initializeMobileApplication() async {
     try {
-      final List<DarwinNotificationCategory> darwinNotificationCategories =
-          <DarwinNotificationCategory>[
-            DarwinNotificationCategory(
-              darwinNotificationCategoryText,
-              actions: <DarwinNotificationAction>[
-                DarwinNotificationAction.text(
-                  'text_1',
-                  'Action 1',
-                  buttonTitle: 'Send',
-                  placeholder: 'Placeholder',
-                ),
-              ],
-            ),
-          ];
+      AndroidInitializationSettings? initializationSettingsAndroid;
+      DarwinInitializationSettings? initializationSettingsIOS;
+      if (Platform.isIOS) {
+        final List<DarwinNotificationCategory> darwinNotificationCategories =
+            <DarwinNotificationCategory>[
+              DarwinNotificationCategory(
+                darwinNotificationCategoryText,
+                actions: <DarwinNotificationAction>[
+                  DarwinNotificationAction.text(
+                    'text_1',
+                    'Action 1',
+                    buttonTitle: 'Send',
+                    placeholder: 'Placeholder',
+                  ),
+                ],
+              ),
+            ];
+        initializationSettingsIOS = DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+          notificationCategories: darwinNotificationCategories,
+        );
+      }
+      if (Platform.isAndroid) {
+        initializationSettingsAndroid = AndroidInitializationSettings(
+          '@mipmap/launcher_icon',
+        );
+      }
 
-      const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('mipmap/ic_launcher');
-
-      /// Note: permissions aren't requested here just to demonstrate that can be
-      /// done later
-      final DarwinInitializationSettings initializationSettingsDarwin =
-          DarwinInitializationSettings(
-            requestAlertPermission: false,
-            requestBadgePermission: false,
-            requestSoundPermission: false,
-            notificationCategories: darwinNotificationCategories,
-          );
       final InitializationSettings initializationSettings =
           InitializationSettings(
             android: initializationSettingsAndroid,
-            iOS: initializationSettingsDarwin,
-            macOS: initializationSettingsDarwin,
+            iOS: initializationSettingsIOS,
           );
       await flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
@@ -132,6 +134,7 @@ class FirebaseNotificationService extends NotificationService {
         onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
       );
       FirebaseMessaging.onMessage.listen((message) {
+        print("Receive message: $message");
         onMessageStream.sink.add(
           message.data.toEntity(
             title: message.notification?.title,
@@ -157,7 +160,7 @@ class FirebaseNotificationService extends NotificationService {
   Future<bool?> requestPermission() async {
     try {
       if (kIsWeb) {
-        await NotificationWebServices.requestPermission();
+        return await NotificationWebServices.requestPermission();
       }
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
           FlutterLocalNotificationsPlugin();
@@ -194,8 +197,10 @@ class FirebaseNotificationService extends NotificationService {
     FlutterLocalNotificationsPlugin();
     const NotificationDetails notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
-        'androidNotification',
-        'pushNotification',
+        'high_importance_channel',
+        'Thông báo đẩy',
+        importance: Importance.max,
+        priority: Priority.high,
       ),
     );
     await flutterLocalNotificationsPlugin.show(

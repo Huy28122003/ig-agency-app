@@ -9,6 +9,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/app/app_bloc.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/shared/utils/bloc_observer.dart';
 import 'package:ig_agency_app/shared/utils/logger.dart';
@@ -66,7 +67,10 @@ void _startApp() async {
       supportedLocales: [Locale('en'), Locale('vn')],
       fallbackLocale: const Locale('en'),
       path: 'assets/translations',
-      child: const MyApp(),
+      child: BlocProvider<AppBloc>(
+        create: (context) => context.read<AppBloc>(),
+        child: const MyApp(),
+      ),
     ),
   );
 }

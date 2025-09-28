@@ -2,12 +2,12 @@ import 'package:dartx/dartx.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../domain/entities/message/message.dart';
-import '../../../domain/entities/pinned_message_summary.dart';
-import '../../../domain/repositories/message_repository.dart';
-import '../../../shared/commons/failure_converter.dart';
-import '../app/message_remote_data_source.dart';
-import '../services/mock/message_mock_service.dart';
+import '../../domain/entities/message/message.dart';
+import '../../domain/entities/pinned_message_summary.dart';
+import '../../domain/repositories/message_repository.dart';
+import '../../shared/commons/failure_converter.dart';
+import '../remote/app/message_remote_data_source.dart';
+import '../remote/services/mock/message_mock_service.dart';
 
 @Injectable(as: MessageRepository)
 class MessageRepositoryImpl implements MessageRepository {

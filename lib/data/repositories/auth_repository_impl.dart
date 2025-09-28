@@ -6,8 +6,8 @@ import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../cache/ram_cache.dart';
-import '../app/auth_remote_data_source.dart';
+import '../cache/ram_cache.dart';
+import '../remote/app/auth_remote_data_source.dart';
 
 @Injectable(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {

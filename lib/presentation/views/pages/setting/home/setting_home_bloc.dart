@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/dependencies/notification/notification_service.dart';
+import 'package:ig_agency_app/app/app_bloc.dart';
+import 'package:ig_agency_app/domain/repositories/notification_repository.dart';
 import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/domain/usecases/logout_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_dark_mode_use_case.dart';
@@ -29,7 +30,8 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     this._setInAppAlertsUseCase,
     this._fetchCurrentUserUseCase,
     this._userRepository,
-    this._notificationService,
+    this._notificationRepository,
+    this._appBloc,
   ) : super(SettingHomeState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -42,7 +44,8 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   final SetInAppAlertsUseCase _setInAppAlertsUseCase;
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
-  final NotificationService _notificationService;
+  final NotificationRepository _notificationRepository;
+  final AppBloc _appBloc;
 
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
 
@@ -51,7 +54,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
 
     handleSubEvent<ToggleDarkModeEvent>(_onToggleDarkMode);
 
-    handleSubEvent<ToggleNotificationEvent>(_onToggleInAppAlerts);
+    handleSubEvent<ChangeNotificationEvent>(_onNotificationChanged);
 
     handleSubEvent<LogoutEvent>(_onLogout);
 
@@ -68,18 +71,21 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     LoadDataEvent event,
     Emitter<SettingHomeState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loading));
-
-    final darkModeResult = await _getDarkModeUseCase.call(null);
-    final inAppAlertsResult = await _getInAppAlertsUseCase.call(null);
-    final userResult = await _fetchCurrentUserUseCase.call();
-
+    final results = await Future.wait([
+      _getDarkModeUseCase.call(),
+      _getInAppAlertsUseCase.call(null),
+      _fetchCurrentUserUseCase.call(),
+    ]);
+    final darkModeResult = results[0] as bool;
+    final isEnableNotification = results[1] as bool;
+    final userResult = results[2] as ProfileInfoEntity;
     emit(
       state.copyWith(
-        pageStatus: PageStatus.loaded,
         isDarkMode: darkModeResult,
-        isInAppAlerts: inAppAlertsResult,
-        user: userResult,
+        isInAppAlerts: isEnableNotification,
+        name: userResult.name,
+        avatar: userResult.avatar,
+        email: 'userResult.email',
       ),
     );
   }
@@ -96,21 +102,23 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     emit(state.copyWith(processing: false, isDarkMode: newDarkMode));
   }
 
-  Future<void> _onToggleInAppAlerts(
-    ToggleNotificationEvent event,
+  Future<void> _onNotificationChanged(
+    ChangeNotificationEvent event,
     Emitter<SettingHomeState> emit,
   ) async {
-    final enableNotification = !state.isInAppAlerts;
-    emit(state.copyWith(processing: true));
-
-    if (enableNotification) {
-      await _notificationService.requestPermission();
+    final enableNotification = !state.isEnableNotification;
+    try {
+      if (enableNotification) {
+        final isEnable = await _notificationRepository.requestPermission();
+        if (isEnable) await _notificationRepository.initNotification();
+      }
+      await _setInAppAlertsUseCase(
+        SetInAppAlertsParam(enableNotification: enableNotification),
+      );
+      emit(state.copyWith(isInAppAlerts: enableNotification));
+    } catch (e) {
+      handleError(emit, e);
     }
-    await _setInAppAlertsUseCase(
-      SetInAppAlertsParam(enableNotification: enableNotification),
-    );
-
-    emit(state.copyWith(processing: false, isInAppAlerts: enableNotification));
   }
 
   Future<void> _onLogout(
@@ -126,7 +134,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     UpdateUserEvent event,
     Emitter<SettingHomeState> emit,
   ) async {
-    emit(state.copyWith(user: event.user));
+    emit(state.copyWith(name: event.user.name, avatar: event.user.avatar));
   }
 
   @override

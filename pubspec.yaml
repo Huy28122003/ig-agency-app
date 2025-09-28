@@ -99,6 +99,9 @@ dependencies:
   url_launcher: ^6.3.2
   fluttertoast: ^8.2.12
 
+  # App icons_launcher:
+  flutter_launcher_icons: ^0.14.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

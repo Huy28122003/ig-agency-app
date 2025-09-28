@@ -10,7 +10,7 @@ class GetDarkModeUseCase extends UseCase<bool, void> {
   final SettingsRepository _settingsRepository;
 
   @override
-  Future<bool> call(void param) async {
+  Future<bool> call([void param]) async {
     return  _settingsRepository.getDarkMode();
   }
 }
