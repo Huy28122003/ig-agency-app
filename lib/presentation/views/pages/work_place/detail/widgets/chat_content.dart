@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_list_view/flutter_list_view.dart';
+import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -38,7 +39,6 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
 
   final listViewController = FlutterListViewController();
   final refreshController = RefreshController(initialRefresh: false);
-  double prevScrollOffset = 0;
 
   @override
   void initState() {
@@ -48,7 +48,6 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     listViewController.addListener(() {
-      _onRefreshListener();
       _onScrollListener();
     });
   }
@@ -70,26 +69,12 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  void _onRefreshListener() {
-    const torrentDistance = 56;
-    var offset = listViewController.offset;
-    if (offset <= torrentDistance && prevScrollOffset > torrentDistance) {
-      if (!refreshController.isRefresh) {
-        refreshController.requestRefresh();
-      }
-    }
-    prevScrollOffset = offset;
-  }
-
   void _onScrollListener() {
     final state = _bloc.state;
     if (state.pageStatus == PageStatus.loaded) {
-      if ((listViewController.offset >=
-              listViewController.position.maxScrollExtent - 300) &&
-          state.showScrollToBottomIcon) {
+      if ((listViewController.offset <= 300) && state.showScrollToBottomIcon) {
         _bloc.add(ToggleShowScrollToBottomIcon());
-      } else if ((listViewController.offset <
-              listViewController.position.maxScrollExtent - 300) &&
+      } else if ((listViewController.offset > 300) &&
           !state.showScrollToBottomIcon) {
         _bloc.add(ToggleShowScrollToBottomIcon());
       }
@@ -98,10 +83,8 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
 
   void _scrollToBottom() {
     if (_bloc.state.chatMessages.isNotEmpty) {
-      final maxScrollExtent = listViewController.position.maxScrollExtent;
-      if (maxScrollExtent > 0) {
-        listViewController.jumpTo(maxScrollExtent);
-      }
+      final minScrollExtent = listViewController.position.minScrollExtent;
+      listViewController.jumpTo(minScrollExtent);
     }
   }
 
@@ -114,7 +97,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
     }
   }
 
-  void _onRefresh() async {
+  void _onLoading() async {
     _bloc.add(LoadMoreChatMessagesEvent());
   }
 
@@ -189,8 +172,10 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
         final maxWidth = constraints.maxWidth;
 
         final double maxWidthChatBubble = switch (widget.screenType) {
-          DeviceScreenType.mobile => _kMaxWidthChatContentMobileRatio * maxWidth,
-          DeviceScreenType.tablet => _kMaxWidthChatContentTabletRatio * maxWidth,
+          DeviceScreenType.mobile =>
+            _kMaxWidthChatContentMobileRatio * maxWidth,
+          DeviceScreenType.tablet =>
+            _kMaxWidthChatContentTabletRatio * maxWidth,
           DeviceScreenType.desktop => _kMaxWidthChatContentWebRatio * maxWidth,
           _ => maxWidth,
         };
@@ -227,15 +212,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
               listenWhen: (previous, current) =>
                   previous.pagingStatus != current.pagingStatus,
               listener: (context, state) {
-                if (state.pagingStatus == PagingStatus.loading) return;
-                switch (state.pagingStatus) {
-                  case PagingStatus.loadCompleted:
-                    refreshController.refreshCompleted();
-                    break;
-                  default:
-                    refreshController.refreshToIdle();
-                    break;
-                }
+                refreshController.refresh(state.pagingStatus);
               },
             ),
           ],
@@ -244,30 +221,24 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
               BlocSelector<
                 WSDetailBloc,
                 WSDetailState,
-                (List<ChatMessageUIModel>, bool, int)
+                (List<ChatMessageUIModel>, bool)
               >(
                 selector: (state) {
-                  return (
-                    state.chatMessages,
-                    state.needLoadMoreOldMessages,
-                    state.initIndex,
-                  );
+                  return (state.chatMessages, state.needLoadMoreOldMessages);
                 },
                 builder: (context, state) {
-                  final (chatMessages, needLoadMoreOldMessages, initIndex) =
-                      state;
+                  final (chatMessages, needLoadMoreOldMessages) = state;
 
                   if (chatMessages.isEmpty) {
                     return const SizedBox.shrink();
                   }
 
                   return SmartRefresher(
-                    enablePullDown: needLoadMoreOldMessages,
-                    enablePullUp: false,
-                    header: CustomHeader(
-                      completeDuration: const Duration(milliseconds: 0),
+                    enablePullDown: false,
+                    enablePullUp: needLoadMoreOldMessages,
+                    footer: CustomFooter(
                       builder: (context, mode) {
-                        if (mode == RefreshStatus.refreshing) {
+                        if (mode == LoadStatus.loading) {
                           return SizedBox(
                             height: 56,
                             child: Center(
@@ -280,8 +251,9 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                       },
                     ),
                     controller: refreshController,
-                    onRefresh: _onRefresh,
+                    onLoading: _onLoading,
                     child: FlutterListView(
+                      reverse: true,
                       controller: listViewController,
                       physics: const ClampingScrollPhysics(),
                       // cacheExtent: chatMessages.length * 100,
@@ -297,10 +269,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                               uiModel.showTime || uiModel.shouldShowTime;
 
                           final double bottomPadding =
-                              chatMessages.isNotEmpty &&
-                                  index == chatMessages.length - 1
-                              ? 20
-                              : 0;
+                              chatMessages.isNotEmpty && index == 0 ? 20 : 0;
                           return Padding(
                             padding: EdgeInsets.only(bottom: bottomPadding),
                             child: ChatMessageBubble(
@@ -350,8 +319,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                         childCount: chatMessages.length,
                         onItemKey: (index) => chatMessages[index].message.id,
                         keepPosition: true,
-                        keepPositionOffset: 40,
-                        // initIndex: initIndex,
+                        keepPositionOffset: 56,
                         firstItemAlign: FirstItemAlign.end,
                       ),
                     ),

@@ -18,7 +18,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.jumpToMessageId,
     this.scrollToTop = false,
     this.showTimeMessageId,
-    this.initIndex = 0,
     this.showTagOverlay = false,
     this.groupMemberStatus = GroupMemberStatus.joined,
     this.groupSearchStatus = GroupSearchStatus.idle,
@@ -45,7 +44,6 @@ class WSDetailState extends BaseState<WSDetailState> {
   final String? jumpToMessageId;
   final bool scrollToTop;
   final String? showTimeMessageId;
-  final int initIndex;
   final bool showTagOverlay;
   final GroupMemberStatus groupMemberStatus;
   final GroupSearchStatus groupSearchStatus;
@@ -84,7 +82,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     bool? scrollToTop,
     String? showTimeMessageId,
     bool forceDisableShowTime = false,
-    int? initIndex,
     // int? totalSearchMessage,
     int? indexSearchMessage,
     bool? showTagOverlay,
@@ -118,7 +115,6 @@ class WSDetailState extends BaseState<WSDetailState> {
       showTimeMessageId: forceDisableShowTime
           ? null
           : showTimeMessageId ?? this.showTimeMessageId,
-      initIndex: initIndex ?? this.initIndex,
       showTagOverlay: showTagOverlay ?? this.showTagOverlay,
       groupMemberStatus: groupMemberStatus ?? this.groupMemberStatus,
       isDeletedConversationSuccess:
@@ -150,7 +146,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     jumpToMessageId,
     scrollToTop,
     showTimeMessageId,
-    initIndex,
     showTagOverlay,
     groupMemberStatus,
     isDeletedConversationSuccess,

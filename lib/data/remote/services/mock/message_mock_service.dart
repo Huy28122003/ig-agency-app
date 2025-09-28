@@ -37,42 +37,7 @@ class MessageMockService {
       'id': '1',
       'name': 'Trần Văn A',
       'avatarUrl': 'https://placehold.co/44x44/4CAF50/FFFFFF?text=TA',
-    },
-    {
-      'id': '2',
-      'name': 'Nguyễn Thị B',
-      'avatarUrl': 'https://placehold.co/44x44/2196F3/FFFFFF?text=NB',
-    },
-    {
-      'id': '3',
-      'name': 'Lê Văn C',
-      'avatarUrl': 'https://placehold.co/44x44/FF9800/FFFFFF?text=LC',
-    },
-    {
-      'id': '4',
-      'name': 'Phạm Thị D',
-      'avatarUrl': 'https://placehold.co/44x44/9C27B0/FFFFFF?text=PD',
-    },
-    {
-      'id': '5',
-      'name': 'Hoàng Văn E',
-      'avatarUrl': 'https://placehold.co/44x44/F44336/FFFFFF?text=HE',
-    },
-    {
-      'id': '6',
-      'name': 'Vũ Thị F',
-      'avatarUrl': 'https://placehold.co/44x44/607D8B/FFFFFF?text=VF',
-    },
-    {
-      'id': '7',
-      'name': 'Đặng Văn G',
-      'avatarUrl': 'https://placehold.co/44x44/795548/FFFFFF?text=DG',
-    },
-    {
-      'id': '8',
-      'name': 'Bùi Thị H',
-      'avatarUrl': 'https://placehold.co/44x44/009688/FFFFFF?text=BH',
-    },
+    }
   ];
 
   static final List<Map<String, dynamic>> _mockGroups = [
@@ -153,7 +118,7 @@ class MessageMockService {
 
   final List<Duration> _timeSteps = [
     Duration(minutes: 1),
-    Duration(minutes: 5),
+    // Duration(minutes: 5),
     Duration(hours: 1),
     Duration(hours: 5),
     Duration(days: 1),
@@ -217,7 +182,7 @@ class MessageMockService {
     return (buffer.toString(), segments);
   }
 
-  List<MessageEntity> _createMockMessages(int groupId, {int count = 50}) {
+  List<MessageEntity> _createMockMessages(int groupId, {int count = 100}) {
     DateTime current = DateTime.now();
     current = current.subtract(Duration(days: 365));
 
@@ -226,8 +191,7 @@ class MessageMockService {
     for (int i = 0; i < count; i++) {
       current = current.add(_timeSteps[_random.nextInt(_timeSteps.length)]);
 
-      final type = MessageContentType
-          .values[_random.nextInt(MessageContentType.values.length)];
+      final type = MessageContentType.text;
       final content = _generateContent(type);
 
       MessageEntity? reply;
@@ -242,7 +206,7 @@ class MessageMockService {
 
       messages.add(
         MessageEntity(
-          id: "msg_${groupId}_${current.millisecondsSinceEpoch}",
+          id: "msg_${groupId}_${i}_${current.millisecondsSinceEpoch}",
           user: UserSummary(
             id: user['id']!,
             name: user['name']!,
@@ -542,7 +506,9 @@ class MessageMockService {
     String? replyMessageId,
     dynamic content,
   ) async {
-    final messageId = "msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}";
+    final messages= _messageMockData[groupId] ?? [];
+
+    final messageId = "msg_${groupId}_${messages.length}_${DateTime.now().millisecondsSinceEpoch}";
 
     final user =
         getUserById(userId) ??
@@ -558,8 +524,8 @@ class MessageMockService {
 
     MessageEntity? reply;
     if (replyMessageId != null) {
-      final replyMessage = _messageMockData[groupId]
-          ?.where((message) => message.id == replyMessageId)
+      final replyMessage = messages
+          .where((message) => message.id == replyMessageId)
           .firstOrNull;
       reply = replyMessage;
     }
@@ -576,10 +542,6 @@ class MessageMockService {
       },
       groupId: groupId,
     );
-
-    if (_messageMockData[groupId] == null) {
-      _messageMockData[groupId] = [];
-    }
     _messageMockData[groupId]?.add(sentMessage);
     _ramCache.saveMessage(sentMessage);
   }

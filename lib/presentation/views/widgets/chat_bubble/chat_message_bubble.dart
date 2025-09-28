@@ -105,7 +105,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     if (widget.message != oldWidget.message) {
       _message = widget.message;
     }
-    if (widget.shouldShowTime != oldWidget.shouldShowTime) {
+    if (widget.shouldShowTime != oldWidget.shouldShowTime ||
+        widget.shouldShowAvatar != oldWidget.shouldShowAvatar ||
+        widget.shouldShowUserName != oldWidget.shouldShowUserName ||
+        widget.isContinuation != oldWidget.isContinuation) {
       _shouldShowTime = widget.shouldShowTime;
       _shouldShowAvatar = widget.shouldShowAvatar;
       _shouldShowUserName = widget.shouldShowUserName;

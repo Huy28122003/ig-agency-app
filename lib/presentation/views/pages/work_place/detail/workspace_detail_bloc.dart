@@ -94,6 +94,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   TagUserTextEditingController get textEditingController =>
       _textEditingController;
 
+  (String, ChatMessageUIModel)? cacheCurrentForceShowTimeMessage;
+
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<LoadMoreChatMessagesEvent>(
@@ -194,7 +196,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
     );
 
-    final messages = messagesResult;
+    final messages = messagesResult.reversed.toList();
     final pagingStatus = messages.isEmpty
         ? PagingStatus.empty
         : (messages.length < _limit
@@ -219,7 +221,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
         pagingStatus: pagingStatus,
         pinnedMessageSummary: pinnedMessageSummary,
-        initIndex: messages.isEmpty ? 0 : messages.length - 1,
         users: users,
         usersSearch: users,
         isSearchMode: event.isSearchMode,
@@ -238,16 +239,18 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-    final messages = await _fetchMessageUseCase.call(
+    final messagesResult = await _fetchMessageUseCase.call(
       FetchMessagesInGroupParams(
         groupId: groupId,
         limit: _limit,
-        oldestMessageId: state.chatMessages.first.message.id,
+        oldestMessageId: state.chatMessages.last.message.id,
       ),
     );
 
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
+
+    final messages = messagesResult.reversed.toList();
 
     if (messages.isEmpty) {
       return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
@@ -261,9 +264,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         pagingStatus: messages.length < _limit
             ? PagingStatus.noMoreData
             : PagingStatus.loadCompleted,
-        // Giữ vị trí là ví trị của message cuối cùng của list vừa được thêm để
-        // tạo thêm cảm giác được scroll tiếp cho load more kế tiếp
-        // initIndex: messages.isEmpty ? 0 : messages.length - 1,
       ),
     );
   }
@@ -381,11 +381,11 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     final uiModel = message.toUIModel(
       previousMessage: state.chatMessages.isNotEmpty
-          ? state.chatMessages.last.message
+          ? state.chatMessages.first.message
           : null,
     );
-    final chatMessages = [...state.chatMessages, uiModel];
-    final messageIndex = chatMessages.length - 1;
+    final chatMessages = [uiModel, ...state.chatMessages];
+    final messageIndex = 0;
     final updatedListUiModel = _updateUIModel(chatMessages, messageIndex);
 
     emit(
@@ -438,7 +438,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
             state.pagingStatus != PagingStatus.empty)) {
       emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-      final result = await _fetchMessageUseCase.call(
+      final messagesResult = await _fetchMessageUseCase.call(
         FetchMessagesInGroupParams(
           groupId: groupId,
           limit: _limit,
@@ -450,7 +450,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       // TODO hoannk: Remove delay
       await Future.delayed(const Duration(seconds: 2));
 
-      final messages = result;
+      final messages = messagesResult.reversed.toList();
 
       if (messages.isEmpty) {
         return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
@@ -491,16 +491,30 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     ToggleShowTimeEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    final uiModelIndex = state.chatMessages.indexWhere(
+    var messages = state.chatMessages;
+
+    // Check cache và xoá cache nếu không trùng id
+    final cache = cacheCurrentForceShowTimeMessage;
+    if (cache != null && cache.$1 != event.messageId) {
+      final messageId = cache.$1;
+      final messageIndex = messages.indexWhere(
+        (uiModel) => uiModel.message.id == messageId,
+      );
+      if (messageIndex >= 0) {
+        messages = _updateUIModel(messages, messageIndex);
+      }
+    }
+
+    final messageIndex = messages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
-    if (uiModelIndex < 0) return;
-    final uiModel = state.chatMessages[uiModelIndex];
+    if (messageIndex < 0) return;
+    final uiModel = messages[messageIndex];
     if (uiModel.message.content.isText && !uiModel.showTime) {
       if (!uiModel.shouldShowTime) {
         final updatedMessages = _updateUIModel(
-          state.chatMessages,
-          uiModelIndex,
+          messages,
+          messageIndex,
           forceShowTime: true,
         );
         emit(
@@ -511,8 +525,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         );
       } else if (uiModel.shouldShowTime) {
         final updatedMessages = _updateUIModel(
-          state.chatMessages,
-          uiModelIndex,
+          messages,
+          messageIndex,
           forceShowTime: false,
         );
         emit(
@@ -658,8 +672,9 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     for (int i = 0; i < messages.length; i++) {
       final uiModel = messages[i].toUIModel(
-        previousMessage: i > 0 ? messages[i - 1] : null,
-        nextMessage: i < messages.length - 1 ? messages[i + 1] : null,
+        // reverse, previous = i+1 (mới hơn), next = i-1 (cũ hơn)
+        previousMessage: i < messages.length - 1 ? messages[i + 1] : null,
+        nextMessage: i > 0 ? messages[i - 1] : null,
       );
       uiModels.add(uiModel);
     }
@@ -673,24 +688,47 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     bool? forceShowTime,
   }) {
     final updatedMessages = List<ChatMessageUIModel>.from(chatMessages);
-    final currentMessage = forceShowTime != null
-        ? chatMessages[messageIndex].copyWith(shouldShowTime: forceShowTime)
-        : chatMessages[messageIndex];
+    var currentMessage = chatMessages[messageIndex];
+    final showTime = forceShowTime;
+    if (showTime != null) {
+      if (showTime) {
+        // Gán vào cache với message được force show time
+        cacheCurrentForceShowTimeMessage = (
+          currentMessage.message.id,
+          currentMessage,
+        );
+        currentMessage = currentMessage.copyWith(
+          shouldShowTime: true,
+          shouldShowAvatar: true,
+          shouldShowUserName: true,
+          isContinuation: false,
+        );
+      } else {
+        // Gán lại cache message nếu trùng id và xoá cache
+        final cache = cacheCurrentForceShowTimeMessage;
+        if (cache != null) {
+          final messageId = cache.$1;
+          final message = cache.$2;
+          if (messageId == currentMessage.message.id) {
+            currentMessage = message;
+            cacheCurrentForceShowTimeMessage = null;
+          }
+        }
+      }
+    }
     updatedMessages[messageIndex] = currentMessage;
 
-    // Xử lý previous message và next message
-    // với mỗi previous message và next message, cần check lại cả previous của
-    // previous message, next message cần check lại cả next của next message
-
-    final previousMessage = messageIndex > 0
-        ? updatedMessages[messageIndex - 1]
-        : null;
-    final nextMessage = messageIndex < chatMessages.length - 1
+    // reverse: previous = mới hơn, next = cũ hơn
+    final previousMessage = messageIndex < updatedMessages.length - 1
         ? updatedMessages[messageIndex + 1]
         : null;
+    final nextMessage = messageIndex > 0
+        ? updatedMessages[messageIndex - 1]
+        : null;
+
     if (previousMessage != null) {
-      final previousPreviousMessage = messageIndex > 1
-          ? updatedMessages[messageIndex - 2]
+      final previousPreviousMessage = messageIndex < updatedMessages.length - 2
+          ? updatedMessages[messageIndex + 2]
           : null;
 
       if (previousPreviousMessage != null) {
@@ -704,18 +742,25 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           previousMessage: previousPreviousMessage,
           nextMessage: currentMessage,
         );
-        updatedMessages[messageIndex - 1] = previousMessage.copyWith(
+        updatedMessages[messageIndex + 1] = previousMessage.copyWith(
           shouldShowTime: shouldShowTime,
           shouldShowAvatar: shouldShowAvatar,
           shouldShowUserName: shouldShowUserName,
           isContinuation: isContinuation,
         );
+      } else if (forceShowTime != null) {
+        updatedMessages[messageIndex + 1] = previousMessage.copyWith(
+          // shouldShowTime: true,
+          shouldShowAvatar: true,
+          shouldShowUserName: true,
+          isContinuation: false,
+        );
       }
     }
 
     if (nextMessage != null) {
-      final nextNextMessage = messageIndex < updatedMessages.length - 2
-          ? chatMessages[messageIndex + 2]
+      final nextNextMessage = messageIndex > 1
+          ? updatedMessages[messageIndex - 2]
           : null;
       if (nextNextMessage != null) {
         final (
@@ -728,11 +773,18 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           previousMessage: currentMessage,
           nextMessage: nextNextMessage,
         );
-        updatedMessages[messageIndex + 1] = nextMessage.copyWith(
+        updatedMessages[messageIndex - 1] = nextMessage.copyWith(
           shouldShowTime: shouldShowTime,
           shouldShowAvatar: shouldShowAvatar,
           shouldShowUserName: shouldShowUserName,
           isContinuation: isContinuation,
+        );
+      } else if (forceShowTime != null) {
+        updatedMessages[messageIndex - 1] = nextMessage.copyWith(
+          // shouldShowTime: true,
+          shouldShowAvatar: true,
+          shouldShowUserName: true,
+          isContinuation: false,
         );
       }
     }
@@ -745,30 +797,21 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     List<MessageEntity>? trailingMessageList,
   }) {
     var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
-    // Mỗi khi thêm list mới sẽ update list vào list cũ và cập nhật phần từ nối
-    // giữa 2 mảng
-    // ví dụ: leading - current - trailing
-    // Thêm mảng vào trước current (leading) => cập nhật message cuối cùng của leading
-    // Thêm mảng vào sau current (trailing) => cập nhật message cuối cùng của current
-    if (leadingMessageList != null) {
+
+    if (leadingMessageList != null && leadingMessageList.isNotEmpty) {
       final newMessages = _mapMessagesToUIModels(leadingMessageList);
-      updatedMessages = [...newMessages, ...updatedMessages];
-      final lastLeadingMessageIndex = newMessages.length - 1;
-      updatedMessages = _updateUIModel(
-        updatedMessages,
-        lastLeadingMessageIndex,
-      );
+      // nối vào sau
+      updatedMessages = [...updatedMessages, ...newMessages];
+      final firstLeadingIndex = updatedMessages.length - newMessages.length;
+      updatedMessages = _updateUIModel(updatedMessages, firstLeadingIndex);
     }
 
     if (trailingMessageList != null) {
       final newMessages = _mapMessagesToUIModels(trailingMessageList);
-      updatedMessages = [...updatedMessages, ...newMessages];
-      final lastCurrentMessageIndex =
-          updatedMessages.length - newMessages.length - 1;
-      updatedMessages = _updateUIModel(
-        updatedMessages,
-        lastCurrentMessageIndex,
-      );
+      // nối vào trước
+      updatedMessages = [...newMessages, ...updatedMessages];
+      final firstTrailingIndex = newMessages.length - 1;
+      updatedMessages = _updateUIModel(updatedMessages, firstTrailingIndex);
     }
 
     return updatedMessages;
@@ -778,19 +821,19 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     List<ChatMessageUIModel> chatMessages,
     String messageId,
   ) {
-    final uiModelIndex = chatMessages.indexWhere(
+    final messageIndex = chatMessages.indexWhere(
       (uiModel) => uiModel.message.id == messageId,
     );
     var updatedMessages = List<ChatMessageUIModel>.from(chatMessages);
-    if (uiModelIndex >= 0) {
-      updatedMessages.removeAt(uiModelIndex);
+    if (messageIndex >= 0) {
+      updatedMessages.removeAt(messageIndex);
       // Cập nhật message trước của message vừa xoá
-      if (uiModelIndex > 0) {
-        updatedMessages = _updateUIModel(updatedMessages, uiModelIndex - 1);
+      if (messageIndex > 0) {
+        updatedMessages = _updateUIModel(updatedMessages, messageIndex - 1);
       }
       // Cập nhật message sau của message vừa xoá
-      if (uiModelIndex < updatedMessages.length - 1) {
-        updatedMessages = _updateUIModel(updatedMessages, uiModelIndex + 1);
+      if (messageIndex < updatedMessages.length - 1) {
+        updatedMessages = _updateUIModel(updatedMessages, messageIndex + 1);
       }
     }
     return updatedMessages;

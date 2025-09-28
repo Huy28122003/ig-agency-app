@@ -43,7 +43,7 @@ class ChatMessageUiModelHelper {
       final previous = previousMessage?.message;
       if (previous != null &&
           previous.repliedMessage == null &&
-          previous.content.isSystem) {
+          previous.content.isNotSystem) {
         final bool isSameSenderAsPrevious =
             currentMessage.message.user.id == previous.user.id;
         final Duration timeDiffWithPrevious = currentMessage.message.createdAt
@@ -79,7 +79,7 @@ class ChatMessageUiModelHelper {
       final next = nextMessage?.message;
       if (next != null &&
           next.repliedMessage == null &&
-          next.content.isSystem) {
+          next.content.isNotSystem) {
         final bool isSameSenderAsNext =
             currentMessage.message.user.id == next.user.id;
         final Duration timeDiffWithNext = next.createdAt.difference(
