@@ -9,8 +9,6 @@ import '../../../../resources/colors.dart';
 import '../../../../routers/app_router.dart';
 import '../../../widgets/app_bottom_navigation_bar.dart';
 
-const kPaddingTablet = 12.0;
-
 class NavTabletLayout extends StatelessWidget {
   const NavTabletLayout({super.key});
 
@@ -28,7 +26,7 @@ class NavTabletLayout extends StatelessWidget {
             child: Container(
               color: AppColors.surfaceContainerGrayStrong1,
               child: Padding(
-                padding: const EdgeInsets.all(kPaddingTablet),
+                padding: const EdgeInsets.all(12),
                 child: LayoutBuilder(
                   builder: (context, boxConstraints) {
                     return Row(
@@ -41,7 +39,7 @@ class NavTabletLayout extends StatelessWidget {
                           ),
                           child: BlocBuilder<NavBloc, NavState>(
                             buildWhen: (pre, cur) =>
-                                pre.currentIndex != cur.currentIndex,
+                            pre.currentIndex != cur.currentIndex,
                             builder: (context, state) {
                               return AutoTabsRouter(
                                 lazyLoad: true,
@@ -76,7 +74,7 @@ class NavTabletLayout extends StatelessWidget {
                             },
                           ),
                         ),
-                        SizedBox(width: kPaddingTablet),
+                        SizedBox(width: 12),
                         Expanded(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),

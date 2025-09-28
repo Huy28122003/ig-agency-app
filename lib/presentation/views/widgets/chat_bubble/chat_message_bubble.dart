@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
@@ -15,17 +14,14 @@ import 'chat_bubble_sender_info.dart';
 import 'chat_buble_content_with_reply.dart';
 import 'reply_icon.dart';
 
-const double _kMaxWidthChatContentMobileRatio = 277 / 350;
-const double _kMaxWidthChatContentTabletRatio = 445 / 598;
-const double _kMaxWidthChatContentWebRatio = 717 / 954;
-const double _kMaxWidthChatReplyContentRatio = 174 / 277;
-
 class ChatMessageBubble extends StatefulWidget {
   const ChatMessageBubble({
     super.key,
-    required this.horizontalPadding,
-    this.userId,
     required this.message,
+    required this.maxWidth,
+    required this.maxWidthReply,
+    this.horizontalPadding = 12,
+    this.userId,
     this.shouldShowTime = false,
     this.shouldShowAvatar = false,
     this.shouldShowUserName = false,
@@ -37,11 +33,11 @@ class ChatMessageBubble extends StatefulWidget {
     this.onPin,
     this.onDelete,
     this.searchText,
-    this.maxScreenWidth,
-    this.screenType = DeviceScreenType.mobile,
   });
 
   final MessageEntity message;
+  final double maxWidth;
+  final double maxWidthReply;
   final double horizontalPadding;
   final String? userId;
   final VoidCallback? onReply;
@@ -57,8 +53,6 @@ class ChatMessageBubble extends StatefulWidget {
   final VoidCallback? onPin;
   final VoidCallback? onDelete;
   final String? searchText;
-  final double? maxScreenWidth;
-  final DeviceScreenType screenType;
 
   factory ChatMessageBubble.system({
     required MessageEntity message,
@@ -67,6 +61,8 @@ class ChatMessageBubble extends StatefulWidget {
   }) {
     return ChatMessageBubble(
       message: message,
+      maxWidth: 0,
+      maxWidthReply: 0,
       shouldShowTime: shouldShowTime,
       horizontalPadding: horizontalPadding,
     );
@@ -191,17 +187,6 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final double maxWidth =
-        widget.maxScreenWidth ?? MediaQuery.of(context).size.width;
-    final double maxWidthChatBubble = switch (widget.screenType) {
-      DeviceScreenType.mobile => _kMaxWidthChatContentMobileRatio * maxWidth,
-      DeviceScreenType.tablet => _kMaxWidthChatContentTabletRatio * maxWidth,
-      DeviceScreenType.desktop => _kMaxWidthChatContentWebRatio * maxWidth,
-      _ => maxWidth,
-    };
-    final double maxWidthChatReply =
-        maxWidthChatBubble * _kMaxWidthChatReplyContentRatio;
-
     final messageContent = _message.content;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -262,11 +247,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                 child: ValueListenableBuilder(
                   valueListenable: _dragDistance,
                   builder: (context, value, child) {
-                    return _buildMainChatBubble(
-                      value,
-                      maxWidthChatBubble,
-                      maxWidthChatReply,
-                    );
+                    return _buildMainChatBubble(value);
                   },
                 ),
               ),
@@ -277,11 +258,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     );
   }
 
-  Widget _buildMainChatBubble(
-    double value,
-    double maxWidthChatBubble,
-    double maxWidthChatReply,
-  ) {
+  Widget _buildMainChatBubble(double value) {
     final repliedMessage = _message.repliedMessage;
     final messageContent = _message.content;
 
@@ -322,9 +299,6 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                           8,
                     ),
               child: CustomContextMenu(
-                maxWidth: widget.maxScreenWidth,
-                deviceScreenType: widget.screenType,
-                horizontalPadding: widget.horizontalPadding,
                 menuAlignment: isMe ? MenuAlignment.right : MenuAlignment.left,
                 childAlignment: isMe ? MenuAlignment.right : MenuAlignment.left,
                 actions: [
@@ -444,15 +418,15 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                         ? ChatBubbleContentWithReply(
                             message: _message,
                             replyMessage: repliedMessage,
-                            maxWidth: maxWidthChatBubble,
-                            maxWidthReply: maxWidthChatReply,
+                            maxWidth: widget.maxWidth,
+                            maxWidthReply: widget.maxWidthReply,
                             isMe: isMe,
                             onTap: widget.onReplyTap,
                             searchText: _searchText,
                           )
                         : ChatBubbleContent(
                             message: _message,
-                            maxWidth: maxWidthChatBubble,
+                            maxWidth: widget.maxWidth,
                             searchText: _searchText,
                             isMe: isMe,
                           ),
