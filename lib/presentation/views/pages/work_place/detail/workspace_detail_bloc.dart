@@ -94,8 +94,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   TagUserTextEditingController get textEditingController =>
       _textEditingController;
 
-  (String, ChatMessageUIModel)? cacheCurrentForceShowTimeMessage;
-
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<LoadMoreChatMessagesEvent>(
@@ -493,25 +491,31 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   ) async {
     var messages = state.chatMessages;
 
-    // Check cache và xoá cache nếu không trùng id
-    final cache = cacheCurrentForceShowTimeMessage;
-    if (cache != null && cache.$1 != event.messageId) {
-      final messageId = cache.$1;
-      final messageIndex = messages.indexWhere(
-        (uiModel) => uiModel.message.id == messageId,
-      );
-      if (messageIndex >= 0) {
-        messages = _updateUIModel(messages, messageIndex);
-      }
-    }
-
     final messageIndex = messages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
     if (messageIndex < 0) return;
-    final uiModel = messages[messageIndex];
-    if (uiModel.message.content.isText && !uiModel.showTime) {
-      if (!uiModel.shouldShowTime) {
+    final message = messages[messageIndex];
+
+    // Check message hiện tại với showTimeMessage trong state có trùng nhau không
+    // Nếu không trùng thực hiện việc cập nhật lại khi lúc không show time
+    final showTimeMessage = state.showTimeMessage;
+    if (showTimeMessage != null &&
+        showTimeMessage.message.id != event.messageId) {
+      final showTimeMessageIndex = messages.indexWhere(
+        (uiModel) => uiModel.message.id == showTimeMessage.message.id,
+      );
+      if (showTimeMessageIndex >= 0) {
+        messages = _updateUIModel(
+          messages,
+          showTimeMessageIndex,
+          forceShowTime: false,
+        );
+      }
+    }
+
+    if (message.message.content.isText && !message.showTime) {
+      if (!message.shouldShowTime) {
         final updatedMessages = _updateUIModel(
           messages,
           messageIndex,
@@ -520,10 +524,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         emit(
           state.copyWith(
             chatMessages: updatedMessages,
-            showTimeMessageId: event.messageId,
+            showTimeMessage: message,
           ),
         );
-      } else if (uiModel.shouldShowTime) {
+      } else if (message.shouldShowTime) {
         final updatedMessages = _updateUIModel(
           messages,
           messageIndex,
@@ -692,11 +696,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final showTime = forceShowTime;
     if (showTime != null) {
       if (showTime) {
-        // Gán vào cache với message được force show time
-        cacheCurrentForceShowTimeMessage = (
-          currentMessage.message.id,
-          currentMessage,
-        );
         currentMessage = currentMessage.copyWith(
           shouldShowTime: true,
           shouldShowAvatar: true,
@@ -704,15 +703,16 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           isContinuation: false,
         );
       } else {
-        // Gán lại cache message nếu trùng id và xoá cache
-        final cache = cacheCurrentForceShowTimeMessage;
-        if (cache != null) {
-          final messageId = cache.$1;
-          final message = cache.$2;
-          if (messageId == currentMessage.message.id) {
-            currentMessage = message;
-            cacheCurrentForceShowTimeMessage = null;
-          }
+        // Check nếu trùng id với showTimeMessage trong state thì cập nhật lại vào currentMessage
+        final showTimeMessage = state.showTimeMessage;
+        if (showTimeMessage != null &&
+            showTimeMessage.message.id == currentMessage.message.id) {
+          currentMessage = currentMessage.copyWith(
+            shouldShowTime: showTimeMessage.shouldShowTime,
+            shouldShowAvatar: showTimeMessage.shouldShowAvatar,
+            shouldShowUserName: showTimeMessage.shouldShowUserName,
+            isContinuation: showTimeMessage.isContinuation,
+          );
         }
       }
     }
@@ -730,63 +730,44 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       final previousPreviousMessage = messageIndex < updatedMessages.length - 2
           ? updatedMessages[messageIndex + 2]
           : null;
-
-      if (previousPreviousMessage != null) {
-        final (
-          shouldShowTime,
-          shouldShowAvatar,
-          shouldShowUserName,
-          isContinuation,
-        ) = ChatMessageUiModelHelper.updateUIModel(
-          currentMessage: previousMessage,
-          previousMessage: previousPreviousMessage,
-          nextMessage: currentMessage,
-        );
-        updatedMessages[messageIndex + 1] = previousMessage.copyWith(
-          shouldShowTime: shouldShowTime,
-          shouldShowAvatar: shouldShowAvatar,
-          shouldShowUserName: shouldShowUserName,
-          isContinuation: isContinuation,
-        );
-      } else if (forceShowTime != null) {
-        updatedMessages[messageIndex + 1] = previousMessage.copyWith(
-          // shouldShowTime: true,
-          shouldShowAvatar: true,
-          shouldShowUserName: true,
-          isContinuation: false,
-        );
-      }
+      final (
+      shouldShowTime,
+      shouldShowAvatar,
+      shouldShowUserName,
+      isContinuation,
+      ) = ChatMessageUiModelHelper.updateUIModel(
+        currentMessage: previousMessage,
+        previousMessage: previousPreviousMessage,
+        nextMessage: currentMessage,
+      );
+      updatedMessages[messageIndex + 1] = previousMessage.copyWith(
+        shouldShowTime: shouldShowTime,
+        shouldShowAvatar: shouldShowAvatar,
+        shouldShowUserName: shouldShowUserName,
+        isContinuation: isContinuation,
+      );
     }
 
     if (nextMessage != null) {
       final nextNextMessage = messageIndex > 1
           ? updatedMessages[messageIndex - 2]
           : null;
-      if (nextNextMessage != null) {
-        final (
-          shouldShowTime,
-          shouldShowAvatar,
-          shouldShowUserName,
-          isContinuation,
-        ) = ChatMessageUiModelHelper.updateUIModel(
-          currentMessage: nextMessage,
-          previousMessage: currentMessage,
-          nextMessage: nextNextMessage,
-        );
-        updatedMessages[messageIndex - 1] = nextMessage.copyWith(
-          shouldShowTime: shouldShowTime,
-          shouldShowAvatar: shouldShowAvatar,
-          shouldShowUserName: shouldShowUserName,
-          isContinuation: isContinuation,
-        );
-      } else if (forceShowTime != null) {
-        updatedMessages[messageIndex - 1] = nextMessage.copyWith(
-          // shouldShowTime: true,
-          shouldShowAvatar: true,
-          shouldShowUserName: true,
-          isContinuation: false,
-        );
-      }
+      final (
+      shouldShowTime,
+      shouldShowAvatar,
+      shouldShowUserName,
+      isContinuation,
+      ) = ChatMessageUiModelHelper.updateUIModel(
+        currentMessage: nextMessage,
+        previousMessage: currentMessage,
+        nextMessage: nextNextMessage,
+      );
+      updatedMessages[messageIndex - 1] = nextMessage.copyWith(
+        shouldShowTime: shouldShowTime,
+        shouldShowAvatar: shouldShowAvatar,
+        shouldShowUserName: shouldShowUserName,
+        isContinuation: isContinuation,
+      );
     }
 
     return updatedMessages;

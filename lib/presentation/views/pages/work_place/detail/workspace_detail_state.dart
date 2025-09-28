@@ -17,7 +17,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.pagingStatus = PagingStatus.idle,
     this.jumpToMessageId,
     this.scrollToTop = false,
-    this.showTimeMessageId,
+    this.showTimeMessage,
     this.showTagOverlay = false,
     this.groupMemberStatus = GroupMemberStatus.joined,
     this.groupSearchStatus = GroupSearchStatus.idle,
@@ -43,7 +43,7 @@ class WSDetailState extends BaseState<WSDetailState> {
   final PagingStatus pagingStatus;
   final String? jumpToMessageId;
   final bool scrollToTop;
-  final String? showTimeMessageId;
+  final ChatMessageUIModel? showTimeMessage;
   final bool showTagOverlay;
   final GroupMemberStatus groupMemberStatus;
   final GroupSearchStatus groupSearchStatus;
@@ -80,7 +80,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     PagingStatus? pagingStatus,
     String? jumpToMessageId,
     bool? scrollToTop,
-    String? showTimeMessageId,
+    ChatMessageUIModel? showTimeMessage,
     bool forceDisableShowTime = false,
     // int? totalSearchMessage,
     int? indexSearchMessage,
@@ -112,9 +112,9 @@ class WSDetailState extends BaseState<WSDetailState> {
       pagingStatus: pagingStatus ?? this.pagingStatus,
       jumpToMessageId: jumpToMessageId ?? this.jumpToMessageId,
       scrollToTop: scrollToTop ?? this.scrollToTop,
-      showTimeMessageId: forceDisableShowTime
+      showTimeMessage: forceDisableShowTime
           ? null
-          : showTimeMessageId ?? this.showTimeMessageId,
+          : showTimeMessage ?? this.showTimeMessage,
       showTagOverlay: showTagOverlay ?? this.showTagOverlay,
       groupMemberStatus: groupMemberStatus ?? this.groupMemberStatus,
       isDeletedConversationSuccess:
@@ -145,7 +145,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     pagingStatus,
     jumpToMessageId,
     scrollToTop,
-    showTimeMessageId,
+    showTimeMessage,
     showTagOverlay,
     groupMemberStatus,
     isDeletedConversationSuccess,
