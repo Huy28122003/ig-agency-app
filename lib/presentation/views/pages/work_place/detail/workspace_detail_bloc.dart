@@ -749,10 +749,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       );
     }
 
-    print(
-      'nextMessage-shouldShowAvatar: ${nextMessage?.shouldShowAvatar} - current message: ${(nextMessage?.message.content as TextMessageContent).text}',
-    );
-
     if (nextMessage != null) {
       final nextNextMessage = messageIndex > 1
           ? updatedMessages[messageIndex - 2]
@@ -773,9 +769,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         shouldShowUserName: shouldShowUserName,
         isContinuation: isContinuation,
       );
-      print(
-        'nextMessage-shouldShowAvatar: $shouldShowAvatar - current message: ${(updatedMessages[messageIndex - 1].message.content as TextMessageContent).text}',
-      );
     }
 
     return updatedMessages;
@@ -793,10 +786,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       updatedMessages = [...updatedMessages, ...newMessages];
       final firstLeadingIndex = updatedMessages.length - newMessages.length;
 
-      updatedMessages = _updateUIModel(
-        updatedMessages,
-        firstLeadingIndex,
-      );
+      updatedMessages = _updateUIModel(updatedMessages, firstLeadingIndex);
     }
 
     if (trailingMessageList != null) {
@@ -804,10 +794,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       // nối vào trước
       updatedMessages = [...newMessages, ...updatedMessages];
       final firstTrailingIndex = newMessages.length - 1;
-      updatedMessages = _updateUIModel(
-        updatedMessages,
-        firstTrailingIndex,
-      );
+      updatedMessages = _updateUIModel(updatedMessages, firstTrailingIndex);
     }
 
     return updatedMessages;
