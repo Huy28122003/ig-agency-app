@@ -111,39 +111,84 @@ class _TextMessageContent extends StatelessWidget {
             : AppColors.surfaceContainerGrayStrong2,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: RichText(text: TextSpan(children: textSpans)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Text(
-                    createdAt,
-                    style: TextStyle(
-                      color: isMe
-                          ? AppColors.textDefaultTextInverted
-                          : AppColors.textDefaultTextSub2,
-                      fontSize: 12,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w400,
-                      height: 1.33,
+      child: link != null
+          ? _buildContentWithLink(textSpans: textSpans, link: link)
+          : _buildContentWithoutLink(textSpans: textSpans),
+    );
+  }
+
+  Widget _buildContentWithLink({
+    required List<TextSpan> textSpans,
+    required String link,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: RichText(text: TextSpan(children: textSpans)),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Text(
+                      createdAt,
+                      style: TextStyle(
+                        color: isMe
+                            ? AppColors.textDefaultTextInverted
+                            : AppColors.textDefaultTextSub2,
+                        fontSize: 12,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.33,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ],
+          ),
+        ),
+        _LinkPreview(url: link),
+      ],
+    );
+  }
+
+  Widget _buildContentWithoutLink({required List<TextSpan> textSpans}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: RichText(text: TextSpan(children: textSpans)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Text(
+              createdAt,
+              style: TextStyle(
+                color: isMe
+                    ? AppColors.textDefaultTextInverted
+                    : AppColors.textDefaultTextSub2,
+                fontSize: 12,
+                fontFamily: FontFamily.segoeUI,
+                fontWeight: FontWeight.w400,
+                height: 1.33,
+              ),
             ),
           ),
-          if (link != null) _LinkPreview(url: link),
         ],
       ),
     );

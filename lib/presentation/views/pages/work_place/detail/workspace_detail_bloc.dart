@@ -301,7 +301,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     dynamic content;
     if (event.type == SendMessageType.text) {
-      final text = _textEditingController.text;
+      final text = _textEditingController.text.trim();
       final tagTextSegments = _textEditingController.tagTextSegments;
       final linkTextSegments = detectLinkTextSegment(text);
       final textSegments = [...tagTextSegments, ...linkTextSegments];
