@@ -551,16 +551,16 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(state.copyWith(processing: true));
     final messages = List<ChatMessageUIModel>.from(state.chatMessages);
 
-    final uiModelIndex = messages.indexWhere(
+    final messageIndex = messages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
 
-    if (uiModelIndex >= 0) {
+    if (messageIndex < 0) {
       emit(state.copyWith(processing: false));
       return;
     }
 
-    final currentMessage = messages[uiModelIndex];
+    final currentMessage = messages[messageIndex];
 
     final isPinned = currentMessage.message.isPinned;
 
@@ -579,7 +579,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    messages[uiModelIndex] = currentMessage.copyWith(
+    messages[messageIndex] = currentMessage.copyWith(
       message: currentMessage.message.copyWith(isPinned: !isPinned),
     );
 
