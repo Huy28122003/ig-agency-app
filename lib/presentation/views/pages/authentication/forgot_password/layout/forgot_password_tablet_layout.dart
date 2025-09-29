@@ -34,7 +34,7 @@ class _ForgotPasswordTabletLayoutState
       listener: (context, state) {
         if (state.isSendMailSuccess) {
           final email = state.email;
-          context.router.push(OtpRoute(email: email));
+          context.router.push(OtpRoute(email: email, otpVerified: state.otp));
         }
       },
       child: Scaffold(
@@ -96,12 +96,12 @@ class _ForgotPasswordTabletLayoutState
                           ),
                           const SizedBox(height: 20),
                           BlocSelector<
-                              ForgotPasswordBloc,
-                              ForgotPasswordState,
-                              (String?, String)
+                            ForgotPasswordBloc,
+                            ForgotPasswordState,
+                            (String?, String)
                           >(
                             selector: (state) =>
-                            (state.errorMessage, state.email),
+                                (state.errorMessage, state.email),
                             builder: (context, data) {
                               return AppTextField(
                                 value: data.$2,
@@ -120,18 +120,18 @@ class _ForgotPasswordTabletLayoutState
                           ),
                           SizedBox(height: 40),
                           BlocSelector<
-                              ForgotPasswordBloc,
-                              ForgotPasswordState,
-                              bool
+                            ForgotPasswordBloc,
+                            ForgotPasswordState,
+                            bool
                           >(
                             selector: (state) => state.isEnableSendCode,
                             builder: (context, isEnableSendCode) {
                               return AppButton.primary(
                                 backgroundColor: isEnableSendCode
                                     ? AppColors
-                                    .surfaceContainerPrimaryPrimaryDefault
+                                          .surfaceContainerPrimaryPrimaryDefault
                                     : AppColors
-                                    .surfaceContainerPrimaryPrimaryDisabled,
+                                          .surfaceContainerPrimaryPrimaryDisabled,
                                 onPressed: () {
                                   _forgotPasswordBloc.add(SendOtpEvent());
                                 },
@@ -141,7 +141,7 @@ class _ForgotPasswordTabletLayoutState
                                     color: isEnableSendCode
                                         ? AppColors.textDefaultTextInverted
                                         : AppColors
-                                        .textDefaultTextInvertedDisabled,
+                                              .textDefaultTextInvertedDisabled,
                                     fontSize: 16,
                                     fontFamily: FontFamily.segoeUI,
                                     fontWeight: FontWeight.w700,

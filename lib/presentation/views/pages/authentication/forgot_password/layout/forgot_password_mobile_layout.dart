@@ -34,7 +34,7 @@ class _ForgotPasswordMobileLayoutState
       listener: (BuildContext context, state) {
         if (state.isSendMailSuccess) {
           final email = state.email;
-          context.router.push(OtpRoute(email: email));
+          context.router.push(OtpRoute(email: email, otpVerified: state.otp));
           _forgotPasswordBloc.add(ResetSendMailEvent());
         }
       },
@@ -117,9 +117,9 @@ class _ForgotPasswordMobileLayoutState
             child: Column(
               children: [
                 BlocSelector<
-                    ForgotPasswordBloc,
-                    ForgotPasswordState,
-                    (String?, String)
+                  ForgotPasswordBloc,
+                  ForgotPasswordState,
+                  (String?, String)
                 >(
                   selector: (state) => (state.errorMessage, state.email),
                   builder: (context, data) {

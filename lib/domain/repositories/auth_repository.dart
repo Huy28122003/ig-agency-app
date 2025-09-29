@@ -1,3 +1,6 @@
+import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/forgot_password_response_model.dart';
+
 abstract class AuthRepository {
   Future login(String email, String password);
 
@@ -11,11 +14,9 @@ abstract class AuthRepository {
 
   Future clearAccessToken();
 
-  Future sendOtpCode(String email);
+  Future<ForgotPasswordResponseModel> sendOtpCode(String email);
 
-  Future verifyOtpCode(String code);
-
-  Future sendNewPassword(String email, String newPassword);
+  Future sendNewPassword(ForgotPasswordRequestModel request);
 
   Future changePassword(String currentPassword, String newPassword);
 

@@ -4,7 +4,8 @@ sealed class ResetPasswordEvent {}
 
 class LoadDataEvent extends ResetPasswordEvent {
   final String email;
-  LoadDataEvent(this.email);
+  final String otpVerified;
+  LoadDataEvent(this.email, this.otpVerified);
 }
 
 class NewPasswordChangedEvent extends ResetPasswordEvent {

@@ -131,12 +131,12 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                 ),
                 SizedBox(height: 20),
                 BlocSelector<
-                    ResetPasswordBloc,
-                    ResetPasswordState,
-                    (String?, String)
+                  ResetPasswordBloc,
+                  ResetPasswordState,
+                  (String?, String)
                 >(
                   selector: (state) =>
-                  (state.errorMessage, state.confirmPassword),
+                      (state.errorMessage, state.confirmPassword),
                   builder: (context, data) {
                     return AppTextField(
                       obscureText: true,
@@ -155,7 +155,7 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                 SizedBox(height: 40),
                 AppButton.primary(
                   backgroundColor:
-                  AppColors.surfaceContainerPrimaryPrimaryDefault,
+                      AppColors.surfaceContainerPrimaryPrimaryDefault,
                   onPressed: () {
                     _resetPasswordBloc.add(ConfirmResetPasswordEvent());
                   },
