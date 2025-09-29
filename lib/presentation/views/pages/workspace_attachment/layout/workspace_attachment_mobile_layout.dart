@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/workspace_attachment/bloc/workspace_attachment_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace_attachment/widgets/file_tab.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace_attachment/widgets/link_tab.dart';
 import 'package:ig_agency_app/presentation/views/pages/workspace_attachment/widgets/media_tab.dart';
@@ -23,7 +21,6 @@ class _WorkspaceAttachmentMobileLayoutState
     extends State<WorkspaceAttachmentMobileLayout>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late final WorkspaceAttachmentBloc _workspaceAttachmentBloc;
   final List<String> tabs = [
     "attachment.media".tr(),
     "attachment.file".tr(),
@@ -33,7 +30,6 @@ class _WorkspaceAttachmentMobileLayoutState
   @override
   void initState() {
     super.initState();
-    _workspaceAttachmentBloc = context.read<WorkspaceAttachmentBloc>();
     _tabController = TabController(length: tabs.length, vsync: this);
   }
 

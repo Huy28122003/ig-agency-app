@@ -28,4 +28,8 @@ class ForgotPasswordPage
   Widget? tabletBuilder(BuildContext context) {
     return ForgotPasswordTabletLayout();
   }
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return ForgotPasswordTabletLayout();
+  }
 }

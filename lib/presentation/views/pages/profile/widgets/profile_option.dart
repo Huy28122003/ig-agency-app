@@ -34,7 +34,8 @@ class ProfileOption extends StatelessWidget {
                 title: 'Bio',
                 iconPath: Assets.icons.icBio.path,
                 onTap: () {
-                  context.router.push(const EditBioRoute());
+                  final bio = context.read<ProfileBloc>().state.user?.bio ?? '';
+                  context.router.push(EditBioRoute(bio: bio));
                 },
                 subtitle: bio,
                 isFirst: true,

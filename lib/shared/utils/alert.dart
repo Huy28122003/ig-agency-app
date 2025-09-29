@@ -55,6 +55,7 @@ class AppAlertDialog {
     }
     showDialog(
       context: curContext,
+      useRootNavigator: true,
       barrierDismissible: barrierDismissible,
       builder: (context) => widget,
     );
@@ -64,6 +65,6 @@ class AppAlertDialog {
     final curContext =
         context ?? getIt<AppRouter>().navigatorKey.currentContext;
     if (curContext == null || !curContext.mounted) return;
-    Navigator.of(curContext).pop();
+    Navigator.of(curContext, rootNavigator: true).pop();
   }
 }

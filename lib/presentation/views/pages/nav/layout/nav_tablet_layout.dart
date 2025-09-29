@@ -1,255 +1,190 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/enums/role.dart';
 import 'package:ig_agency_app/presentation/views/pages/nav/nav_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../../routers/app_router.dart';
+import '../../../widgets/app_bottom_navigation_bar.dart';
 
 class NavTabletLayout extends StatelessWidget {
   const NavTabletLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: LayoutBuilder(
-        builder: (context, boxConstraints) {
-          return Row(
-            children: [
-              Container(
-                color: AppColors.surfaceContainerGrayStrong1,
-                width: boxConstraints.maxWidth * 0.4,
-                constraints: BoxConstraints(minWidth: 64 + 240, maxWidth: 380),
-                child: BlocBuilder<NavBloc, NavState>(
-                  buildWhen: (pre, cur) => pre.currentIndex != cur.currentIndex,
-                  builder: (context, state) {
-                    return AutoTabsRouter(
-                      lazyLoad: true,
-                      routes: const [
-                        WorkspaceListRoute(),
-                        SearchRoute(),
-                        SettingRoute(),
-                      ],
-                      builder: (context, child) {
-                        final tabsRouter = AutoTabsRouter.of(context);
-                        return Row(
-                          children: [
-                            Theme(
-                              data: Theme.of(context).copyWith(
-                                splashFactory: NoSplash.splashFactory,
-                                highlightColor: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                              ),
-                              child: NavigationRail(
-                                useIndicator: true,
-                                extended: false,
-                                minWidth: 64,
-                                indicatorColor: Colors.transparent,
-                                labelType: NavigationRailLabelType.none,
-                                selectedIndex: state.currentIndex,
-                                onDestinationSelected: (int index) {
-                                  tabsRouter.setActiveIndex(index);
-                                  context.read<NavBloc>().add(
-                                    OnChangeTabEvent(index),
+    return BlocSelector<NavBloc, NavState, RoleSystem>(
+      selector: (state) => state.roleSystem,
+      builder: (BuildContext context, RoleSystem roleSystem) {
+        final isAdmin = roleSystem.isAdmin;
+        List<AppBottomNavigationItem> items = _getItems(isAdmin);
+
+        return Scaffold(
+          backgroundColor: AppColors.surfaceContainerGrayStrong0,
+          body: SafeArea(
+            child: Container(
+              color: AppColors.surfaceContainerGrayStrong1,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: LayoutBuilder(
+                  builder: (context, boxConstraints) {
+                    return Row(
+                      children: [
+                        Container(
+                          width: boxConstraints.maxWidth * 0.4,
+                          constraints: BoxConstraints(
+                            minWidth: 240,
+                            maxWidth: 300,
+                          ),
+                          child: BlocBuilder<NavBloc, NavState>(
+                            buildWhen: (pre, cur) =>
+                            pre.currentIndex != cur.currentIndex,
+                            builder: (context, state) {
+                              return AutoTabsRouter(
+                                lazyLoad: true,
+                                routes: [
+                                  WorkspaceListRoute(),
+                                  SearchRoute(),
+                                  if (isAdmin) DashboardHomeRoute(),
+                                  SettingRoute(),
+                                ],
+                                builder: (context, child) {
+                                  return BlocListener<NavBloc, NavState>(
+                                    listenWhen: (pre, cur) {
+                                      return pre.currentIndex !=
+                                          cur.currentIndex;
+                                    },
+                                    listener: (_, state) {
+                                      final index = state.currentIndex;
+                                      AutoTabsRouter.of(
+                                        context,
+                                      ).setActiveIndex(index);
+                                      if (index != 0) {
+                                        context.router.replace(EmptyRoute());
+                                      }
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: child,
+                                    ),
                                   );
                                 },
-                                destinations: <NavigationRailDestination>[
-                                  NavigationRailDestination(
-                                    selectedIcon: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          RotatedBox(
-                                            quarterTurns: 1,
-                                            child: Assets.icons.icIndicator
-                                                .svg(),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Assets.icons.icWorkspace.svg(
-                                              colorFilter: ColorFilter.mode(
-                                                AppColors
-                                                    .textPrimaryTextDefault,
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    icon: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Opacity(
-                                            opacity: 0,
-                                            child: RotatedBox(
-                                              quarterTurns: 1,
-                                              child: Assets.icons.icIndicator
-                                                  .svg(),
-                                            ),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Assets.icons.icWorkspace.svg(
-                                              colorFilter: ColorFilter.mode(
-                                                AppColors.textDefaultTextSub2,
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    label: const SizedBox.shrink(),
-                                  ),
-                                  NavigationRailDestination(
-                                    selectedIcon: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          RotatedBox(
-                                            quarterTurns: 1,
-                                            child: Assets.icons.icIndicator
-                                                .svg(),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Assets.icons.icSearch.svg(
-                                              colorFilter: ColorFilter.mode(
-                                                AppColors
-                                                    .textPrimaryTextDefault,
-                                                BlendMode.srcIn,
-                                              ),
-                                              width: 24,
-                                              height: 24,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    icon: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Opacity(
-                                            opacity: 0,
-                                            child: RotatedBox(
-                                              quarterTurns: 1,
-                                              child: Assets.icons.icIndicator
-                                                  .svg(),
-                                            ),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Assets.icons.icSearch.svg(
-                                              colorFilter: ColorFilter.mode(
-                                                AppColors.textDefaultTextSub2,
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    label: const SizedBox.shrink(),
-                                  ),
-                                  NavigationRailDestination(
-                                    selectedIcon: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          RotatedBox(
-                                            quarterTurns: 1,
-                                            child: Assets.icons.icIndicator
-                                                .svg(),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Assets.icons.icSetting.svg(
-                                              colorFilter: ColorFilter.mode(
-                                                AppColors
-                                                    .textPrimaryTextDefault,
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    icon: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Opacity(
-                                            opacity: 0,
-                                            child: RotatedBox(
-                                              quarterTurns: 1,
-                                              child: Assets.icons.icIndicator
-                                                  .svg(),
-                                            ),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Assets.icons.icSetting.svg(
-                                              colorFilter: ColorFilter.mode(
-                                                AppColors.textDefaultTextSub2,
-                                                BlendMode.srcIn,
-                                              ),
-                                              width: 24,
-                                              height: 24,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    label: const SizedBox.shrink(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: 350,
-                                  // minWidth: 200,
-                                ),
-                                child: child,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: AutoRouter(),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
               ),
-              SizedBox(width: 12),
-              Expanded(child: AutoRouter()),
-            ],
-          );
-        },
-      ),
+            ),
+          ),
+
+          bottomNavigationBar: BlocSelector<NavBloc, NavState, int>(
+            selector: (state) => state.currentIndex,
+            builder: (context, currentIndex) {
+              return AppBottomNavigationBar(
+                items: items,
+                currentIndex: currentIndex,
+                onTap: (index) {
+                  context.read<NavBloc>().add(OnChangeTabEvent(index));
+                },
+              );
+            },
+          ),
+        );
+      },
     );
+  }
+
+  List<AppBottomNavigationItem> _getItems(bool isAdmin) {
+    return [
+      AppBottomNavigationItem(
+        selectedIcon: Assets.icons.icWorkspace.svg(
+          width: 24,
+          height: 24,
+          colorFilter: ColorFilter.mode(
+            AppColors.textPrimaryTextDefault,
+            BlendMode.srcIn,
+          ),
+        ),
+        icon: Assets.icons.icWorkspace.svg(
+          width: 24,
+          height: 24,
+          colorFilter: ColorFilter.mode(
+            AppColors.textDefaultTextSub2,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Workspace',
+        page: WorkspaceListRoute(),
+      ),
+      AppBottomNavigationItem(
+        selectedIcon: Assets.icons.icSearch.svg(
+          width: 24,
+          height: 24,
+          colorFilter: ColorFilter.mode(
+            AppColors.textPrimaryTextDefault,
+            BlendMode.srcIn,
+          ),
+        ),
+        icon: Assets.icons.icSearch.svg(
+          width: 24,
+          height: 24,
+          colorFilter: ColorFilter.mode(
+            AppColors.textDefaultTextSub2,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Search',
+        page: SearchRoute(),
+      ),
+      if (isAdmin)
+        AppBottomNavigationItem(
+          selectedIcon: Assets.icons.icAdmin.svg(
+            colorFilter: ColorFilter.mode(
+              AppColors.textPrimaryTextDefault,
+              BlendMode.srcIn,
+            ),
+          ),
+          icon: Assets.icons.icAdmin.svg(
+            colorFilter: ColorFilter.mode(
+              AppColors.textDefaultTextSub2,
+              BlendMode.srcIn,
+            ),
+          ),
+          label: 'Admin',
+          page: DashboardHomeRoute(),
+        ),
+      AppBottomNavigationItem(
+        selectedIcon: Assets.icons.icSetting.svg(
+          width: 24,
+          height: 24,
+          colorFilter: ColorFilter.mode(
+            AppColors.textPrimaryTextDefault,
+            BlendMode.srcIn,
+          ),
+        ),
+        icon: Assets.icons.icSetting.svg(
+          width: 24,
+          height: 24,
+          colorFilter: ColorFilter.mode(
+            AppColors.textDefaultTextSub2,
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Setting',
+        page: SettingHomeRoute(),
+      ),
+    ];
   }
 }

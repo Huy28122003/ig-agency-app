@@ -248,7 +248,7 @@ class MessageMockService {
 
       messages.add(
         MessageEntity(
-          id: "msg_${groupId}_${current.millisecondsSinceEpoch}",
+          id: "msg_${groupId}_${i}_${current.millisecondsSinceEpoch}",
           user: UserSummary(
             id: user['id']!,
             name: user['name']!,
@@ -486,7 +486,7 @@ class MessageMockService {
 
   List<MessageEntity> mockFetchMessagesByGroupId({
     required String groupId,
-    int limit = 10,
+    int limit = 20,
     String? oldestMessageId,
     String? targetMessageId,
   }) {
@@ -494,32 +494,30 @@ class MessageMockService {
     if (messages == null || messages.isEmpty) {
       return [];
     }
-
-    var messageIndex = 0;
+    var offset = 0;
+    var newLimit = limit;
 
     if (oldestMessageId == null) {
-      messageIndex = messages.length - 1;
+      offset = max(0, messages.length - limit);
+      newLimit = min(limit, messages.length);
+      return messages.skip(offset).take(newLimit).toList();
     } else {
-      messageIndex = messages.indexWhere(
+      var messageIndex = messages.indexWhere(
         (message) => message.id == oldestMessageId,
       );
-      if (messageIndex == -1) {
-        throw Exception();
+      if (messageIndex < 0) {
+        throw Exception('Oldest message not found');
       }
-    }
 
-    var offset = 0;
-
-    if (targetMessageId != null) {
-      final targetMessageIndex = messages.indexWhere(
-        (message) => message.id == targetMessageId,
-      );
-      if (targetMessageIndex == -1) {
-        throw Exception();
-      } else {
-        offset = max(0, targetMessageIndex);
-        if (targetMessageIndex >= messageIndex) {
-          throw Exception();
+      if (targetMessageId != null) {
+        var targetMessageIndex = messages.indexWhere(
+          (message) => message.id == targetMessageId,
+        );
+        if (targetMessageIndex < 0) {
+          throw Exception('Target message not found');
+        }
+        if (targetMessageIndex > messageIndex) {
+          throw Exception('Target message is older than oldest message');
         }
         final filteredMessages = messages
             .skip(offset)
@@ -527,18 +525,11 @@ class MessageMockService {
             .toList();
         return filteredMessages;
       }
+
+      offset = max(0, messageIndex - limit);
+      newLimit = min(limit, limit > messageIndex ? messageIndex : limit);
+      return messages.skip(offset).take(newLimit).toList();
     }
-
-    offset = max(0, messageIndex + 1 - limit);
-
-    if (offset == 0) {
-      return [];
-    }
-
-    final newLimit = limit >= messageIndex ? limit : (messageIndex + 1);
-
-    final filteredMessages = messages.skip(offset).take(newLimit).toList();
-    return filteredMessages;
   }
 
   UserEntity? getUserById(String userId) {
@@ -564,7 +555,10 @@ class MessageMockService {
     String? replyMessageId,
     dynamic content,
   ) async {
-    final messageId = "msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}";
+    final messages = _messageMockData[groupId] ?? [];
+
+    final messageId =
+        "msg_${groupId}_${messages.length}_${DateTime.now().millisecondsSinceEpoch}";
 
     final user =
         getUserById(userId) ??
@@ -580,8 +574,8 @@ class MessageMockService {
 
     MessageEntity? reply;
     if (replyMessageId != null) {
-      final replyMessage = _messageMockData[groupId]
-          ?.where((message) => message.id == replyMessageId)
+      final replyMessage = messages
+          .where((message) => message.id == replyMessageId)
           .firstOrNull;
       reply = replyMessage;
     }
@@ -598,10 +592,6 @@ class MessageMockService {
       },
       groupId: groupId,
     );
-
-    if (_messageMockData[groupId] == null) {
-      _messageMockData[groupId] = [];
-    }
     _messageMockData[groupId]?.add(sentMessage);
     _ramCache.saveMessage(sentMessage);
   }

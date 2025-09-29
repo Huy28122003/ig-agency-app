@@ -17,11 +17,11 @@ import 'reply_icon.dart';
 class ChatMessageBubble extends StatefulWidget {
   const ChatMessageBubble({
     super.key,
+    required this.message,
     required this.maxWidth,
     required this.maxWidthReply,
-    required this.horizontalPadding,
+    this.horizontalPadding = 12,
     this.userId,
-    required this.message,
     this.shouldShowTime = false,
     this.shouldShowAvatar = false,
     this.shouldShowUserName = false,
@@ -35,9 +35,9 @@ class ChatMessageBubble extends StatefulWidget {
     this.searchText,
   });
 
+  final MessageEntity message;
   final double maxWidth;
   final double maxWidthReply;
-  final MessageEntity message;
   final double horizontalPadding;
   final String? userId;
   final VoidCallback? onReply;
@@ -92,7 +92,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     _shouldShowAvatar = widget.shouldShowAvatar;
     _shouldShowUserName = widget.shouldShowUserName;
     _isContinuation = widget.isContinuation;
-    _searchText = 'https://flutter.dev'; // TODO hoannk: test search
+    _searchText = widget.searchText;
     _animationHelper = ChatBubbleAnimationHelper(
       isMe: isMe,
       horizontalPadding: widget.horizontalPadding,
@@ -105,7 +105,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
     if (widget.message != oldWidget.message) {
       _message = widget.message;
     }
-    if (widget.shouldShowTime != oldWidget.shouldShowTime) {
+    if (widget.shouldShowTime != oldWidget.shouldShowTime ||
+        widget.shouldShowAvatar != oldWidget.shouldShowAvatar ||
+        widget.shouldShowUserName != oldWidget.shouldShowUserName ||
+        widget.isContinuation != oldWidget.isContinuation) {
       _shouldShowTime = widget.shouldShowTime;
       _shouldShowAvatar = widget.shouldShowAvatar;
       _shouldShowUserName = widget.shouldShowUserName;
@@ -230,7 +233,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                 style: TextStyle(
                   color: AppColors.textPrimaryTextDefault,
                   fontSize: 13,
-                  fontFamily: 'Segoe UI',
+                  fontFamily: FontFamily.segoeUI,
                   fontWeight: FontWeight.w600,
                   height: 1.54,
                 ),
@@ -261,6 +264,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   Widget _buildMainChatBubble(double value) {
     final repliedMessage = _message.repliedMessage;
     final messageContent = _message.content;
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Stack(
@@ -298,7 +302,6 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                           8,
                     ),
               child: CustomContextMenu(
-                horizontalPadding: widget.horizontalPadding,
                 menuAlignment: isMe ? MenuAlignment.right : MenuAlignment.left,
                 childAlignment: isMe ? MenuAlignment.right : MenuAlignment.left,
                 actions: [
@@ -405,10 +408,13 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   children: [
                     if ((!isMe || (isMe && repliedMessage != null)) &&
                         _shouldShowUserName) ...[
-                      ChatBubbleSenderInfo(
-                        message: _message,
-                        userId: widget.userId,
-                        isMe: isMe,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: ChatBubbleSenderInfo(
+                          message: _message,
+                          userId: widget.userId,
+                          isMe: isMe,
+                        ),
                       ),
                     ],
                     repliedMessage != null

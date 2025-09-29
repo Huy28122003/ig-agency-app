@@ -28,7 +28,7 @@ class PinnedMessagesBottomSheet extends StatefulWidget {
     required Function(String messageId) onTap,
   }) async {
     showModalBottomSheet(
-      context: context,
+      context: Navigator.of(context, rootNavigator: true).context,
       useSafeArea: true,
       elevation: 0,
       barrierColor: Colors.black.withValues(alpha: 0.68),

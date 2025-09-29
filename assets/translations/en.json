@@ -12,7 +12,8 @@
     "group": "Group",
     "message": "Message",
     "search_in_conversation": "Search in conversation",
-    "show_as_list": "Show as list"
+    "show_as_list": "Show as list",
+    "no_result": "No result"
   },
   "workspace": {
     "workspace": "Workspace",
@@ -49,6 +50,12 @@
     "title": "OTP Verification",
     "description": "Please enter the OTP sent on your\nregistered email address",
     "continue": "Continue"
+  },
+  "reset_password": {
+    "title": "OTP Verification",
+    "hint_text_new_password": "New password",
+    "hint_text_confirm_password": "Confirm New Password",
+    "reset_password": "Reset Password"
   },
   "camera": {
     "send": "Send"
@@ -136,5 +143,10 @@
   },
   "error": {
     "error": "Error"
+  },
+  "pinned_message_list": {
+    "title": "Pinned Messages",
+    "content": "No pinned messages",
+    "description": "Messages pinned from this chat\nwill appear here"
   }
 }

@@ -9,33 +9,27 @@ import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
 
-class EditWorkspaceBioMobileLayout extends StatefulWidget {
-  const EditWorkspaceBioMobileLayout({super.key});
+class EditWorkspaceNameMobileLayout extends StatefulWidget {
+  const EditWorkspaceNameMobileLayout({super.key});
 
   @override
-  State<EditWorkspaceBioMobileLayout> createState() =>
-      _EditWorkspaceBioMobileLayoutState();
+  State<EditWorkspaceNameMobileLayout> createState() =>
+      _EditWorkspaceNameMobileLayoutState();
 }
 
-class _EditWorkspaceBioMobileLayoutState
-    extends State<EditWorkspaceBioMobileLayout> {
-  late final TextEditingController _controller;
-  late final EditWorkspaceBioBloc _editWorkspaceBioBloc;
+class _EditWorkspaceNameMobileLayoutState
+    extends State<EditWorkspaceNameMobileLayout> {
+  late final EditWorkspaceNameBloc _editWorkspaceBioBloc;
 
   @override
   void initState() {
     super.initState();
-    _editWorkspaceBioBloc = context.read<EditWorkspaceBioBloc>();
-    _controller = TextEditingController(text: _editWorkspaceBioBloc.state.bio);
-
-    _controller.addListener(() {
-      _editWorkspaceBioBloc.add(BioChangeEvent(value: _controller.text));
-    });
+    _editWorkspaceBioBloc = context.read<EditWorkspaceNameBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditWorkspaceBioBloc, EditWorkspaceBioState>(
+    return BlocListener<EditWorkspaceNameBloc, EditWorkspaceNameState>(
       listener: (_, state) {
         if (state.updateStatus ?? false) {
           context.router.pop(state.bio);
@@ -83,7 +77,7 @@ class _EditWorkspaceBioMobileLayoutState
             child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
           actions: [
-            BlocSelector<EditWorkspaceBioBloc, EditWorkspaceBioState, String>(
+            BlocSelector<EditWorkspaceNameBloc, EditWorkspaceNameState, String>(
               selector: (state) {
                 return state.bio;
               },
@@ -119,8 +113,8 @@ class _EditWorkspaceBioMobileLayoutState
             padding: const EdgeInsets.symmetric(vertical: 20),
             child:
                 BlocSelector<
-                  EditWorkspaceBioBloc,
-                  EditWorkspaceBioState,
+                  EditWorkspaceNameBloc,
+                  EditWorkspaceNameState,
                   String
                 >(
                   selector: (state) {
@@ -129,7 +123,6 @@ class _EditWorkspaceBioMobileLayoutState
                   builder: (context, state) {
                     return AppTextField(
                       value: state,
-                      controller: _controller,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       maxLength: 150,
@@ -141,6 +134,9 @@ class _EditWorkspaceBioMobileLayoutState
                         fontWeight: FontWeight.w400,
                         height: 24 / 16,
                       ),
+                      onChanged: (value) {
+                        _editWorkspaceBioBloc.add(BioChangeEvent(value: value));
+                      },
                     );
                   },
                 ),

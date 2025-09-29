@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/dependencies/notification/notification_service.dart';
 import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/domain/usecases/logout_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_dark_mode_use_case.dart';
@@ -28,6 +29,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     this._setInAppAlertsUseCase,
     this._fetchCurrentUserUseCase,
     this._userRepository,
+    this._notificationService,
   ) : super(SettingHomeState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -40,6 +42,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   final SetInAppAlertsUseCase _setInAppAlertsUseCase;
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
+  final NotificationService _notificationService;
 
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
 
@@ -48,7 +51,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
 
     handleSubEvent<ToggleDarkModeEvent>(_onToggleDarkMode);
 
-    handleSubEvent<ToggleInAppAlertsEvent>(_onToggleInAppAlerts);
+    handleSubEvent<ToggleNotificationEvent>(_onToggleInAppAlerts);
 
     handleSubEvent<LogoutEvent>(_onLogout);
 
@@ -94,17 +97,20 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   }
 
   Future<void> _onToggleInAppAlerts(
-    ToggleInAppAlertsEvent event,
+    ToggleNotificationEvent event,
     Emitter<SettingHomeState> emit,
   ) async {
-    final newInAppAlerts = !state.isInAppAlerts;
+    final enableNotification = !state.isInAppAlerts;
     emit(state.copyWith(processing: true));
 
+    if (enableNotification) {
+      await _notificationService.requestPermission();
+    }
     await _setInAppAlertsUseCase(
-      SetInAppAlertsParam(isInAppAlerts: newInAppAlerts),
+      SetInAppAlertsParam(enableNotification: enableNotification),
     );
 
-    emit(state.copyWith(processing: false, isInAppAlerts: newInAppAlerts));
+    emit(state.copyWith(processing: false, isInAppAlerts: enableNotification));
   }
 
   Future<void> _onLogout(
