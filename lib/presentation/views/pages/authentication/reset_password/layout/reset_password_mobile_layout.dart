@@ -153,22 +153,39 @@ class _ResetPasswordMobileLayoutState extends State<ResetPasswordMobileLayout> {
                   },
                 ),
                 SizedBox(height: 40),
-                AppButton.primary(
-                  backgroundColor:
-                      AppColors.surfaceContainerPrimaryPrimaryDefault,
-                  onPressed: () {
-                    _resetPasswordBloc.add(ConfirmResetPasswordEvent());
+                BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
+                  selector: (state) => (state.isValid),
+                  builder: (context, isValid) {
+                    return AppButton.primary(
+                      backgroundColor:
+                          AppColors.surfaceContainerPrimaryPrimaryDefault,
+                      textStyle: TextStyle(
+                        color: isValid
+                            ? AppColors.textDefaultTextInverted
+                            : AppColors.textDefaultTextInvertedDisabled,
+                        fontSize: 16,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w700,
+                        height: 1.50,
+                      ),
+                      onPressed: () {
+                        if (!isValid) return;
+                        _resetPasswordBloc.add(ConfirmResetPasswordEvent());
+                      },
+                      child: Text(
+                        'reset_password.reset_password'.tr(),
+                        style: TextStyle(
+                          color: isValid
+                              ? AppColors.textDefaultTextInverted
+                              : AppColors.textDefaultTextInvertedDisabled,
+                          fontSize: 16,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.50,
+                        ),
+                      ),
+                    );
                   },
-                  child: Text(
-                    'reset_password.reset_password'.tr(),
-                    style: TextStyle(
-                      color: AppColors.textDefaultTextInvertedDisabled,
-                      fontSize: 16,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                  ),
                 ),
               ],
             ),

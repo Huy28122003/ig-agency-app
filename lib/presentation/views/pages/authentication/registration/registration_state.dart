@@ -28,9 +28,9 @@ class RegistrationState extends BaseState<RegistrationState> {
 
   bool get isFormValid =>
       name.isNotEmpty &&
-      email.isNotEmpty &&
+      ValidatorUtil.isValidEmail(email) &&
       password.isNotEmpty &&
-      confirmPassword.isNotEmpty;
+      confirmPassword == password;
 
   @override
   RegistrationState copyWith({

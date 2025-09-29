@@ -132,6 +132,16 @@ class _ForgotPasswordTabletLayoutState
                                           .surfaceContainerPrimaryPrimaryDefault
                                     : AppColors
                                           .surfaceContainerPrimaryPrimaryDisabled,
+                                textStyle: TextStyle(
+                                  color: isEnableSendCode
+                                      ? AppColors.textDefaultTextInverted
+                                      : AppColors
+                                            .textDefaultTextInvertedDisabled,
+                                  fontSize: 16,
+                                  fontFamily: FontFamily.segoeUI,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.50,
+                                ),
                                 onPressed: () {
                                   _forgotPasswordBloc.add(SendOtpEvent());
                                 },

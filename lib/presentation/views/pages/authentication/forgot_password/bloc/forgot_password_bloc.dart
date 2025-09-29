@@ -3,6 +3,7 @@ import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/constants/string.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
+import 'package:ig_agency_app/shared/utils/validator_util.dart';
 import 'package:injectable/injectable.dart';
 
 part 'forgot_password_event.dart';
@@ -21,7 +22,7 @@ class ForgotPasswordBloc
     });
 
     handleSubEvent<EmailChangeEvent>((event, emit) async {
-      final isEmail = _formatValidateEmail(event.email);
+      final isEmail = ValidatorUtil.isValidEmail(event.email);
 
       emit(
         state.copyWith(
@@ -50,10 +51,5 @@ class ForgotPasswordBloc
     handleSubEvent<ResetSendMailEvent>((event, emit) async {
       emit(state.copyWith(isSendMailSuccess: false));
     });
-  }
-
-  bool _formatValidateEmail(String email) {
-    final regex = RegExp(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$");
-    return regex.hasMatch(email.trim());
   }
 }

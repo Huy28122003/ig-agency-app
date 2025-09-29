@@ -175,6 +175,13 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                 AppButton.primary(
                   backgroundColor:
                       AppColors.surfaceContainerPrimaryPrimaryDefault,
+                  textStyle: TextStyle(
+                    color: AppColors.textDefaultTextInvertedDisabled,
+                    fontSize: 16,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w700,
+                    height: 1.50,
+                  ),
                   onPressed: () {
                     // Todo: Refactor logic ui
                   },

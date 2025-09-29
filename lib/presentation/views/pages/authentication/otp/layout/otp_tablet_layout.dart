@@ -142,6 +142,13 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                           AppButton.primary(
                             backgroundColor: AppColors
                                 .surfaceContainerPrimaryPrimaryDisabled,
+                            textStyle: TextStyle(
+                              color: AppColors.textDefaultTextInvertedDisabled,
+                              fontSize: 16,
+                              fontFamily: FontFamily.segoeUI,
+                              fontWeight: FontWeight.w700,
+                              height: 1.50,
+                            ),
                             onPressed: () {
                               //Todo: Recheck Logic ui
                             },

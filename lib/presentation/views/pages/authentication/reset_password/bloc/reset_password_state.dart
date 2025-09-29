@@ -9,6 +9,8 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
   final String otpVerified;
   final bool isResetSuccess;
 
+  bool get isValid => newPassword.isNotEmpty && newPassword == confirmPassword;
+
   const ResetPasswordState({
     super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,

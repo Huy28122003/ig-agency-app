@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/usecases/register_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
+import 'package:ig_agency_app/shared/utils/validator_util.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
@@ -61,17 +62,21 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
     SubmitRegistrationEvent event,
     Emitter<RegistrationState> emit,
   ) async {
-    emit(state.copyWith(processing: true));
-    _resetErrorMessages(emit);
+    try {
+      emit(state.copyWith(processing: true));
+      _resetErrorMessages(emit);
 
-    await _registerUseCase(
-      RegisterParam(
-        name: state.name,
-        email: state.email,
-        password: state.password,
-        confirmPassword: state.confirmPassword,
-      ),
-    );
-    emit(state.copyWith(processing: false, isSuccess: true));
+      await _registerUseCase(
+        RegisterParam(
+          name: state.name,
+          email: state.email,
+          password: state.password,
+          confirmPassword: state.confirmPassword,
+        ),
+      );
+      emit(state.copyWith(processing: false, isSuccess: true));
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 }
