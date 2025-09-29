@@ -70,6 +70,10 @@ class ChatMessageUiModelHelper {
           shouldShowUserName = true;
           isContinuation = false;
         }
+        if (previousMessage?.shouldShowTime ?? false) {
+          shouldShowUserName = true;
+          isContinuation = false;
+        }
       }
       // No previous message or previous message has reply or previous message is system message
       else {
@@ -105,6 +109,10 @@ class ChatMessageUiModelHelper {
             shouldShowTime) {
           shouldShowAvatar = true;
         }
+
+        if (nextMessage?.shouldShowTime ?? false) {
+          shouldShowAvatar = true;
+        }
         // No next message or next message has reply or next message is system message
       } else {
         shouldShowAvatar = true;
@@ -113,6 +121,7 @@ class ChatMessageUiModelHelper {
       // current message is the first message of the day or show time
       if (shouldShowTime) {
         shouldShowUserName = true;
+        isContinuation = false;
       }
     }
 

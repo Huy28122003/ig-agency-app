@@ -731,10 +731,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           ? updatedMessages[messageIndex + 2]
           : null;
       final (
-      shouldShowTime,
-      shouldShowAvatar,
-      shouldShowUserName,
-      isContinuation,
+        shouldShowTime,
+        shouldShowAvatar,
+        shouldShowUserName,
+        isContinuation,
       ) = ChatMessageUiModelHelper.updateUIModel(
         currentMessage: previousMessage,
         previousMessage: previousPreviousMessage,
@@ -753,10 +753,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           ? updatedMessages[messageIndex - 2]
           : null;
       final (
-      shouldShowTime,
-      shouldShowAvatar,
-      shouldShowUserName,
-      isContinuation,
+        shouldShowTime,
+        shouldShowAvatar,
+        shouldShowUserName,
+        isContinuation,
       ) = ChatMessageUiModelHelper.updateUIModel(
         currentMessage: nextMessage,
         previousMessage: currentMessage,

@@ -120,9 +120,9 @@ class MessageMockService {
     Duration(minutes: 1),
     // Duration(minutes: 5),
     Duration(hours: 1),
-    Duration(hours: 5),
-    Duration(days: 1),
-    Duration(days: 5),
+    // Duration(hours: 5),
+    // Duration(days: 1),
+    // Duration(days: 5),
   ];
 
   (String, List<TextSegment>) mockText() {
