@@ -26,7 +26,7 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
   final String searchKeyWord;
   final PageStatus searchStatus;
   final bool isSearchMode;
-  final int? workspaceSelectedId;
+  final String? workspaceSelectedId;
 
   @override
   WorkspaceListState copyWith({
@@ -42,7 +42,7 @@ class WorkspaceListState extends BaseState<WorkspaceListState> {
     List<WorkspaceEntity>? workspacesSearch,
     String? searchKeyWord,
     bool? isSearchMode,
-    int? workspaceSelectedId,
+    String? workspaceSelectedId,
   }) {
     return WorkspaceListState(
       pageStatus: pageStatus ?? this.pageStatus,

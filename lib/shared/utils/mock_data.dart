@@ -112,7 +112,7 @@ class MockData {
     (index) => SearchResult(
       id: 1,
       groupInfo: GroupSummary(
-        id: 1,
+        id: "1",
         name: 'WorkSpace ${index + 1}',
         avatar: '.png',
       ),
@@ -145,7 +145,7 @@ class MockData {
   static List<WorkspaceEntity> getWorkspaces() {
     return [
       WorkspaceEntity(
-        id: 1,
+        id: "1",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=1',
         workspaceName: 'Design Team',
         lastMessage: 'Please review the latest designs.',
@@ -159,7 +159,7 @@ class MockData {
         bio: 'Creative group focusing on UI/UX.',
       ),
       WorkspaceEntity(
-        id: 2,
+        id: "2",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=2',
         workspaceName: 'Marketing Team',
         lastMessage: 'Campaign report updated.',
@@ -172,7 +172,7 @@ class MockData {
         countPin: 1,
       ),
       WorkspaceEntity(
-        id: 3,
+        id: "3",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=3',
         workspaceName: 'Developers',
         lastMessage: 'Bug in payment flow fixed.',
@@ -185,7 +185,7 @@ class MockData {
         countPin: 4,
       ),
       WorkspaceEntity(
-        id: 4,
+        id: "4",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=4',
         workspaceName: 'HR Department',
         lastMessage: 'New leave policy announced.',
@@ -198,7 +198,7 @@ class MockData {
         countPin: 0,
       ),
       WorkspaceEntity(
-        id: 5,
+        id: "5",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=5',
         workspaceName: 'Finance',
         lastMessage: 'Invoice #123 approved.',
@@ -212,7 +212,7 @@ class MockData {
         bio: 'Manages budgets and financial planning.',
       ),
       WorkspaceEntity(
-        id: 6,
+        id: "6",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=6',
         workspaceName: 'Operations',
         lastMessage: 'Warehouse restocked successfully.',
@@ -226,7 +226,7 @@ class MockData {
         bio: 'Oversees daily business operations.',
       ),
       WorkspaceEntity(
-        id: 7,
+        id: "7",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=7',
         workspaceName: 'Legal Team',
         lastMessage: 'Contract draft ready.',
@@ -240,7 +240,7 @@ class MockData {
         bio: 'Ensures compliance and contracts.',
       ),
       WorkspaceEntity(
-        id: 8,
+        id: "8",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=8',
         workspaceName: 'QA Team',
         lastMessage: 'Regression test completed.',
@@ -254,7 +254,7 @@ class MockData {
         bio: 'Testing and quality assurance.',
       ),
       WorkspaceEntity(
-        id: 9,
+        id: "9",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=9',
         workspaceName: 'Support',
         lastMessage: 'Ticket #987 resolved.',
@@ -268,7 +268,7 @@ class MockData {
         bio: 'Customer support and helpdesk.',
       ),
       WorkspaceEntity(
-        id: 10,
+        id: "10",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=10',
         workspaceName: 'Product Team',
         lastMessage: 'Specs document updated.',
@@ -282,7 +282,7 @@ class MockData {
         bio: 'Defines product roadmap and features.',
       ),
       WorkspaceEntity(
-        id: 11,
+        id: "11",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=11',
         workspaceName: 'Sales',
         lastMessage: 'Q3 targets achieved!',
@@ -296,7 +296,7 @@ class MockData {
         bio: 'Handles customer acquisition.',
       ),
       WorkspaceEntity(
-        id: 12,
+        id: "12",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=12',
         workspaceName: 'Admins',
         lastMessage: 'Server maintenance scheduled.',
@@ -310,7 +310,7 @@ class MockData {
         bio: 'System administrators and IT support.',
       ),
       WorkspaceEntity(
-        id: 13,
+        id: "13",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=13',
         workspaceName: 'R&D',
         lastMessage: 'Prototype V2 released.',
@@ -324,7 +324,7 @@ class MockData {
         bio: 'Research and innovation projects.',
       ),
       WorkspaceEntity(
-        id: 14,
+        id: "14",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=14',
         workspaceName: 'Board',
         lastMessage: 'Meeting agenda finalized.',
@@ -338,7 +338,7 @@ class MockData {
         bio: 'Executive board of directors.',
       ),
       WorkspaceEntity(
-        id: 15,
+        id: "15",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=15',
         workspaceName: 'Community',
         lastMessage: 'Welcome new members!',
@@ -352,7 +352,7 @@ class MockData {
         bio: 'Open community discussions.',
       ),
       WorkspaceEntity(
-        id: 16,
+        id: "16",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=16',
         workspaceName: 'Logistics',
         lastMessage: 'Shipment delayed.',
@@ -366,7 +366,7 @@ class MockData {
         bio: 'Handles supply chain and transport.',
       ),
       WorkspaceEntity(
-        id: 17,
+        id: "17",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=17',
         workspaceName: 'Data Team',
         lastMessage: 'Analytics dashboard updated.',
@@ -380,7 +380,7 @@ class MockData {
         bio: 'Data analytics and reporting.',
       ),
       WorkspaceEntity(
-        id: 18,
+        id: "18",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=18',
         workspaceName: 'Security',
         lastMessage: '2FA enforced on all accounts.',
@@ -394,7 +394,7 @@ class MockData {
         bio: 'Security and compliance team.',
       ),
       WorkspaceEntity(
-        id: 19,
+        id: "19",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=19',
         workspaceName: 'CSR',
         lastMessage: 'Charity event planned.',
@@ -408,7 +408,7 @@ class MockData {
         bio: 'Corporate social responsibility.',
       ),
       WorkspaceEntity(
-        id: 20,
+        id: "20",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=20',
         workspaceName: 'Students',
         lastMessage: 'Workshop this weekend.',
@@ -422,7 +422,7 @@ class MockData {
         bio: 'Student projects and activities.',
       ),
       WorkspaceEntity(
-        id: 21,
+        id: "21",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=21',
         workspaceName: 'Writers',
         lastMessage: 'New article published.',
@@ -436,7 +436,7 @@ class MockData {
         bio: 'Content creators and authors.',
       ),
       WorkspaceEntity(
-        id: 22,
+        id: "22",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=22',
         workspaceName: 'Artists',
         lastMessage: 'Gallery updated.',
@@ -450,7 +450,7 @@ class MockData {
         bio: 'Creative art sharing space.',
       ),
       WorkspaceEntity(
-        id: 23,
+        id: "23",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=23',
         workspaceName: 'Athletes',
         lastMessage: 'Training schedule revised.',
@@ -464,7 +464,7 @@ class MockData {
         bio: 'Professional and amateur athletes.',
       ),
       WorkspaceEntity(
-        id: 24,
+        id: "24",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=24',
         workspaceName: 'Gamers',
         lastMessage: 'Tournament tomorrow.',
@@ -478,7 +478,7 @@ class MockData {
         bio: 'Gaming enthusiasts and tournaments.',
       ),
       WorkspaceEntity(
-        id: 25,
+        id: "25",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=25',
         workspaceName: 'Scientists',
         lastMessage: 'Research paper accepted.',
@@ -492,7 +492,7 @@ class MockData {
         bio: 'Science and innovation research.',
       ),
       WorkspaceEntity(
-        id: 26,
+        id: "26",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=26',
         workspaceName: 'Chefs',
         lastMessage: 'New recipe shared.',
@@ -506,7 +506,7 @@ class MockData {
         bio: 'Cooking and culinary team.',
       ),
       WorkspaceEntity(
-        id: 27,
+        id: "27",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=27',
         workspaceName: 'Musicians',
         lastMessage: 'Concert rehearsal scheduled.',
@@ -520,7 +520,7 @@ class MockData {
         bio: 'Band and solo musicians.',
       ),
       WorkspaceEntity(
-        id: 28,
+        id: "28",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=28',
         workspaceName: 'Doctors',
         lastMessage: 'Weekly meeting moved.',
@@ -534,7 +534,7 @@ class MockData {
         bio: 'Medical professionals group.',
       ),
       WorkspaceEntity(
-        id: 29,
+        id: "29",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=29',
         workspaceName: 'Teachers',
         lastMessage: 'Exam results published.',
@@ -548,7 +548,7 @@ class MockData {
         bio: 'School and college teachers.',
       ),
       WorkspaceEntity(
-        id: 30,
+        id: "30",
         workspaceAvatar: 'https://i.pravatar.cc/150?img=30',
         workspaceName: 'Volunteers',
         lastMessage: 'Beach cleanup event tomorrow.',

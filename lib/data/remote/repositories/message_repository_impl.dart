@@ -171,7 +171,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> searchMessageInWorkspace({
-    required int workspaceId,
+    required String workspaceId,
     required String searchMessage,
     int? limit,
     int? offset,

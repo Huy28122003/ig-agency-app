@@ -241,7 +241,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       FetchMessagesInGroupParams(
         groupId: groupId,
         limit: _limit,
-        oldestMessageId: state.chatMessages.last.message.id,
+        beforeMessageId: state.chatMessages.last.message.id,
       ),
     );
 
@@ -856,7 +856,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(state.copyWith(messageSearchResults: const [], indexSearchMessage: 0));
     final result = await _searchMessageInGroupUseCase.call(
       SearchMessageInGroupParams(
-        workspaceId: groupId.toInt(),
+        workspaceId: groupId,
         searchMessage: event.value,
       ),
     );

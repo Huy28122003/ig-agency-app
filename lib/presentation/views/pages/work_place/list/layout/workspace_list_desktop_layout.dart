@@ -26,7 +26,8 @@ class WorkspaceListDesktopLayout extends StatefulWidget {
       _WorkspaceListDesktopLayoutState();
 }
 
-class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout> {
+class _WorkspaceListDesktopLayoutState
+    extends State<WorkspaceListDesktopLayout> {
   late RefreshController _searchRefreshController;
   late RefreshController _refreshController;
   late WorkspaceListBloc _workspaceBloc;
@@ -180,7 +181,7 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                       return BlocSelector<
                         WorkspaceListBloc,
                         WorkspaceListState,
-                        int?
+                        String?
                       >(
                         selector: (state) {
                           return state.workspaceSelectedId;
@@ -228,7 +229,7 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: 1, // TODO hoannk: change id
+                                    groupId: "1", // TODO hoannk: change id
                                     groupName: workspace.workspaceName,
                                     groupAvatar: workspace.workspaceAvatar,
                                   ),
@@ -294,7 +295,7 @@ class _WorkspaceListDesktopLayoutState extends State<WorkspaceListDesktopLayout>
                                   return BlocSelector<
                                     WorkspaceListBloc,
                                     WorkspaceListState,
-                                    int?
+                                    String?
                                   >(
                                     selector: (state) {
                                       return state.workspaceSelectedId;

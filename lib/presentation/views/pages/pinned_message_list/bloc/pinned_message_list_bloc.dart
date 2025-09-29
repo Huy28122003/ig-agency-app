@@ -13,7 +13,7 @@ part 'pinned_message_list_state.dart';
 @injectable
 class PinnedMessageListBloc
     extends BaseBloc<PinnedMessageListEvent, PinnedMessageListState> {
-  late final int groupId;
+  late final String groupId;
   late final String groupName;
   late final String groupAvatar;
 

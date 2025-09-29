@@ -22,7 +22,7 @@ class MessageSearchResultsListPage
   });
 
   final String searchMessage;
-  final int workspaceId;
+  final String workspaceId;
   final String workspaceName;
 
   @override

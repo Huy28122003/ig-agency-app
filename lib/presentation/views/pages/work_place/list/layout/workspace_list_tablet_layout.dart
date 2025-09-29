@@ -180,7 +180,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                       return BlocSelector<
                         WorkspaceListBloc,
                         WorkspaceListState,
-                        int?
+                        String?
                       >(
                         selector: (state) {
                           return state.workspaceSelectedId;
@@ -294,7 +294,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                   return BlocSelector<
                                     WorkspaceListBloc,
                                     WorkspaceListState,
-                                    int?
+                                    String?
                                   >(
                                     selector: (state) {
                                       return state.workspaceSelectedId;
