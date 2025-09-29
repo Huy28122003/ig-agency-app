@@ -56,14 +56,14 @@ class ChatMessageUiModelHelper {
           shouldShowUserName = true;
         }
         // Same day, same sender, within 5 minutes with previous message, and not show time
-        else if (isSameSenderAsPrevious &&
+        if (isSameSenderAsPrevious &&
             isSameDayAsPrevious &&
             isWithinFiveMinutesWithPrevious &&
             !shouldShowTime) {
           shouldShowUserName = false;
           isContinuation = true;
         } // Not same sender or not within 5 minutes with previous message, but same day
-        else if ((!isSameSenderAsPrevious ||
+        if ((!isSameSenderAsPrevious ||
                 !isWithinFiveMinutesWithPrevious ||
                 shouldShowTime) &&
             isSameDayAsPrevious) {
@@ -99,14 +99,11 @@ class ChatMessageUiModelHelper {
         // Same day, same sender, within 5 minutes with next message, and not show time
         if (isSameSenderAsNext &&
             isSameDayAsNext &&
-            isWithinFiveMinutesWithNext &&
-            !shouldShowTime) {
+            isWithinFiveMinutesWithNext) {
           shouldShowAvatar = false;
         }
-        // Not same sender or not within 5 minutes or show time with next message
-        else if (!isSameSenderAsNext ||
-            !isWithinFiveMinutesWithNext ||
-            shouldShowTime) {
+        // Not same sender or not within 5 minutes
+        if (!isSameSenderAsNext || !isWithinFiveMinutesWithNext) {
           shouldShowAvatar = true;
         }
 
