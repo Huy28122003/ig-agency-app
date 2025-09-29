@@ -6,7 +6,6 @@ import 'package:injectable/injectable.dart';
 import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/entities/pinned_message_summary.dart';
-import '../../../../domain/entities/user.dart';
 import '../../../../domain/entities/user_entity.dart';
 import '../../../../domain/enums/message_enums.dart';
 
@@ -149,14 +148,6 @@ class MessageMockService {
     },
   ];
 
-  final List<Map<String, dynamic>> _mockStickers = [
-    {
-      "stickerUrl": "https://example.com/sticker1.png",
-      "width": 100,
-      "height": 100,
-    },
-  ];
-
   final List<Duration> _timeSteps = [
     Duration(minutes: 1),
     Duration(minutes: 5),
@@ -249,7 +240,7 @@ class MessageMockService {
       messages.add(
         MessageEntity(
           id: "msg_${groupId}_${i}_${current.millisecondsSinceEpoch}",
-          user: UserSummary(
+          user: UserEntity(
             id: user['id']!,
             name: user['name']!,
             avatar: user['avatarUrl']!,
@@ -275,7 +266,7 @@ class MessageMockService {
       case MessageContentType.text:
         final (text, segments) = mockText();
         return TextMessageContent(text: text, textSegments: segments);
-      case MessageContentType.image:
+      case MessageContentType.photo:
         final imageUrl = _mockImages[_random.nextInt(_mockImages.length)];
         final (width, height) = extractDimensions(imageUrl);
         return ImageMessageContent(
@@ -294,7 +285,7 @@ class MessageMockService {
           width: width,
           height: height,
         );
-      case MessageContentType.file:
+      case MessageContentType.document:
         final file = _mockFiles[_random.nextInt(_mockFiles.length)];
         return FileMessageContent(
           fileUrl: file['fileUrl'],
@@ -308,14 +299,8 @@ class MessageMockService {
           systemType: sys['systemType'],
           message: sys['message'],
         );
-      case MessageContentType.sticker:
-        final sticker = _mockStickers[_random.nextInt(_mockStickers.length)];
-        return StickerMessageContent(
-          stickerUrl: sticker['stickerUrl'],
-          width: sticker['width'],
-          height: sticker['height'],
-          fileSize: null,
-        );
+      default:
+        return TextMessageContent(text: 'Unknown message content');
     }
   }
 
@@ -566,9 +551,9 @@ class MessageMockService {
 
     final type = switch (content) {
       TextMessageContent _ => MessageContentType.text,
-      ImageMessageContent _ => MessageContentType.image,
+      ImageMessageContent _ => MessageContentType.photo,
       VideoMessageContent _ => MessageContentType.video,
-      FileMessageContent _ => MessageContentType.file,
+      FileMessageContent _ => MessageContentType.document,
       _ => throw Exception(),
     };
 
@@ -582,7 +567,7 @@ class MessageMockService {
 
     final sentMessage = MessageEntity(
       id: messageId,
-      user: UserSummary(id: user.id, name: user.name, avatar: user.avatar),
+      user: UserEntity(id: user.id, name: user.name, avatar: user.avatar),
       repliedMessage: reply,
       status: MessageStatus.sent,
       createdAt: DateTime.now(),

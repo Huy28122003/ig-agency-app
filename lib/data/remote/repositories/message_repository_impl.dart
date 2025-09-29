@@ -138,8 +138,6 @@ class MessageRepositoryImpl implements MessageRepository {
     String messageId,
   ) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
       await _messageRemoteDataSource.deleteMessageForEveryone(
         groupId,
         messageId,
@@ -152,8 +150,6 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> deleteMessageForYou(String groupId, String messageId) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
       await _messageRemoteDataSource.deleteMessageForYou(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);

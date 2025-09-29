@@ -569,17 +569,17 @@ class MockData {
     final random = Random();
 
     final senders = [
-      UserSummary(
+      UserEntity(
         id: "u1",
         name: "Alice",
         avatar: "https://i.pravatar.cc/100?img=1",
       ),
-      UserSummary(
+      UserEntity(
         id: "u2",
         name: "Bob",
         avatar: "https://i.pravatar.cc/100?img=2",
       ),
-      UserSummary(
+      UserEntity(
         id: "u3",
         name: "Charlie",
         avatar: "https://i.pravatar.cc/100?img=3",

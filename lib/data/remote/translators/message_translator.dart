@@ -1,5 +1,5 @@
 import 'package:ig_agency_app/data/remote/models/response/message_response_model.dart';
-import 'package:ig_agency_app/data/remote/translators/user_summary_translator.dart';
+import 'package:ig_agency_app/data/remote/translators/user_translator.dart';
 import 'package:ig_agency_app/data/remote/translators/entity_translator.dart';
 import 'package:ig_agency_app/domain/entities/message/message_entity.dart';
 import 'package:ig_agency_app/domain/entities/message/message_content.dart';
@@ -35,36 +35,48 @@ extension MessageTranslatorExtension on MessageResponseModel {
         if (photos != null && photos.isNotEmpty) {
           final firstPhoto = photos.first;
           return ImageMessageContent(
-            imageUrl: '',
+            imageUrl: firstPhoto.filePath ?? '',
             width: firstPhoto.width?.toDouble(),
             height: firstPhoto.height?.toDouble(),
+            path: firstPhoto.filePath,
           );
         }
         return ImageMessageContent(imageUrl: '', width: null, height: null);
 
       case 'video':
-        final thumbnail = video?.thumbnail;
+        final videoData = video;
+        final thumbnail = videoData?.thumbnail;
         return VideoMessageContent(
-          videoUrl: '',
-          duration: const Duration(seconds: 0),
-          thumbnailUrl: '',
-          width: thumbnail?.width?.toDouble(),
-          height: thumbnail?.height?.toDouble(),
+          videoUrl: videoData?.filePath ?? '',
+          duration: Duration(seconds: videoData?.duration ?? 0),
+          thumbnailUrl: thumbnail?.filePath ?? '',
+          width: videoData?.width.toDouble(),
+          height: videoData?.height.toDouble(),
+          path: videoData?.filePath,
         );
 
       case 'document':
-      case 'audio':
-      case 'voice':
         return FileMessageContent(
-          fileUrl: '',
+          fileUrl: document?.filePath ?? '',
           fileName: document?.fileName ?? '',
           fileSize: document?.fileSize ?? 0,
           fileType: FileType.document,
+          path: document?.filePath,
+        );
+
+      case 'audio':
+      case 'voice':
+        return FileMessageContent(
+          fileUrl: audio?.filePath ?? '',
+          fileName: audio?.fileName ?? '',
+          fileSize: audio?.fileSize ?? 0,
+          fileType: FileType.document,
+          path: audio?.filePath,
         );
 
       case 'sticker':
         return StickerMessageContent(
-          stickerUrl: '',
+          stickerUrl: sticker?.filePath ?? '',
           width: sticker?.width,
           height: sticker?.height,
           fileSize: sticker?.fileSize,
@@ -104,36 +116,48 @@ extension MessageTranslatorExtension on MessageResponseModel {
         if (photos != null && photos.isNotEmpty) {
           final firstPhoto = photos.first;
           return ImageMessageContent(
-            imageUrl: '',
+            imageUrl: firstPhoto.filePath ?? '',
             width: firstPhoto.width?.toDouble(),
             height: firstPhoto.height?.toDouble(),
+            path: firstPhoto.filePath,
           );
         }
         return ImageMessageContent(imageUrl: '', width: null, height: null);
 
       case 'video':
-        final thumbnail = replyMessage.video?.thumbnail;
+        final videoData = replyMessage.video;
+        final thumbnail = videoData?.thumbnail;
         return VideoMessageContent(
-          videoUrl: '',
-          duration: const Duration(seconds: 0),
-          thumbnailUrl: '',
-          width: thumbnail?.width?.toDouble(),
-          height: thumbnail?.height?.toDouble(),
+          videoUrl: videoData?.filePath ?? '',
+          duration: Duration(seconds: videoData?.duration ?? 0),
+          thumbnailUrl: thumbnail?.filePath ?? '',
+          width: videoData?.width.toDouble(),
+          height: videoData?.height.toDouble(),
+          path: videoData?.filePath,
         );
 
       case 'document':
-      case 'audio':
-      case 'voice':
         return FileMessageContent(
-          fileUrl: '',
+          fileUrl: replyMessage.document?.filePath ?? '',
           fileName: replyMessage.document?.fileName ?? '',
           fileSize: replyMessage.document?.fileSize ?? 0,
           fileType: FileType.document,
+          path: replyMessage.document?.filePath,
+        );
+
+      case 'audio':
+      case 'voice':
+        return FileMessageContent(
+          fileUrl: replyMessage.audio?.filePath ?? '',
+          fileName: replyMessage.audio?.fileName ?? '',
+          fileSize: replyMessage.audio?.fileSize ?? 0,
+          fileType: FileType.document,
+          path: replyMessage.audio?.filePath,
         );
 
       case 'sticker':
         return StickerMessageContent(
-          stickerUrl: replyMessage.sticker?.fileId ?? '',
+          stickerUrl: replyMessage.sticker?.filePath ?? '',
           width: replyMessage.sticker?.width,
           height: replyMessage.sticker?.height,
           fileSize: replyMessage.sticker?.fileSize,

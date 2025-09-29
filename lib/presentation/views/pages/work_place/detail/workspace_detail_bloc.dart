@@ -186,44 +186,58 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     LoadDataEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loading));
+    try {
+      emit(state.copyWith(pageStatus: PageStatus.loading));
 
-    final profile = await _getProfileInfoUseCase.call();
+      final profile = await _getProfileInfoUseCase.call();
 
-    final messagesResult = await _fetchMessageUseCase.call(
-      FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
-    );
+      final messagesResult = await _fetchMessageUseCase.call(
+        FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
+      );
 
-    final messages = messagesResult.reversed.toList();
-    final pagingStatus = messages.isEmpty
-        ? PagingStatus.empty
-        : (messages.length < _limit
-              ? PagingStatus.noMoreData
-              : PagingStatus.loadCompleted);
+      // Sắp xếp lại message theo createTime cao dần tức từ cũ nhất đến mới nhất
+      messagesResult.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-    final pinnedMessageSummaryResult =
-        await _getPinnedMessageSummaryGroupUseCase.call(
-          GetPinnedMessageSummaryGroupParams(groupId: groupId),
-        );
+      final messages = messagesResult.reversed.toList();
+      final pagingStatus = messages.isEmpty
+          ? PagingStatus.empty
+          : (messages.length < _limit
+                ? PagingStatus.noMoreData
+                : PagingStatus.loadCompleted);
 
-    final pinnedMessageSummary = pinnedMessageSummaryResult.toUIModel();
+      final pinnedMessageSummaryResult =
+          await _getPinnedMessageSummaryGroupUseCase.call(
+            GetPinnedMessageSummaryGroupParams(groupId: groupId),
+          );
 
-    final users = await _fetchMemberInGroupUseCase.call(
-      FetchMemberInGroupParams(groupId: groupId),
-    );
+      final pinnedMessageSummary = pinnedMessageSummaryResult.toUIModel();
 
-    emit(
-      state.copyWith(
-        profile: profile,
-        pageStatus: PageStatus.loaded,
-        chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
-        pagingStatus: pagingStatus,
-        pinnedMessageSummary: pinnedMessageSummary,
-        users: users,
-        usersSearch: users,
-        isSearchMode: event.isSearchMode,
-      ),
-    );
+      final users = await _fetchMemberInGroupUseCase.call(
+        FetchMemberInGroupParams(groupId: groupId),
+      );
+
+      emit(
+        state.copyWith(
+          profile: profile,
+          pageStatus: PageStatus.loaded,
+          chatMessages: messages.isEmpty
+              ? []
+              : _mapMessagesToUIModels(messages),
+          pagingStatus: pagingStatus,
+          pinnedMessageSummary: pinnedMessageSummary,
+          users: users,
+          usersSearch: users,
+          isSearchMode: event.isSearchMode,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.failure,
+          pageErrorMessage: e.toString(),
+        ),
+      );
+    }
   }
 
   Future<void> _onLoadMoreMessages(
@@ -235,35 +249,40 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       return;
     }
 
-    emit(state.copyWith(pagingStatus: PagingStatus.loading));
+    try {
+      emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-    final messagesResult = await _fetchMessageUseCase.call(
-      FetchMessagesInGroupParams(
-        groupId: groupId,
-        limit: _limit,
-        beforeMessageId: state.chatMessages.last.message.id,
-      ),
-    );
+      final messagesResult = await _fetchMessageUseCase.call(
+        FetchMessagesInGroupParams(
+          groupId: groupId,
+          limit: _limit,
+          beforeMessageId: state.chatMessages.last.message.id,
+        ),
+      );
 
-    // TODO hoannk: Remove delay
-    await Future.delayed(const Duration(seconds: 2));
+      // Sắp xếp lại message theo createTime cao dần tức từ cũ nhất đến mới nhất
+      messagesResult.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-    final messages = messagesResult.reversed.toList();
+      final messages = messagesResult.reversed.toList();
 
-    if (messages.isEmpty) {
-      return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+      if (messages.isEmpty) {
+        return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+      }
+
+      final updatedMessages = _addMessageList(leadingMessageList: messages);
+
+      emit(
+        state.copyWith(
+          chatMessages: updatedMessages,
+          pagingStatus: messages.length < _limit
+              ? PagingStatus.noMoreData
+              : PagingStatus.loadCompleted,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(pagingStatus: PagingStatus.loadCompleted));
+      // TODO: Show error message to user
     }
-
-    final updatedMessages = _addMessageList(leadingMessageList: messages);
-
-    emit(
-      state.copyWith(
-        chatMessages: updatedMessages,
-        pagingStatus: messages.length < _limit
-            ? PagingStatus.noMoreData
-            : PagingStatus.loadCompleted,
-      ),
-    );
   }
 
   Future<void> _onCloseReplyMessage(
@@ -435,51 +454,56 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     if (!hasMessage &&
         (state.pagingStatus != PagingStatus.noMoreData ||
             state.pagingStatus != PagingStatus.empty)) {
-      emit(state.copyWith(pagingStatus: PagingStatus.loading));
+      try {
+        emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-      final messagesResult = await _fetchMessageUseCase.call(
-        FetchMessagesInGroupParams(
-          groupId: groupId,
-          limit: _limit,
-          beforeMessageId: state.chatMessages.first.message.id,
-          targetMessageId: event.messageId,
-        ),
-      );
-
-      // TODO hoannk: Remove delay
-      await Future.delayed(const Duration(seconds: 2));
-
-      final messages = messagesResult.reversed.toList();
-
-      if (messages.isEmpty) {
-        return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
-      }
-
-      final pagingStatus = messages.length < _limit
-          ? PagingStatus.noMoreData
-          : PagingStatus.loadCompleted;
-
-      final updatedMessages = _addMessageList(leadingMessageList: messages);
-
-      final hasMessage = updatedMessages.any(
-        (uiModel) => uiModel.message.id == event.messageId,
-      );
-
-      if (hasMessage) {
-        emit(
-          state.copyWith(
-            chatMessages: updatedMessages,
-            pagingStatus: pagingStatus,
-            jumpToMessageId: messageId,
+        final messagesResult = await _fetchMessageUseCase.call(
+          FetchMessagesInGroupParams(
+            groupId: groupId,
+            limit: _limit,
+            beforeMessageId: state.chatMessages.first.message.id,
+            targetMessageId: event.messageId,
           ),
         );
-      } else {
-        emit(
-          state.copyWith(
-            chatMessages: updatedMessages,
-            pagingStatus: pagingStatus,
-          ),
+
+        // Sắp xếp lại message theo createTime cao dần tức từ cũ nhất đến mới nhất
+        messagesResult.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+        final messages = messagesResult.reversed.toList();
+
+        if (messages.isEmpty) {
+          return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+        }
+
+        final pagingStatus = messages.length < _limit
+            ? PagingStatus.noMoreData
+            : PagingStatus.loadCompleted;
+
+        final updatedMessages = _addMessageList(leadingMessageList: messages);
+
+        final hasMessage = updatedMessages.any(
+          (uiModel) => uiModel.message.id == event.messageId,
         );
+
+        if (hasMessage) {
+          emit(
+            state.copyWith(
+              chatMessages: updatedMessages,
+              pagingStatus: pagingStatus,
+              jumpToMessageId: messageId,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              chatMessages: updatedMessages,
+              pagingStatus: pagingStatus,
+            ),
+          );
+        }
+      } catch (e) {
+        emit(state.copyWith(pagingStatus: PagingStatus.loadCompleted));
+        // TODO: Show error message to user
       }
     } else if (hasMessage) {
       emit(state.copyWith(jumpToMessageId: messageId));
@@ -550,41 +574,42 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     emit(state.copyWith(processing: true));
-    final messages = List<ChatMessageUIModel>.from(state.chatMessages);
+    try {
+      final messages = List<ChatMessageUIModel>.from(state.chatMessages);
 
-    final uiModelIndex = messages.indexWhere(
-      (uiModel) => uiModel.message.id == event.messageId,
-    );
+      final messageIndex = messages.indexWhere(
+        (uiModel) => uiModel.message.id == event.messageId,
+      );
 
-    if (uiModelIndex >= 0) {
+      if (messageIndex < 0) {
+        emit(state.copyWith(processing: false));
+        return;
+      }
+
+      final currentMessage = messages[messageIndex];
+      final isPinned = currentMessage.message.isPinned;
+
+      if (isPinned) {
+        await _unpinMessageUseCase.call(
+          UnpinMessageParams(groupId: groupId, messageId: event.messageId),
+        );
+      } else {
+        await _pinMessageUseCase.call(
+          PinMessageParams(groupId: groupId, messageId: event.messageId),
+        );
+      }
+
+      add(GetPinnedMessageSummaryEvent());
+
+      messages[messageIndex] = currentMessage.copyWith(
+        message: currentMessage.message.copyWith(isPinned: !isPinned),
+      );
+
+      emit(state.copyWith(chatMessages: messages, processing: false));
+    } catch (e) {
       emit(state.copyWith(processing: false));
-      return;
+      // TODO: Show error message to user
     }
-
-    final currentMessage = messages[uiModelIndex];
-
-    final isPinned = currentMessage.message.isPinned;
-
-    if (isPinned) {
-      await _unpinMessageUseCase.call(
-        UnpinMessageParams(groupId: groupId, messageId: event.messageId),
-      );
-    } else {
-      await _pinMessageUseCase.call(
-        PinMessageParams(groupId: groupId, messageId: event.messageId),
-      );
-    }
-
-    add(GetPinnedMessageSummaryEvent());
-
-    // TODO hoannk: Remove delay
-    await Future.delayed(const Duration(seconds: 2));
-
-    messages[uiModelIndex] = currentMessage.copyWith(
-      message: currentMessage.message.copyWith(isPinned: !isPinned),
-    );
-
-    emit(state.copyWith(chatMessages: messages, processing: false));
   }
 
   Future<void> _onToggleShowTagOverlay(
@@ -624,8 +649,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         ),
       );
 
-      await Future.delayed(const Duration(seconds: 2));
-
       final updatedMessages = _deleteMessage(
         state.chatMessages,
         event.messageId,
@@ -634,6 +657,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       emit(state.copyWith(chatMessages: updatedMessages, processing: false));
     } catch (e) {
       emit(state.copyWith(processing: false));
+      // TODO: Show error message to user
     }
   }
 
@@ -658,6 +682,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       emit(state.copyWith(chatMessages: updatedMessages, processing: false));
     } catch (e) {
       emit(state.copyWith(processing: false));
+      // TODO: Show error message to user
     }
   }
 

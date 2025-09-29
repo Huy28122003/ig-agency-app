@@ -95,7 +95,10 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
       (uiModel) => uiModel.message.id == messageId,
     );
     if (index >= 0 && index < _bloc.state.chatMessages.length) {
-      listViewController.sliverController.jumpToIndex(index, offset: 0.5);
+      listViewController.sliverController.jumpToIndex(
+        index,
+        offsetBasedOnBottom: true,
+      );
     }
   }
 

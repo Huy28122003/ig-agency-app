@@ -175,7 +175,7 @@ class _TextMessageContent extends StatelessWidget {
             child: RichText(text: TextSpan(children: textSpans)),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               createdAt,
               style: TextStyle(

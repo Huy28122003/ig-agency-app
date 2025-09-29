@@ -1,4 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'pin_message_request_model.g.dart';
 
@@ -7,4 +7,6 @@ class PinMessageRequestModel {
   final String messageId;
 
   PinMessageRequestModel({required this.messageId});
+
+  Map<String, dynamic> toJson() => _$PinMessageRequestModelToJson(this);
 }
