@@ -59,7 +59,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
               _otpKey.currentState?.clearOtp();
               ToastUtil.showError(
                 context,
-                'Mã xác thực không đúng. Vui lòng thử lại.',
+                'The verification code is incorrect. Please try again.',
               );
             }
           },

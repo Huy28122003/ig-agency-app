@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/usecases/register_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
+import 'package:ig_agency_app/shared/commons/constants/string.dart';
 import 'package:ig_agency_app/shared/utils/validator_util.dart';
 import 'package:injectable/injectable.dart';
 
@@ -30,18 +31,30 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
       (event, emit) async => emit(state.copyWith(name: event.name)),
     );
 
-    handleSubEvent<EmailChangedEvent>(
-      (event, emit) async => emit(state.copyWith(email: event.email)),
-    );
+    handleSubEvent<EmailChangedEvent>((event, emit) async {
+      final isEmail = ValidatorUtil.isValidEmail(event.email);
+      emit(
+        state.copyWith(
+          email: event.email,
+          errorEmailMessage: isEmail ? null : emailIncorrectFormatMessage,
+        ),
+      );
+    });
 
     handleSubEvent<PasswordChangedEvent>(
       (event, emit) async => emit(state.copyWith(password: event.password)),
     );
 
-    handleSubEvent<ConfirmPasswordChangedEvent>(
-      (event, emit) async =>
-          emit(state.copyWith(confirmPassword: event.confirmPassword)),
-    );
+    handleSubEvent<ConfirmPasswordChangedEvent>((event, emit) async {
+      emit(
+        state.copyWith(
+          confirmPassword: event.confirmPassword,
+          errorConfirmPasswordMessage: event.confirmPassword == state.password
+              ? null
+              : confirmPasswordIncorrectMessage,
+        ),
+      );
+    });
 
     handleSubEvent<SubmitRegistrationEvent>(_onSubmitRegistration);
   }
