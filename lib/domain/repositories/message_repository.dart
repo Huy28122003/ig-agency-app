@@ -4,9 +4,9 @@ import '../entities/pinned_message_summary.dart';
 abstract class MessageRepository {
   Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset);
 
-  Future unpinMessage(String messageId);
+  Future unpinMessage(String groupId, String messageId);
 
-  Future pinMessage(String messageId);
+  Future pinMessage(String groupId, String messageId);
 
   Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(String groupId);
 

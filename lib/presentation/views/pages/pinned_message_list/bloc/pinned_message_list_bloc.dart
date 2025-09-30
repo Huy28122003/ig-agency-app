@@ -26,18 +26,7 @@ class PinnedMessageListBloc
     handleLoadData<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loading));
 
-      final result = await fetchPinnedMessageInGroupUseCase.call(
-        FetchPinnedMessageInGroupParams(
-          groupId: groupId,
-          limit: _limit,
-          offset: _offset,
-        ),
-      );
-
-      _offset += result.length;
-      final pagingStatus = _offset > result.length
-          ? PagingStatus.noMoreData
-          : PagingStatus.loadCompleted;
+      final (result, pagingStatus) = await _getPinnedMessages();
 
       emit(
         state.copyWith(
@@ -51,22 +40,28 @@ class PinnedMessageListBloc
     handleSubEvent<FetchDataEvent>((event, emit) async {
       emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-      final result = await fetchPinnedMessageInGroupUseCase.call(
-        FetchPinnedMessageInGroupParams(
-          groupId: groupId,
-          limit: _limit,
-          offset: _offset,
-        ),
-      );
-
-      _offset += result.length;
-      final pagingStatus = _offset > result.length
-          ? PagingStatus.noMoreData
-          : PagingStatus.loadCompleted;
+      final (result, pagingStatus) = await _getPinnedMessages();
 
       List<MessageEntity> curr = List.from(state.pinnedMessages);
       curr.addAll(result);
       emit(state.copyWith(pagingStatus: pagingStatus, pinnedMessages: curr));
     });
+  }
+
+  Future<(List<MessageEntity>, PagingStatus)> _getPinnedMessages() async {
+    final result = await fetchPinnedMessageInGroupUseCase.call(
+      FetchPinnedMessageInGroupParams(
+        groupId: groupId,
+        limit: _limit,
+        offset: _offset,
+      ),
+    );
+
+    _offset += result.length;
+    final pagingStatus = result.isEmpty || result.length < _limit
+        ? PagingStatus.noMoreData
+        : PagingStatus.loadCompleted;
+
+    return (result, pagingStatus);
   }
 }

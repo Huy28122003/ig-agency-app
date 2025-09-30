@@ -36,20 +36,18 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future unpinMessage(String messageId) async {
+  Future unpinMessage(String groupId, String messageId) async {
     try {
-      return await _messageRemoteDataSource.unpinMessage(messageId);
+      return await _messageRemoteDataSource.unpinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future pinMessage(String messageId) async {
+  Future pinMessage(String groupId, String messageId) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
-      return await _messageMockService.mockPinMessage(messageId);
+      return await _messageRemoteDataSource.pinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -61,13 +59,11 @@ class MessageRepositoryImpl implements MessageRepository {
     int limit,
     int offset,
   ) async {
-    // Todo: hoannk: rehandle this
-    // TODO: Sử dụng tạm mock tại repository
     try {
-      final pinnedMessages = _messageMockService.mockFetchPinnedMessages(
-        groupId: groupId,
-        limit: limit,
-        offset: offset,
+      final pinnedMessages = _messageRemoteDataSource.fetchPinnedMessage(
+        groupId,
+        limit,
+        offset,
       );
 
       return pinnedMessages;

@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:card_loading/card_loading.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
@@ -10,7 +9,6 @@ import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/pinned_message_list/bloc/pinned_message_list_bloc.dart';
 import 'package:ig_agency_app/presentation/views/ui_models/pinned_message_ui_model.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
-import 'package:ig_agency_app/shared/commons/enums/status.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../widgets/pinned_message_bubble.dart';
@@ -72,60 +70,48 @@ class _PinnedMessageListMobileLayoutState
         scrolledUnderElevation: 0,
       ),
       body: BlocBuilder<PinnedMessageListBloc, PinnedMessageListState>(
-        buildWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
-        builder: (context, state) {
-          if (state.pageStatus == PageStatus.loaded) {
-            return BlocBuilder<PinnedMessageListBloc, PinnedMessageListState>(
-              buildWhen: (prev, curr) =>
-                  prev.pagingStatus != curr.pagingStatus ||
-                  prev.pinnedMessages != curr.pinnedMessages,
-              builder: (_, state) {
-                if (state.pinnedMessages.isEmpty) {
-                  return _buildEmpty();
-                } else {
-                  return AppListView(
-                    enablePullDown: false,
-                    onLoadMore: () {
-                      _pinnedMessageListBloc.add(FetchDataEvent());
-                    },
-                    cardLoading: _buildLoading(),
-                    numCardLoading: 6,
-                    fetchStatus: state.pagingStatus,
-                    data: state.pinnedMessages,
-                    builder: (_, index) {
-                      final message = state.pinnedMessages[index];
-
-                      return PinnedMessageBubble(
-                        key: ValueKey(message.id),
-                        message: message.toUIModel(),
-                        hasArrow: true,
-                        onTap: () {
-                          context.router.push(
-                            WSDetailRoute(
-                              groupId: _pinnedMessageListBloc.groupId,
-                              groupName: _pinnedMessageListBloc.groupName,
-                              groupAvatar: _pinnedMessageListBloc.groupAvatar,
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    separatorBuilder: (_, _) => Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Divider(
-                        color: AppColors.outlineGrayStrong200,
-                        height: 2,
-                      ),
-                    ),
-                  );
-                }
-              },
-            );
-          }
-          if (state.pageStatus == PageStatus.loading) {
-            return Center(child: CupertinoActivityIndicator());
+        buildWhen: (prev, curr) =>
+            prev.pagingStatus != curr.pagingStatus ||
+            prev.pinnedMessages != curr.pinnedMessages,
+        builder: (_, state) {
+          if (state.pinnedMessages.isEmpty) {
+            return _buildEmpty();
           } else {
-            return SizedBox();
+            return AppListView(
+              enablePullDown: false,
+              onLoadMore: () {
+                _pinnedMessageListBloc.add(FetchDataEvent());
+              },
+              cardLoading: _buildLoading(),
+              numCardLoading: 6,
+              fetchStatus: state.pagingStatus,
+              data: state.pinnedMessages,
+              builder: (_, index) {
+                final message = state.pinnedMessages[index];
+
+                return PinnedMessageBubble(
+                  key: ValueKey(message.id),
+                  message: message.toUIModel(),
+                  hasArrow: true,
+                  onTap: () {
+                    context.router.push(
+                      WSDetailRoute(
+                        groupId: _pinnedMessageListBloc.groupId,
+                        groupName: _pinnedMessageListBloc.groupName,
+                        groupAvatar: _pinnedMessageListBloc.groupAvatar,
+                      ),
+                    );
+                  },
+                );
+              },
+              separatorBuilder: (_, _) => Padding(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                child: Divider(
+                  color: AppColors.outlineGrayStrong200,
+                  height: 2,
+                ),
+              ),
+            );
           }
         },
       ),
