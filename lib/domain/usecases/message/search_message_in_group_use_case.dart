@@ -23,7 +23,7 @@ class SearchMessageInGroupUseCase
 }
 
 class SearchMessageInGroupParams {
-  final int workspaceId;
+  final String workspaceId;
   final int? limit;
   final int? offset;
   final String searchMessage;

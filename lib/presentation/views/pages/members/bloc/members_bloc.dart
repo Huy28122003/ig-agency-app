@@ -14,7 +14,7 @@ part 'members_state.dart';
 class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
   final int _limit = 15;
   int _offset = 0;
-  late final int _workspaceId;
+  late final String _workspaceId;
   final GetUsersInGroupUseCase getUsersByWorkspaceIdUseCase;
 
   MembersBloc({required this.getUsersByWorkspaceIdUseCase})

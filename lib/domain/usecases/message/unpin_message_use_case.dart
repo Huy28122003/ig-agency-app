@@ -16,7 +16,8 @@ class UnpinMessageUseCase extends UseCase<void, UnpinMessageParams> {
 }
 
 class UnpinMessageParams {
+  final String groupId;
   final String messageId;
 
-  UnpinMessageParams({required this.messageId});
+  UnpinMessageParams({required this.groupId, required this.messageId});
 }

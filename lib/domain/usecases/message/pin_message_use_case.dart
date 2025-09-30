@@ -16,7 +16,8 @@ class PinMessageUseCase extends UseCase<void, PinMessageParams> {
 }
 
 class PinMessageParams {
+  final String groupId;
   final String messageId;
 
-  PinMessageParams({required this.messageId});
+  PinMessageParams({required this.groupId, required this.messageId});
 }

@@ -139,7 +139,7 @@ class PinnedMessageBubble extends StatelessWidget {
         );
       case FileMessageContent _:
         return _PinnedMessageFile(
-          fileFullName: '${content.fileName}.${content.fileExtension}',
+          fileFullName: content.fileName,
           fileSize: content.fileSize,
         );
       default:

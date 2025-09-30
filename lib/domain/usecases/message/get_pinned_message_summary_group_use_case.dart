@@ -22,7 +22,7 @@ class GetPinnedMessageSummaryGroupUseCase
 }
 
 class GetPinnedMessageSummaryGroupParams {
-  final int groupId;
+  final String groupId;
 
   GetPinnedMessageSummaryGroupParams({required this.groupId});
 }

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:ig_agency_app/domain/entities/user.dart';
+import 'package:ig_agency_app/domain/entities/user_entity.dart';
 
 import '../../enums/message_enums.dart';
 import 'message_content.dart';
@@ -18,11 +18,11 @@ class MessageEntity extends Equatable {
   });
 
   final String id;
-  final UserSummary user;
+  final UserEntity user;
   final DateTime createdAt;
   final MessageContent content;
   final MessageStatus status;
-  final int? groupId;
+  final String? groupId;
   final MessageEntity? repliedMessage;
   final bool isPinned;
   final DateTime? pinnedAt;
@@ -31,11 +31,11 @@ class MessageEntity extends Equatable {
 
   MessageEntity copyWith({
     String? id,
-    UserSummary? user,
+    UserEntity? user,
     DateTime? createdAt,
     MessageContent? content,
     MessageStatus? status,
-    int? groupId,
+    String? groupId,
     MessageEntity? repliedMessage,
     bool? isPinned,
     DateTime? pinnedAt,

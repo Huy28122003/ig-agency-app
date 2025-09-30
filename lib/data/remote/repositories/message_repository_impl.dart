@@ -57,7 +57,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
-    int groupId,
+    String groupId,
     int limit,
     int offset,
   ) async {
@@ -78,7 +78,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(
-    int groupId,
+    String groupId,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
@@ -92,7 +92,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> fetchMessagesInGroup(
-    int groupId,
+    String groupId,
     int limit,
     String? oldestMessageId,
     String? targetMessageId,
@@ -116,7 +116,7 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> sendMessage(
     String userId,
-    int groupId,
+    String groupId,
     String? replyMessageId,
     dynamic content,
   ) async {
@@ -157,7 +157,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<void> deleteConversation(int groupId) async {
+  Future<void> deleteConversation(String groupId) async {
     try {
       // Todo: hoannk: rehandle this
     } catch (e) {
@@ -167,7 +167,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> searchMessageInWorkspace({
-    required int workspaceId,
+    required String workspaceId,
     required String searchMessage,
     int? limit,
     int? offset,

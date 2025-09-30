@@ -21,7 +21,7 @@ class ForwardState extends BaseState<ForwardState> {
   final PagingStatus pagingStatus;
   final PagingStatus searchPagingStatus;
   final String searchKeyWord;
-  final List<int> sentGroups;
+  final List<String> sentGroups;
 
   @override
   ForwardState copyWith({
@@ -32,7 +32,7 @@ class ForwardState extends BaseState<ForwardState> {
     bool? processing,
     List<WorkspaceEntity>? workspaces,
     List<WorkspaceEntity>? workspacesSearch,
-    List<int>? sentGroups,
+    List<String>? sentGroups,
     PagingStatus? pagingStatus,
     PagingStatus? searchPagingStatus,
   }) {

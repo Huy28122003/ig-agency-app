@@ -1,4 +1,14 @@
-enum MessageContentType { text, image, video, file, system }
+enum MessageContentType {
+  text,
+  photo,
+  video,
+  audio,
+  voice,
+  document,
+  sticker,
+  unknown,
+  system,
+}
 
 enum MessageStatus { sent, delivered, read, failed, pending }
 

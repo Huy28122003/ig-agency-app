@@ -1,4 +1,3 @@
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/domain/repositories/workspace_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
@@ -20,7 +19,7 @@ class UpdateWorkspaceBioUseCase
 }
 
 class UpdateWorkspaceBioParams {
-  final int workspaceId;
+  final String workspaceId;
   final String bio;
 
   UpdateWorkspaceBioParams({required this.workspaceId, required this.bio});

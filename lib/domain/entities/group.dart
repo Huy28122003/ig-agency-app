@@ -7,7 +7,7 @@ class GroupSummary with _$GroupSummary {
   GroupSummary({required this.id, required this.name, required this.avatar});
 
   @override
-  final int id;
+  final String id;
   @override
   final String name;
   @override

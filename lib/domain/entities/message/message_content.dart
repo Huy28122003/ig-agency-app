@@ -7,9 +7,9 @@ sealed class MessageContent {
   final MessageContentType messageContentType;
 
   bool get isText => messageContentType == MessageContentType.text;
-  bool get isImage => messageContentType == MessageContentType.image;
+  bool get isImage => messageContentType == MessageContentType.photo;
   bool get isVideo => messageContentType == MessageContentType.video;
-  bool get isFile => messageContentType == MessageContentType.file;
+  bool get isFile => messageContentType == MessageContentType.document;
   bool get isSystem => messageContentType == MessageContentType.system;
   bool get isNotSystem => messageContentType != MessageContentType.system;
 }
@@ -31,7 +31,7 @@ class ImageMessageContent extends MessageContent {
     this.width,
     this.height,
     this.path,
-  }) : super(messageContentType: MessageContentType.image);
+  }) : super(messageContentType: MessageContentType.photo);
 }
 
 class VideoMessageContent extends MessageContent {
@@ -54,18 +54,16 @@ class VideoMessageContent extends MessageContent {
 class FileMessageContent extends MessageContent {
   final String fileUrl;
   final String fileName;
-  final String fileExtension;
   final int fileSize;
   final FileType? fileType;
   final String? path;
   const FileMessageContent({
     required this.fileUrl,
     required this.fileName,
-    required this.fileExtension,
     required this.fileSize,
     this.fileType,
     this.path,
-  }) : super(messageContentType: MessageContentType.file);
+  }) : super(messageContentType: MessageContentType.document);
 }
 
 class SystemMessageContent extends MessageContent {

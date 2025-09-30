@@ -19,7 +19,7 @@ class UpdateWorkspaceNotificationUseCase
 }
 
 class UpdateWorkspaceNotificationParams {
-  final int workspaceId;
+  final String workspaceId;
   final bool isMute;
 
   UpdateWorkspaceNotificationParams({
