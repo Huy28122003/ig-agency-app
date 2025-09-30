@@ -55,14 +55,9 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future updateUsername(String name) async {
     try {
-      // TODO hoannk: Call API update user name
-
-      final user = _ramCache.getLatestProfileInfo();
-      if (user == null) {
-        throw Exception('User not found');
-      }
-      final newUser = user.copyWith(name: name);
-      _ramCache.saveProfileInfo(newUser);
+      final profileInfo = await _remote.updateProfile(name: name);
+      _local.saveProfileInfo(profileInfo);
+      _ramCache.saveProfileInfo(profileInfo);
       return;
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -72,13 +67,9 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future updateProfileBio(String bio) async {
     try {
-      // TODO hoannk: Call API update user bio
-      final user = _ramCache.getLatestProfileInfo();
-      if (user == null) {
-        throw Exception('User not found');
-      }
-      final newUser = user.copyWith(bio: bio);
-      _ramCache.saveProfileInfo(newUser);
+      final profileInfo = await _remote.updateProfile(bio: bio);
+      _local.saveProfileInfo(profileInfo);
+      _ramCache.saveProfileInfo(profileInfo);
       return;
     } catch (e) {
       throw FailureConverter.convert(e);

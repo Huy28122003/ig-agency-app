@@ -7,6 +7,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
+import '../models/requests/update_profile_request_model.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/change_password_response_model.dart';
 import '../models/response/profile_info_response.dart';
@@ -36,5 +37,10 @@ abstract class ApiService {
   @POST('/')
   Future<PagedResponse<SearchResultResponse>> search(
     @Body() SearchRequestModel request,
+  );
+
+  @PUT('/profile')
+  Future<ProfileInfoResponse> updateProfile(
+    @Body() UpdateProfileRequestModel request,
   );
 }
