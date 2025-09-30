@@ -61,8 +61,6 @@ class MessageRepositoryImpl implements MessageRepository {
     String? search,
     String? beforeMessageId,
   ) async {
-    // Todo: hoannk: rehandle this
-    // TODO: Sử dụng tạm mock tại repository
     try {
       final pinnedMessages = await _messageRemoteDataSource.fetchPinnedMessage(
         groupId,

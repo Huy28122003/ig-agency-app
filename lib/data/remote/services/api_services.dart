@@ -88,11 +88,4 @@ abstract class ApiService {
     @Path('conversationId') String conversationId,
     @Path('messageId') String messageId,
   );
-
-  // @GET('/conversations/{conversationId}/members')
-  // Future<List<void>> getMembers(
-  //   @Path('conversationId') String conversationId,
-  //   @Query('limit') int limit,
-  //   @Query('offset') int offset,
-  // );
 }

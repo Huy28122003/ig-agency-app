@@ -6,23 +6,26 @@ import 'package:ig_agency_app/domain/entities/message/message_content.dart';
 import 'package:ig_agency_app/domain/entities/message/text_segment.dart';
 import 'package:ig_agency_app/domain/enums/message_enums.dart';
 
+import '../../../flavor_settings.dart';
+
 extension MessageTranslatorExtension on MessageResponseModel {
   MessageEntity toEntity() {
+    final baseUrl = env.baseUrl;
     return MessageEntity(
       id: id,
       user: from.toEntity(),
       createdAt: DateTime.fromMillisecondsSinceEpoch(date * 1000),
-      content: _mapContent(),
+      content: _mapContent(baseUrl),
       status: MessageStatus.sent,
       repliedMessage: replyToMessage != null
-          ? _mapReplyMessage(replyToMessage!)
+          ? _mapReplyMessage(baseUrl, replyToMessage!)
           : null,
       isPinned: pinned,
       pinnedAt: null,
     );
   }
 
-  MessageContent _mapContent() {
+  MessageContent _mapContent(String baseUrl) {
     switch (type.toLowerCase()) {
       case 'text':
         return TextMessageContent(
@@ -35,7 +38,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
         if (photos != null && photos.isNotEmpty) {
           final firstPhoto = photos.first;
           return ImageMessageContent(
-            imageUrl: firstPhoto.filePath ?? '',
+            imageUrl: '$baseUrl/${firstPhoto.filePath}',
             width: firstPhoto.width?.toDouble(),
             height: firstPhoto.height?.toDouble(),
             path: firstPhoto.filePath,
@@ -47,9 +50,9 @@ extension MessageTranslatorExtension on MessageResponseModel {
         final videoData = video;
         final thumbnail = videoData?.thumbnail;
         return VideoMessageContent(
-          videoUrl: videoData?.filePath ?? '',
+          videoUrl: '$baseUrl/${videoData?.filePath}',
           duration: Duration(seconds: videoData?.duration ?? 0),
-          thumbnailUrl: thumbnail?.filePath ?? '',
+          thumbnailUrl: '$baseUrl/${thumbnail?.filePath}',
           width: videoData?.width.toDouble(),
           height: videoData?.height.toDouble(),
           path: videoData?.filePath,
@@ -57,7 +60,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
 
       case 'document':
         return FileMessageContent(
-          fileUrl: document?.filePath ?? '',
+          fileUrl: '$baseUrl/${document?.filePath}',
           fileName: document?.fileName ?? '',
           fileSize: document?.fileSize ?? 0,
           fileType: FileType.document,
@@ -67,7 +70,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
       case 'audio':
       case 'voice':
         return FileMessageContent(
-          fileUrl: audio?.filePath ?? '',
+          fileUrl: '$baseUrl/${audio?.filePath}',
           fileName: audio?.fileName ?? '',
           fileSize: audio?.fileSize ?? 0,
           fileType: FileType.document,
@@ -76,7 +79,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
 
       case 'sticker':
         return StickerMessageContent(
-          stickerUrl: sticker?.filePath ?? '',
+          stickerUrl: '$baseUrl/${sticker?.filePath}',
           width: sticker?.width,
           height: sticker?.height,
           fileSize: sticker?.fileSize,
@@ -93,12 +96,15 @@ extension MessageTranslatorExtension on MessageResponseModel {
     return entities!.map((entity) => entity.toTextSegment()).toList();
   }
 
-  MessageEntity _mapReplyMessage(ReplyMessageResponseModel replyMessage) {
+  MessageEntity _mapReplyMessage(
+    String baseUrl,
+    ReplyMessageResponseModel replyMessage,
+  ) {
     return MessageEntity(
       id: replyMessage.id,
       user: replyMessage.from.toEntity(),
       createdAt: DateTime.fromMillisecondsSinceEpoch(replyMessage.date * 1000),
-      content: _mapReplyContent(replyMessage),
+      content: _mapReplyContent(baseUrl, replyMessage),
       status: MessageStatus.sent,
       repliedMessage: null, // Reply message không có nested reply
       isPinned: replyMessage.pinned,
@@ -106,7 +112,10 @@ extension MessageTranslatorExtension on MessageResponseModel {
     );
   }
 
-  MessageContent _mapReplyContent(ReplyMessageResponseModel replyMessage) {
+  MessageContent _mapReplyContent(
+    String baseUrl,
+    ReplyMessageResponseModel replyMessage,
+  ) {
     switch (replyMessage.type.toLowerCase()) {
       case 'text':
         return TextMessageContent(text: replyMessage.text ?? '');
@@ -116,7 +125,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
         if (photos != null && photos.isNotEmpty) {
           final firstPhoto = photos.first;
           return ImageMessageContent(
-            imageUrl: firstPhoto.filePath ?? '',
+            imageUrl: '$baseUrl/${firstPhoto.filePath}',
             width: firstPhoto.width?.toDouble(),
             height: firstPhoto.height?.toDouble(),
             path: firstPhoto.filePath,
@@ -128,9 +137,9 @@ extension MessageTranslatorExtension on MessageResponseModel {
         final videoData = replyMessage.video;
         final thumbnail = videoData?.thumbnail;
         return VideoMessageContent(
-          videoUrl: videoData?.filePath ?? '',
+          videoUrl: '$baseUrl/${videoData?.filePath}',
           duration: Duration(seconds: videoData?.duration ?? 0),
-          thumbnailUrl: thumbnail?.filePath ?? '',
+          thumbnailUrl: '$baseUrl/${thumbnail?.filePath}',
           width: videoData?.width.toDouble(),
           height: videoData?.height.toDouble(),
           path: videoData?.filePath,
@@ -138,7 +147,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
 
       case 'document':
         return FileMessageContent(
-          fileUrl: replyMessage.document?.filePath ?? '',
+          fileUrl: '$baseUrl/${replyMessage.document?.filePath}',
           fileName: replyMessage.document?.fileName ?? '',
           fileSize: replyMessage.document?.fileSize ?? 0,
           fileType: FileType.document,
@@ -148,7 +157,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
       case 'audio':
       case 'voice':
         return FileMessageContent(
-          fileUrl: replyMessage.audio?.filePath ?? '',
+          fileUrl: '$baseUrl/${replyMessage.audio?.filePath}',
           fileName: replyMessage.audio?.fileName ?? '',
           fileSize: replyMessage.audio?.fileSize ?? 0,
           fileType: FileType.document,
@@ -157,7 +166,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
 
       case 'sticker':
         return StickerMessageContent(
-          stickerUrl: replyMessage.sticker?.filePath ?? '',
+          stickerUrl: '$baseUrl/${replyMessage.sticker?.filePath}',
           width: replyMessage.sticker?.width,
           height: replyMessage.sticker?.height,
           fileSize: replyMessage.sticker?.fileSize,
