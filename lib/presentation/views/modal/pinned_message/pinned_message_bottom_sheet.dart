@@ -92,54 +92,6 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
     super.dispose();
   }
 
-  Future<void> _showOptionSheet(BuildContext context, String messageId) async {
-    final cubit = context.read<PinnedMessageBottomSheetCubit>();
-    final result = await showCupertinoModalPopup<bool>(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.68),
-      builder: (BuildContext context) => CupertinoActionSheet(
-        actions: <CupertinoActionSheetAction>[
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(
-              'Unpin',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.colorsBlue,
-                fontSize: 17,
-                fontWeight: FontWeight.w500,
-                height: 1.29,
-                letterSpacing: -0.43,
-              ),
-            ),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
-          child: Text(
-            'Cancel',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.colorsBlue,
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              height: 1.29,
-              letterSpacing: -0.43,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (result == true) {
-      cubit.unpinMessage(messageId);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -285,10 +237,12 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
                                     if (messageId == null) return;
                                     widget.onTap?.call(messageId);
                                   },
-                                  onLongPress: () {
+                                  unpin: () {
                                     final messageId = message.id;
                                     if (messageId == null) return;
-                                    _showOptionSheet(context, messageId);
+                                    context
+                                        .read<PinnedMessageBottomSheetCubit>()
+                                        .unpinMessage(messageId);
                                   },
                                 );
                               },

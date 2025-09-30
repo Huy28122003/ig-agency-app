@@ -39,55 +39,6 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
     super.dispose();
   }
 
-  Future<void> _showOptionSheet(BuildContext context, String messageId) async {
-    final result = await showCupertinoModalPopup<bool>(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.68),
-      builder: (BuildContext context) => CupertinoActionSheet(
-        actions: <CupertinoActionSheetAction>[
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(
-              'Unpin',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.colorsBlue,
-                fontSize: 17,
-                // fontFamily: 'SF Pro',
-                fontWeight: FontWeight.w500,
-                height: 1.29,
-                letterSpacing: -0.43,
-              ),
-            ),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
-          child: Text(
-            'Cancel',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.colorsBlue,
-              fontSize: 17,
-              // fontFamily: 'SF Pro',
-              fontWeight: FontWeight.w600,
-              height: 1.29,
-              letterSpacing: -0.43,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (result == true) {
-      _pinnedMessageBloc.add(UnpinMessageEvent(messageId: messageId));
-    }
-  }
-
   void _onRefresh() {
     _pinnedMessageBloc.add(RefreshPinnedMessageEvent());
   }
@@ -167,10 +118,13 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
                   return PinnedMessageBubble(
                     key: ValueKey(message.id),
                     message: message,
-                    onTap: () {
+                    onTapToShowUnpin: true,
+                    unpin: () {
                       final messageId = message.id;
                       if (messageId == null) return;
-                      _showOptionSheet(context, messageId);
+                      _pinnedMessageBloc.add(
+                        UnpinMessageEvent(messageId: messageId),
+                      );
                     },
                   );
                 },
@@ -190,4 +144,3 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
     );
   }
 }
-

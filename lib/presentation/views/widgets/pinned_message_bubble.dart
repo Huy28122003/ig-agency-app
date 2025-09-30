@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
@@ -18,21 +19,70 @@ class PinnedMessageBubble extends StatelessWidget {
     super.key,
     required this.message,
     this.onTap,
-    this.onLongPress,
+    this.unpin,
     this.hasArrow = false,
+    this.onTapToShowUnpin = false,
   });
 
   final PinnedMessageUIModel message;
   final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
+  final VoidCallback? unpin;
   final bool hasArrow;
+  final bool onTapToShowUnpin;
+
+  Future<void> _showOptionSheet(BuildContext context) async {
+    final result = await showCupertinoModalPopup<bool>(
+      context: Navigator.of(context, rootNavigator: true).context,
+      barrierColor: Colors.black.withValues(alpha: 0.68),
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            child: Text(
+              'Unpin',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.colorsBlue,
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                height: 1.29,
+                letterSpacing: -0.43,
+              ),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
+          child: Text(
+            'Cancel',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.colorsBlue,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              height: 1.29,
+              letterSpacing: -0.43,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (result == true) {
+      unpin?.call();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      onLongPress: onLongPress,
+      onTap: onTapToShowUnpin ? () => _showOptionSheet(context) : onTap,
+      onLongPress: onTapToShowUnpin ? null : () => _showOptionSheet(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 12,
@@ -156,6 +206,7 @@ class _PinnedMessageText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hostName = this.hostName;
     return Container(
       padding: const EdgeInsets.only(top: 4, left: 12, right: 12, bottom: 8),
       decoration: ShapeDecoration(
@@ -167,10 +218,10 @@ class _PinnedMessageText extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(text: TextSpan(children: textSpans)),
-          if (hostName != null) ...[
+          if (hostName != null && hostName.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
-              hostName!,
+              hostName,
               style: TextStyle(
                 color: AppColors.textDefaultTextDefault,
                 fontSize: 16,

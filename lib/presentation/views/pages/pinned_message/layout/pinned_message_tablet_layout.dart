@@ -143,12 +143,12 @@ class _PinnedMessageTabletLayoutState extends State<PinnedMessageTabletLayout> {
       body: SafeArea(
         child: BlocConsumer<PinnedMessageBloc, PinnedMessageState>(
           listenWhen: (previous, current) =>
-          previous.pagingStatus != current.pagingStatus,
+              previous.pagingStatus != current.pagingStatus,
           listener: (context, state) {
             _refreshController.refresh(state.pagingStatus);
           },
           buildWhen: (previous, current) =>
-          previous.messages != current.messages,
+              previous.messages != current.messages,
           builder: (context, state) {
             if (state.messages.isEmpty) {
               return const EmptyPinnedMessage();
