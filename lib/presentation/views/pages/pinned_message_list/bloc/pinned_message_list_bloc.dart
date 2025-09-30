@@ -41,9 +41,9 @@ class PinnedMessageListBloc
   }
 
   Future<void> _onLoadData(
-      LoadDataEvent event,
-      Emitter<PinnedMessageListState> emit,
-      ) async {
+    LoadDataEvent event,
+    Emitter<PinnedMessageListState> emit,
+  ) async {
     emit(state.copyWith(pageStatus: PageStatus.loaded));
 
     final (result, pagingStatus) = await _getPinnedMessages();
