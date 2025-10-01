@@ -13,6 +13,7 @@ import 'package:ig_agency_app/shared/utils/logger.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/notification/received_notification_entity.dart';
+import '../../shared/commons/constants/string.dart';
 import 'notification_service.dart';
 import 'package:ig_agency_app/dependencies/notification/notification_web_services_stub.dart'
     if (dart.library.js_interop) 'package:ig_agency_app/dependencies/notification/notification_web_services_web.dart';
@@ -49,13 +50,17 @@ class FirebaseNotificationService extends NotificationService {
   Stream<String> get onTokenRefresh => _firebaseMessaging.onTokenRefresh;
 
   @override
-  Future<String?> getDeviceToken() {
-    return _firebaseMessaging.getToken();
+  Future<String?> getDeviceToken() async {
+    String? vapidKey;
+    if (kIsWeb) vapidKey = kVapidKey;
+    await NotificationWebServices.requestPermission();
+    return await _firebaseMessaging.getToken(vapidKey: vapidKey);
   }
 
   @override
   Future init() async {
     if (!kIsWeb) {
+      await _firebaseMessaging.requestPermission();
       return await _initializeMobileApplication();
     }
     await _initializeWebApplication();

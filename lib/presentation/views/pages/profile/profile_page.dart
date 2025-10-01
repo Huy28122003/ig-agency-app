@@ -10,7 +10,12 @@ import 'profile_bloc.dart';
 
 @RoutePage()
 class ProfilePage extends BasePage<ProfileBloc, ProfileEvent, ProfileState> {
-  const ProfilePage({super.key});
+  const ProfilePage(this.email, {super.key});
+
+  final String email;
+
+  @override
+  ProfileBloc get buildBloc => super.buildBloc..email =email;
 
   @override
   void onInitState(BuildContext context) {

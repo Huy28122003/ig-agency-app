@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/app/app_bloc.dart';
+import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
 import 'package:ig_agency_app/domain/repositories/notification_repository.dart';
 import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/domain/usecases/logout_use_case.dart';
@@ -32,6 +33,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     this._userRepository,
     this._notificationRepository,
     this._appBloc,
+    this._authRepository,
   ) : super(SettingHomeState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -45,6 +47,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
   final NotificationRepository _notificationRepository;
+  final AuthRepository _authRepository;
   final AppBloc _appBloc;
 
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
@@ -75,17 +78,19 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
       _getDarkModeUseCase.call(),
       _getInAppAlertsUseCase.call(null),
       _fetchCurrentUserUseCase.call(),
+      _authRepository.getEmail(),
     ]);
     final darkModeResult = results[0] as bool;
     final isEnableNotification = results[1] as bool;
     final userResult = results[2] as ProfileInfoEntity;
+    final email = results[3] as String?;
     emit(
       state.copyWith(
         isDarkMode: darkModeResult,
         isInAppAlerts: isEnableNotification,
         name: userResult.name,
         avatar: userResult.avatar,
-        email: 'userResult.email',
+        email: email,
       ),
     );
   }

@@ -10,4 +10,8 @@ abstract class AuthLocalDataSource {
   Future<void> revokeTokens();
 
   Future logout();
+
+  Future saveEmail(String email);
+
+  Future<String?> getEmail();
 }

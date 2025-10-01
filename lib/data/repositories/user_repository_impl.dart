@@ -97,7 +97,7 @@ class UserRepositoryImpl implements UserRepository {
         name: "Nguyễn Văn Quang",
         email: "email",
         avatar:
-            "https://media.istockphoto.com/id/814423752/vi/anh/con-m%E1%BA%AFt-c%E1%BB%A7a-ng%C6%B0%E1%BB%9Di-m%E1%BA%ABu-v%E1%BB%9Bi-trang-%C4%91i%E1%BB%83m-ngh%E1%BB%87-thu%E1%BA%ADt-%C4%91%E1%BA%A7y-m%C3%A0u-s%E1%BA%AFc-c%E1%BA%ADn-c%E1%BA%A3nh.jpg?s=1024x1024&w=is&k=20&c=g9JektNW0igwf2u2mT9uqSLkhzR91ZYviuVLXuhy2JQ=",
+        "https://media.istockphoto.com/id/814423752/vi/anh/con-m%E1%BA%AFt-c%E1%BB%A7a-ng%C6%B0%E1%BB%9Di-m%E1%BA%ABu-v%E1%BB%9Bi-trang-%C4%91i%E1%BB%83m-ngh%E1%BB%87-thu%E1%BA%ADt-%C4%91%E1%BA%A7y-m%C3%A0u-s%E1%BA%AFc-c%E1%BA%ADn-c%E1%BA%A3nh.jpg?s=1024x1024&w=is&k=20&c=g9JektNW0igwf2u2mT9uqSLkhzR91ZYviuVLXuhy2JQ=",
       );
     } catch (e) {
       throw FailureConverter.convert(e);
