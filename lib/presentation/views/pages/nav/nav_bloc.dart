@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:ig_agency_app/domain/enums/role.dart';
+import 'package:ig_agency_app/domain/repositories/notification_repository.dart';
 import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
@@ -14,8 +15,11 @@ part 'nav_state.dart';
 
 @injectable
 class NavBloc extends BaseBloc<NavEvent, NavState> {
-  NavBloc(this._fetchCurrentUserUseCase, this._userRepository)
-    : super(NavState()) {
+  NavBloc(
+    this._fetchCurrentUserUseCase,
+    this._userRepository,
+    this._notificationRepository,
+  ) : super(NavState()) {
     _subscription = _userRepository.fetchProfileInfo.listen((
       profileInformation,
     ) {
@@ -23,6 +27,7 @@ class NavBloc extends BaseBloc<NavEvent, NavState> {
     });
     handleSubEvent<LoadDataEvent>((event, emit) async {
       _fetchCurrentUserUseCase.call(true);
+      _notificationRepository.requestPermission();
     });
     handleSubEvent<OnChangeTabEvent>((event, emit) async {
       emit(state.copyWith(currentIndex: event.index));
@@ -34,6 +39,7 @@ class NavBloc extends BaseBloc<NavEvent, NavState> {
 
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
+  final NotificationRepository _notificationRepository;
   StreamSubscription? _subscription;
 
   @override

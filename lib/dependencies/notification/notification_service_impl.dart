@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,6 +13,7 @@ import 'package:ig_agency_app/shared/utils/logger.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/notification/received_notification_entity.dart';
+import '../../shared/commons/constants/string.dart';
 import 'notification_service.dart';
 import 'package:ig_agency_app/dependencies/notification/notification_web_services_stub.dart'
     if (dart.library.js_interop) 'package:ig_agency_app/dependencies/notification/notification_web_services_web.dart';
@@ -45,18 +47,20 @@ class FirebaseNotificationService extends NotificationService {
   final String darwinNotificationCategoryText = 'textCategory';
 
   @override
-  Stream<String> deviceTokenRefresh() {
-    return _firebaseMessaging.onTokenRefresh;
-  }
+  Stream<String> get onTokenRefresh => _firebaseMessaging.onTokenRefresh;
 
   @override
-  Future<String?> getDeviceToken() {
-    return _firebaseMessaging.getToken();
+  Future<String?> getDeviceToken() async {
+    String? vapidKey;
+    if (kIsWeb) vapidKey = kVapidKey;
+    await NotificationWebServices.requestPermission();
+    return await _firebaseMessaging.getToken(vapidKey: vapidKey);
   }
 
   @override
   Future init() async {
     if (!kIsWeb) {
+      await _firebaseMessaging.requestPermission();
       return await _initializeMobileApplication();
     }
     await _initializeWebApplication();
@@ -65,6 +69,8 @@ class FirebaseNotificationService extends NotificationService {
   Future _initializeWebApplication() async {
     try {
       FirebaseMessaging.onMessage.listen((message) {
+        // todo: anh.trandang : handle notification
+        logger.i("Received notification: \n $message");
         onMessageStream.sink.add(
           message.data.toEntity(
             title: message.notification?.title,
@@ -79,38 +85,40 @@ class FirebaseNotificationService extends NotificationService {
 
   Future _initializeMobileApplication() async {
     try {
-      final List<DarwinNotificationCategory> darwinNotificationCategories =
-          <DarwinNotificationCategory>[
-            DarwinNotificationCategory(
-              darwinNotificationCategoryText,
-              actions: <DarwinNotificationAction>[
-                DarwinNotificationAction.text(
-                  'text_1',
-                  'Action 1',
-                  buttonTitle: 'Send',
-                  placeholder: 'Placeholder',
-                ),
-              ],
-            ),
-          ];
+      AndroidInitializationSettings? initializationSettingsAndroid;
+      DarwinInitializationSettings? initializationSettingsIOS;
+      if (Platform.isIOS) {
+        final List<DarwinNotificationCategory> darwinNotificationCategories =
+            <DarwinNotificationCategory>[
+              DarwinNotificationCategory(
+                darwinNotificationCategoryText,
+                actions: <DarwinNotificationAction>[
+                  DarwinNotificationAction.text(
+                    'text_1',
+                    'Action 1',
+                    buttonTitle: 'Send',
+                    placeholder: 'Placeholder',
+                  ),
+                ],
+              ),
+            ];
+        initializationSettingsIOS = DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+          notificationCategories: darwinNotificationCategories,
+        );
+      }
+      if (Platform.isAndroid) {
+        initializationSettingsAndroid = AndroidInitializationSettings(
+          '@mipmap/launcher_icon',
+        );
+      }
 
-      const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('mipmap/ic_launcher');
-
-      /// Note: permissions aren't requested here just to demonstrate that can be
-      /// done later
-      final DarwinInitializationSettings initializationSettingsDarwin =
-          DarwinInitializationSettings(
-            requestAlertPermission: false,
-            requestBadgePermission: false,
-            requestSoundPermission: false,
-            notificationCategories: darwinNotificationCategories,
-          );
       final InitializationSettings initializationSettings =
           InitializationSettings(
             android: initializationSettingsAndroid,
-            iOS: initializationSettingsDarwin,
-            macOS: initializationSettingsDarwin,
+            iOS: initializationSettingsIOS,
           );
       await flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
@@ -132,6 +140,7 @@ class FirebaseNotificationService extends NotificationService {
         onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
       );
       FirebaseMessaging.onMessage.listen((message) {
+        print("Receive message: $message");
         onMessageStream.sink.add(
           message.data.toEntity(
             title: message.notification?.title,
@@ -157,7 +166,7 @@ class FirebaseNotificationService extends NotificationService {
   Future<bool?> requestPermission() async {
     try {
       if (kIsWeb) {
-        await NotificationWebServices.requestPermission();
+        return await NotificationWebServices.requestPermission();
       }
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
           FlutterLocalNotificationsPlugin();
@@ -194,8 +203,10 @@ class FirebaseNotificationService extends NotificationService {
     FlutterLocalNotificationsPlugin();
     const NotificationDetails notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
-        'androidNotification',
-        'pushNotification',
+        'high_importance_channel',
+        'Thông báo đẩy',
+        importance: Importance.max,
+        priority: Priority.high,
       ),
     );
     await flutterLocalNotificationsPlugin.show(

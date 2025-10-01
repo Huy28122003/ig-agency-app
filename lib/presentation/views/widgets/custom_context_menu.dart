@@ -23,7 +23,7 @@ const _kMenuInitialTranslate = 0.0;
 // Bottom padding when menu touches screen bottom
 const _kBottomPaddingWhenTouchingEdge = 10.0;
 
-enum MenuAlignment { left, center, right }
+enum MenuAlignment { left, right }
 
 /// Calculate menu and child positions
 class _PositionCalculator {
@@ -33,62 +33,23 @@ class _PositionCalculator {
     required double menuWidth,
     required double childOffsetX,
     required double childWidth,
-    required double horizontalPadding,
     required double safeAreaLeft,
     required double safeAreaRight,
   }) {
     double calculatedLeft;
+
     switch (alignment) {
       case MenuAlignment.left:
-        calculatedLeft = horizontalPadding > 0
-            ? horizontalPadding
-            : childOffsetX;
-        break;
-      case MenuAlignment.center:
-        calculatedLeft = screenWidth / 2 - (menuWidth / 2);
+        calculatedLeft = childOffsetX;
         break;
       case MenuAlignment.right:
-        calculatedLeft = horizontalPadding > 0
-            ? (screenWidth - horizontalPadding - menuWidth)
-            : (childOffsetX + childWidth - menuWidth);
+        calculatedLeft = childOffsetX + childWidth - menuWidth;
         break;
     }
 
     return calculatedLeft.clamp(
       safeAreaLeft,
-      screenWidth - menuWidth - horizontalPadding - safeAreaRight,
-    );
-  }
-
-  static double calculateChildLeft({
-    required MenuAlignment alignment,
-    required double screenWidth,
-    required double childWidth,
-    required double childOffsetX,
-    required double horizontalPadding,
-    required double safeAreaLeft,
-    required double safeAreaRight,
-  }) {
-    double calculatedLeft;
-    switch (alignment) {
-      case MenuAlignment.left:
-        calculatedLeft = horizontalPadding > 0
-            ? horizontalPadding
-            : childOffsetX;
-        break;
-      case MenuAlignment.center:
-        calculatedLeft = screenWidth / 2 - (childWidth / 2);
-        break;
-      case MenuAlignment.right:
-        calculatedLeft = horizontalPadding > 0
-            ? (screenWidth - horizontalPadding - childWidth)
-            : childOffsetX;
-        break;
-    }
-
-    return calculatedLeft.clamp(
-      safeAreaLeft,
-      screenWidth - childWidth - horizontalPadding - safeAreaRight,
+      screenWidth - menuWidth - safeAreaRight,
     );
   }
 
@@ -178,16 +139,14 @@ class CustomContextMenu extends StatefulWidget {
     super.key,
     required this.child,
     required this.actions,
-    this.menuAlignment = MenuAlignment.center,
+    this.menuAlignment = MenuAlignment.left,
     this.childAlignment = MenuAlignment.left,
-    this.horizontalPadding,
   });
 
   final Widget child;
   final List<CustomContextMenuAction> actions;
   final MenuAlignment menuAlignment;
   final MenuAlignment childAlignment;
-  final double? horizontalPadding;
 
   @override
   State<CustomContextMenu> createState() => _CustomContextMenuState();
@@ -230,6 +189,8 @@ class _CustomContextMenuState extends State<CustomContextMenu>
     final Size childSize = renderBox.size;
     final Offset childOffset = renderBox.localToGlobal(Offset.zero);
 
+    final overlay = Overlay.of(context, rootOverlay: true);
+
     _overlayEntry = OverlayEntry(
       builder: (context) {
         return Material(
@@ -255,7 +216,6 @@ class _CustomContextMenuState extends State<CustomContextMenu>
                 borderRadius: BorderRadius.circular(_kBorderRadius),
                 menuAlignment: widget.menuAlignment,
                 childAlignment: widget.childAlignment,
-                horizontalPadding: widget.horizontalPadding,
                 onHideMenu: _hideContextMenu,
                 child: widget.child,
               ),
@@ -265,7 +225,7 @@ class _CustomContextMenuState extends State<CustomContextMenu>
       },
     );
 
-    Overlay.of(context).insert(_overlayEntry!);
+    overlay.insert(_overlayEntry!);
     _animationController.forward(from: 0.0);
   }
 
@@ -303,9 +263,8 @@ class _ContextMenuContent extends StatelessWidget {
     required this.borderRadius,
     required this.onHideMenu,
     required this.child,
-    this.menuAlignment = MenuAlignment.center,
+    this.menuAlignment = MenuAlignment.left,
     this.childAlignment = MenuAlignment.left,
-    this.horizontalPadding,
   });
 
   final AnimationController animation;
@@ -319,7 +278,6 @@ class _ContextMenuContent extends StatelessWidget {
   final Widget child;
   final MenuAlignment menuAlignment;
   final MenuAlignment childAlignment;
-  final double? horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -339,22 +297,9 @@ class _ContextMenuContent extends StatelessWidget {
       menuWidth: menuWidth,
       childOffsetX: childOffset.dx,
       childWidth: childSize.width,
-      horizontalPadding: horizontalPadding ?? 0,
       safeAreaLeft: safeAreaPadding.left,
       safeAreaRight: safeAreaPadding.right,
     );
-
-    final double childCalculatedLeft = _PositionCalculator.calculateChildLeft(
-      alignment: childAlignment,
-      screenWidth: screenWidth,
-      childWidth: childSize.width,
-      childOffsetX: childOffset.dx,
-      horizontalPadding: horizontalPadding ?? 0,
-      safeAreaLeft: safeAreaPadding.left,
-      safeAreaRight: safeAreaPadding.right,
-    );
-
-    final double deltaX = childCalculatedLeft - childOffset.dx;
 
     Widget menuWidgetContent = Material(
       color: Colors.transparent,
@@ -417,7 +362,6 @@ class _ContextMenuContent extends StatelessWidget {
     if (needsScrolling) {
       return _ScrollAnimation(
         animation: animation,
-        deltaX: deltaX,
         childOffset: childOffset,
         childSize: childSize,
         menuCalculatedLeft: menuCalculatedLeft,
@@ -438,7 +382,6 @@ class _ContextMenuContent extends StatelessWidget {
 
       return _Animation(
         animation: animation,
-        deltaX: deltaX,
         deltaY: deltaY,
         childOffset: childOffset,
         childSize: childSize,
@@ -455,7 +398,6 @@ class _ScrollAnimation extends StatefulWidget {
   const _ScrollAnimation({
     required this.child,
     required this.animation,
-    required this.deltaX,
     required this.childOffset,
     required this.childSize,
     required this.menuCalculatedLeft,
@@ -467,7 +409,6 @@ class _ScrollAnimation extends StatefulWidget {
 
   final Widget child;
   final AnimationController animation;
-  final double deltaX;
   final Offset childOffset;
   final Size childSize;
   final double menuCalculatedLeft;
@@ -481,17 +422,12 @@ class _ScrollAnimation extends StatefulWidget {
 }
 
 class _ScrollAnimationState extends State<_ScrollAnimation> {
-  late final Animatable<double> _translateXTween;
   late final Animatable<double> _menuScaleTween;
   late final Animatable<double> _menuOpacityTween;
 
   @override
   void initState() {
     super.initState();
-    _translateXTween = Tween<double>(
-      begin: _kMenuInitialTranslate,
-      end: widget.deltaX,
-    ).chain(CurveTween(curve: Curves.easeOutCubic));
 
     _menuScaleTween = Tween<double>(
       begin: _kMenuInitialScale,
@@ -509,9 +445,6 @@ class _ScrollAnimationState extends State<_ScrollAnimation> {
     return AnimatedBuilder(
       animation: widget.animation,
       builder: (context, childWidget) {
-        final currentChildTranslateX = _translateXTween.evaluate(
-          widget.animation,
-        );
         final currentMenuScale = _menuScaleTween.evaluate(widget.animation);
         final currentMenuOpacity = _menuOpacityTween.evaluate(widget.animation);
 
@@ -536,13 +469,7 @@ class _ScrollAnimationState extends State<_ScrollAnimation> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(
-                        left:
-                            widget.childOffset.dx +
-                            (widget.deltaX > 0
-                                ? -currentChildTranslateX
-                                : currentChildTranslateX),
-                      ),
+                      padding: EdgeInsets.only(left: widget.childOffset.dx),
                       child: SizedBox(
                         width: widget.childSize.width,
                         height: widget.childSize.height,
@@ -578,7 +505,6 @@ class _Animation extends StatefulWidget {
   const _Animation({
     required this.child,
     required this.animation,
-    required this.deltaX,
     required this.deltaY,
     required this.childOffset,
     required this.childSize,
@@ -589,7 +515,6 @@ class _Animation extends StatefulWidget {
 
   final Widget child;
   final AnimationController animation;
-  final double deltaX;
   final double deltaY;
   final Offset childOffset;
   final Size childSize;
@@ -602,7 +527,6 @@ class _Animation extends StatefulWidget {
 }
 
 class _AnimationState extends State<_Animation> {
-  late final Animatable<double> _translateXTween;
   late final Animatable<double> _translateYTween;
   late final Animatable<double> _menuScaleTween;
   late final Animatable<double> _menuOpacityTween;
@@ -610,18 +534,17 @@ class _AnimationState extends State<_Animation> {
   @override
   void initState() {
     super.initState();
-    _translateXTween = Tween<double>(
-      begin: _kMenuInitialTranslate,
-      end: widget.deltaX,
-    ).chain(CurveTween(curve: Curves.easeOutCubic));
+
     _translateYTween = Tween<double>(
       begin: _kMenuInitialTranslate,
       end: widget.deltaY,
     ).chain(CurveTween(curve: Curves.easeOutCubic));
+
     _menuScaleTween = Tween<double>(
       begin: _kMenuInitialScale,
       end: _kMenuFinalScale,
     ).chain(CurveTween(curve: Curves.easeOutBack));
+
     _menuOpacityTween = Tween<double>(
       begin: _kMenuInitialOpacity,
       end: _kMenuFinalOpacity,
@@ -633,9 +556,6 @@ class _AnimationState extends State<_Animation> {
     return AnimatedBuilder(
       animation: widget.animation,
       builder: (context, childWidget) {
-        final currentChildTranslateX = _translateXTween.evaluate(
-          widget.animation,
-        );
         final currentChildTranslateY = _translateYTween.evaluate(
           widget.animation,
         );
@@ -654,11 +574,7 @@ class _AnimationState extends State<_Animation> {
               ),
             ),
             Positioned(
-              left:
-                  widget.childOffset.dx +
-                  (widget.deltaX > 0
-                      ? -currentChildTranslateX
-                      : currentChildTranslateX),
+              left: widget.childOffset.dx,
               top: widget.childOffset.dy + currentChildTranslateY,
               width: widget.childSize.width,
               height: widget.childSize.height,

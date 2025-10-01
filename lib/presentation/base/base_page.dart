@@ -118,9 +118,9 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
       ],
       child: ResponsiveBuilder(
         breakpoints: const ScreenBreakpoints(
-          desktop: 1300, // >1200 mới coi là desktop
-          tablet: 600,   // từ 600 → 1199 coi là tablet
-          watch: 200,    // dưới 200 coi là watch
+          desktop: 1300,
+          tablet: 600,
+          watch: 200,
         ),
         builder: (context, sizingInfo) {
           return BlocBuilder<B, S>(

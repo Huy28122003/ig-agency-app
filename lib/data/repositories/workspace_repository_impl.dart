@@ -4,9 +4,9 @@ import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/shared/commons/models/pagination.dart';
 import 'package:injectable/injectable.dart';
-import '../../../domain/repositories/workspace_repository.dart';
-import '../../../shared/commons/failure_converter.dart';
-import '../../../shared/utils/mock_data.dart';
+import '../../domain/repositories/workspace_repository.dart';
+import '../../shared/commons/failure_converter.dart';
+import '../../shared/utils/mock_data.dart';
 
 @Injectable(as: WorkspaceRepository)
 class WorkspaceRepositoryImpl implements WorkspaceRepository {

@@ -29,8 +29,8 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   final DeleteAccountUseCase _deleteAccountUseCase;
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
-
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
+  late final String email;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);

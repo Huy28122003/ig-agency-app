@@ -49,7 +49,11 @@ class SettingHomeDesktopLayout extends StatelessWidget {
                     children: [
                       ProfileSettingHomeSection(
                         onEdit: () {
-                          context.router.push(const ProfileRoute());
+                          final email = context
+                              .read<SettingHomeBloc>()
+                              .state
+                              .email;
+                          context.router.push(ProfileRoute(email: email));
                         },
                       ),
                       const GeneralSettingHomeSection(),
