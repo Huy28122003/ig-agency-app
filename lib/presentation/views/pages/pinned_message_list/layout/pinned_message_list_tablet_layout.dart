@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
-import '../../../../routers/app_router.dart';
 import '../../../widgets/app_list_view.dart';
 import '../../../widgets/pinned_message_bubble.dart';
 import '../bloc/pinned_message_list_bloc.dart';
@@ -95,13 +94,7 @@ class _PinnedMessageListTabletLayoutState
                   message: message,
                   hasArrow: true,
                   onTap: () {
-                    context.router.push(
-                      WSDetailRoute(
-                        groupId: _pinnedMessageListBloc.groupId,
-                        groupName: _pinnedMessageListBloc.groupName,
-                        groupAvatar: _pinnedMessageListBloc.groupAvatar,
-                      ),
-                    );
+                    context.router.pop(message.id);
                   },
                   unpin: () {
                     final messageId = message.id;
