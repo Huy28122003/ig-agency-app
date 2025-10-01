@@ -76,7 +76,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
               icon: Assets.icons.icInAppAlerts.svg(width: 32, height: 32),
               title: 'setting.notification'.tr(),
               trailing: BlocSelector<SettingHomeBloc, SettingHomeState, bool>(
-                selector: (state) => state.isInAppAlerts,
+                selector: (state) => state.isEnableNotification,
                 builder: (context, isInAppAlerts) {
                   return SizedBox(
                     width: 51,
@@ -84,14 +84,14 @@ class GeneralSettingHomeSection extends StatelessWidget {
                     child: CupertinoSwitch(
                       value: isInAppAlerts,
                       onChanged: (_) {
-                        settingHomeBloc.add(ToggleNotificationEvent());
+                        settingHomeBloc.add(ChangeNotificationEvent());
                       },
                     ),
                   );
                 },
               ),
               onTap: () {
-                settingHomeBloc.add(ToggleNotificationEvent());
+                settingHomeBloc.add(ChangeNotificationEvent());
               },
             ),
           ],

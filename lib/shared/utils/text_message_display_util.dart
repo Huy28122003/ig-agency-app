@@ -174,8 +174,6 @@ class TextMessageDisplayUtil {
       // Check link đầu tiên
       if (isLink) {
         link ??= text.substring(start, end);
-        print('hoannk');
-        print(link);
         hostName ??= Uri.tryParse(link)?.host;
       }
 

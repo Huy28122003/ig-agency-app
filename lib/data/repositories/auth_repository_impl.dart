@@ -10,20 +10,20 @@ import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:ig_agency_app/shared/utils/device_manager.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../cache/ram_cache.dart';
-import '../app/auth_remote_data_source.dart';
+import '../cache/ram_cache.dart';
+import '../remote/app/auth_remote_data_source.dart';
 
 @Injectable(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   final RamCache _ramCache;
-  final AuthLocalDataSource _authLocalDataSource;
-  final AuthRemoteDataSource _authRemoteDataSource;
+  final AuthLocalDataSource _localDataSource;
+  final AuthRemoteDataSource _remoteDataSource;
   final UserLocalDataSource _userLocalDataSource;
 
   AuthRepositoryImpl(
-    this._authRemoteDataSource,
+    this._remoteDataSource,
     this._ramCache,
-    this._authLocalDataSource,
+    this._localDataSource,
     this._userLocalDataSource,
   );
 
@@ -40,7 +40,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<String> getAccessToken() async {
     try {
-      final accessToken = await _authLocalDataSource.getAccessToken();
+      final accessToken = await _localDataSource.getAccessToken();
       return accessToken ?? "";
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -65,11 +65,12 @@ class AuthRepositoryImpl implements AuthRepository {
         deviceToken: deviceToken,
       );
 
-      final response = await _authRemoteDataSource.login(request);
+      final response = await _remoteDataSource.login(request);
       final profileInfo = response.user.toEntity();
       _ramCache.saveProfileInfo(profileInfo);
+      await _localDataSource.saveEmail(email);
+      await _localDataSource.saveAccessToken(response.accessToken);
       await _userLocalDataSource.saveProfileInfo(profileInfo);
-      await _authLocalDataSource.saveAccessToken(response.accessToken);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -88,8 +89,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // Simulate login process
       _ramCache.clearUserData();
-      await _authRemoteDataSource.logout(request);
-      await _authLocalDataSource.logout();
+      await _remoteDataSource.logout(request);
+      await _localDataSource.logout();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -98,7 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future saveAccessToken(String token) async {
     try {
-      await _authLocalDataSource.saveAccessToken(token);
+      await _localDataSource.saveAccessToken(token);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -107,7 +108,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future register(String name, String email, String password) async {
     try {
-      await _authRemoteDataSource.register(name, email, password);
+      await _remoteDataSource.register(name, email, password);
       return;
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -117,7 +118,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<ForgotPasswordResponseModel> sendOtpCode(String email) async {
     try {
-      return await _authRemoteDataSource.sendOtpCode(email);
+      return await _remoteDataSource.sendOtpCode(email);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -126,7 +127,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future sendNewPassword(ForgotPasswordRequestModel request) async {
     try {
-      return await _authRemoteDataSource.sendNewPassword(request);
+      return await _remoteDataSource.sendNewPassword(request);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -135,7 +136,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future changePassword(String currentPassword, String newPassword) async {
     try {
-      return await _authRemoteDataSource.changePassword(
+      return await _remoteDataSource.changePassword(
         currentPassword,
         newPassword,
       );
@@ -147,10 +148,20 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future deleteAccount(String userId) async {
     try {
-      await _authRemoteDataSource.deleteAccount(userId);
+      await _remoteDataSource.deleteAccount(userId);
       return await clearAccessToken();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
+  }
+
+  @override
+  Future<String?> getEmail() async {
+    return await _localDataSource.getEmail();
+  }
+
+  @override
+  Future saveEmail(String email) async {
+    return await _localDataSource.saveEmail(email);
   }
 }
