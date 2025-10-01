@@ -50,4 +50,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future logout() async {
     await _localStorageManager.deleteAll();
   }
+
+  @override
+  Future<String?> getEmail() async {
+    return await _localStorageManager.getValue<String>(LocalStorageKeys.email);
+  }
+
+  @override
+  Future saveEmail(String email) async {
+    return await _localStorageManager.setValue(LocalStorageKeys.email, email);
+  }
 }
