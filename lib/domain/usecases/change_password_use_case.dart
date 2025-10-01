@@ -14,6 +14,7 @@ class ChangePasswordUseCase extends UseCase<void, ChangePasswordParam> {
     return await _authRepository.changePassword(
       param.currentPassword,
       param.newPassword,
+      param.passwordConfirm,
     );
   }
 }
@@ -22,8 +23,10 @@ class ChangePasswordParam {
   ChangePasswordParam({
     required this.currentPassword,
     required this.newPassword,
+    required this.passwordConfirm,
   });
 
   final String currentPassword;
   final String newPassword;
+  final String passwordConfirm;
 }

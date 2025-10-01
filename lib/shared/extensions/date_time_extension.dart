@@ -38,9 +38,9 @@ extension DateTimeExtension on DateTime {
   String toShortDateString() {
     final now = DateTime.now();
     if (year == now.year) {
-      return DateFormat('MMM d').format(this);
+      return DateFormat('h:mm a, MMM d').format(this);
     } else {
-      return DateFormat('MMM d, yyyy').format(this);
+      return DateFormat('h:mm a, MMM d, yyyy').format(this);
     }
   }
 

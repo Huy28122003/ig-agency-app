@@ -9,7 +9,6 @@ import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
 import '../models/requests/update_profile_request_model.dart';
 import '../models/response/login_response_model.dart';
-import '../models/response/change_password_response_model.dart';
 import '../models/response/profile_info_response.dart';
 
 part 'api_services.g.dart';
@@ -24,10 +23,8 @@ abstract class ApiService {
   @POST('/register')
   Future register(@Body() RegistrationRequestModel requestModel);
 
-  @POST('/change-password')
-  Future<ChangePasswordResponseModel> changePassword(
-    @Body() ChangePasswordRequestModel requestModel,
-  );
+  @PUT('/password')
+  Future<void> changePassword(@Body() ChangePasswordRequestModel requestModel);
 
   // Profile
   @GET('/profile')

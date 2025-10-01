@@ -17,7 +17,11 @@ abstract class AuthRepository {
 
   Future sendNewPassword(String email, String newPassword);
 
-  Future changePassword(String currentPassword, String newPassword);
+  Future changePassword(
+    String currentPassword,
+    String newPassword,
+    String passwordConfirm,
+  );
 
   Future deleteAccount(String userId);
 
