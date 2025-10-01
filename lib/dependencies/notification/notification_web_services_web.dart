@@ -4,9 +4,6 @@ import 'package:web/web.dart' as web;
 class NotificationWebServices {
   static Future<bool> requestPermission() async {
     try {
-      // Kiểm tra service worker
-      final registrations =  web.window.navigator.serviceWorker.getRegistrations();
-      print("ServiceWorker registrations: $registrations");
       // permission: 'default' | 'granted' | 'denied'
       final String current = web.Notification.permission;
       if (current == 'granted') return true;

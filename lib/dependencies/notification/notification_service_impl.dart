@@ -69,7 +69,8 @@ class FirebaseNotificationService extends NotificationService {
   Future _initializeWebApplication() async {
     try {
       FirebaseMessaging.onMessage.listen((message) {
-        print('sjhdgfhjdg    $message');
+        // todo: anh.trandang : handle notification
+        logger.i("Received notification: \n $message");
         onMessageStream.sink.add(
           message.data.toEntity(
             title: message.notification?.title,
