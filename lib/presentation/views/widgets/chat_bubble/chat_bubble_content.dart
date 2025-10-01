@@ -91,7 +91,7 @@ class _TextMessageContent extends StatelessWidget {
     if (isOnlyLink) {
       return Container(
         clipBehavior: Clip.antiAlias,
-        constraints: BoxConstraints(maxWidth: maxWidth),
+        constraints: BoxConstraints(maxWidth: maxWidth * 2 / 3),
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerGrayStrong2,
           borderRadius: BorderRadius.circular(12),
@@ -102,51 +102,93 @@ class _TextMessageContent extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.antiAlias,
-      constraints: BoxConstraints(maxWidth: maxWidth),
+      constraints: BoxConstraints(
+        maxWidth: link != null ? maxWidth * 2 / 3 : maxWidth,
+      ),
       decoration: BoxDecoration(
         color: isMe
             ? AppColors.surfaceContainerSecondarySecondaryDefault
             : AppColors.surfaceContainerGrayStrong2,
         borderRadius: BorderRadius.circular(12),
       ),
+      child: link != null
+          ? _buildContentWithLink(textSpans: textSpans, link: link)
+          : _buildContentWithoutLink(textSpans: textSpans),
+    );
+  }
+
+  Widget _buildContentWithLink({
+    required List<TextSpan> textSpans,
+    required String link,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: RichText(text: TextSpan(children: textSpans)),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Text(
+                      createdAt,
+                      style: TextStyle(
+                        color: isMe
+                            ? AppColors.textDefaultTextInverted
+                            : AppColors.textDefaultTextSub2,
+                        fontSize: 12,
+                        fontFamily: FontFamily.segoeUI,
+                        fontWeight: FontWeight.w400,
+                        height: 1.33,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        _LinkPreview(url: link),
+      ],
+    );
+  }
+
+  Widget _buildContentWithoutLink({required List<TextSpan> textSpans}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: RichText(text: TextSpan(children: textSpans)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        createdAt,
-                        style: TextStyle(
-                          color: isMe
-                              ? AppColors.textDefaultTextInverted
-                              : AppColors.textDefaultTextSub2,
-                          fontSize: 12,
-                          fontFamily: FontFamily.segoeUI,
-                          fontWeight: FontWeight.w400,
-                          height: 1.33,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: RichText(text: TextSpan(children: textSpans)),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              createdAt,
+              style: TextStyle(
+                color: isMe
+                    ? AppColors.textDefaultTextInverted
+                    : AppColors.textDefaultTextSub2,
+                fontSize: 12,
+                fontFamily: FontFamily.segoeUI,
+                fontWeight: FontWeight.w400,
+                height: 1.33,
+              ),
             ),
           ),
-          if (link != null) _LinkPreview(url: link),
         ],
       ),
     );
@@ -195,11 +237,13 @@ class _LinkPreview extends StatelessWidget {
                     ),
                     placeholder: (_, _) => Container(
                       height: _kMaxHeightImageLinkPreview,
+                      width: double.infinity,
                       color: AppColors.surfaceContainerGrayStrong2,
                       child: const Center(child: CupertinoActivityIndicator()),
                     ),
                     errorWidget: (_, _, _) => Container(
                       height: _kMaxHeightImageLinkPreview,
+                      width: double.infinity,
                       color: Color.fromARGB(255, 195, 197, 201),
                     ),
                   ),

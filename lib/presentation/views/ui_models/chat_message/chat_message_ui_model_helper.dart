@@ -43,7 +43,7 @@ class ChatMessageUiModelHelper {
       final previous = previousMessage?.message;
       if (previous != null &&
           previous.repliedMessage == null &&
-          previous.content.isSystem) {
+          previous.content.isNotSystem) {
         final bool isSameSenderAsPrevious =
             currentMessage.message.user.id == previous.user.id;
         final Duration timeDiffWithPrevious = currentMessage.message.createdAt
@@ -56,17 +56,21 @@ class ChatMessageUiModelHelper {
           shouldShowUserName = true;
         }
         // Same day, same sender, within 5 minutes with previous message, and not show time
-        else if (isSameSenderAsPrevious &&
+        if (isSameSenderAsPrevious &&
             isSameDayAsPrevious &&
             isWithinFiveMinutesWithPrevious &&
             !shouldShowTime) {
           shouldShowUserName = false;
           isContinuation = true;
         } // Not same sender or not within 5 minutes with previous message, but same day
-        else if ((!isSameSenderAsPrevious ||
+        if ((!isSameSenderAsPrevious ||
                 !isWithinFiveMinutesWithPrevious ||
                 shouldShowTime) &&
             isSameDayAsPrevious) {
+          shouldShowUserName = true;
+          isContinuation = false;
+        }
+        if (previousMessage?.shouldShowTime ?? false) {
           shouldShowUserName = true;
           isContinuation = false;
         }
@@ -79,7 +83,7 @@ class ChatMessageUiModelHelper {
       final next = nextMessage?.message;
       if (next != null &&
           next.repliedMessage == null &&
-          next.content.isSystem) {
+          next.content.isNotSystem) {
         final bool isSameSenderAsNext =
             currentMessage.message.user.id == next.user.id;
         final Duration timeDiffWithNext = next.createdAt.difference(
@@ -95,14 +99,15 @@ class ChatMessageUiModelHelper {
         // Same day, same sender, within 5 minutes with next message, and not show time
         if (isSameSenderAsNext &&
             isSameDayAsNext &&
-            isWithinFiveMinutesWithNext &&
-            !shouldShowTime) {
+            isWithinFiveMinutesWithNext) {
           shouldShowAvatar = false;
         }
-        // Not same sender or not within 5 minutes or show time with next message
-        else if (!isSameSenderAsNext ||
-            !isWithinFiveMinutesWithNext ||
-            shouldShowTime) {
+        // Not same sender or not within 5 minutes
+        if (!isSameSenderAsNext || !isWithinFiveMinutesWithNext) {
+          shouldShowAvatar = true;
+        }
+
+        if (nextMessage?.shouldShowTime ?? false) {
           shouldShowAvatar = true;
         }
         // No next message or next message has reply or next message is system message
@@ -113,6 +118,7 @@ class ChatMessageUiModelHelper {
       // current message is the first message of the day or show time
       if (shouldShowTime) {
         shouldShowUserName = true;
+        isContinuation = false;
       }
     }
 

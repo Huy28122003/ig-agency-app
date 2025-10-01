@@ -157,7 +157,6 @@ class _PinnedMessageText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.only(top: 4, left: 12, right: 12, bottom: 8),
       decoration: ShapeDecoration(
         color: AppColors.surfaceContainerGrayStrong2,
@@ -285,7 +284,6 @@ class _PinnedMessageFile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       clipBehavior: Clip.antiAlias,
       decoration: ShapeDecoration(
@@ -293,11 +291,12 @@ class _PinnedMessageFile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 8,
         children: [
           Assets.icons.icCircleDocumentPrimary.svg(width: 24, height: 24),
-          Expanded(
+          Flexible(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

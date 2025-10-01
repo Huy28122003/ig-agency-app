@@ -39,7 +39,7 @@ class NavTabletLayout extends StatelessWidget {
                           ),
                           child: BlocBuilder<NavBloc, NavState>(
                             buildWhen: (pre, cur) =>
-                                pre.currentIndex != cur.currentIndex,
+                            pre.currentIndex != cur.currentIndex,
                             builder: (context, state) {
                               return AutoTabsRouter(
                                 lazyLoad: true,
