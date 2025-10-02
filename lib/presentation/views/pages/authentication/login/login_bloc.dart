@@ -47,7 +47,7 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     try {
-      emit(state.copyWith(processing: true));
+      emit(state.copyWith(processing: true, isSuccess: false));
       _resetErrorMessages(emit);
 
       await _loginUseCase(
@@ -57,11 +57,5 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     } catch (error) {
       handleError(emit, error);
     }
-  }
-
-  @override
-  void handleError(Emitter<LoginState> emit, Object error) {
-    // TODO: implement handleError
-    super.handleError(emit, error);
   }
 }

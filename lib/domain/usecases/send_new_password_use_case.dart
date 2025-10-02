@@ -5,13 +5,13 @@ import 'package:injectable/injectable.dart';
 import '../repositories/auth_repository.dart';
 
 @injectable
-class SendNewPasswordUseCase extends UseCase<bool, ForgotPasswordRequestModel> {
+class SendNewPasswordUseCase extends UseCase<void, ForgotPasswordRequestModel> {
   SendNewPasswordUseCase(this._authRepository);
 
   final AuthRepository _authRepository;
 
   @override
-  Future<bool> call(ForgotPasswordRequestModel request) async {
+  Future call(ForgotPasswordRequestModel request) async {
     return await _authRepository.sendNewPassword(request);
   }
 }

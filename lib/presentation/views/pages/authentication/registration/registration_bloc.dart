@@ -36,7 +36,7 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
       emit(
         state.copyWith(
           email: event.email,
-          errorEmailMessage: isEmail ? null : emailIncorrectFormatMessage,
+          errorEmailMessage: isEmail ? '' : emailIncorrectFormatMessage,
         ),
       );
     });
@@ -46,11 +46,12 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
     );
 
     handleSubEvent<ConfirmPasswordChangedEvent>((event, emit) async {
+      final isValid = event.confirmPassword == state.password;
       emit(
         state.copyWith(
           confirmPassword: event.confirmPassword,
-          errorConfirmPasswordMessage: event.confirmPassword == state.password
-              ? null
+          errorConfirmPasswordMessage: isValid
+              ? ''
               : confirmPasswordIncorrectMessage,
         ),
       );
@@ -59,25 +60,12 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
     handleSubEvent<SubmitRegistrationEvent>(_onSubmitRegistration);
   }
 
-  void _resetErrorMessages(Emitter<RegistrationState> emit) {
-    emit(
-      state.copyWith(
-        errorNameMessage: null,
-        errorEmailMessage: null,
-        errorPasswordMessage: null,
-        errorConfirmPasswordMessage: null,
-        forceResetErrorMessages: true,
-      ),
-    );
-  }
-
   Future<void> _onSubmitRegistration(
     SubmitRegistrationEvent event,
     Emitter<RegistrationState> emit,
   ) async {
     try {
       emit(state.copyWith(processing: true));
-      _resetErrorMessages(emit);
 
       await _registerUseCase(
         RegisterParam(

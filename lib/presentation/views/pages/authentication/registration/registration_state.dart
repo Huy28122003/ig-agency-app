@@ -10,10 +10,10 @@ class RegistrationState extends BaseState<RegistrationState> {
     this.password = '',
     this.confirmPassword = '',
     this.isSuccess = false,
-    this.errorNameMessage,
-    this.errorEmailMessage,
-    this.errorPasswordMessage,
-    this.errorConfirmPasswordMessage,
+    this.errorNameMessage = '',
+    this.errorEmailMessage = '',
+    this.errorPasswordMessage = '',
+    this.errorConfirmPasswordMessage = '',
   });
 
   final String name;
@@ -21,10 +21,10 @@ class RegistrationState extends BaseState<RegistrationState> {
   final String password;
   final String confirmPassword;
   final bool isSuccess;
-  final String? errorNameMessage;
-  final String? errorEmailMessage;
-  final String? errorPasswordMessage;
-  final String? errorConfirmPasswordMessage;
+  final String errorNameMessage;
+  final String errorEmailMessage;
+  final String errorPasswordMessage;
+  final String errorConfirmPasswordMessage;
 
   bool get isFormValid =>
       name.isNotEmpty &&
@@ -46,7 +46,6 @@ class RegistrationState extends BaseState<RegistrationState> {
     String? errorEmailMessage,
     String? errorPasswordMessage,
     String? errorConfirmPasswordMessage,
-    bool forceResetErrorMessages = false,
   }) {
     return RegistrationState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -57,18 +56,11 @@ class RegistrationState extends BaseState<RegistrationState> {
       confirmPassword: confirmPassword ?? this.confirmPassword,
       isSuccess: isSuccess ?? this.isSuccess,
       processing: processing ?? this.processing,
-      errorNameMessage: forceResetErrorMessages
-          ? null
-          : errorNameMessage ?? this.errorNameMessage,
-      errorEmailMessage: forceResetErrorMessages
-          ? null
-          : errorEmailMessage ?? this.errorEmailMessage,
-      errorPasswordMessage: forceResetErrorMessages
-          ? null
-          : errorPasswordMessage ?? this.errorPasswordMessage,
-      errorConfirmPasswordMessage: forceResetErrorMessages
-          ? null
-          : errorConfirmPasswordMessage ?? this.errorConfirmPasswordMessage,
+      errorNameMessage: errorNameMessage ?? this.errorNameMessage,
+      errorEmailMessage: errorEmailMessage ?? this.errorEmailMessage,
+      errorPasswordMessage: errorPasswordMessage ?? this.errorPasswordMessage,
+      errorConfirmPasswordMessage:
+          errorConfirmPasswordMessage ?? this.errorConfirmPasswordMessage,
     );
   }
 

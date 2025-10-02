@@ -15,7 +15,7 @@ abstract class AuthRemoteDataSource {
 
   Future<void> revokeTokens();
 
-  Future<ForgotPasswordResponseModel> sendOtpCode(String email);
+  Future<ForgotPasswordResponseModel> sendOtpCode(String email, [String? otp]);
 
   Future<void> sendNewPassword(ForgotPasswordRequestModel request);
 

@@ -3,13 +3,16 @@ import 'package:ig_agency_app/data/local/app/user_local_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
-import 'package:ig_agency_app/data/remote/models/response/forgot_password_response_model.dart';
 import 'package:ig_agency_app/data/remote/translators/profile_info_translator.dart';
+import 'package:ig_agency_app/dependencies/notification/notification_service.dart';
+import 'package:ig_agency_app/domain/entities/forgot_password_entity.dart';
 import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
+import 'package:ig_agency_app/domain/translators/forgot_password_translator.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:ig_agency_app/shared/utils/device_manager.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../di/di.dart';
 import '../cache/ram_cache.dart';
 import '../remote/app/auth_remote_data_source.dart';
 
@@ -53,8 +56,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final deviceType = DeviceManager.getDeviceType();
       final deviceId = await DeviceManager.getOrCreateDeviceId();
       final osVersion = await DeviceManager.getOsVersion() ?? "";
-      final model = "test";
-      final deviceToken = "test";
+      final model = await DeviceManager.getDeviceModel() ?? "";
+      final deviceToken =
+          await getIt<NotificationService>().getDeviceToken() ?? '';
       final request = LoginRequestModel(
         email: email,
         password: password,
@@ -64,7 +68,6 @@ class AuthRepositoryImpl implements AuthRepository {
         model: model,
         deviceToken: deviceToken,
       );
-
       final response = await _remoteDataSource.login(request);
       final profileInfo = response.user.toEntity();
       _ramCache.saveProfileInfo(profileInfo);
@@ -81,10 +84,12 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final profile = await _userLocalDataSource.getProfileInfo();
 
+      final deviceType = DeviceManager.getDeviceType();
+      final deviceId = await DeviceManager.getOrCreateDeviceId();
       final request = LogoutRequestModel(
         userId: profile?.id ?? '',
-        deviceId: await DeviceManager.getOrCreateDeviceId(),
-        deviceType: DeviceManager.getDeviceType(),
+        deviceId: deviceId,
+        deviceType: deviceType,
       );
 
       // Simulate login process
@@ -116,9 +121,20 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<ForgotPasswordResponseModel> sendOtpCode(String email) async {
+  Future<ForgotPasswordEntity> sendOtpCode(String email) async {
     try {
-      return await _remoteDataSource.sendOtpCode(email);
+      final result = await _remoteDataSource.sendOtpCode(email);
+      return result.toEntity();
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<ForgotPasswordEntity> verifyOtpCode(String email, String otp) async {
+    try {
+      final result = await _remoteDataSource.sendOtpCode(email, otp);
+      return result.toEntity();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

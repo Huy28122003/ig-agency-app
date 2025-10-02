@@ -71,9 +71,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<ForgotPasswordResponseModel> sendOtpCode(String email) async {
+  Future<ForgotPasswordResponseModel> sendOtpCode(
+    String email, [
+    String? otp,
+  ]) async {
     try {
-      final request = ForgotPasswordRequestModel(email: email);
+      final request = ForgotPasswordRequestModel(email: email, otp: otp);
       return await _apiService.forgotPassword(request);
     } catch (e) {
       throw ExceptionConverter.convert(e);
