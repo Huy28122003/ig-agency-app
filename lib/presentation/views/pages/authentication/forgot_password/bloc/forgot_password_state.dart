@@ -6,11 +6,13 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
     super.pageErrorMessage,
     super.processing = false,
     this.email = "",
+    this.otp = "",
     this.errorMessage,
     this.isSendMailSuccess = false,
   });
 
   final String email;
+  final String otp;
   final String? errorMessage;
   final bool isSendMailSuccess;
 
@@ -22,6 +24,7 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
     String? pageErrorMessage,
     bool? processing,
     String? email,
+    String? otp,
     String? errorMessage,
     bool? isSendMailSuccess,
   }) {
@@ -30,6 +33,7 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
       email: email ?? this.email,
+      otp: otp ?? this.otp,
       errorMessage: errorMessage,
       isSendMailSuccess: isSendMailSuccess ?? this.isSendMailSuccess,
     );
@@ -39,6 +43,7 @@ class ForgotPasswordState extends BaseState<ForgotPasswordState> {
   List<Object?> get props => [
     ...super.props,
     email,
+    otp,
     errorMessage,
     isSendMailSuccess,
   ];

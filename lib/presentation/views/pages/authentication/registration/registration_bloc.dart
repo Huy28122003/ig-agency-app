@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/usecases/register_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
+import 'package:ig_agency_app/shared/commons/constants/string.dart';
+import 'package:ig_agency_app/shared/utils/validator_util.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
@@ -29,49 +31,53 @@ class RegistrationBloc extends BaseBloc<RegistrationEvent, RegistrationState> {
       (event, emit) async => emit(state.copyWith(name: event.name)),
     );
 
-    handleSubEvent<EmailChangedEvent>(
-      (event, emit) async => emit(state.copyWith(email: event.email)),
-    );
+    handleSubEvent<EmailChangedEvent>((event, emit) async {
+      final isEmail = ValidatorUtil.isValidEmail(event.email);
+      emit(
+        state.copyWith(
+          email: event.email,
+          errorEmailMessage: isEmail ? '' : emailIncorrectFormatMessage,
+        ),
+      );
+    });
 
     handleSubEvent<PasswordChangedEvent>(
       (event, emit) async => emit(state.copyWith(password: event.password)),
     );
 
-    handleSubEvent<ConfirmPasswordChangedEvent>(
-      (event, emit) async =>
-          emit(state.copyWith(confirmPassword: event.confirmPassword)),
-    );
+    handleSubEvent<ConfirmPasswordChangedEvent>((event, emit) async {
+      final isValid = event.confirmPassword == state.password;
+      emit(
+        state.copyWith(
+          confirmPassword: event.confirmPassword,
+          errorConfirmPasswordMessage: isValid
+              ? ''
+              : confirmPasswordIncorrectMessage,
+        ),
+      );
+    });
 
     handleSubEvent<SubmitRegistrationEvent>(_onSubmitRegistration);
-  }
-
-  void _resetErrorMessages(Emitter<RegistrationState> emit) {
-    emit(
-      state.copyWith(
-        errorNameMessage: null,
-        errorEmailMessage: null,
-        errorPasswordMessage: null,
-        errorConfirmPasswordMessage: null,
-        forceResetErrorMessages: true,
-      ),
-    );
   }
 
   Future<void> _onSubmitRegistration(
     SubmitRegistrationEvent event,
     Emitter<RegistrationState> emit,
   ) async {
-    emit(state.copyWith(processing: true));
-    _resetErrorMessages(emit);
+    try {
+      emit(state.copyWith(processing: true));
 
-    await _registerUseCase(
-      RegisterParam(
-        name: state.name,
-        email: state.email,
-        password: state.password,
-        confirmPassword: state.confirmPassword,
-      ),
-    );
-    emit(state.copyWith(processing: false, isSuccess: true));
+      await _registerUseCase(
+        RegisterParam(
+          name: state.name,
+          email: state.email,
+          password: state.password,
+          confirmPassword: state.confirmPassword,
+        ),
+      );
+      emit(state.copyWith(processing: false, isSuccess: true));
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 }

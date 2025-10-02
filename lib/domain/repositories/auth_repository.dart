@@ -1,3 +1,7 @@
+import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
+
+import '../entities/forgot_password_entity.dart';
+
 abstract class AuthRepository {
   Future login(String email, String password);
 
@@ -11,11 +15,11 @@ abstract class AuthRepository {
 
   Future clearAccessToken();
 
-  Future sendOtpCode(String email);
+  Future<ForgotPasswordEntity> sendOtpCode(String email);
 
-  Future verifyOtpCode(String code);
+  Future<ForgotPasswordEntity> verifyOtpCode(String email, String otp);
 
-  Future sendNewPassword(String email, String newPassword);
+  Future sendNewPassword(ForgotPasswordRequestModel request);
 
   Future changePassword(String currentPassword, String newPassword);
 

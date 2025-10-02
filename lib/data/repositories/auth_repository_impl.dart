@@ -1,11 +1,18 @@
 import 'package:ig_agency_app/data/local/app/auth_local_data_source.dart';
 import 'package:ig_agency_app/data/local/app/user_local_data_source.dart';
+import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
 import 'package:ig_agency_app/data/remote/translators/profile_info_translator.dart';
+import 'package:ig_agency_app/dependencies/notification/notification_service.dart';
+import 'package:ig_agency_app/domain/entities/forgot_password_entity.dart';
 import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
+import 'package:ig_agency_app/domain/translators/forgot_password_translator.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
+import 'package:ig_agency_app/shared/utils/device_manager.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../di/di.dart';
 import '../cache/ram_cache.dart';
 import '../remote/app/auth_remote_data_source.dart';
 
@@ -46,11 +53,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future login(String email, String password) async {
     try {
-      final deviceType = "ios";
-      final deviceId = "test";
-      final osVersion = "test";
-      final model = "test";
-      final deviceToken = "test";
+      final deviceType = DeviceManager.getDeviceType();
+      final deviceId = await DeviceManager.getOrCreateDeviceId();
+      final osVersion = await DeviceManager.getOsVersion() ?? "";
+      final model = await DeviceManager.getDeviceModel() ?? "";
+      final deviceToken =
+          await getIt<NotificationService>().getDeviceToken() ?? '';
       final request = LoginRequestModel(
         email: email,
         password: password,
@@ -60,7 +68,6 @@ class AuthRepositoryImpl implements AuthRepository {
         model: model,
         deviceToken: deviceToken,
       );
-
       final response = await _remoteDataSource.login(request);
       final profileInfo = response.user.toEntity();
       _ramCache.saveProfileInfo(profileInfo);
@@ -75,9 +82,19 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future logout() async {
     try {
+      final profile = await _userLocalDataSource.getProfileInfo();
+
+      final deviceType = DeviceManager.getDeviceType();
+      final deviceId = await DeviceManager.getOrCreateDeviceId();
+      final request = LogoutRequestModel(
+        userId: profile?.id ?? '',
+        deviceId: deviceId,
+        deviceType: deviceType,
+      );
+
       // Simulate login process
       _ramCache.clearUserData();
-      await _remoteDataSource.logout();
+      await _remoteDataSource.logout(request);
       await _localDataSource.logout();
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -96,7 +113,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future register(String name, String email, String password) async {
     try {
-      // Simulate register process
       await _remoteDataSource.register(name, email, password);
       return;
     } catch (e) {
@@ -105,28 +121,29 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future sendOtpCode(String email) async {
+  Future<ForgotPasswordEntity> sendOtpCode(String email) async {
     try {
-      // Simulate register process
-      return await _remoteDataSource.sendOtpCode(email);
+      final result = await _remoteDataSource.sendOtpCode(email);
+      return result.toEntity();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<bool> verifyOtpCode(String code) async {
+  Future<ForgotPasswordEntity> verifyOtpCode(String email, String otp) async {
     try {
-      return await _remoteDataSource.verifyOtpCode(code);
+      final result = await _remoteDataSource.sendOtpCode(email, otp);
+      return result.toEntity();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future sendNewPassword(String email, String newPassword) async {
+  Future sendNewPassword(ForgotPasswordRequestModel request) async {
     try {
-      return await _remoteDataSource.sendNewPassword(email, newPassword);
+      return await _remoteDataSource.sendNewPassword(request);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
