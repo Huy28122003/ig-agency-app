@@ -82,13 +82,14 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                       ),
                       const SizedBox(height: 20),
                       BlocSelector<
-                          ResetPasswordBloc,
-                          ResetPasswordState,
-                          String
+                        ResetPasswordBloc,
+                        ResetPasswordState,
+                        String
                       >(
                         selector: (state) => state.newPassword,
-                        builder: (context, isObscure) {
+                        builder: (context, value) {
                           return AppTextField(
+                            value: value,
                             keyboardType: TextInputType.none,
                             textInputAction: TextInputAction.done,
                             hintText: "reset_password.hint_text_new_password"
@@ -104,23 +105,23 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
 
                       SizedBox(height: 20),
                       BlocSelector<
-                          ResetPasswordBloc,
-                          ResetPasswordState,
-                          (String?, String)
+                        ResetPasswordBloc,
+                        ResetPasswordState,
+                        String
                       >(
-                        selector: (state) =>
-                        (state.errorMessage, state.confirmPassword),
-                        builder: (context, isObscure) {
+                        selector: (state) => state.confirmPassword,
+                        builder: (context, value) {
                           return AppTextField(
+                            value: value,
                             errorText: context.select(
-                                  (ResetPasswordBloc bloc) =>
-                              bloc.state.errorMessage,
+                              (ResetPasswordBloc bloc) =>
+                                  bloc.state.errorMessage,
                             ),
                             keyboardType: TextInputType.none,
                             textInputAction: TextInputAction.done,
                             hintText:
-                            "reset_password.hint_text_confirm_password"
-                                .tr(),
+                                "reset_password.hint_text_confirm_password"
+                                    .tr(),
                             onChanged: (value) {
                               _resetPasswordBloc.add(
                                 ConfirmPasswordChangedEvent(
@@ -133,22 +134,41 @@ class _ResetPasswordTabletLayoutState extends State<ResetPasswordTabletLayout> {
                       ),
 
                       SizedBox(height: 40),
-                      AppButton.primary(
-                        backgroundColor:
-                        AppColors.surfaceContainerPrimaryPrimaryDefault,
-                        onPressed: () {
-                          _resetPasswordBloc.add(ConfirmResetPasswordEvent());
+                      BlocSelector<ResetPasswordBloc, ResetPasswordState, bool>(
+                        selector: (state) => (state.isValid),
+                        builder: (context, isValid) {
+                          return AppButton.primary(
+                            backgroundColor:
+                                AppColors.surfaceContainerPrimaryPrimaryDefault,
+                            textStyle: TextStyle(
+                              color: isValid
+                                  ? AppColors.textDefaultTextInverted
+                                  : AppColors.textDefaultTextInvertedDisabled,
+                              fontSize: 16,
+                              fontFamily: FontFamily.segoeUI,
+                              fontWeight: FontWeight.w700,
+                              height: 1.50,
+                            ),
+                            onPressed: () {
+                              if (!isValid) return;
+                              _resetPasswordBloc.add(
+                                ConfirmResetPasswordEvent(),
+                              );
+                            },
+                            child: Text(
+                              'reset_password.reset_password'.tr(),
+                              style: TextStyle(
+                                color: isValid
+                                    ? AppColors.textDefaultTextInverted
+                                    : AppColors.textDefaultTextInvertedDisabled,
+                                fontSize: 16,
+                                fontFamily: FontFamily.segoeUI,
+                                fontWeight: FontWeight.w700,
+                                height: 1.50,
+                              ),
+                            ),
+                          );
                         },
-                        child: Text(
-                          'reset_password.reset_password'.tr(),
-                          style: TextStyle(
-                            color: AppColors.textDefaultTextInvertedDisabled,
-                            fontSize: 16,
-                            fontFamily: FontFamily.segoeUI,
-                            fontWeight: FontWeight.w700,
-                            height: 1.50,
-                          ),
-                        ),
                       ),
                     ],
                   ),

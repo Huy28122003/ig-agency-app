@@ -5,6 +5,7 @@ import 'package:ig_agency_app/presentation/base/base_page.dart';
 import 'package:ig_agency_app/presentation/views/pages/nav/layout/nav_mobile_layout.dart';
 import 'package:ig_agency_app/presentation/views/pages/nav/layout/nav_tablet_layout.dart';
 
+import 'layout/nav_web_layout.dart';
 import 'nav_bloc.dart';
 
 @RoutePage()
@@ -28,5 +29,10 @@ class NavPage extends BasePage<NavBloc, NavEvent, NavState> {
   @override
   Widget? tabletBuilder(BuildContext context) {
     return NavTabletLayout();
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return NavDesktopLayout();
   }
 }

@@ -11,13 +11,18 @@ class ResetPasswordPage
     extends
         BasePage<ResetPasswordBloc, ResetPasswordEvent, ResetPasswordState> {
   final String email;
+  final String otpVerified;
 
-  const ResetPasswordPage({super.key, required this.email});
+  const ResetPasswordPage({
+    super.key,
+    required this.email,
+    required this.otpVerified,
+  });
 
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<ResetPasswordBloc>().add(LoadDataEvent(email));
+    context.read<ResetPasswordBloc>().add(LoadDataEvent(email, otpVerified));
   }
 
   @override
@@ -27,6 +32,11 @@ class ResetPasswordPage
 
   @override
   Widget? tabletBuilder(BuildContext context) {
+    return ResetPasswordTabletLayout();
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
     return ResetPasswordTabletLayout();
   }
 }

@@ -11,6 +11,7 @@ import 'edit_name_bloc.dart';
 class EditNamePage
     extends BasePage<EditNameBloc, EditNameEvent, EditNameState> {
   const EditNamePage(this.name, {super.key});
+
   final String name;
 
   @override
@@ -29,6 +30,11 @@ class EditNamePage
 
   @override
   Widget? tabletBuilder(BuildContext context) {
+    return EditNameTabletLayout();
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
     return EditNameTabletLayout();
   }
 }

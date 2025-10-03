@@ -2,7 +2,7 @@ import 'package:ig_agency_app/domain/repositories/settings_repository.dart';
 import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../local/app/settings_local_data_source.dart';
+import '../local/app/settings_local_data_source.dart';
 
 @Injectable(as: SettingsRepository)
 class SettingsRepositoryImpl implements SettingsRepository {

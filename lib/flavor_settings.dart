@@ -17,7 +17,7 @@ enum FlavorEnvironment {
 
   String get baseUrl {
     return switch (this) {
-      FlavorEnvironment.development => 'https://namnt.site/register',
+      FlavorEnvironment.development => 'https://namnt.site',
       FlavorEnvironment.staging => '',
       FlavorEnvironment.production => '',
     };
@@ -74,9 +74,29 @@ enum FlavorEnvironment {
           ),
         };
       default:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
-        );
+        return switch (this) {
+          FlavorEnvironment.development => const FirebaseOptions(
+            apiKey: 'AIzaSyAuBpERSCO-EiTRYa741iIsNTAusYxzH-s',
+            appId: '1:275257763877:web:ad7965932e989cdfefb7cc',
+            messagingSenderId: '275257763877',
+            projectId: 'ig-agency-7a016',
+            storageBucket: 'ig-agency-7a016.firebasestorage.app',
+          ),
+          FlavorEnvironment.staging => const FirebaseOptions(
+            apiKey: 'AIzaSyAuBpERSCO-EiTRYa741iIsNTAusYxzH-s',
+            appId: '1:275257763877:web:f2aef1a198b2ccacefb7cc',
+            messagingSenderId: '275257763877',
+            projectId: 'ig-agency-7a016',
+            storageBucket: 'ig-agency-7a016.firebasestorage.app',
+          ),
+          FlavorEnvironment.production => const FirebaseOptions(
+            apiKey: 'AIzaSyAuBpERSCO-EiTRYa741iIsNTAusYxzH-s',
+            appId: '1:275257763877:web:b5ac8f27dd497d47efb7cc',
+            messagingSenderId: '275257763877',
+            projectId: 'ig-agency-7a016',
+            storageBucket: 'ig-agency-7a016.firebasestorage.app',
+          ),
+        };
     }
   }
 }
@@ -84,7 +104,7 @@ enum FlavorEnvironment {
 class FlavorSettings {
   const FlavorSettings();
 
-  FlavorSettings.develop() {
+  FlavorSettings.development() {
     env = FlavorEnvironment.development;
   }
 
@@ -92,7 +112,7 @@ class FlavorSettings {
     env = FlavorEnvironment.production;
   }
 
-  FlavorSettings.poc() {
+  FlavorSettings.staging() {
     env = FlavorEnvironment.staging;
   }
 
