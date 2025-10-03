@@ -15,7 +15,7 @@ class SearchResultResponse {
     this.messageInfo,
   });
 
-  final int id;
+  final String id;
   final GroupSummaryResponse groupInfo;
   final UserSummaryResponse? userInfo;
   final MessageSummaryResponse? messageInfo;

@@ -9,13 +9,13 @@ import 'package:injectable/injectable.dart';
 import '../../domain/repositories/workspace_repository.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../../shared/utils/mock_data.dart';
-import '../app/workspace_remote_data_source.dart';
+import '../remote/app/workspace_remote_data_source.dart';
 
 @Injectable(as: GroupRepository)
-class Group implements GroupRepository {
-  final WorkspaceRemoteDataSource _workspaceRemoteDataSource;
+class GroupRepositoryImpl implements GroupRepository {
+  final GroupRemoteDataSource _workspaceRemoteDataSource;
 
-  Group(this._workspaceRemoteDataSource);
+  GroupRepositoryImpl(this._workspaceRemoteDataSource);
 
   @override
   Future<List<GroupEntity>> getWorkspaces({

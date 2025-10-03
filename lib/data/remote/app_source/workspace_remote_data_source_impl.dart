@@ -8,8 +8,8 @@ import '../../../shared/commons/exception_converter.dart';
 import '../app/workspace_remote_data_source.dart';
 import '../services/api_services.dart';
 
-@Injectable(as: WorkspaceRemoteDataSource)
-class GroupRemoteDataSourceImpl extends WorkspaceRemoteDataSource {
+@Injectable(as: GroupRemoteDataSource)
+class GroupRemoteDataSourceImpl extends GroupRemoteDataSource {
   final ApiService _apiService;
 
   GroupRemoteDataSourceImpl(this._apiService);
