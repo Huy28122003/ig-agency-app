@@ -13,7 +13,6 @@ import '../../../../../data/cache/ram_cache.dart';
 import '../../../../../dependencies/media/media_manager.dart';
 import '../../../../../dependencies/file/file_manager.dart';
 import '../../../../../domain/entities/message/message.dart';
-import '../../../../../domain/entities/user.dart';
 import '../../../../../domain/enums/message_enums.dart';
 import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/enums/send_message_type.dart';
@@ -60,27 +59,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   ) : super(WSDetailState()) {
     _registerHandlers();
     _initializeListener();
-
-    // TODO hoannk: Remove this after testing, fake user removed event
-    Future.delayed(const Duration(minutes: 3), () {
-      if (!isClosed) {
-        add(
-          AddMessageEvent(
-            message: MessageEntity(
-              id: 'msg_${groupId}_${DateTime.now().millisecondsSinceEpoch}',
-              groupId: groupId,
-              user: UserSummary(id: '1', name: 'Admin', avatar: ''),
-              createdAt: DateTime.now(),
-              content: SystemMessageContent(
-                systemType: SystemMessageType.userRemoved,
-                message: 'Admin removed you from the group.',
-              ),
-              status: MessageStatus.sent,
-            ),
-          ),
-        );
-      }
-    });
   }
 
   late final String groupId;
@@ -216,7 +194,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       FetchMessagesInGroupParams(groupId: groupId, limit: _limit),
     );
 
-    final messages = messagesResult;
+    final messages = messagesResult.reversed.toList();
     final pagingStatus = messages.isEmpty
         ? PagingStatus.empty
         : (messages.length < _limit
@@ -241,7 +219,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         chatMessages: messages.isEmpty ? [] : _mapMessagesToUIModels(messages),
         pagingStatus: pagingStatus,
         pinnedMessageSummary: pinnedMessageSummary,
-        initIndex: messages.isEmpty ? 0 : messages.length - 1,
         users: users,
         usersSearch: users,
         isSearchMode: event.isSearchMode,
@@ -260,18 +237,20 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-    final messages = await _fetchMessageUseCase.call(
+    final messagesResult = await _fetchMessageUseCase.call(
       FetchMessagesInGroupParams(
         groupId: groupId,
         limit: _limit,
-        oldestMessageId: state.chatMessages.first.message.id,
+        oldestMessageId: state.chatMessages.last.message.id,
       ),
     );
 
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    if (messages.isEmpty || messages.length < _limit) {
+    final messages = messagesResult.reversed.toList();
+
+    if (messages.isEmpty) {
       return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
     }
 
@@ -280,10 +259,9 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(
       state.copyWith(
         chatMessages: updatedMessages,
-        pagingStatus: PagingStatus.loadCompleted,
-        // Giữ vị trí là ví trị của message cuối cùng của list vừa được thêm để
-        // tạo thêm cảm giác được scroll tiếp cho load more kế tiếp
-        initIndex: messages.isEmpty ? 0 : messages.length - 1,
+        pagingStatus: messages.length < _limit
+            ? PagingStatus.noMoreData
+            : PagingStatus.loadCompleted,
       ),
     );
   }
@@ -323,46 +301,10 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     dynamic content;
     if (event.type == SendMessageType.text) {
-      // final text = _textEditingController.text;
-      // final tagTextSegments = _textEditingController.tagTextSegments;
-      // final linkTextSegments = detectLinkTextSegment(text);
-      // final textSegments = [...tagTextSegments, ...linkTextSegments];
-      // content = TextMessageContent(text: text, textSegments: textSegments);
-
-      // TODO: Demo search
-      final text =
-          '''Hôm nay @minh đi dạo quanh Hồ Gươm cùng @anh và @minhchoco. 
-Cậu ấy bảo: “Tôi cho bạn xem link này: https://flutter.dev và https://dart.dev 
-rất hay, mình cho thêm ví dụ trong https://example.com/cho.” 
-Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập trình. 
-Đặc biệt, mình cho đi nhiều kinh nghiệm quý giá, cho tới tận khuya mới về. 
-''';
-
-      final textSegments = [
-        TextSegment(type: TextSegmentType.tag, start: 8, end: 13), // @minh
-        TextSegment(type: TextSegmentType.tag, start: 40, end: 44), // @anh
-        TextSegment(
-          type: TextSegmentType.tag,
-          start: 48,
-          end: 58,
-        ), // @minhchoco
-        TextSegment(
-          type: TextSegmentType.link,
-          start: 100,
-          end: 119,
-        ), // https://flutter.dev
-        TextSegment(
-          type: TextSegmentType.link,
-          start: 123,
-          end: 139,
-        ), // https://dart.dev
-        TextSegment(
-          type: TextSegmentType.link,
-          start: 176,
-          end: 199,
-        ), // https://example.com/cho
-      ];
-
+      final text = _textEditingController.text.trim();
+      final tagTextSegments = _textEditingController.tagTextSegments;
+      final linkTextSegments = detectLinkTextSegment(text);
+      final textSegments = [...tagTextSegments, ...linkTextSegments];
       content = TextMessageContent(text: text, textSegments: textSegments);
       // Clear text editing controller
       _textEditingController.clear();
@@ -437,11 +379,11 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
 
     final uiModel = message.toUIModel(
       previousMessage: state.chatMessages.isNotEmpty
-          ? state.chatMessages.last.message
+          ? state.chatMessages.first.message
           : null,
     );
-    final chatMessages = [...state.chatMessages, uiModel];
-    final messageIndex = chatMessages.length - 1;
+    final chatMessages = [uiModel, ...state.chatMessages];
+    final messageIndex = 0;
     final updatedListUiModel = _updateUIModel(chatMessages, messageIndex);
 
     emit(
@@ -494,7 +436,7 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
             state.pagingStatus != PagingStatus.empty)) {
       emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-      final result = await _fetchMessageUseCase.call(
+      final messagesResult = await _fetchMessageUseCase.call(
         FetchMessagesInGroupParams(
           groupId: groupId,
           limit: _limit,
@@ -506,8 +448,13 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
       // TODO hoannk: Remove delay
       await Future.delayed(const Duration(seconds: 2));
 
-      final messages = result;
-      final pagingStatus = messages.isEmpty || messages.length < _limit
+      final messages = messagesResult.reversed.toList();
+
+      if (messages.isEmpty) {
+        return emit(state.copyWith(pagingStatus: PagingStatus.noMoreData));
+      }
+
+      final pagingStatus = messages.length < _limit
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
@@ -542,28 +489,49 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     ToggleShowTimeEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    final uiModelIndex = state.chatMessages.indexWhere(
+    var messages = state.chatMessages;
+
+    final messageIndex = messages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
-    if (uiModelIndex < 0) return;
-    final uiModel = state.chatMessages[uiModelIndex];
-    if (uiModel.message.content.isText && !uiModel.showTime) {
-      if (!uiModel.shouldShowTime) {
+    if (messageIndex < 0) return;
+    final message = messages[messageIndex];
+
+    // Check message hiện tại với showTimeMessage trong state có trùng nhau không
+    // Nếu không trùng thực hiện việc cập nhật lại như lúc không show time
+    final showTimeMessage = state.showTimeMessage;
+    if (showTimeMessage != null &&
+        showTimeMessage.message.id != event.messageId) {
+      final showTimeMessageIndex = messages.indexWhere(
+        (uiModel) => uiModel.message.id == showTimeMessage.message.id,
+      );
+      if (showTimeMessageIndex >= 0) {
+        messages = _updateUIModel(
+          messages,
+          showTimeMessageIndex,
+          forceShowTime: false,
+        );
+      }
+    }
+
+    if (message.message.content.isText && !message.showTime) {
+      if (!message.shouldShowTime) {
         final updatedMessages = _updateUIModel(
-          state.chatMessages,
-          uiModelIndex,
+          messages,
+          messageIndex,
           forceShowTime: true,
         );
+        final showTimeMessage = messages[messageIndex];
         emit(
           state.copyWith(
             chatMessages: updatedMessages,
-            showTimeMessageId: event.messageId,
+            showTimeMessage: showTimeMessage,
           ),
         );
-      } else if (uiModel.shouldShowTime) {
+      } else if (message.shouldShowTime) {
         final updatedMessages = _updateUIModel(
-          state.chatMessages,
-          uiModelIndex,
+          messages,
+          messageIndex,
           forceShowTime: false,
         );
         emit(
@@ -583,16 +551,16 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     emit(state.copyWith(processing: true));
     final messages = List<ChatMessageUIModel>.from(state.chatMessages);
 
-    final uiModelIndex = messages.indexWhere(
+    final messageIndex = messages.indexWhere(
       (uiModel) => uiModel.message.id == event.messageId,
     );
 
-    if (uiModelIndex >= 0) {
+    if (messageIndex < 0) {
       emit(state.copyWith(processing: false));
       return;
     }
 
-    final currentMessage = messages[uiModelIndex];
+    final currentMessage = messages[messageIndex];
 
     final isPinned = currentMessage.message.isPinned;
 
@@ -611,7 +579,7 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     // TODO hoannk: Remove delay
     await Future.delayed(const Duration(seconds: 2));
 
-    messages[uiModelIndex] = currentMessage.copyWith(
+    messages[messageIndex] = currentMessage.copyWith(
       message: currentMessage.message.copyWith(isPinned: !isPinned),
     );
 
@@ -709,8 +677,9 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
 
     for (int i = 0; i < messages.length; i++) {
       final uiModel = messages[i].toUIModel(
-        previousMessage: i > 0 ? messages[i - 1] : null,
-        nextMessage: i < messages.length - 1 ? messages[i + 1] : null,
+        // reverse, previous = i+1 (mới hơn), next = i-1 (cũ hơn)
+        previousMessage: i < messages.length - 1 ? messages[i + 1] : null,
+        nextMessage: i > 0 ? messages[i - 1] : null,
       );
       uiModels.add(uiModel);
     }
@@ -724,68 +693,82 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     bool? forceShowTime,
   }) {
     final updatedMessages = List<ChatMessageUIModel>.from(chatMessages);
-    final currentMessage = forceShowTime != null
-        ? chatMessages[messageIndex].copyWith(shouldShowTime: forceShowTime)
-        : chatMessages[messageIndex];
+    var currentMessage = chatMessages[messageIndex];
+    final showTime = forceShowTime;
+    if (showTime != null) {
+      if (showTime) {
+        currentMessage = currentMessage.copyWith(
+          shouldShowTime: true,
+          shouldShowAvatar: true,
+          shouldShowUserName: true,
+          isContinuation: false,
+        );
+      } else {
+        // Check nếu trùng id với showTimeMessage trong state thì cập nhật lại vào currentMessage
+        final showTimeMessage = state.showTimeMessage;
+        if (showTimeMessage != null &&
+            showTimeMessage.message.id == currentMessage.message.id) {
+          currentMessage = currentMessage.copyWith(
+            shouldShowTime: showTimeMessage.shouldShowTime,
+            shouldShowAvatar: showTimeMessage.shouldShowAvatar,
+            shouldShowUserName: showTimeMessage.shouldShowUserName,
+            isContinuation: showTimeMessage.isContinuation,
+          );
+        }
+      }
+    }
     updatedMessages[messageIndex] = currentMessage;
 
-    // Xử lý previous message và next message
-    // với mỗi previous message và next message, cần check lại cả previous của
-    // previous message, next message cần check lại cả next của next message
-
-    final previousMessage = messageIndex > 0
-        ? updatedMessages[messageIndex - 1]
-        : null;
-    final nextMessage = messageIndex < chatMessages.length - 1
+    // reverse: previous = mới hơn, next = cũ hơn
+    final previousMessage = messageIndex < updatedMessages.length - 1
         ? updatedMessages[messageIndex + 1]
         : null;
-    if (previousMessage != null) {
-      final previousPreviousMessage = messageIndex > 1
-          ? updatedMessages[messageIndex - 2]
-          : null;
+    final nextMessage = messageIndex > 0
+        ? updatedMessages[messageIndex - 1]
+        : null;
 
-      if (previousPreviousMessage != null) {
-        final (
-          shouldShowTime,
-          shouldShowAvatar,
-          shouldShowUserName,
-          isContinuation,
-        ) = ChatMessageUiModelHelper.updateUIModel(
-          currentMessage: previousMessage,
-          previousMessage: previousPreviousMessage,
-          nextMessage: currentMessage,
-        );
-        updatedMessages[messageIndex - 1] = previousMessage.copyWith(
-          shouldShowTime: shouldShowTime,
-          shouldShowAvatar: shouldShowAvatar,
-          shouldShowUserName: shouldShowUserName,
-          isContinuation: isContinuation,
-        );
-      }
+    if (previousMessage != null) {
+      final previousPreviousMessage = messageIndex < updatedMessages.length - 2
+          ? updatedMessages[messageIndex + 2]
+          : null;
+      final (
+        shouldShowTime,
+        shouldShowAvatar,
+        shouldShowUserName,
+        isContinuation,
+      ) = ChatMessageUiModelHelper.updateUIModel(
+        currentMessage: previousMessage,
+        previousMessage: previousPreviousMessage,
+        nextMessage: currentMessage,
+      );
+      updatedMessages[messageIndex + 1] = previousMessage.copyWith(
+        shouldShowTime: shouldShowTime,
+        shouldShowAvatar: shouldShowAvatar,
+        shouldShowUserName: shouldShowUserName,
+        isContinuation: isContinuation,
+      );
     }
 
     if (nextMessage != null) {
-      final nextNextMessage = messageIndex < updatedMessages.length - 2
-          ? chatMessages[messageIndex + 2]
+      final nextNextMessage = messageIndex > 1
+          ? updatedMessages[messageIndex - 2]
           : null;
-      if (nextNextMessage != null) {
-        final (
-          shouldShowTime,
-          shouldShowAvatar,
-          shouldShowUserName,
-          isContinuation,
-        ) = ChatMessageUiModelHelper.updateUIModel(
-          currentMessage: nextMessage,
-          previousMessage: currentMessage,
-          nextMessage: nextNextMessage,
-        );
-        updatedMessages[messageIndex + 1] = nextMessage.copyWith(
-          shouldShowTime: shouldShowTime,
-          shouldShowAvatar: shouldShowAvatar,
-          shouldShowUserName: shouldShowUserName,
-          isContinuation: isContinuation,
-        );
-      }
+      final (
+        shouldShowTime,
+        shouldShowAvatar,
+        shouldShowUserName,
+        isContinuation,
+      ) = ChatMessageUiModelHelper.updateUIModel(
+        currentMessage: nextMessage,
+        previousMessage: currentMessage,
+        nextMessage: nextNextMessage,
+      );
+      updatedMessages[messageIndex - 1] = nextMessage.copyWith(
+        shouldShowTime: shouldShowTime,
+        shouldShowAvatar: shouldShowAvatar,
+        shouldShowUserName: shouldShowUserName,
+        isContinuation: isContinuation,
+      );
     }
 
     return updatedMessages;
@@ -796,30 +779,22 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     List<MessageEntity>? trailingMessageList,
   }) {
     var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
-    // Mỗi khi thêm list mới sẽ update list vào list cũ và cập nhật phần từ nối
-    // giữa 2 mảng
-    // ví dụ: leading - current - trailing
-    // Thêm mảng vào trước current (leading) => cập nhật message cuối cùng của leading
-    // Thêm mảng vào sau current (trailing) => cập nhật message cuối cùng của current
-    if (leadingMessageList != null) {
+
+    if (leadingMessageList != null && leadingMessageList.isNotEmpty) {
       final newMessages = _mapMessagesToUIModels(leadingMessageList);
-      updatedMessages = [...newMessages, ...updatedMessages];
-      final lastLeadingMessageIndex = newMessages.length - 1;
-      updatedMessages = _updateUIModel(
-        updatedMessages,
-        lastLeadingMessageIndex,
-      );
+      // nối vào sau
+      updatedMessages = [...updatedMessages, ...newMessages];
+      final firstLeadingIndex = updatedMessages.length - newMessages.length;
+
+      updatedMessages = _updateUIModel(updatedMessages, firstLeadingIndex);
     }
 
     if (trailingMessageList != null) {
       final newMessages = _mapMessagesToUIModels(trailingMessageList);
-      updatedMessages = [...updatedMessages, ...newMessages];
-      final lastCurrentMessageIndex =
-          updatedMessages.length - newMessages.length - 1;
-      updatedMessages = _updateUIModel(
-        updatedMessages,
-        lastCurrentMessageIndex,
-      );
+      // nối vào trước
+      updatedMessages = [...newMessages, ...updatedMessages];
+      final firstTrailingIndex = newMessages.length - 1;
+      updatedMessages = _updateUIModel(updatedMessages, firstTrailingIndex);
     }
 
     return updatedMessages;
@@ -829,19 +804,19 @@ Chúng mình ăn chocolate, trò chuyện về việc cho trẻ em học lập t
     List<ChatMessageUIModel> chatMessages,
     String messageId,
   ) {
-    final uiModelIndex = chatMessages.indexWhere(
+    final messageIndex = chatMessages.indexWhere(
       (uiModel) => uiModel.message.id == messageId,
     );
     var updatedMessages = List<ChatMessageUIModel>.from(chatMessages);
-    if (uiModelIndex >= 0) {
-      updatedMessages.removeAt(uiModelIndex);
+    if (messageIndex >= 0) {
+      updatedMessages.removeAt(messageIndex);
       // Cập nhật message trước của message vừa xoá
-      if (uiModelIndex > 0) {
-        updatedMessages = _updateUIModel(updatedMessages, uiModelIndex - 1);
+      if (messageIndex > 0) {
+        updatedMessages = _updateUIModel(updatedMessages, messageIndex - 1);
       }
       // Cập nhật message sau của message vừa xoá
-      if (uiModelIndex < updatedMessages.length - 1) {
-        updatedMessages = _updateUIModel(updatedMessages, uiModelIndex + 1);
+      if (messageIndex < updatedMessages.length - 1) {
+        updatedMessages = _updateUIModel(updatedMessages, messageIndex + 1);
       }
     }
     return updatedMessages;

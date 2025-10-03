@@ -5,6 +5,7 @@ enum LocalStorageKeys {
   isInAppAlerts,
   accessToken,
   profileInfo,
+  deviceId,
 }
 
 abstract class LocalStorageManager {

@@ -3,7 +3,7 @@ import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request
 import 'package:ig_agency_app/data/remote/models/response/get_workspaces_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
 
-abstract class WorkspaceRemoteDataSource {
+abstract class GroupRemoteDataSource {
   Future<List<GroupResponse>> getWorkspaces({
     required GetWorkspacesRequestModel getWorkspacesRequest,
   });

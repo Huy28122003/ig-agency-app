@@ -16,7 +16,7 @@ abstract class NotificationService {
 
   Future<String?> getDeviceToken();
 
-  Stream<String> deviceTokenRefresh();
+  Stream<String> get onTokenRefresh;
 
   Future init();
 
