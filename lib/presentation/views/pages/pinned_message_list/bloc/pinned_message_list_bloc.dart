@@ -44,18 +44,28 @@ class PinnedMessageListBloc
     LoadDataEvent event,
     Emitter<PinnedMessageListState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loaded));
+    try {
+      emit(state.copyWith(pageStatus: PageStatus.loaded));
 
-    final (result, pagingStatus) = await _getPinnedMessages();
+      final (result, pagingStatus) = await _getPinnedMessages();
 
-    emit(
-      state.copyWith(
-        pagingStatus: pagingStatus,
-        pageStatus: PageStatus.loaded,
-        pinnedMessages: result,
-        isLoadedData: true,
-      ),
-    );
+      emit(
+        state.copyWith(
+          pagingStatus: pagingStatus,
+          pageStatus: PageStatus.loaded,
+          pinnedMessages: result,
+          isLoadedData: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.failure,
+          pageErrorMessage: error.toString(),
+        ),
+      );
+      handleError(emit, error);
+    }
   }
 
   Future<void> _onLoadMorePinnedMessages(
