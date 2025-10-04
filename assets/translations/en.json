@@ -1,4 +1,14 @@
 {
+  "time_ago": {
+    "just_now": "Now",
+    "secs_ago": "{}s",
+    "min_ago": "{}m",
+    "hour_ago": "{}h",
+    "day_ago": "{}d",
+    "week_ago": "{}w",
+    "moth_ago": "{}m",
+    "year_ago": "{}y"
+  },
   "login": {
     "welcome_to": "Welcome to",
     "email": "Email",
@@ -142,7 +152,9 @@
     "logout": "Logout"
   },
   "error": {
-    "error": "Error"
+    "error": "Error",
+    "this_otp_has_expired": "This OTP has expired.",
+    "the_otp_is_invalid.": "The OTP is invalid."
   },
   "pinned_message_list": {
     "title": "Pinned Messages",

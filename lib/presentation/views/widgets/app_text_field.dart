@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 
 import '../../../gen/assets.gen.dart';
@@ -88,7 +89,7 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final isError = widget.errorText != null;
+    final isError = widget.errorText.isNotNullOrEmpty;
 
     final underlineBorder =
         widget.border ??

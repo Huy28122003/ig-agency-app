@@ -13,7 +13,8 @@ class SettingHomeMobileLayout extends StatefulWidget {
   const SettingHomeMobileLayout({super.key});
 
   @override
-  State<SettingHomeMobileLayout> createState() => _SettingHomeMobileLayoutState();
+  State<SettingHomeMobileLayout> createState() =>
+      _SettingHomeMobileLayoutState();
 }
 
 class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
@@ -38,7 +39,15 @@ class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-            const HeaderHomeView(title: 'Settings', padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 30)),
+            const HeaderHomeView(
+              title: 'Settings',
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 10,
+                bottom: 30,
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
@@ -47,7 +56,11 @@ class _SettingHomeMobileLayoutState extends State<SettingHomeMobileLayout> {
                   children: [
                     ProfileSettingHomeSection(
                       onEdit: () {
-                        context.router.push(const ProfileRoute());
+                        final email = context
+                            .read<SettingHomeBloc>()
+                            .state
+                            .email;
+                        context.router.push(ProfileRoute(email: email));
                       },
                     ),
                     const GeneralSettingHomeSection(),

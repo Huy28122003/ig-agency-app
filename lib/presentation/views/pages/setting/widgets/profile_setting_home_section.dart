@@ -4,7 +4,6 @@ import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 
 import '../../../../../../gen/assets.gen.dart';
-import '../../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../widgets/circle_network_avatar.dart';
 import '../home/setting_home_bloc.dart';
 
@@ -15,40 +14,37 @@ class ProfileSettingHomeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<SettingHomeBloc, SettingHomeState, ProfileInfoEntity?>(
-      selector: (state) => state.user,
-      builder: (context, user) {
-        final currentUser = user;
-
-        if (currentUser == null) {
-          return const SizedBox();
-        }
-
-        return GestureDetector(
-          onTap: onEdit,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: ShapeDecoration(
-              color: AppColors.surfaceContainerGrayStrong05,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  width: 1,
-                  color: AppColors.outlineGrayStrong200,
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
+    return GestureDetector(
+      onTap: onEdit,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: ShapeDecoration(
+          color: AppColors.surfaceContainerGrayStrong05,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1, color: AppColors.outlineGrayStrong200),
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          spacing: 12,
+          children: [
+            BlocSelector<SettingHomeBloc, SettingHomeState, String>(
+              selector: (state) => state.avatar,
+              builder: (context, avatar) {
+                return CircleNetworkAvatar(imageUrl: avatar, size: 44);
+              },
             ),
-            child: Row(
-              spacing: 12,
-              children: [
-                CircleNetworkAvatar(imageUrl: currentUser.avatar, size: 44),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        currentUser.name,
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BlocSelector<SettingHomeBloc, SettingHomeState, String>(
+                    selector: (state) => state.name,
+                    builder: (context, name) {
+                      return Text(
+                        name,
                         style: TextStyle(
                           color: AppColors.textDefaultTextDefault,
                           fontSize: 16,
@@ -58,9 +54,14 @@ class ProfileSettingHomeSection extends StatelessWidget {
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        'currentUser.email',
+                      );
+                    },
+                  ),
+                  BlocSelector<SettingHomeBloc, SettingHomeState, String>(
+                    selector: (state) => state.email,
+                    builder: (context, email) {
+                      return Text(
+                        email,
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,
@@ -70,23 +71,23 @@ class ProfileSettingHomeSection extends StatelessWidget {
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
-                Assets.icons.icEdit.svg(
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.iconDefaultDefault,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+            Assets.icons.icEdit.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                AppColors.iconDefaultDefault,
+                BlendMode.srcIn,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
