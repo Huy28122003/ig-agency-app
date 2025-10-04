@@ -35,9 +35,6 @@ class UnknowFailure extends Failure {
   UnknowFailure() : super(message: 'An unknown error occurred');
 }
 
-class ValidationFailure extends Failure {
-  ValidationFailure() : super(message: 'An unknown error occurred');
-}
 
 extension FailureExtension on Failure? {
   Failure? operator &(bool other) {

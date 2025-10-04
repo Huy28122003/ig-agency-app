@@ -6,15 +6,19 @@ class SettingHomeState extends BaseState<SettingHomeState> {
     super.pageErrorMessage,
     super.processing = false,
     this.isDarkMode = false,
-    this.isInAppAlerts = true,
+    this.isEnableNotification = false,
     this.isLogoutSuccess = false,
-    this.user,
+    this.name = '',
+    this.email = '',
+    this.avatar = '',
   });
 
   final bool isDarkMode;
-  final bool isInAppAlerts;
+  final bool isEnableNotification;
   final bool isLogoutSuccess;
-  final ProfileInfoEntity? user;
+  final String name;
+  final String email;
+  final String avatar;
 
   @override
   SettingHomeState copyWith({
@@ -24,16 +28,20 @@ class SettingHomeState extends BaseState<SettingHomeState> {
     bool? isDarkMode,
     bool? isInAppAlerts,
     bool? isLogoutSuccess,
-    ProfileInfoEntity? user,
+    String? name,
+    String? email,
+    String? avatar,
   }) {
     return SettingHomeState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
       isDarkMode: isDarkMode ?? this.isDarkMode,
-      isInAppAlerts: isInAppAlerts ?? this.isInAppAlerts,
+      isEnableNotification: isInAppAlerts ?? this.isEnableNotification,
       isLogoutSuccess: isLogoutSuccess ?? this.isLogoutSuccess,
-      user: user ?? this.user,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatar: avatar ?? this.avatar,
     );
   }
 
@@ -41,8 +49,10 @@ class SettingHomeState extends BaseState<SettingHomeState> {
   List<Object?> get props => [
     ...super.props,
     isDarkMode,
-    isInAppAlerts,
+    isEnableNotification,
     isLogoutSuccess,
-    user,
+    avatar,
+    name,
+    email,
   ];
 }

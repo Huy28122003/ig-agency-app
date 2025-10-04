@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/search_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/message_response_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/forgot_password_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
 import 'package:ig_agency_app/data/remote/models/response/search_result_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -20,8 +23,12 @@ part 'api_services.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String? baseUrl}) = _ApiService;
 
+  //authen
   @POST('/login')
   Future<LoginResponseModel> login(@Body() LoginRequestModel loginRequestModel);
+
+  @POST('/logout')
+  Future logout(@Body() LogoutRequestModel logoutRequestModel);
 
   @POST('/register')
   Future register(@Body() RegistrationRequestModel requestModel);
@@ -29,6 +36,16 @@ abstract class ApiService {
   @POST('/change-password')
   Future<ChangePasswordResponseModel> changePassword(
     @Body() ChangePasswordRequestModel requestModel,
+  );
+
+  @POST('/forgot-password')
+  Future<ForgotPasswordResponseModel> forgotPassword(
+    @Body() ForgotPasswordRequestModel forgotPasswordRequestModel,
+  );
+
+  @POST('/reset-password')
+  Future resetPassword(
+    @Body() ForgotPasswordRequestModel forgotPasswordRequestModel,
   );
 
   // Profile

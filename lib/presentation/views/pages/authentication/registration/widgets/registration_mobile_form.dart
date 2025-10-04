@@ -17,10 +17,7 @@ class RegistrationMobileForm extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: 276,
-          ), // TODO hoannk: fix height
+        Flexible(
           child: Column(
             children: [
               BlocSelector<
@@ -71,7 +68,7 @@ class RegistrationMobileForm extends StatelessWidget {
                     (state.password, state.errorPasswordMessage),
                 builder: (context, state) {
                   final (password, errorPasswordMessage) = state;
-
+          
                   return AppTextField(
                     value: password,
                     errorText: errorPasswordMessage,
@@ -93,7 +90,7 @@ class RegistrationMobileForm extends StatelessWidget {
                     (state.confirmPassword, state.errorConfirmPasswordMessage),
                 builder: (context, state) {
                   final (confirmPassword, errorConfirmPasswordMessage) = state;
-
+          
                   return AppTextField(
                     obscureText: true,
                     value: confirmPassword,

@@ -1,3 +1,4 @@
+import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/domain/usecases/send_new_password_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
@@ -16,7 +17,13 @@ class ResetPasswordBloc
   ResetPasswordBloc({required this.sendNewPasswordUseCase})
     : super(ResetPasswordState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loaded, email: event.email));
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.loaded,
+          email: event.email,
+          otpVerified: event.otpVerified,
+        ),
+      );
     });
 
     handleSubEvent<NewPasswordChangedEvent>((event, emit) async {
@@ -28,22 +35,25 @@ class ResetPasswordBloc
     });
 
     handleSubEvent<ConfirmResetPasswordEvent>((event, emit) async {
-      emit(state.copyWith(processing: true));
-      await sendNewPasswordUseCase.call(
-        SendNewPasswordParams(
-          email: state.email,
-          newPassword: state.newPassword,
-        ),
-      );
-      await Future.delayed(const Duration(seconds: 1));
-
-      emit(
-        state.copyWith(
-          processing: false,
-          isResetSuccess: true,
-          errorMessage: '',
-        ),
-      );
+      try {
+        emit(state.copyWith(processing: true));
+        await sendNewPasswordUseCase.call(
+          ForgotPasswordRequestModel(
+            email: state.email,
+            otp: state.otpVerified,
+            password: state.newPassword,
+          ),
+        );
+        emit(
+          state.copyWith(
+            processing: false,
+            isResetSuccess: true,
+            errorMessage: '',
+          ),
+        );
+      } catch (error) {
+        handleError(emit, error);
+      }
     });
   }
 }
