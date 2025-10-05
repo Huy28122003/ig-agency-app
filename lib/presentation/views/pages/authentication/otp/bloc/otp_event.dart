@@ -4,8 +4,9 @@ sealed class OtpEvent {}
 
 class LoadDataEvent extends OtpEvent {
   final String email;
+  final String otpVerified;
 
-  LoadDataEvent(this.email);
+  LoadDataEvent(this.email, this.otpVerified);
 }
 
 class VerifyOtpEvent extends OtpEvent {

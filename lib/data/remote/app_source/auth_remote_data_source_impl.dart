@@ -1,3 +1,6 @@
+import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/forgot_password_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/login_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
@@ -39,10 +42,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logout() {
+  Future<void> logout(LogoutRequestModel request) async {
     try {
-      // Simulate logout process
-      return Future.value();
+      await _apiService.logout(request);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -69,30 +71,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> sendOtpCode(String email) {
+  Future<ForgotPasswordResponseModel> sendOtpCode(
+    String email, [
+    String? otp,
+  ]) async {
     try {
-      // Simulate revoking tokens
-      return Future.value('123456');
+      final request = ForgotPasswordRequestModel(email: email, otp: otp);
+      return await _apiService.forgotPassword(request);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
   }
 
   @override
-  Future<bool> verifyOtpCode(String code) {
+  Future<void> sendNewPassword(ForgotPasswordRequestModel request) async {
     try {
-      // Simulate revoking tokens
-      return Future.value(true);
-    } catch (e) {
-      throw ExceptionConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<bool> sendNewPassword(String email, String newPassword) {
-    try {
-      // Simulate revoking tokens
-      return Future.value(true);
+      await _apiService.resetPassword(request);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

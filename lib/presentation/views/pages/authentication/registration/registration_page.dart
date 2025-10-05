@@ -21,4 +21,9 @@ class RegistrationPage
   Widget? tabletBuilder(BuildContext context) {
     return RegistrationTabletLayout();
   }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return RegistrationTabletLayout();
+  }
 }

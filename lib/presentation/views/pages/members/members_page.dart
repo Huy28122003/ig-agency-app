@@ -28,4 +28,8 @@ class MembersPage extends BasePage<MembersBloc, MembersEvent, MembersState> {
   Widget? tabletBuilder(BuildContext context) {
     return MembersTabletLayout();
   }
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return MembersTabletLayout();
+  }
 }

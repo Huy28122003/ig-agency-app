@@ -4,14 +4,19 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ig_agency_app/domain/translators/received_notification_translator.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
+import 'package:ig_agency_app/shared/utils/logger.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/notification/received_notification_entity.dart';
+import '../../shared/commons/constants/string.dart';
 import 'notification_service.dart';
+import 'package:ig_agency_app/dependencies/notification/notification_web_services_stub.dart'
+    if (dart.library.js_interop) 'package:ig_agency_app/dependencies/notification/notification_web_services_web.dart';
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {}
@@ -42,106 +47,148 @@ class FirebaseNotificationService extends NotificationService {
   final String darwinNotificationCategoryText = 'textCategory';
 
   @override
-  Stream<String> deviceTokenRefresh() {
-    return _firebaseMessaging.onTokenRefresh;
-  }
+  Stream<String> get onTokenRefresh => _firebaseMessaging.onTokenRefresh;
 
   @override
-  Future<String?> getDeviceToken() {
-    return _firebaseMessaging.getToken();
+  Future<String?> getDeviceToken() async {
+    String? vapidKey;
+    if (kIsWeb) vapidKey = kVapidKey;
+    await NotificationWebServices.requestPermission();
+    return await _firebaseMessaging.getToken(vapidKey: vapidKey);
   }
 
   @override
   Future init() async {
-    final List<DarwinNotificationCategory> darwinNotificationCategories =
-        <DarwinNotificationCategory>[
-          DarwinNotificationCategory(
-            darwinNotificationCategoryText,
-            actions: <DarwinNotificationAction>[
-              DarwinNotificationAction.text(
-                'text_1',
-                'Action 1',
-                buttonTitle: 'Send',
-                placeholder: 'Placeholder',
-              ),
-            ],
+    if (!kIsWeb) {
+      await _firebaseMessaging.requestPermission();
+      return await _initializeMobileApplication();
+    }
+    await _initializeWebApplication();
+  }
+
+  Future _initializeWebApplication() async {
+    try {
+      FirebaseMessaging.onMessage.listen((message) {
+        // todo: anh.trandang : handle notification
+        logger.i("Received notification: \n $message");
+        onMessageStream.sink.add(
+          message.data.toEntity(
+            title: message.notification?.title,
+            body: message.notification?.body,
           ),
-        ];
+        );
+      });
+    } catch (e) {
+      return;
+    }
+  }
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('mipmap/ic_launcher');
-
-    /// Note: permissions aren't requested here just to demonstrate that can be
-    /// done later
-    final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
+  Future _initializeMobileApplication() async {
+    try {
+      AndroidInitializationSettings? initializationSettingsAndroid;
+      DarwinInitializationSettings? initializationSettingsIOS;
+      if (Platform.isIOS) {
+        final List<DarwinNotificationCategory> darwinNotificationCategories =
+            <DarwinNotificationCategory>[
+              DarwinNotificationCategory(
+                darwinNotificationCategoryText,
+                actions: <DarwinNotificationAction>[
+                  DarwinNotificationAction.text(
+                    'text_1',
+                    'Action 1',
+                    buttonTitle: 'Send',
+                    placeholder: 'Placeholder',
+                  ),
+                ],
+              ),
+            ];
+        initializationSettingsIOS = DarwinInitializationSettings(
           requestAlertPermission: false,
           requestBadgePermission: false,
           requestSoundPermission: false,
           notificationCategories: darwinNotificationCategories,
         );
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-          android: initializationSettingsAndroid,
-          iOS: initializationSettingsDarwin,
-          macOS: initializationSettingsDarwin,
+      }
+      if (Platform.isAndroid) {
+        initializationSettingsAndroid = AndroidInitializationSettings(
+          '@mipmap/launcher_icon',
         );
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse:
-          (NotificationResponse notificationResponse) {
-            ReceivedNotificationEntity? data;
-            if (notificationResponse.payload.isNotNullOrEmpty()) {
-              data = ReceivedNotificationEntity.fromJson(
-                jsonDecode(notificationResponse.payload!),
-              );
-            }
-            if (notificationResponse.notificationResponseType ==
-                NotificationResponseType.selectedNotification) {
-              if (data != null) {
-                selectNotificationStream.add(data);
-              }
-            }
-          },
-      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-    );
-    FirebaseMessaging.onMessage.listen((message) {
-      onMessageStream.sink.add(
-        message.data.toEntity(
-          title: message.notification?.title,
-          body: message.notification?.body,
-        ),
-      );
-    });
+      }
 
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      onMessageOpenedAppStream.sink.add(
-        message.data.toEntity(
-          title: message.notification?.title,
-          body: message.notification?.body,
-        ),
+      final InitializationSettings initializationSettings =
+          InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsIOS,
+          );
+      await flutterLocalNotificationsPlugin.initialize(
+        initializationSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) {
+              ReceivedNotificationEntity? data;
+              if (notificationResponse.payload.isNotNullOrEmpty()) {
+                data = ReceivedNotificationEntity.fromJson(
+                  jsonDecode(notificationResponse.payload!),
+                );
+              }
+              if (notificationResponse.notificationResponseType ==
+                  NotificationResponseType.selectedNotification) {
+                if (data != null) {
+                  selectNotificationStream.add(data);
+                }
+              }
+            },
+        onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
       );
-    });
+      FirebaseMessaging.onMessage.listen((message) {
+        print("Receive message: $message");
+        onMessageStream.sink.add(
+          message.data.toEntity(
+            title: message.notification?.title,
+            body: message.notification?.body,
+          ),
+        );
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        onMessageOpenedAppStream.sink.add(
+          message.data.toEntity(
+            title: message.notification?.title,
+            body: message.notification?.body,
+          ),
+        );
+      });
+    } catch (e) {
+      return;
+    }
   }
 
   @override
   Future<bool?> requestPermission() async {
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    try {
+      if (kIsWeb) {
+        return await NotificationWebServices.requestPermission();
+      }
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          FlutterLocalNotificationsPlugin();
 
-    if (Platform.isIOS) {
-      return await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >()
-          ?.requestPermissions(alert: true, badge: true, sound: true);
-    } else {
-      final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      return flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
-          >()
-          ?.requestNotificationsPermission();
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        return await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >()
+            ?.requestPermissions(alert: true, badge: true, sound: true);
+      } else {
+        final flutterLocalNotificationsPlugin =
+            FlutterLocalNotificationsPlugin();
+        return flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.requestNotificationsPermission();
+      }
+    } catch (e, s) {
+      logger.e(e, stackTrace: s);
+      return null;
     }
   }
 
@@ -156,8 +203,10 @@ class FirebaseNotificationService extends NotificationService {
     FlutterLocalNotificationsPlugin();
     const NotificationDetails notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
-        'androidNotification',
-        'pushNotification',
+        'high_importance_channel',
+        'Thông báo đẩy',
+        importance: Importance.max,
+        priority: Priority.high,
       ),
     );
     await flutterLocalNotificationsPlugin.show(

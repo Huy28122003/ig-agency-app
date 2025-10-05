@@ -5,6 +5,7 @@ import 'package:ig_agency_app/presentation/base/base_page.dart';
 
 import 'layout/workspace_detail_tablet_layout.dart';
 import 'layout/workspace_detail_mobile_layout.dart';
+import 'layout/workspace_detail_web_layout.dart';
 import 'workspace_detail_bloc.dart';
 
 @RoutePage()
@@ -42,6 +43,14 @@ class WSDetailPage
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return WorkspaceDetailTabletLayout();
+    return WorkspaceDetailTabletLayout(
+      groupName: groupName,
+      groupAvatar: groupAvatar,
+    );
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
+    return WorkspaceDetailDesktopLayout();
   }
 }

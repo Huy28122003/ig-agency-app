@@ -1,27 +1,36 @@
 package com.anhtran.agency
 
-import androidx.annotation.NonNull;
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugins.GeneratedPluginRegistrant
-import io.flutter.embedding.android.FlutterFragmentActivity;
 
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        GeneratedPluginRegistrant.registerWith(flutterEngine)
+        super.configureFlutterEngine(flutterEngine)
 
-        val flavor = try {
-            val buildConfigClass = Class.forName("${this.packageName}.BuildConfig")
-            val field = buildConfigClass.getField("FLAVOR")
-            field.get(null) as String
-        } catch (e: Exception) {
+        // Đọc flavor từ resource theo productFlavor hiện tại
+        val raw = try {
+            getString(R.string.app_flavor)
+        } catch (_: Throwable) {
             "unknown"
         }
+        val flavor = normalizeFlavor(raw)
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "flavor")
             .setMethodCallHandler { call, result ->
-                result.success(flavor)
+                if (call.method == "getFlavor") result.success(flavor)
+                else result.notImplemented()
             }
+    }
+
+    private fun normalizeFlavor(v: String): String {
+        val x = v.lowercase()
+        return when {
+            x == "development" || x.contains("dev") -> "development"
+            x == "staging" || x.contains("stag") || x.contains("stg") -> "staging"
+            x == "production" || x.contains("prod") || x.contains("pro") -> "production"
+            else -> "dev"
+        }
     }
 }

@@ -9,13 +9,14 @@ import 'package:ig_agency_app/presentation/views/pages/authentication/otp/layout
 @RoutePage()
 class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
   final String email;
+  final String otpVerified;
 
-  const OtpPage({super.key, required this.email});
+  const OtpPage({super.key, required this.email, required this.otpVerified});
 
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<OtpBloc>().add(LoadDataEvent(email));
+    context.read<OtpBloc>().add(LoadDataEvent(email, otpVerified));
   }
 
   @override
@@ -25,6 +26,11 @@ class OtpPage extends BasePage<OtpBloc, OtpEvent, OtpState> {
 
   @override
   Widget? tabletBuilder(BuildContext context) {
+    return OtpTabletLayout();
+  }
+
+  @override
+  Widget? desktopBuilder(BuildContext context) {
     return OtpTabletLayout();
   }
 }

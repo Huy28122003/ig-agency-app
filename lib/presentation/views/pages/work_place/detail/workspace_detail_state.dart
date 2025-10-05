@@ -17,8 +17,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.pagingStatus = PagingStatus.idle,
     this.jumpToMessageId,
     this.scrollToTop = false,
-    this.showTimeMessageId,
-    this.initIndex = 0,
+    this.showTimeMessage,
     this.showTagOverlay = false,
     this.groupMemberStatus = GroupMemberStatus.joined,
     this.groupSearchStatus = GroupSearchStatus.idle,
@@ -29,6 +28,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     // this.totalSearchMessage = 0,
     this.searchKeyword = "",
     this.messageSearchResults = const [],
+    this.showGroupInfo = false,
   });
 
   final List<ChatMessageUIModel> chatMessages;
@@ -43,8 +43,7 @@ class WSDetailState extends BaseState<WSDetailState> {
   final PagingStatus pagingStatus;
   final String? jumpToMessageId;
   final bool scrollToTop;
-  final String? showTimeMessageId;
-  final int initIndex;
+  final ChatMessageUIModel? showTimeMessage;
   final bool showTagOverlay;
   final GroupMemberStatus groupMemberStatus;
   final GroupSearchStatus groupSearchStatus;
@@ -52,9 +51,11 @@ class WSDetailState extends BaseState<WSDetailState> {
   final ProfileInfoEntity? profile;
   final bool isSearchMode;
   final int indexSearchMessage;
+
   // final int totalSearchMessage;
   final String searchKeyword;
   final List<MessageEntity> messageSearchResults;
+  final bool showGroupInfo;
 
   bool get needLoadMoreOldMessages =>
       pagingStatus != PagingStatus.empty &&
@@ -79,9 +80,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     PagingStatus? pagingStatus,
     String? jumpToMessageId,
     bool? scrollToTop,
-    String? showTimeMessageId,
+    ChatMessageUIModel? showTimeMessage,
     bool forceDisableShowTime = false,
-    int? initIndex,
     // int? totalSearchMessage,
     int? indexSearchMessage,
     bool? showTagOverlay,
@@ -91,6 +91,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     ProfileInfoEntity? profile,
     String? searchKeyword,
     List<MessageEntity>? messageSearchResults,
+    bool? showGroupInfo,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -111,10 +112,9 @@ class WSDetailState extends BaseState<WSDetailState> {
       pagingStatus: pagingStatus ?? this.pagingStatus,
       jumpToMessageId: jumpToMessageId ?? this.jumpToMessageId,
       scrollToTop: scrollToTop ?? this.scrollToTop,
-      showTimeMessageId: forceDisableShowTime
+      showTimeMessage: forceDisableShowTime
           ? null
-          : showTimeMessageId ?? this.showTimeMessageId,
-      initIndex: initIndex ?? this.initIndex,
+          : showTimeMessage ?? this.showTimeMessage,
       showTagOverlay: showTagOverlay ?? this.showTagOverlay,
       groupMemberStatus: groupMemberStatus ?? this.groupMemberStatus,
       isDeletedConversationSuccess:
@@ -125,6 +125,8 @@ class WSDetailState extends BaseState<WSDetailState> {
       // totalSearchMessage: totalSearchMessage ?? this.totalSearchMessage,
       searchKeyword: searchKeyword ?? this.searchKeyword,
       messageSearchResults: messageSearchResults ?? this.messageSearchResults,
+      groupSearchStatus: groupSearchStatus ?? this.groupSearchStatus,
+      showGroupInfo: showGroupInfo ?? this.showGroupInfo,
     );
   }
 
@@ -143,8 +145,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     pagingStatus,
     jumpToMessageId,
     scrollToTop,
-    showTimeMessageId,
-    initIndex,
+    showTimeMessage,
     showTagOverlay,
     groupMemberStatus,
     isDeletedConversationSuccess,
@@ -154,5 +155,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     indexSearchMessage,
     searchKeyword,
     messageSearchResults,
+    showGroupInfo,
   ];
 }

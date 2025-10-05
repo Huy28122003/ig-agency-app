@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/app/app_bloc.dart';
+import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
+import 'package:ig_agency_app/domain/repositories/notification_repository.dart';
 import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/domain/usecases/logout_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_dark_mode_use_case.dart';
@@ -28,6 +31,9 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     this._setInAppAlertsUseCase,
     this._fetchCurrentUserUseCase,
     this._userRepository,
+    this._notificationRepository,
+    this._appBloc,
+    this._authRepository,
   ) : super(SettingHomeState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -40,6 +46,9 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
   final SetInAppAlertsUseCase _setInAppAlertsUseCase;
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
+  final NotificationRepository _notificationRepository;
+  final AuthRepository _authRepository;
+  final AppBloc _appBloc;
 
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
 
@@ -48,7 +57,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
 
     handleSubEvent<ToggleDarkModeEvent>(_onToggleDarkMode);
 
-    handleSubEvent<ToggleInAppAlertsEvent>(_onToggleInAppAlerts);
+    handleSubEvent<ChangeNotificationEvent>(_onNotificationChanged);
 
     handleSubEvent<LogoutEvent>(_onLogout);
 
@@ -65,18 +74,23 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     LoadDataEvent event,
     Emitter<SettingHomeState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loading));
-
-    final darkModeResult = await _getDarkModeUseCase.call(null);
-    final inAppAlertsResult = await _getInAppAlertsUseCase.call(null);
-    final userResult = await _fetchCurrentUserUseCase.call();
-
+    final results = await Future.wait([
+      _getDarkModeUseCase.call(),
+      _getInAppAlertsUseCase.call(null),
+      _fetchCurrentUserUseCase.call(),
+      _authRepository.getEmail(),
+    ]);
+    final darkModeResult = results[0] as bool;
+    final isEnableNotification = results[1] as bool;
+    final userResult = results[2] as ProfileInfoEntity;
+    final email = results[3] as String?;
     emit(
       state.copyWith(
-        pageStatus: PageStatus.loaded,
         isDarkMode: darkModeResult,
-        isInAppAlerts: inAppAlertsResult,
-        user: userResult,
+        isInAppAlerts: isEnableNotification,
+        name: userResult.name,
+        avatar: userResult.avatar,
+        email: email,
       ),
     );
   }
@@ -93,18 +107,23 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     emit(state.copyWith(processing: false, isDarkMode: newDarkMode));
   }
 
-  Future<void> _onToggleInAppAlerts(
-    ToggleInAppAlertsEvent event,
+  Future<void> _onNotificationChanged(
+    ChangeNotificationEvent event,
     Emitter<SettingHomeState> emit,
   ) async {
-    final newInAppAlerts = !state.isInAppAlerts;
-    emit(state.copyWith(processing: true));
-
-    await _setInAppAlertsUseCase(
-      SetInAppAlertsParam(isInAppAlerts: newInAppAlerts),
-    );
-
-    emit(state.copyWith(processing: false, isInAppAlerts: newInAppAlerts));
+    final enableNotification = !state.isEnableNotification;
+    try {
+      if (enableNotification) {
+        final isEnable = await _notificationRepository.requestPermission();
+        if (isEnable) await _notificationRepository.initNotification();
+      }
+      await _setInAppAlertsUseCase(
+        SetInAppAlertsParam(enableNotification: enableNotification),
+      );
+      emit(state.copyWith(isInAppAlerts: enableNotification));
+    } catch (e) {
+      handleError(emit, e);
+    }
   }
 
   Future<void> _onLogout(
@@ -120,7 +139,7 @@ class SettingHomeBloc extends BaseBloc<SettingHomeEvent, SettingHomeState> {
     UpdateUserEvent event,
     Emitter<SettingHomeState> emit,
   ) async {
-    emit(state.copyWith(user: event.user));
+    emit(state.copyWith(name: event.user.name, avatar: event.user.avatar));
   }
 
   @override

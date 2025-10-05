@@ -1,16 +1,18 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/search.dart';
-import 'package:ig_agency_app/domain/enums/filter_type.dart';
-import 'package:ig_agency_app/presentation/views/pages/search/search_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/search/widgets/search_group_card_loading.dart';
-import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
-import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 
+import '../../../../../domain/entities/search.dart';
+import '../../../../../domain/enums/filter_type.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
+import '../../../../routers/app_router.dart';
+import '../../../widgets/app_list_view.dart';
+import '../../../widgets/circle_network_avatar.dart';
+import '../search_bloc.dart';
+import 'search_group_card_loading.dart';
 
 class BodySearchWidget extends StatelessWidget {
   const BodySearchWidget({super.key, this.numCardLoading = 10});
@@ -40,12 +42,23 @@ class BodySearchWidget extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 enablePullDown: false,
                 data: state.results,
-                builder: (context, index) {
+                builder: (_, index) {
                   final result = state.results[index];
                   if (state.filterType == FilterType.message) {
                     return _buildMessageResult(result: result, onTap: () {});
                   }
-                  return _buildGroupResult(result: result, onTap: () {});
+                  return _buildGroupResult(
+                    result: result,
+                    onTap: () {
+                      context.router.replaceAll([
+                        WSDetailRoute(
+                          groupId: result.groupInfo.id,
+                          groupName: result.groupInfo.name,
+                          groupAvatar: result.groupInfo.avatar,
+                        ),
+                      ]);
+                    },
+                  );
                 },
                 fetchStatus: state.pagingStatus,
                 separatorBuilder: (_, _) => Container(

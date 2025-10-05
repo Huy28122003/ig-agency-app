@@ -15,7 +15,7 @@ class SearchResult with _$SearchResult {
   });
 
   @override
-  final int id;
+  final String id;
   @override
   final GroupSummary groupInfo;
   @override

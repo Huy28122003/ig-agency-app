@@ -110,9 +110,9 @@ class MockData {
   final listSearch = List.generate(
     40,
     (index) => SearchResult(
-      id: 1,
+      id: '1',
       groupInfo: GroupSummary(
-        id: 1,
+        id: '1',
         name: 'WorkSpace ${index + 1}',
         avatar: '.png',
       ),

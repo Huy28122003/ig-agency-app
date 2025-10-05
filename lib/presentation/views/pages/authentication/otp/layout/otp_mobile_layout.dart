@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/otp/bloc/otp_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
+import 'package:ig_agency_app/shared/utils/toast_util.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
@@ -48,10 +49,18 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
           listenWhen: (prev, curr) => prev.otpStatus != curr.otpStatus,
           listener: (context, state) {
             if (state.otpStatus == VerifyStatus.valid) {
-              context.router.push(ResetPasswordRoute(email: state.email));
+              context.router.push(
+                ResetPasswordRoute(
+                  email: state.email,
+                  otpVerified: state.otpVerified,
+                ),
+              );
             } else if (state.otpStatus == VerifyStatus.invalid) {
               _otpKey.currentState?.clearOtp();
-              // Show error message
+              ToastUtil.showError(
+                context,
+                'The verification code is incorrect. Please try again.',
+              );
             }
           },
           child: Column(
@@ -147,6 +156,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                       fontWeight: FontWeight.w500,
                       color: AppColors.outlinePrimaryDefault,
                       fontSize: 24,
+                      height: 1,
                     ),
                     fieldBorderRadius: 8.8,
                     fieldBorderWidth: 1.1,
@@ -166,6 +176,13 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                 AppButton.primary(
                   backgroundColor:
                       AppColors.surfaceContainerPrimaryPrimaryDefault,
+                  textStyle: TextStyle(
+                    color: AppColors.textDefaultTextInvertedDisabled,
+                    fontSize: 16,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w700,
+                    height: 1.50,
+                  ),
                   onPressed: () {
                     // Todo: Refactor logic ui
                   },

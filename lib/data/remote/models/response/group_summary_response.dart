@@ -10,7 +10,7 @@ class GroupSummaryResponse {
     required this.avatar,
   });
 
-  final int id;
+  final String id;
   final String name;
   @JsonKey(defaultValue: '')
   final String avatar;
