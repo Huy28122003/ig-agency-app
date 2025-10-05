@@ -63,8 +63,6 @@ abstract class ApiService {
     @Path('conversationId') String conversationId,
     @Query('limit') int limit,
     @Query('offset') int offset,
-    @Query('search') String? search,
-    @Query('before') String? beforeMessageId,
   );
 
   @POST('/conversations/{conversationId}/pinned-messages')

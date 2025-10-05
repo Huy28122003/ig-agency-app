@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
 import 'package:injectable/injectable.dart';
 
@@ -60,13 +61,13 @@ class MessageRepositoryImpl implements MessageRepository {
     int offset,
   ) async {
     try {
-      final pinnedMessages = _messageRemoteDataSource.fetchPinnedMessage(
+      final pinnedMessages = await _messageRemoteDataSource.fetchPinnedMessage(
         groupId,
         limit,
         offset,
       );
 
-      return pinnedMessages;
+      return pinnedMessages.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

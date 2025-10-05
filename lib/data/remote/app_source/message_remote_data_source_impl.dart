@@ -1,11 +1,10 @@
 import 'package:ig_agency_app/data/remote/app/message_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/pin_message_request_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
-import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
-import 'package:ig_agency_app/domain/entities/message/message.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../shared/commons/exception_converter.dart';
+import '../models/response/message_response_model.dart';
 
 @Injectable(as: MessageRemoteDataSource)
 class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
@@ -14,7 +13,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   final ApiService _apiService;
 
   @override
-  Future<List<MessageEntity>> fetchPinnedMessage(
+  Future<List<MessageResponseModel>> fetchPinnedMessage(
     String groupId,
     int limit,
     int offset,
@@ -24,11 +23,9 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
         groupId,
         limit,
         offset,
-        null,
-        null,
       );
 
-      return pinnedMessages.map((e) => e.toEntity()).toList();
+      return pinnedMessages;
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

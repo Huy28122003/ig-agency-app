@@ -55,14 +55,12 @@ class VideoMessageContent extends MessageContent {
 class FileMessageContent extends MessageContent {
   final String fileUrl;
   final String fileName;
-  // final String fileExtension;
   final int fileSize;
   final FileType? fileType;
   final String? path;
   const FileMessageContent({
     required this.fileUrl,
     required this.fileName,
-    // required this.fileExtension,
     required this.fileSize,
     this.fileType,
     this.path,
@@ -78,8 +76,8 @@ class SystemMessageContent extends MessageContent {
 
 class StickerMessageContent extends MessageContent {
   final String stickerUrl;
-  final int? width;
-  final int? height;
+  final double? width;
+  final double? height;
   final int? fileSize;
   const StickerMessageContent({
     required this.stickerUrl,

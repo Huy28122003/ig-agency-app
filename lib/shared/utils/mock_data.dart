@@ -615,7 +615,7 @@ class MockData {
           groupId: '1',
           repliedMessage: repliedMessage,
           isPinned: i % 10 == 0,
-          pinnedAt: i % 10 == 0 ? now.subtract(Duration(minutes: i * 2)) : null,
+          // pinnedAt: i % 10 == 0 ? now.subtract(Duration(minutes: i * 2)) : null,
         ),
       );
     }

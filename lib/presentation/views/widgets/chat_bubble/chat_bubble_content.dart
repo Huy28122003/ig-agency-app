@@ -36,7 +36,7 @@ class ChatBubbleContent extends StatelessWidget {
       case TextMessageContent _:
         return _TextMessageContent(
           textContent: content,
-          createdAt: message.createdAt.toShortTimeString(),
+          createdAt: message.createdAt.formatHourMinuteAmPm(),
           maxWidth: maxWidth,
           searchText: searchText,
           isMe: isMe,

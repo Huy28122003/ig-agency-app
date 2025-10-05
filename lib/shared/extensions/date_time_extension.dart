@@ -11,6 +11,8 @@ enum DateTimeType {
   dateSlash,
   dateSlashFull,
   dateSlashFullTimeSecond,
+  monthDay,
+  hourMinuteAmPm,
 }
 
 extension DateTimeTypeExtenstions on DateTimeType {
@@ -34,6 +36,10 @@ extension DateTimeTypeExtenstions on DateTimeType {
         return 'yyyy/MM/dd';
       case DateTimeType.dateSlashFullTimeSecond:
         return 'yyyy/MM/dd HH:mm:ss';
+      case DateTimeType.monthDay:
+        return 'MMM d';
+      case DateTimeType.hourMinuteAmPm:
+        return 'h:mm a';
     }
   }
 }
@@ -41,6 +47,30 @@ extension DateTimeTypeExtenstions on DateTimeType {
 extension DateTimeExtensions on DateTime {
   String format({DateTimeType type = DateTimeType.date, bool utc = false}) {
     return DateFormat(type.getDateFormat()).format(utc ? toUtc() : this);
+  }
+
+  String formatMonthDay({bool utc = false}) {
+    final now = DateTime.now();
+    if (year == now.year) {
+      return format(type: DateTimeType.monthDay, utc: utc);
+    } else {
+      return DateFormat('MMM d, yyyy').format(this);
+    }
+  }
+
+  String formatHourMinuteAmPm({bool utc = false}) {
+    return format(type: DateTimeType.hourMinuteAmPm, utc: utc);
+  }
+}
+
+extension DateTimeNumExtensions on int {
+  DateTime toLocalTime({bool isSecond = false, bool utc = false}) {
+    if (utc) {
+      return DateTime.fromMillisecondsSinceEpoch(
+        isSecond ? this * 1000 : this,
+      ).toUtc();
+    }
+    return DateTime.fromMillisecondsSinceEpoch(isSecond ? this * 1000 : this);
   }
 }
 
@@ -109,18 +139,5 @@ extension DateTimeExtension on DateTime {
     } else {
       return "${(diff.inDays / 365).floor()}y";
     }
-  }
-
-  String toShortDateString() {
-    final now = DateTime.now();
-    if (year == now.year) {
-      return DateFormat('MMM d').format(this);
-    } else {
-      return DateFormat('MMM d, yyyy').format(this);
-    }
-  }
-
-  String toShortTimeString() {
-    return DateFormat('h:mm a').format(this);
   }
 }
