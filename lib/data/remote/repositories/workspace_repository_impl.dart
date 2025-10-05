@@ -1,6 +1,4 @@
-import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
-import 'package:ig_agency_app/data/remote/translators/user_profile_translator.dart';
 import 'package:ig_agency_app/data/remote/translators/workspace_translator.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
@@ -159,14 +157,12 @@ class GroupRepositoryImpl implements GroupRepository {
     required int limit,
   }) async {
     try {
-      final response = await _workspaceRemoteDataSource.getUserInGroup(
-        GetDataInGroupRequest(
-          limit: limit,
-          offset: offset,
-          groupId: workspaceId,
-        ),
+      return MockData().users.sublist(
+        offset,
+        offset + limit > MockData().users.length
+            ? MockData().users.length
+            : offset + limit,
       );
-      return response.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
