@@ -133,3 +133,7 @@ class GoToMessageEvent extends WSDetailEvent {
 class OnShowGroupInfoEvent extends WSDetailEvent {
   OnShowGroupInfoEvent();
 }
+
+class FetchGroupDetailEvent extends WSDetailEvent {
+  const FetchGroupDetailEvent();
+}

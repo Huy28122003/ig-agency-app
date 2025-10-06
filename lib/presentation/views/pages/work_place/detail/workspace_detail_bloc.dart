@@ -141,6 +141,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<SearchKeywordChangeEvent>(_onSearchKeywordChange);
     handleSubEvent<GoToMessageEvent>(_onGoToMessage);
     handleSubEvent<OnShowGroupInfoEvent>(_onShowGroupInfo);
+    handleSubEvent<FetchGroupDetailEvent>(_onFetchGroupDetail);
   }
 
   void _initializeListener() {
@@ -168,6 +169,30 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     // Listen to text changes for send button
     _textEditingController.addListener(_onTextChanged);
+  }
+
+  Future<void> _onFetchGroupDetail(
+    FetchGroupDetailEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    try {
+      final groupDetail = await _getGroupDetailUseCase.call(groupId);
+      final pinnedMessageSummary = PinnedMessageSummaryUiModel(
+        latestPinnedMessageContent: _extractContent(
+          groupDetail.recentPinnedMessage?.content,
+        ),
+        latestSenderName: groupDetail.recentPinnedMessage?.user.name,
+        totalPinnedMessages: groupDetail.pinnedMessageCount,
+      );
+      emit(
+        state.copyWith(
+          groupDetail: groupDetail,
+          pinnedMessageSummary: pinnedMessageSummary,
+        ),
+      );
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 
   Timer? _sendButtonDebounceTimer;
@@ -631,7 +656,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         );
       }
 
-      add(GetPinnedMessageSummaryEvent());
+      // add(GetPinnedMessageSummaryEvent());
+      add(const FetchGroupDetailEvent());
 
       messages[messageIndex] = currentMessage.copyWith(
         message: currentMessage.message.copyWith(isPinned: !isPinned),
