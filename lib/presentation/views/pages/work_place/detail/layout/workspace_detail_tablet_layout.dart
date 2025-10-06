@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import '../../../../../../domain/entities/group_detail_entity.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../resources/colors.dart';
@@ -76,9 +76,7 @@ class _WorkspaceDetailTabletLayoutState
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 context.router.push(
-                  GroupInfoRoute(
-                    groupId: context.read<WSDetailBloc>().groupId,
-                  ),
+                  GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),
                 );
               },
               child: Row(
@@ -104,17 +102,17 @@ class _WorkspaceDetailTabletLayoutState
                         BlocSelector<
                           WSDetailBloc,
                           WSDetailState,
-                          List<UserEntity>
+                          GroupDetailEntity?
                         >(
                           selector: (state) {
-                            return state.users;
+                            return state.groupDetail;
                           },
-                          builder: (context, users) {
-                            final onlineUsers = users
-                                .where((user) => user.isOnline)
-                                .length;
+                          builder: (context, groupDetail) {
+                            final memberCount = groupDetail?.memberCount ?? 0;
+                            final onlineMemberCount =
+                                groupDetail?.onlineMemberCount ?? 0;
                             return Text(
-                              '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                              '$memberCount ${memberCount == 1 ? 'Member' : 'Members'}, $onlineMemberCount Online',
                               style: TextStyle(
                                 color: AppColors.textDefaultTextSub2,
                                 fontSize: 14,
@@ -134,10 +132,7 @@ class _WorkspaceDetailTabletLayoutState
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
-            child: Container(
-              color: AppColors.outlineGrayStrong200,
-              height: 1,
-            ),
+            child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
         ),
         body: BlocSelector<WSDetailBloc, WSDetailState, GroupMemberStatus>(

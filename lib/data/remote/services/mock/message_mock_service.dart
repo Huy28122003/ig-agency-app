@@ -131,12 +131,6 @@ class MessageMockService {
       "fileSize": 10240,
       "fileType": FileType.document,
     },
-    {
-      "fileUrl": "https://example.com/file2.zip",
-      "fileName": "Source Code",
-      "fileSize": 20480,
-      "fileType": FileType.archive,
-    },
   ];
 
   final List<String> _mockLinks = ["https://flutter.dev", "https://dart.dev"];
@@ -253,7 +247,7 @@ class MessageMockService {
           isPinned: type == MessageContentType.system
               ? false
               : _random.nextBool(),
-          pinnedAt: type == MessageContentType.system ? null : current,
+          // pinnedAt: type == MessageContentType.system ? null : current,
         ),
       );
     }

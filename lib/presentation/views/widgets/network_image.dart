@@ -56,9 +56,14 @@ class NetworkImageWidget extends StatelessWidget {
                         imageBuilder?.call(context, imageProvider) ??
                         SizedBox.shrink(),
                   )
-                : FittedBox(
-                    fit: BoxFit.contain,
-                    child: Image(image: imageProvider),
+                // : FittedBox(
+                //     fit: BoxFit.contain,
+                //     child: Image(image: imageProvider),
+                //   ),
+                : _buildBackground(
+                    effectiveMaxWidth,
+                    effectiveMaxHeight,
+                    child: Image(image: imageProvider, fit: BoxFit.cover,),
                   ),
             placeholder: (_, _) =>
                 _buildPlaceholder(effectiveMaxWidth, effectiveMaxHeight),

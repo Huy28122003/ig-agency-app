@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
@@ -9,6 +8,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 
 import '../../../../resources/colors.dart';
+import '../../../modal/unpin_message_modal.dart';
 import '../../../widgets/app_pull_to_refresh.dart';
 import '../../../widgets/pinned_message_bubble.dart';
 import '../pinned_message_bloc.dart';
@@ -118,13 +118,16 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
                   return PinnedMessageBubble(
                     key: ValueKey(message.id),
                     message: message,
-                    onTapToShowUnpin: true,
-                    unpin: () {
+                    onTap: () async {
                       final messageId = message.id;
                       if (messageId == null) return;
-                      _pinnedMessageBloc.add(
-                        UnpinMessageEvent(messageId: messageId),
-                      );
+
+                      final unpin = await UnpinMessageModal.show(context);
+                      if (unpin && context.mounted) {
+                        _pinnedMessageBloc.add(
+                          UnpinMessageEvent(messageId: messageId),
+                        );
+                      }
                     },
                   );
                 },

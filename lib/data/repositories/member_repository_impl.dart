@@ -1,26 +1,34 @@
-import 'package:ig_agency_app/data/remote/services/mock/message_mock_service.dart';
-import 'package:ig_agency_app/domain/entities/user_entity.dart';
+import 'package:ig_agency_app/data/remote/app/member_remote_data_source.dart';
+import 'package:ig_agency_app/data/remote/translators/member_translator.dart';
+import 'package:ig_agency_app/domain/entities/member_entity.dart';
 import 'package:ig_agency_app/domain/repositories/member_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: MemberRepository)
 class MemberRepositoryImpl implements MemberRepository {
-  final MessageMockService _messageMockService;
+  final MemberRemoteDataSource _memberRemoteDataSource;
 
-  MemberRepositoryImpl(this._messageMockService);
+  MemberRepositoryImpl(this._memberRemoteDataSource);
 
   @override
-  Future<List<UserEntity>> fetchMembersInGroup({
+  Future<List<MemberEntity>> fetchMembersInGroup({
     required String groupId,
   }) async {
-    return _messageMockService.mockGetMemberInGroup(groupId);
+    final membersResponse = await _memberRemoteDataSource.fetchMembersInGroup(
+      groupId: groupId,
+    );
+    return membersResponse.map((e) => e.toEntity()).toList();
   }
 
   @override
-  Future<List<UserEntity>> searchMembersInGroup({
+  Future<List<MemberEntity>> searchMembersInGroup({
     required String groupId,
     required String query,
   }) async {
-    return _messageMockService.mockSearchMemberInGroup(groupId, query);
+    final membersResponse = await _memberRemoteDataSource.searchMembersInGroup(
+      groupId: groupId,
+      query: query,
+    );
+    return membersResponse.map((e) => e.toEntity()).toList();
   }
 }

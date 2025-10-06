@@ -8,6 +8,7 @@ import 'package:ig_agency_app/presentation/views/pages/pinned_message_list/bloc/
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../modal/unpin_message_modal.dart';
 import '../../../widgets/pinned_message_bubble.dart';
 import '../widgets/pinned_message_empty_view.dart';
 import '../widgets/pinned_message_loading_item.dart';
@@ -102,10 +103,14 @@ class _PinnedMessageListMobileLayoutState
                     //   ),
                     // );
                   },
-                  unpin: () {
+                  onLongPress: () async {
                     final messageId = message.id;
                     if (messageId == null) return;
-                    _bloc.add(UnpinMessageInGroupEvent(messageId: messageId));
+
+                    final unpin = await UnpinMessageModal.show(context);
+                    if (unpin && context.mounted) {
+                      _bloc.add(UnpinMessageInGroupEvent(messageId: messageId));
+                    }
                   },
                 );
               },

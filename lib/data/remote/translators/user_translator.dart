@@ -8,8 +8,7 @@ extension UserTranslatorExtension on UserResponseModel {
       id: id,
       name: name,
       avatar: avatar ?? '',
-      bio: bio,
-      isAdmin: role.isAdmin,
+      isAdmin: RoleSystem.fromString(role).isAdmin,
       isOnline: status == 'active',
     );
   }

@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
-import '../../../../routers/app_router.dart';
+import '../../../modal/unpin_message_modal.dart';
 import '../../../widgets/app_list_view.dart';
 import '../../../widgets/pinned_message_bubble.dart';
 import '../bloc/pinned_message_list_bloc.dart';
@@ -95,20 +95,18 @@ class _PinnedMessageListTabletLayoutState
                   message: message,
                   hasArrow: true,
                   onTap: () {
-                    context.router.push(
-                      WSDetailRoute(
-                        groupId: _pinnedMessageListBloc.groupId,
-                        groupName: _pinnedMessageListBloc.groupName,
-                        groupAvatar: _pinnedMessageListBloc.groupAvatar,
-                      ),
-                    );
+                    context.router.pop(message.id);
                   },
-                  unpin: () {
+                  onLongPress: () async {
                     final messageId = message.id;
                     if (messageId == null) return;
-                    _pinnedMessageListBloc.add(
-                      UnpinMessageInGroupEvent(messageId: messageId),
-                    );
+
+                    final unpin = await UnpinMessageModal.show(context);
+                    if (unpin && context.mounted) {
+                      _pinnedMessageListBloc.add(
+                        UnpinMessageInGroupEvent(messageId: messageId),
+                      );
+                    }
                   },
                 );
               },

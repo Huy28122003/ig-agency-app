@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-import '../../../../../../domain/entities/user_entity.dart';
+import '../../../../../../domain/entities/group_detail_entity.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/group_chat_status.dart';
@@ -214,16 +214,16 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  BlocSelector<WSDetailBloc, WSDetailState, List<UserEntity>>(
+                  BlocSelector<WSDetailBloc, WSDetailState, GroupDetailEntity?>(
                     selector: (state) {
-                      return state.users;
+                      return state.groupDetail;
                     },
-                    builder: (context, users) {
-                      final onlineUsers = users
-                          .where((user) => user.isOnline)
-                          .length;
+                    builder: (context, groupDetail) {
+                      final memberCount = groupDetail?.memberCount ?? 0;
+                      final onlineMemberCount =
+                          groupDetail?.onlineMemberCount ?? 0;
                       return Text(
-                        '${users.length} ${users.length == 1 ? 'Member' : 'Members'}, $onlineUsers Online',
+                        '$memberCount ${memberCount == 1 ? 'Member' : 'Members'}, $onlineMemberCount Online',
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,

@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
 import 'package:injectable/injectable.dart';
 
@@ -58,19 +59,15 @@ class MessageRepositoryImpl implements MessageRepository {
     String groupId,
     int limit,
     int offset,
-    String? search,
-    String? beforeMessageId,
   ) async {
     try {
       final pinnedMessages = await _messageRemoteDataSource.fetchPinnedMessage(
         groupId,
         limit,
         offset,
-        search,
-        beforeMessageId,
       );
 
-      return pinnedMessages;
+      return pinnedMessages.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -98,14 +95,14 @@ class MessageRepositoryImpl implements MessageRepository {
     String? targetMessageId,
   ) async {
     try {
-      final messages = _messageRemoteDataSource.fetchMessagesInGroup(
+      final messages = await _messageRemoteDataSource.fetchMessagesInGroup(
         groupId,
         limit,
         beforeMessageId,
         targetMessageId,
       );
 
-      return messages;
+      return messages.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

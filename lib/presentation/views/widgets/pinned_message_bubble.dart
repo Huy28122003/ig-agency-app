@@ -19,70 +19,21 @@ class PinnedMessageBubble extends StatelessWidget {
     super.key,
     required this.message,
     this.onTap,
-    this.unpin,
+    this.onLongPress,
     this.hasArrow = false,
-    this.onTapToShowUnpin = false,
   });
 
   final PinnedMessageUIModel message;
   final VoidCallback? onTap;
-  final VoidCallback? unpin;
+  final VoidCallback? onLongPress;
   final bool hasArrow;
-  final bool onTapToShowUnpin;
-
-  Future<void> _showOptionSheet(BuildContext context) async {
-    final result = await showCupertinoModalPopup<bool>(
-      context: Navigator.of(context, rootNavigator: true).context,
-      barrierColor: Colors.black.withValues(alpha: 0.68),
-      builder: (BuildContext context) => CupertinoActionSheet(
-        actions: <CupertinoActionSheetAction>[
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(
-              'Unpin',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.colorsBlue,
-                fontSize: 17,
-                fontWeight: FontWeight.w500,
-                height: 1.29,
-                letterSpacing: -0.43,
-              ),
-            ),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
-          child: Text(
-            'Cancel',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.colorsBlue,
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              height: 1.29,
-              letterSpacing: -0.43,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (result == true) {
-      unpin?.call();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onTapToShowUnpin ? () => _showOptionSheet(context) : onTap,
-      onLongPress: onTapToShowUnpin ? null : () => _showOptionSheet(context),
+      onTap: onTap,
+      onLongPress: onLongPress,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 12,
@@ -126,7 +77,7 @@ class PinnedMessageBubble extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        message.pinnedAt.toShortDateString(),
+                        message.createdAt.formatMonthDay(),
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,
@@ -191,6 +142,12 @@ class PinnedMessageBubble extends StatelessWidget {
         return _PinnedMessageFile(
           fileFullName: content.fileName,
           fileSize: content.fileSize,
+        );
+      case StickerMessageContent _:
+        return _PinnedMessageSticker(
+          stickerUrl: content.stickerUrl,
+          width: content.width,
+          height: content.height,
         );
       default:
         return SizedBox.shrink();
@@ -379,5 +336,22 @@ class _PinnedMessageFile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _PinnedMessageSticker extends StatelessWidget {
+  const _PinnedMessageSticker({
+    required this.stickerUrl,
+    required this.width,
+    required this.height,
+  });
+
+  final String stickerUrl;
+  final double? width;
+  final double? height;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(); // TODO hoannk
   }
 }

@@ -13,6 +13,7 @@ import '../../../../shared/commons/enums/status.dart';
 import '../../../resources/colors.dart';
 import '../../widgets/app_pull_to_refresh.dart';
 import '../../widgets/pinned_message_bubble.dart';
+import '../unpin_message_modal.dart';
 import 'cubits/pinned_message_bottom_sheet_cubit.dart';
 
 class PinnedMessagesBottomSheet extends StatefulWidget {
@@ -237,12 +238,18 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
                                     if (messageId == null) return;
                                     widget.onTap?.call(messageId);
                                   },
-                                  unpin: () {
+                                  onLongPress: () async {
                                     final messageId = message.id;
                                     if (messageId == null) return;
-                                    context
-                                        .read<PinnedMessageBottomSheetCubit>()
-                                        .unpinMessage(messageId);
+
+                                    final unpin = await UnpinMessageModal.show(
+                                      context,
+                                    );
+                                    if (unpin && context.mounted) {
+                                      context
+                                          .read<PinnedMessageBottomSheetCubit>()
+                                          .unpinMessage(messageId);
+                                    }
                                   },
                                 );
                               },

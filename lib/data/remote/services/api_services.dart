@@ -13,9 +13,12 @@ import '../models/requests/pin_message_request_model.dart';
 import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
 import '../models/requests/send_message_request_model.dart';
+import '../models/requests/delete_message_request_model.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/change_password_response_model.dart';
 import '../models/response/profile_info_response.dart';
+import '../models/response/group_detail_response_model.dart';
+import '../models/response/member_response_model.dart';
 
 part 'api_services.g.dart';
 
@@ -59,6 +62,11 @@ abstract class ApiService {
   );
 
   // Conversation
+  @GET('/conversations/{conversationId}')
+  Future<GroupDetailResponseModel> getGroupDetail(
+    @Path('conversationId') String conversationId,
+  );
+
   @DELETE('/conversations/{conversationId}')
   Future<void> deleteConversation(
     @Path('conversationId') String conversationId,
@@ -83,6 +91,7 @@ abstract class ApiService {
   Future<void> deleteMessage(
     @Path('conversationId') String conversationId,
     @Path('messageId') String messageId,
+    @Body() DeleteMessageRequestModel? request,
   );
 
   @GET('/conversations/{conversationId}/pinned-messages')
@@ -90,8 +99,6 @@ abstract class ApiService {
     @Path('conversationId') String conversationId,
     @Query('limit') int limit,
     @Query('offset') int offset,
-    @Query('search') String? search,
-    @Query('before') String? beforeMessageId,
   );
 
   @POST('/conversations/{conversationId}/pinned-messages')
@@ -104,5 +111,17 @@ abstract class ApiService {
   Future<void> unpinMessage(
     @Path('conversationId') String conversationId,
     @Path('messageId') String messageId,
+  );
+
+  // Member
+  @GET('/conversations/{conversationId}/members')
+  Future<List<MemberResponseModel>> getMembersInGroup(
+    @Path('conversationId') String conversationId,
+  );
+
+  @GET('/conversations/{conversationId}/members')
+  Future<List<MemberResponseModel>> searchMembersInGroup(
+    @Path('conversationId') String conversationId,
+    @Query('search') String search,
   );
 }

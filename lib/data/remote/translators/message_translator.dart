@@ -5,170 +5,153 @@ import 'package:ig_agency_app/domain/entities/message/message_entity.dart';
 import 'package:ig_agency_app/domain/entities/message/message_content.dart';
 import 'package:ig_agency_app/domain/entities/message/text_segment.dart';
 import 'package:ig_agency_app/domain/enums/message_enums.dart';
-
-import '../../../flavor_settings.dart';
+import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
+import 'package:ig_agency_app/shared/extensions/string_ext.dart';
 
 extension MessageTranslatorExtension on MessageResponseModel {
   MessageEntity toEntity() {
-    final baseUrl = env.baseUrl;
     return MessageEntity(
       id: id,
       user: from.toEntity(),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(date * 1000),
-      content: _mapContent(baseUrl),
+      createdAt: date.toLocalTime(isSecond: true),
+      content: _mapContent(),
       status: MessageStatus.sent,
       repliedMessage: replyToMessage != null
-          ? _mapReplyMessage(baseUrl, replyToMessage!)
+          ? _mapReplyMessage(replyToMessage!)
           : null,
       isPinned: pinned,
-      pinnedAt: null,
+      // pinnedAt: null,
     );
   }
 
-  MessageContent _mapContent(String baseUrl) {
-    switch (type.toLowerCase()) {
-      case 'text':
+  MessageContent _mapContent() {
+    final messageContentType = MessageContentType.fromString(type);
+    switch (messageContentType) {
+      case MessageContentType.text:
         return TextMessageContent(
           text: text ?? '',
           textSegments: _mapTextSegments(),
         );
-
-      case 'photo':
+      case MessageContentType.photo:
         final photos = photo;
-        if (photos != null && photos.isNotEmpty) {
+        if (photos.isNotEmpty) {
           final firstPhoto = photos.first;
           return ImageMessageContent(
-            imageUrl: '$baseUrl/${firstPhoto.filePath}',
+            imageUrl: firstPhoto.filePath.withBaseUrl(),
             width: firstPhoto.width?.toDouble(),
             height: firstPhoto.height?.toDouble(),
             path: firstPhoto.filePath,
           );
         }
         return ImageMessageContent(imageUrl: '', width: null, height: null);
-
-      case 'video':
+      case MessageContentType.video:
         final videoData = video;
         final thumbnail = videoData?.thumbnail;
         return VideoMessageContent(
-          videoUrl: '$baseUrl/${videoData?.filePath}',
+          videoUrl: videoData?.filePath.withBaseUrl() ?? '',
           duration: Duration(seconds: videoData?.duration ?? 0),
-          thumbnailUrl: '$baseUrl/${thumbnail?.filePath}',
-          width: videoData?.width.toDouble(),
-          height: videoData?.height.toDouble(),
+          thumbnailUrl: thumbnail?.filePath.withBaseUrl(),
+          width: videoData?.width?.toDouble(),
+          height: videoData?.height?.toDouble(),
           path: videoData?.filePath,
         );
-
-      case 'document':
+      case MessageContentType.document:
         return FileMessageContent(
-          fileUrl: '$baseUrl/${document?.filePath}',
+          fileUrl: document?.filePath.withBaseUrl() ?? '',
           fileName: document?.fileName ?? '',
           fileSize: document?.fileSize ?? 0,
           fileType: FileType.document,
           path: document?.filePath,
         );
-
-      case 'audio':
-      case 'voice':
+      case MessageContentType.audio:
         return FileMessageContent(
-          fileUrl: '$baseUrl/${audio?.filePath}',
+          fileUrl: audio?.filePath.withBaseUrl() ?? '',
           fileName: audio?.fileName ?? '',
           fileSize: audio?.fileSize ?? 0,
-          fileType: FileType.document,
+          fileType: FileType.audio,
           path: audio?.filePath,
         );
-
-      case 'sticker':
+      case MessageContentType.sticker:
         return StickerMessageContent(
-          stickerUrl: '$baseUrl/${sticker?.filePath}',
-          width: sticker?.width,
-          height: sticker?.height,
+          stickerUrl: sticker?.filePath.withBaseUrl() ?? '',
+          width: sticker?.width?.toDouble(),
+          height: sticker?.height?.toDouble(),
           fileSize: sticker?.fileSize,
         );
-
       default:
         return TextMessageContent(text: text ?? '');
     }
   }
 
   List<TextSegment>? _mapTextSegments() {
-    if (entities == null || entities!.isEmpty) return null;
+    if (entities.isEmpty) return null;
 
-    return entities!.map((entity) => entity.toTextSegment()).toList();
+    return entities.map((entity) => entity.toTextSegment()).toList();
   }
 
-  MessageEntity _mapReplyMessage(
-    String baseUrl,
-    ReplyMessageResponseModel replyMessage,
-  ) {
+  MessageEntity _mapReplyMessage(ReplyMessageResponseModel replyMessage) {
     return MessageEntity(
       id: replyMessage.id,
       user: replyMessage.from.toEntity(),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(replyMessage.date * 1000),
-      content: _mapReplyContent(baseUrl, replyMessage),
+      createdAt: replyMessage.date.toLocalTime(isSecond: true),
+      content: _mapReplyContent(replyMessage),
       status: MessageStatus.sent,
-      repliedMessage: null, // Reply message không có nested reply
+      repliedMessage: null,
+      // Reply message không có nested reply
       isPinned: replyMessage.pinned,
-      pinnedAt: null,
+      // pinnedAt: null,
     );
   }
 
-  MessageContent _mapReplyContent(
-    String baseUrl,
-    ReplyMessageResponseModel replyMessage,
-  ) {
-    switch (replyMessage.type.toLowerCase()) {
-      case 'text':
+  MessageContent _mapReplyContent(ReplyMessageResponseModel replyMessage) {
+    final messageContentType = MessageContentType.fromString(replyMessage.type);
+    switch (messageContentType) {
+      case MessageContentType.text:
         return TextMessageContent(text: replyMessage.text ?? '');
-
-      case 'photo':
+      case MessageContentType.photo:
         final photos = replyMessage.photo;
-        if (photos != null && photos.isNotEmpty) {
+        if (photos.isNotEmpty) {
           final firstPhoto = photos.first;
           return ImageMessageContent(
-            imageUrl: '$baseUrl/${firstPhoto.filePath}',
+            imageUrl: firstPhoto.filePath.withBaseUrl(),
             width: firstPhoto.width?.toDouble(),
             height: firstPhoto.height?.toDouble(),
             path: firstPhoto.filePath,
           );
         }
         return ImageMessageContent(imageUrl: '', width: null, height: null);
-
-      case 'video':
+      case MessageContentType.video:
         final videoData = replyMessage.video;
         final thumbnail = videoData?.thumbnail;
         return VideoMessageContent(
-          videoUrl: '$baseUrl/${videoData?.filePath}',
+          videoUrl: videoData?.filePath.withBaseUrl() ?? '',
           duration: Duration(seconds: videoData?.duration ?? 0),
-          thumbnailUrl: '$baseUrl/${thumbnail?.filePath}',
-          width: videoData?.width.toDouble(),
-          height: videoData?.height.toDouble(),
+          thumbnailUrl: thumbnail?.filePath.withBaseUrl(),
+          width: thumbnail?.width?.toDouble(),
+          height: thumbnail?.height?.toDouble(),
           path: videoData?.filePath,
         );
-
-      case 'document':
+      case MessageContentType.document:
         return FileMessageContent(
-          fileUrl: '$baseUrl/${replyMessage.document?.filePath}',
+          fileUrl: replyMessage.document?.filePath.withBaseUrl() ?? '',
           fileName: replyMessage.document?.fileName ?? '',
           fileSize: replyMessage.document?.fileSize ?? 0,
           fileType: FileType.document,
           path: replyMessage.document?.filePath,
         );
-
-      case 'audio':
-      case 'voice':
+      case MessageContentType.audio:
         return FileMessageContent(
-          fileUrl: '$baseUrl/${replyMessage.audio?.filePath}',
+          fileUrl: replyMessage.audio?.filePath.withBaseUrl() ?? '',
           fileName: replyMessage.audio?.fileName ?? '',
           fileSize: replyMessage.audio?.fileSize ?? 0,
-          fileType: FileType.document,
+          fileType: FileType.audio,
           path: replyMessage.audio?.filePath,
         );
-
-      case 'sticker':
+      case MessageContentType.sticker:
         return StickerMessageContent(
-          stickerUrl: '$baseUrl/${replyMessage.sticker?.filePath}',
-          width: replyMessage.sticker?.width,
-          height: replyMessage.sticker?.height,
+          stickerUrl: replyMessage.sticker?.filePath.withBaseUrl() ?? '',
+          width: replyMessage.sticker?.width?.toDouble(),
+          height: replyMessage.sticker?.height?.toDouble(),
           fileSize: replyMessage.sticker?.fileSize,
         );
 

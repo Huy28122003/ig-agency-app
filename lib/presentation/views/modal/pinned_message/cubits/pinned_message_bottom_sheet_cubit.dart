@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -21,6 +23,7 @@ class PinnedMessageBottomSheetCubit
   }
 
   final int _limit = 10;
+  var _offset = 0;
 
   final String groupId;
 
@@ -28,14 +31,15 @@ class PinnedMessageBottomSheetCubit
   final UnpinMessageUseCase _unpinMessageUseCase;
 
   Future<(List<PinnedMessageUIModel>, PagingStatus)?> _getPinnedMessages({
-    String? beforeMessageId,
+    required int limit,
+    required int offset,
     bool isRefresh = false,
   }) async {
     final result = await _fetchPinnedMessageUseCase.call(
       FetchPinnedMessageInGroupParams(
         groupId: groupId,
-        limit: _limit,
-        beforeMessageId: beforeMessageId,
+        limit: limit,
+        offset: offset,
       ),
     );
 
@@ -44,7 +48,7 @@ class PinnedMessageBottomSheetCubit
 
     final fetchStatus = messages.isEmpty
         ? PagingStatus.empty
-        : (messages.length < _limit
+        : (messages.length < limit
               ? PagingStatus.noMoreData
               : (isRefresh
                     ? PagingStatus.refreshCompleted
@@ -56,16 +60,16 @@ class PinnedMessageBottomSheetCubit
   Future<void> loadPinnedMessage() async {
     try {
       emit(state.copyWith(pageStatus: PageStatus.loading));
-      // _offset = 0;
+      _offset = 0;
 
-      final result = await _getPinnedMessages();
+      final result = await _getPinnedMessages(limit: _limit, offset: _offset);
       if (result == null) {
         emit(state.copyWith(pageStatus: PageStatus.failure));
         return;
       }
 
       final (pinnedMessages, pagingStatus) = result;
-      // _offset = pinnedMessages.length;
+      _offset = pinnedMessages.length;
       emit(
         state.copyWith(
           pageStatus: PageStatus.loaded,
@@ -81,17 +85,21 @@ class PinnedMessageBottomSheetCubit
   void refreshPinnedMessages() async {
     if (state.pagingStatus == PagingStatus.refreshing) return;
 
-    // _offset = 0;
+    _offset = 0;
     emit(state.copyWith(pagingStatus: PagingStatus.refreshing));
 
-    final result = await _getPinnedMessages(isRefresh: true);
+    final result = await _getPinnedMessages(
+      isRefresh: true,
+      limit: _limit,
+      offset: _offset,
+    );
     if (result == null) {
       emit(state.copyWith(pagingStatus: PagingStatus.refreshFailed));
       return;
     }
 
     final (messages, pagingStatus) = result;
-    // _offset = messages.length;
+    _offset = messages.length;
     emit(state.copyWith(pagingStatus: pagingStatus, pinnedMessages: messages));
   }
 
@@ -103,16 +111,14 @@ class PinnedMessageBottomSheetCubit
 
     emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-    final result = await _getPinnedMessages(
-      beforeMessageId: state.pinnedMessages.last.id,
-    );
+    final result = await _getPinnedMessages(limit: _limit, offset: _offset);
     if (result == null) {
       emit(state.copyWith(pagingStatus: PagingStatus.loadFailed));
       return;
     }
 
     final (messages, pagingStatus) = result;
-    // _offset += messages.length;
+    _offset += messages.length;
     final updatedMessages = [...state.pinnedMessages, ...messages];
 
     emit(
@@ -131,7 +137,7 @@ class PinnedMessageBottomSheetCubit
     final messages = List<PinnedMessageUIModel>.from(state.pinnedMessages)
       ..removeWhere((e) => e.id == messageId);
 
-    // _offset = max(0, _offset - 1);
+    _offset = max(0, _offset - 1);
     emit(state.copyWith(pinnedMessages: messages, isUnpinSuccess: true));
   }
 

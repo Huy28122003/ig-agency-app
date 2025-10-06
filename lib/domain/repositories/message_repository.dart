@@ -14,8 +14,6 @@ abstract class MessageRepository {
     String groupId,
     int limit,
     int offset,
-    String? search,
-    String? beforeMessageId,
   );
 
   Future<List<MessageEntity>> fetchMessagesInGroup(

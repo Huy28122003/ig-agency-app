@@ -5,12 +5,14 @@ part 'send_message_request_model.g.dart';
 @JsonSerializable()
 class SendMessageRequestModel {
   final String type;
-  final String text;
+  final String? clientMessageId;
+  final String? text;
   final String? replyToMessageId;
 
   SendMessageRequestModel({
     required this.type,
-    required this.text,
+    this.clientMessageId,
+    this.text,
     this.replyToMessageId,
   });
 

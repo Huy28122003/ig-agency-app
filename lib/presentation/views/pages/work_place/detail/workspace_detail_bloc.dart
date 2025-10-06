@@ -12,10 +12,12 @@ import 'package:injectable/injectable.dart';
 import '../../../../../data/cache/ram_cache.dart';
 import '../../../../../dependencies/media/media_manager.dart';
 import '../../../../../dependencies/file/file_manager.dart';
+import '../../../../../domain/entities/group_detail_entity.dart';
 import '../../../../../domain/entities/message/message.dart';
 import '../../../../../domain/enums/message_enums.dart';
 import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/enums/send_message_type.dart';
+import '../../../../../domain/usecases/group/get_group_detail_use_case.dart';
 import '../../../../../domain/usecases/member/fetch_member_in_group_use_case.dart';
 import '../../../../../domain/usecases/message/get_pinned_message_summary_group_use_case.dart';
 import '../../../../../domain/usecases/message/fetch_messages_in_group_use_case.dart';
@@ -56,6 +58,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     this._fileManager,
     this._deleteConversationUseCase,
     this._searchMessageInGroupUseCase,
+    this._getGroupDetailUseCase,
   ) : super(WSDetailState()) {
     _registerHandlers();
     _initializeListener();
@@ -75,6 +78,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   final DeleteMessageForYouUseCase _deleteMessageForYouUseCase;
   final DeleteConversationUseCase _deleteConversationUseCase;
   final SearchMessageInGroupUseCase _searchMessageInGroupUseCase;
+  final GetGroupDetailUseCase _getGroupDetailUseCase;
 
   final MediaManager _mediaManager;
   final FileManager _fileManager;
@@ -205,15 +209,25 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
                 ? PagingStatus.noMoreData
                 : PagingStatus.loadCompleted);
 
-      final pinnedMessageSummaryResult =
-          await _getPinnedMessageSummaryGroupUseCase.call(
-            GetPinnedMessageSummaryGroupParams(groupId: groupId),
-          );
+      // final pinnedMessageSummaryResult =
+      //     await _getPinnedMessageSummaryGroupUseCase.call(
+      //       GetPinnedMessageSummaryGroupParams(groupId: groupId),
+      //     );
 
-      final pinnedMessageSummary = pinnedMessageSummaryResult.toUIModel();
+      // final pinnedMessageSummary = pinnedMessageSummaryResult.toUIModel();
 
       final users = await _fetchMemberInGroupUseCase.call(
         FetchMemberInGroupParams(groupId: groupId),
+      );
+
+      final groupDetail = await _getGroupDetailUseCase.call(groupId);
+
+      final pinnedMessageSummary = PinnedMessageSummaryUiModel(
+        latestPinnedMessageContent: _extractContent(
+          groupDetail.recentPinnedMessage?.content,
+        ),
+        latestSenderName: groupDetail.recentPinnedMessage?.user.name,
+        totalPinnedMessages: groupDetail.pinnedMessageCount,
       );
 
       emit(
@@ -225,19 +239,37 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
               : _mapMessagesToUIModels(messages),
           pagingStatus: pagingStatus,
           pinnedMessageSummary: pinnedMessageSummary,
-          users: users,
-          usersSearch: users,
+          users: users.map((e) => e.user).toList(),
+          usersSearch: users.map((e) => e.user).toList(),
           isSearchMode: event.isSearchMode,
+          groupDetail: groupDetail,
         ),
       );
-    } catch (e) {
+    } catch (error) {
       emit(
         state.copyWith(
           pageStatus: PageStatus.failure,
-          pageErrorMessage: e.toString(),
+          pageErrorMessage: error.toString(),
         ),
       );
+      handleError(emit, error);
     }
+  }
+
+  String? _extractContent(MessageContent? content) {
+    if (content == null) return null;
+
+    if (content is TextMessageContent) {
+      return content.text;
+    } else if (content is ImageMessageContent) {
+      return 'Image';
+    } else if (content is VideoMessageContent) {
+      return 'Video';
+    } else if (content is FileMessageContent) {
+      return 'Attachment';
+    }
+
+    return null;
   }
 
   Future<void> _onLoadMoreMessages(
@@ -439,7 +471,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     final users = await _searchMemberInGroupUseCase.call(
       SearchMemberInGroupParams(groupId: groupId, query: event.query),
     );
-    emit(state.copyWith(usersSearch: users));
+    emit(state.copyWith(usersSearch: users.map((e) => e.user).toList()));
   }
 
   Future<void> _onJumpToMessage(

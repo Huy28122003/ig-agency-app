@@ -1,12 +1,13 @@
 import 'package:ig_agency_app/data/remote/app/message_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/pin_message_request_model.dart';
-import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
-import 'package:ig_agency_app/domain/entities/message/message.dart';
+import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../domain/entities/message/message_content.dart';
 import '../../../shared/commons/exception_converter.dart';
 import '../models/requests/send_message_request_model.dart';
-import '../services/api_services.dart';
+import '../models/requests/delete_message_request_model.dart';
+import '../models/response/message_response_model.dart';
 
 @Injectable(as: MessageRemoteDataSource)
 class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
@@ -15,23 +16,28 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   final ApiService _apiService;
 
   @override
-  Future<List<MessageEntity>> fetchPinnedMessage(
+  Future<List<MessageResponseModel>> fetchPinnedMessage(
     String groupId,
     int limit,
     int offset,
-    String? search,
-    String? before,
   ) async {
     try {
       final pinnedMessages = await _apiService.getPinnedMessages(
         groupId,
         limit,
         offset,
-        search,
-        before,
       );
 
-      return pinnedMessages.map((e) => e.toEntity()).toList();
+      return pinnedMessages;
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> unpinMessage(String groupId, String messageId) async {
+    try {
+      await _apiService.unpinMessage(groupId, messageId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -50,18 +56,9 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   }
 
   @override
-  Future<void> unpinMessage(String groupId, String messageId) async {
-    try {
-      await _apiService.unpinMessage(groupId, messageId);
-    } catch (e) {
-      throw ExceptionConverter.convert(e);
-    }
-  }
-
-  @override
   Future<void> sendMessage(
-    String userId,
     String groupId,
+    String? clientMessageId,
     String? replyMessageId,
     MessageContent content,
   ) async {
@@ -71,6 +68,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
           groupId,
           SendMessageRequestModel(
             type: 'text',
+            clientMessageId: clientMessageId,
             text: content.text,
             replyToMessageId: replyMessageId,
           ),
@@ -84,7 +82,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   }
 
   @override
-  Future<List<MessageEntity>> fetchMessagesInGroup(
+  Future<List<MessageResponseModel>> fetchMessagesInGroup(
     String groupId,
     int limit,
     String? beforeMessageId,
@@ -98,7 +96,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
       beforeMessageId,
     );
 
-    return messages.map((e) => e.toEntity()).toList();
+    return messages;
   }
 
   @override
@@ -107,7 +105,11 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
     String messageId,
   ) async {
     try {
-      await _apiService.deleteMessage(groupId, messageId);
+      await _apiService.deleteMessage(
+        groupId,
+        messageId,
+        const DeleteMessageRequestModel(deleteForAllMember: true),
+      );
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -116,7 +118,11 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   @override
   Future<void> deleteMessageForYou(String groupId, String messageId) async {
     try {
-      await _apiService.deleteMessage(groupId, messageId);
+      await _apiService.deleteMessage(
+        groupId,
+        messageId,
+        const DeleteMessageRequestModel(deleteForAllMember: false),
+      );
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
