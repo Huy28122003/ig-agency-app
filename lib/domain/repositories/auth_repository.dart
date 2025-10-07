@@ -23,7 +23,7 @@ abstract class AuthRepository {
 
   Future changePassword(String currentPassword, String newPassword);
 
-  Future deleteAccount(String userId);
+  Future deleteAccount();
 
   Future<String?> getEmail();
 

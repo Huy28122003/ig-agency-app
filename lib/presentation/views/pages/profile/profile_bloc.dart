@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/repositories/user_repository.dart';
+import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/domain/usecases/delete_account_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/update_avatar_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
+import '../../../../dependencies/media/media_manager.dart';
 import '../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../base/base_state.dart';
 
@@ -21,6 +24,8 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     this._deleteAccountUseCase,
     this._fetchCurrentUserUseCase,
     this._userRepository,
+    this._mediaManager,
+    this._updateAvatarUseCase,
   ) : super(ProfileState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -29,6 +34,9 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   final DeleteAccountUseCase _deleteAccountUseCase;
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
+  final MediaManager _mediaManager;
+  final UpdateAvatarUseCase _updateAvatarUseCase;
+
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
   late final String email;
 
@@ -38,6 +46,8 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     handleSubEvent<DeleteAccountEvent>(_onDeleteAccount);
 
     handleSubEvent<UpdateUserEvent>(_onUpdateUser);
+
+    handleSubEvent<UpdateAvatarEvent>(_onUpdateAvatar);
   }
 
   void _initializeUserListener() {
@@ -63,7 +73,7 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(processing: true));
 
-    await _deleteAccountUseCase(DeleteAccountParam(userId: ''));
+    await _deleteAccountUseCase(NoParam());
 
     emit(state.copyWith(processing: false, isDeleteAccountSuccess: true));
   }
@@ -73,6 +83,18 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     emit(state.copyWith(user: event.user));
+  }
+
+  Future<void> _onUpdateAvatar(
+    UpdateAvatarEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    final file = await _mediaManager.pickMedia();
+    if (file != null) {
+      emit(state.copyWith(processing: true));
+      await _updateAvatarUseCase.call(UpdateAvatarParam(avatarPath: file.path));
+      emit(state.copyWith(processing: false));
+    }
   }
 
   @override

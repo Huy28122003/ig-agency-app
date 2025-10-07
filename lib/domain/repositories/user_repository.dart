@@ -13,5 +13,7 @@ abstract class UserRepository {
 
   Future updateProfileBio(String bio);
 
+  Future<void> updateUserAvatar(String avatarPath);
+
   Future<UserEntity> getUserInfo(String userId);
 }

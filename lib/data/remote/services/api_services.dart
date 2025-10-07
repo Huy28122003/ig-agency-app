@@ -49,9 +49,20 @@ abstract class ApiService {
   @GET('/profile')
   Future<ProfileInfoResponse> getProfileInfo();
 
+  @DELETE('/profile')
+  Future<void> deleteAccount();
+
   //Search
   @POST('/')
   Future<PagedResponse<SearchResultResponse>> search(
     @Body() SearchRequestModel request,
   );
+
+  @MultiPart()
+  @PUT('/profile')
+  Future<ProfileInfoResponse> updateProfile({
+    @Part(name: "name") String? name,
+    @Part(name: "bio") String? bio,
+    @Part(name: "avatar") MultipartFile? avatar,
+  });
 }

@@ -17,3 +17,7 @@ class UpdateUserEvent extends ProfileEvent {
 
   final ProfileInfoEntity user;
 }
+
+class UpdateAvatarEvent extends ProfileEvent {
+  const UpdateAvatarEvent();
+}

@@ -33,7 +33,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future clearAccessToken() async {
     try {
-      // Simulate clearing token
+      _ramCache.clearUserData();
+      await _localDataSource.revokeTokens();
+      await _localDataSource.logout();
       return;
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -162,9 +164,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future deleteAccount(String userId) async {
+  Future deleteAccount() async {
     try {
-      await _remoteDataSource.deleteAccount(userId);
+      await _remoteDataSource.deleteAccount();
       return await clearAccessToken();
     } catch (e) {
       throw FailureConverter.convert(e);

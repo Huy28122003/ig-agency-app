@@ -86,7 +86,8 @@ class _ProfileMobileLayoutState extends State<ProfileMobileLayout> {
               children: [
                 ProfileHeader(
                   onChangeAvatar: () {
-                    // TODO hoannk: Route
+                    // TODO hoannk: Demo
+                    context.read<ProfileBloc>().add(const UpdateAvatarEvent());
                   },
                   onEditName: () {
                     final name = _profileBloc.state.user?.name ?? '';
