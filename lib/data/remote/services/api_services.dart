@@ -10,7 +10,6 @@ import 'package:retrofit/retrofit.dart';
 
 import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
-import '../models/requests/update_profile_request_model.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/profile_info_response.dart';
 
@@ -53,8 +52,11 @@ abstract class ApiService {
     @Body() SearchRequestModel request,
   );
 
+  @MultiPart()
   @PUT('/profile')
-  Future<ProfileInfoResponse> updateProfile(
-    @Body() UpdateProfileRequestModel request,
-  );
+  Future<ProfileInfoResponse> updateProfile({
+    @Part(name: "name") String? name,
+    @Part(name: "bio") String? bio,
+    @Part(name: "avatar") MultipartFile? avatar,
+  });
 }
