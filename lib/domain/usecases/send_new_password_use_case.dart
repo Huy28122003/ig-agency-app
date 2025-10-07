@@ -1,26 +1,17 @@
+import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
 
 import '../repositories/auth_repository.dart';
 
 @injectable
-class SendNewPasswordUseCase extends UseCase<bool, SendNewPasswordParams> {
+class SendNewPasswordUseCase extends UseCase<void, ForgotPasswordRequestModel> {
   SendNewPasswordUseCase(this._authRepository);
 
   final AuthRepository _authRepository;
 
   @override
-  Future<bool> call(SendNewPasswordParams params) async {
-    return await _authRepository.sendNewPassword(
-      params.email,
-      params.newPassword,
-    );
+  Future call(ForgotPasswordRequestModel request) async {
+    return await _authRepository.sendNewPassword(request);
   }
-}
-
-class SendNewPasswordParams {
-  SendNewPasswordParams({required this.email, required this.newPassword});
-
-  final String email;
-  final String newPassword;
 }

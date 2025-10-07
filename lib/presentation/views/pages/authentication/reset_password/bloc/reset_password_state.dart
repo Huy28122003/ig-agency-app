@@ -6,7 +6,10 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
   final String newPassword;
   final String confirmPassword;
   final String email;
+  final String otpVerified;
   final bool isResetSuccess;
+
+  bool get isValid => newPassword.isNotEmpty && newPassword == confirmPassword;
 
   const ResetPasswordState({
     super.pageStatus = PageStatus.loaded,
@@ -17,6 +20,7 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
     this.newPassword = "",
     this.confirmPassword = "",
     this.email = "",
+    this.otpVerified = "",
     this.isResetSuccess = false,
   });
 
@@ -28,6 +32,7 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
     VerifyStatus? otpStatus,
     String? errorMessage,
     String? email,
+    String? otpVerified,
     VerifyStatus? verifyStatus,
     String? newPassword,
     String? confirmPassword,
@@ -40,6 +45,7 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
       errorMessage: errorMessage,
       verifyStatus: verifyStatus ?? this.verifyStatus,
       email: email ?? this.email,
+      otpVerified: otpVerified ?? this.otpVerified,
       newPassword: newPassword ?? this.newPassword,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       isResetSuccess: isResetSuccess ?? this.isResetSuccess,
@@ -52,6 +58,7 @@ class ResetPasswordState extends BaseState<ResetPasswordState> {
     errorMessage,
     verifyStatus,
     email,
+    otpVerified,
     newPassword,
     isResetSuccess,
     confirmPassword,

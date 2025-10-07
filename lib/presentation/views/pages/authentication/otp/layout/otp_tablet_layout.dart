@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/authentication/otp/bloc/otp_bloc.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
+import 'package:ig_agency_app/shared/utils/toast_util.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
@@ -56,10 +57,18 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
               listenWhen: (prev, curr) => prev.otpStatus != curr.otpStatus,
               listener: (context, state) {
                 if (state.otpStatus == VerifyStatus.valid) {
-                  context.router.push(ResetPasswordRoute(email: state.email));
+                  context.router.push(
+                    ResetPasswordRoute(
+                      email: state.email,
+                      otpVerified: state.otpVerified,
+                    ),
+                  );
                 } else if (state.otpStatus == VerifyStatus.invalid) {
-                  // Show error message
                   _otpKey.currentState?.clearOtp();
+                  ToastUtil.showError(
+                    context,
+                    'The verification code is incorrect. Please try again.',
+                  );
                 }
               },
               child: Column(
@@ -106,7 +115,7 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                             onChange: (value) {},
                             cursorColor: AppColors.outlinePrimaryDefault,
                             otpPinFieldDecoration:
-                            OtpPinFieldDecoration.defaultPinBoxDecoration,
+                                OtpPinFieldDecoration.defaultPinBoxDecoration,
                             otpPinFieldStyle: OtpPinFieldStyle(
                               textStyle: TextStyle(
                                 fontWeight: FontWeight.w500,
@@ -116,16 +125,16 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                               fieldBorderRadius: 8.8,
                               fieldBorderWidth: 1.1,
                               defaultFieldBackgroundColor:
-                              AppColors.surfaceContainerGrayStrong2,
+                                  AppColors.surfaceContainerGrayStrong2,
                               defaultFieldBorderColor: Colors.transparent,
                               activeFieldBorderColor:
-                              AppColors.outlinePrimaryDefault,
+                                  AppColors.outlinePrimaryDefault,
                               activeFieldBackgroundColor:
-                              AppColors.surfaceContainerPrimaryPrimaryLight,
+                                  AppColors.surfaceContainerPrimaryPrimaryLight,
                               filledFieldBorderColor:
-                              AppColors.outlinePrimaryDefault,
+                                  AppColors.outlinePrimaryDefault,
                               filledFieldBackgroundColor:
-                              AppColors.surfaceContainerPrimaryPrimaryLight,
+                                  AppColors.surfaceContainerPrimaryPrimaryLight,
                             ),
                             maxLength: 6,
                           ),
@@ -133,6 +142,13 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                           AppButton.primary(
                             backgroundColor: AppColors
                                 .surfaceContainerPrimaryPrimaryDisabled,
+                            textStyle: TextStyle(
+                              color: AppColors.textDefaultTextInvertedDisabled,
+                              fontSize: 16,
+                              fontFamily: FontFamily.segoeUI,
+                              fontWeight: FontWeight.w700,
+                              height: 1.50,
+                            ),
                             onPressed: () {
                               //Todo: Recheck Logic ui
                             },
@@ -140,7 +156,7 @@ class _OtpTabletLayoutState extends State<OtpTabletLayout> {
                               'otp.continue'.tr(),
                               style: TextStyle(
                                 color:
-                                AppColors.textDefaultTextInvertedDisabled,
+                                    AppColors.textDefaultTextInvertedDisabled,
                                 fontSize: 16,
                                 fontFamily: FontFamily.segoeUI,
                                 fontWeight: FontWeight.w700,
