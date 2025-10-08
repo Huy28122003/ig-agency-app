@@ -12,6 +12,7 @@ import 'package:retrofit/retrofit.dart';
 import '../models/requests/pin_message_request_model.dart';
 import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
+import '../models/requests/update_profile_request_model.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/profile_info_response.dart';
 
@@ -74,11 +75,19 @@ abstract class ApiService {
     @Path('messageId') String messageId,
   );
 
+  @PUT('/profile')
+  Future<ProfileInfoResponse> updateName(
+    @Body() UpdateProfileRequestModel request,
+  );
+
+  @PUT('/profile')
+  Future<ProfileInfoResponse> updateBio(
+    @Body() UpdateProfileRequestModel request,
+  );
+
   @MultiPart()
   @PUT('/profile')
-  Future<ProfileInfoResponse> updateProfile({
-    @Part(name: "name") String? name,
-    @Part(name: "bio") String? bio,
-    @Part(name: "avatar") MultipartFile? avatar,
-  });
+  Future<ProfileInfoResponse> updateAvatar(
+    @Part(name: "avatar") MultipartFile avatar,
+  );
 }

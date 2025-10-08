@@ -8,6 +8,5 @@ class UpdateProfileRequestModel {
   Map<String, dynamic> toJson() => {
     if (name != null) 'name': name,
     if (bio != null) 'bio': bio,
-    if (avatar != null) 'avatar': avatar,
   };
 }
