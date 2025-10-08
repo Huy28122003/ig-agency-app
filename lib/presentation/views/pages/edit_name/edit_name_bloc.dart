@@ -45,10 +45,14 @@ class EditNameBloc extends BaseBloc<EditNameEvent, EditNameState> {
     SaveNameEvent event,
     Emitter<EditNameState> emit,
   ) async {
-    emit(state.copyWith(processing: true));
+    try {
+      emit(state.copyWith(processing: true));
 
-    await _updateUserNameUseCase.call(UpdateUserNameParam(name: state.name));
+      await _updateUserNameUseCase.call(UpdateUserNameParam(name: state.name));
 
-    emit(state.copyWith(processing: false, isSaveSuccess: true));
+      emit(state.copyWith(processing: false, isSaveSuccess: true));
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 }

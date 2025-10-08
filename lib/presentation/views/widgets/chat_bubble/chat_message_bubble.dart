@@ -203,7 +203,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _message.createdAt.formatMonthDay().toUpperCase(),
+                  _message.createdAt.formatDateWithTime().toUpperCase(),
                   style: TextStyle(
                     color: AppColors.textDefaultTextDefault,
                     fontSize: 14,
