@@ -55,7 +55,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future updateUsername(String name) async {
     try {
-      final response = await _remote.updateName(name: name);
+      final response = await _remote.updateName(name);
       final profileInfo = response.toEntity();
       _local.saveProfileInfo(profileInfo);
       _ramCache.saveProfileInfo(profileInfo);
@@ -68,7 +68,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future updateProfileBio(String bio) async {
     try {
-      final response = await _remote.updateBio(bio: bio);
+      final response = await _remote.updateBio(bio);
       final profileInfo = response.toEntity();
       _local.saveProfileInfo(profileInfo);
       _ramCache.saveProfileInfo(profileInfo);

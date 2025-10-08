@@ -21,7 +21,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<ProfileInfoResponse> updateName({String? name}) async {
+  Future<ProfileInfoResponse> updateName(String name) async {
     try {
       final response = await _apiService.updateName(
         UpdateProfileRequestModel(name: name),
@@ -33,7 +33,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<ProfileInfoResponse> updateBio({String? bio}) async {
+  Future<ProfileInfoResponse> updateBio(String bio) async {
     try {
       final response = await _apiService.updateBio(
         UpdateProfileRequestModel(bio: bio),
