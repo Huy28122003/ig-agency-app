@@ -1,5 +1,5 @@
 class WorkspaceEntity {
-  final int id;
+  final String id;
   final String workspaceAvatar;
   final String workspaceName;
   final String lastMessage;
@@ -28,6 +28,7 @@ class WorkspaceEntity {
   });
 
   WorkspaceEntity copyWith({
+    String? id,
     String? workspaceAvatar,
     String? workspaceName,
     String? lastMessage,
@@ -41,7 +42,7 @@ class WorkspaceEntity {
     String? bio,
   }) {
     return WorkspaceEntity(
-      id: id,
+      id: id ?? this.id,
       workspaceAvatar: workspaceAvatar ?? this.workspaceAvatar,
       workspaceName: workspaceName ?? this.workspaceName,
       lastMessage: lastMessage ?? this.lastMessage,

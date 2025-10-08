@@ -23,7 +23,7 @@ class FetchMessagesInGroupUseCase
 }
 
 class FetchMessagesInGroupParams {
-  final int groupId;
+  final String groupId;
   final int limit;
   final String? oldestMessageId;
   final String? targetMessageId;

@@ -140,7 +140,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
       onTap: () {
         final group = context.read<GroupInfoBloc>().state.workspace;
         final name = group?.workspaceName ?? "";
-        final id = group?.id ?? 0;
+        final id = group?.id ?? '0';
         context.router.push(
           EditWorkspaceNameRoute(name: name, workspaceId: id),
         );
@@ -346,16 +346,19 @@ class GroupInfoTabletLayout extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     final group = bloc.state.workspace;
                     if (group == null) return;
-                    context.router.push(
+                    final messageId = await context.router.push(
                       PinnedMessageListRoute(
-                        groupId: 5,
+                        groupId: "5",
                         groupName: group.workspaceName,
                         groupAvatar: group.workspaceAvatar,
                       ),
                     );
+                    if (messageId != null && context.mounted) {
+                      context.router.pop(messageId);
+                    }
                   },
                 ),
                 GroupInfoItem(

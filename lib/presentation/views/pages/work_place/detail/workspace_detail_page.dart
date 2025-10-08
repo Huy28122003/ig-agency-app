@@ -19,7 +19,7 @@ class WSDetailPage
     this.isSearchMode = false,
   });
 
-  final int groupId;
+  final String groupId;
   final String groupName;
   final String groupAvatar;
   final bool isSearchMode;

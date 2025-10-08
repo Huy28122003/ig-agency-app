@@ -122,7 +122,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
       onTap: () {
         final group = context.read<GroupInfoBloc>().state.workspace;
         final name = group?.workspaceName ?? "";
-        final id = group?.id ?? 0;
+        final id = group?.id ?? '0';
         context.router.push(
           EditWorkspaceNameRoute(name: name, workspaceId: id),
         );
@@ -333,7 +333,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
                     if (group == null) return;
                     context.router.push(
                       PinnedMessageListRoute(
-                        groupId: 5,
+                        groupId: "5",
                         groupName: group.workspaceName,
                         groupAvatar: group.workspaceAvatar,
                       ),

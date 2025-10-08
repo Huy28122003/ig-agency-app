@@ -4,20 +4,20 @@ import '../entities/pinned_message_summary.dart';
 abstract class MessageRepository {
   Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset);
 
-  Future unpinMessage(String messageId);
+  Future unpinMessage(String groupId, String messageId);
 
-  Future pinMessage(String messageId);
+  Future pinMessage(String groupId, String messageId);
 
-  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(int groupId);
+  Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(String groupId);
 
   Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
-    int groupId,
+    String groupId,
     int limit,
     int offset,
   );
 
   Future<List<MessageEntity>> fetchMessagesInGroup(
-    int groupId,
+    String groupId,
     int limit,
     String? oldestMessageId,
     String? targetMessageId,
@@ -25,7 +25,7 @@ abstract class MessageRepository {
 
   Future<void> sendMessage(
     String userId,
-    int groupId,
+    String groupId,
     String? replyMessageId,
     dynamic content,
   );
@@ -34,10 +34,10 @@ abstract class MessageRepository {
 
   Future<void> deleteMessageForYou(String messageId);
 
-  Future<void> deleteConversation(int groupId);
+  Future<void> deleteConversation(String groupId);
 
   Future<List<MessageEntity>> searchMessageInWorkspace({
-    required int workspaceId,
+    required String workspaceId,
     required String searchMessage,
     int? limit,
     int? offset,

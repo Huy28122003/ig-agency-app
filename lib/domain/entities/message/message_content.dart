@@ -7,10 +7,11 @@ sealed class MessageContent {
   final MessageContentType messageContentType;
 
   bool get isText => messageContentType == MessageContentType.text;
-  bool get isImage => messageContentType == MessageContentType.image;
+  bool get isImage => messageContentType == MessageContentType.photo;
   bool get isVideo => messageContentType == MessageContentType.video;
-  bool get isFile => messageContentType == MessageContentType.file;
+  bool get isFile => messageContentType == MessageContentType.document;
   bool get isSystem => messageContentType == MessageContentType.system;
+  bool get isSticker => messageContentType == MessageContentType.sticker;
   bool get isNotSystem => messageContentType != MessageContentType.system;
 }
 
@@ -18,7 +19,7 @@ class TextMessageContent extends MessageContent {
   final String text;
   final List<TextSegment>? textSegments;
   const TextMessageContent({required this.text, this.textSegments})
-    : super(messageContentType: MessageContentType.text);
+      : super(messageContentType: MessageContentType.text);
 }
 
 class ImageMessageContent extends MessageContent {
@@ -31,7 +32,7 @@ class ImageMessageContent extends MessageContent {
     this.width,
     this.height,
     this.path,
-  }) : super(messageContentType: MessageContentType.image);
+  }) : super(messageContentType: MessageContentType.photo);
 }
 
 class VideoMessageContent extends MessageContent {
@@ -54,23 +55,34 @@ class VideoMessageContent extends MessageContent {
 class FileMessageContent extends MessageContent {
   final String fileUrl;
   final String fileName;
-  final String fileExtension;
   final int fileSize;
   final FileType? fileType;
   final String? path;
   const FileMessageContent({
     required this.fileUrl,
     required this.fileName,
-    required this.fileExtension,
     required this.fileSize,
     this.fileType,
     this.path,
-  }) : super(messageContentType: MessageContentType.file);
+  }) : super(messageContentType: MessageContentType.document);
 }
 
 class SystemMessageContent extends MessageContent {
   final SystemMessageType systemType;
   final String message;
   const SystemMessageContent({required this.systemType, required this.message})
-    : super(messageContentType: MessageContentType.system);
+      : super(messageContentType: MessageContentType.system);
+}
+
+class StickerMessageContent extends MessageContent {
+  final String stickerUrl;
+  final double? width;
+  final double? height;
+  final int? fileSize;
+  const StickerMessageContent({
+    required this.stickerUrl,
+    this.width,
+    this.height,
+    this.fileSize,
+  }) : super(messageContentType: MessageContentType.sticker);
 }

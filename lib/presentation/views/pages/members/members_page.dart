@@ -11,7 +11,7 @@ import '../../../base/base_page.dart';
 class MembersPage extends BasePage<MembersBloc, MembersEvent, MembersState> {
   const MembersPage({super.key, required this.workspaceId});
 
-  final int workspaceId;
+  final String workspaceId;
 
   @override
   void onInitState(BuildContext context) {
@@ -28,6 +28,7 @@ class MembersPage extends BasePage<MembersBloc, MembersEvent, MembersState> {
   Widget? tabletBuilder(BuildContext context) {
     return MembersTabletLayout();
   }
+
   @override
   Widget? desktopBuilder(BuildContext context) {
     return MembersTabletLayout();
