@@ -295,6 +295,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                               userId: _bloc.userId,
                               onTap: () {
                                 final messageId = uiModel.message.id;
+                                if (messageId == null) return;
                                 _bloc.add(
                                   ToggleShowTimeEvent(messageId: messageId),
                                 );
@@ -310,23 +311,28 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                                 );
                               },
                               onPin: () {
+                                final messageId = uiModel.message.id;
+                                if (messageId == null) return;
                                 _bloc.add(
                                   TogglePinMessageFromDetailEvent(
-                                    messageId: uiModel.message.id,
+                                    messageId: messageId,
                                   ),
                                 );
                               },
                               onDelete: () {
-                                _showDeleteOptionSheet(
-                                  context,
-                                  uiModel.message.id,
-                                );
+                                final messageId = uiModel.message.id;
+                                if (messageId == null) return;
+                                _showDeleteOptionSheet(context, messageId);
                               },
                             ),
                           );
                         },
                         childCount: chatMessages.length,
-                        onItemKey: (index) => chatMessages[index].message.id,
+                        onItemKey: (index) {
+                          final messageId = chatMessages[index].message.id;
+                          if (messageId == null) return '';
+                          return messageId;
+                        },
                         keepPosition: true,
                         keepPositionOffset: 56,
                         firstItemAlign: FirstItemAlign.end,

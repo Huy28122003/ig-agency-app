@@ -110,15 +110,15 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<void> sendMessage(
-    String userId,
     String groupId,
+    String? clientMessageId,
     String? replyMessageId,
     MessageContent content,
   ) async {
     try {
       await _messageRemoteDataSource.sendMessage(
-        userId,
         groupId,
+        clientMessageId,
         replyMessageId,
         content,
       );

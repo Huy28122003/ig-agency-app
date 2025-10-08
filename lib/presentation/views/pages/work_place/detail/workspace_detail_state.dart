@@ -33,7 +33,7 @@ class WSDetailState extends BaseState<WSDetailState> {
   });
 
   final List<ChatMessageUIModel> chatMessages;
-  final PinnedMessageSummaryUiModel? pinnedMessageSummary;
+  final PinnedMessageSummary? pinnedMessageSummary;
   final MessageEntity? messageReply;
   final bool scrollToBottom;
   final bool showScrollToBottomIcon;
@@ -70,7 +70,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     String? pageErrorMessage,
     bool? processing,
     List<ChatMessageUIModel>? chatMessages,
-    PinnedMessageSummaryUiModel? pinnedMessageSummary,
+    PinnedMessageSummary? pinnedMessageSummary,
     MessageEntity? messageReply,
     bool forceCloseReplyMessage = false,
     bool? scrollToBottom,

@@ -49,7 +49,11 @@ class ChatBubbleContentWithReply extends StatelessWidget {
       alignment: isMe ? Alignment.topRight : Alignment.topLeft,
       children: [
         GestureDetector(
-          onTap: () => onTap?.call(replyMessage.id),
+          onTap: () {
+            final messageId = replyMessage.id;
+            if (messageId == null) return;
+            onTap?.call(messageId);
+          },
           child: Container(
             constraints: BoxConstraints(maxWidth: maxWidthReply, maxHeight: 60),
             padding: const EdgeInsets.only(

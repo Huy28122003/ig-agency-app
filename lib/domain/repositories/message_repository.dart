@@ -24,8 +24,8 @@ abstract class MessageRepository {
   );
 
   Future<void> sendMessage(
-    String userId,
     String groupId,
+    String? clientMessageId,
     String? replyMessageId,
     MessageContent content,
   );

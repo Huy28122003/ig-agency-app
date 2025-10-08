@@ -4,6 +4,7 @@ import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/message/message_content.dart';
+import '../../../domain/enums/message_enums.dart';
 import '../../../shared/commons/exception_converter.dart';
 import '../models/requests/send_message_request_model.dart';
 import '../models/requests/delete_message_request_model.dart';
@@ -67,7 +68,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
         await _apiService.sendMessage(
           groupId,
           SendMessageRequestModel(
-            type: 'text',
+            type: MessageContentType.text.code,
             clientMessageId: clientMessageId,
             text: content.text,
             replyToMessageId: replyMessageId,

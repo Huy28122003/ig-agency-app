@@ -13,8 +13,8 @@ class SendMessageUseCase extends UseCase<void, SendMessageParams> {
   @override
   Future<void> call(SendMessageParams params) async {
     return await _messageRepository.sendMessage(
-      params.userId,
       params.groupId,
+      params.clientMessageId,
       params.replyMessageId,
       params.content,
     );
@@ -22,15 +22,15 @@ class SendMessageUseCase extends UseCase<void, SendMessageParams> {
 }
 
 class SendMessageParams {
-  final String userId;
   final String groupId;
+  final String? clientMessageId;
   final String? replyMessageId;
   final MessageContent content;
 
   SendMessageParams({
-    required this.userId,
     required this.groupId,
-    required this.replyMessageId,
+    this.clientMessageId,
+    this.replyMessageId,
     required this.content,
   });
 }

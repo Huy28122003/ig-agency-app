@@ -5,12 +5,12 @@ import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspa
 import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../../../../../domain/entities/message/message_entity.dart';
+import '../../../../../../domain/entities/pinned_message_summary.dart';
 import '../../../../../../domain/enums/send_message_type.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../resources/colors.dart';
 import '../../../../../routers/app_router.dart';
 import '../../../../modal/pinned_message/pinned_message_bottom_sheet.dart';
-import '../../../../ui_models/pinned_message_summary_ui_model.dart';
 import '../../../../widgets/chat/pinned_message_section.dart';
 import '../../../../widgets/chat_input/chat_input_bar.dart';
 import '../../../../widgets/chat_input/tag_user_list_view.dart';
@@ -50,13 +50,16 @@ class GroupChatView extends StatelessWidget {
                           BlocSelector<
                             WSDetailBloc,
                             WSDetailState,
-                            PinnedMessageSummaryUiModel?
+                            PinnedMessageSummary?
                           >(
                             selector: (state) {
                               return state.pinnedMessageSummary;
                             },
                             builder: (context, pinnedMessageSummary) {
-                              if (pinnedMessageSummary == null) {
+                              if (pinnedMessageSummary == null ||
+                                  pinnedMessageSummary.totalPinnedMessages ==
+                                      0 ||
+                                  pinnedMessageSummary.latestMessage == null) {
                                 return const SizedBox.shrink();
                               }
 
@@ -68,9 +71,7 @@ class GroupChatView extends StatelessWidget {
                                       context,
                                       bloc.groupId,
                                       onUnpinSuccess: () {
-                                        bloc.add(
-                                          GetPinnedMessageSummaryEvent(),
-                                        );
+                                        bloc.add(const FetchGroupDetailEvent());
                                       },
                                       onTap: (messageId) {
                                         bloc.add(

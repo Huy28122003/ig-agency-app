@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/entities/pinned_message_summary.dart';
 import 'package:ig_agency_app/domain/entities/user/profile_info_entity.dart';
 import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/message/search_message_in_group_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../../data/cache/ram_cache.dart';
 import '../../../../../dependencies/media/media_manager.dart';
@@ -33,7 +35,6 @@ import '../../../../../shared/commons/enums/status.dart';
 import '../../../ui_models/chat_message/chat_message_ui_model_helper.dart';
 import '../../../../../shared/utils/tag_user_text_editing_controller.dart';
 import '../../../../base/base_state.dart';
-import '../../../ui_models/pinned_message_summary_ui_model.dart';
 import '../../../ui_models/chat_message/chat_message_ui_model.dart';
 
 part 'workspace_detail_event.dart';
@@ -127,7 +128,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<ToggleShowTagOverlayEvent>(_onToggleShowTagOverlay);
     handleSubEvent<SearchMembersEvent>(_onSearchMembers);
     handleSubEvent<ToggleShowTimeEvent>(_onShowTime);
-    handleSubEvent<GetPinnedMessageSummaryEvent>(_onGetPinnedMessageSummary);
+    // handleSubEvent<GetPinnedMessageSummaryEvent>(_onGetPinnedMessageSummary);
 
     handleSubEvent<TogglePinMessageFromDetailEvent>(
       _onTogglePinMessageFromDetail,
@@ -177,13 +178,11 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   ) async {
     try {
       final groupDetail = await _getGroupDetailUseCase.call(groupId);
-      final pinnedMessageSummary = PinnedMessageSummaryUiModel(
-        latestPinnedMessageContent: _extractContent(
-          groupDetail.recentPinnedMessage?.content,
-        ),
-        latestSenderName: groupDetail.recentPinnedMessage?.user.name,
+      final pinnedMessageSummary = PinnedMessageSummary(
+        latestMessage: groupDetail.recentPinnedMessage,
         totalPinnedMessages: groupDetail.pinnedMessageCount,
       );
+
       emit(
         state.copyWith(
           groupDetail: groupDetail,
@@ -247,11 +246,8 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
       final groupDetail = await _getGroupDetailUseCase.call(groupId);
 
-      final pinnedMessageSummary = PinnedMessageSummaryUiModel(
-        latestPinnedMessageContent: _extractContent(
-          groupDetail.recentPinnedMessage?.content,
-        ),
-        latestSenderName: groupDetail.recentPinnedMessage?.user.name,
+      final pinnedMessageSummary = PinnedMessageSummary(
+        latestMessage: groupDetail.recentPinnedMessage,
         totalPinnedMessages: groupDetail.pinnedMessageCount,
       );
 
@@ -279,22 +275,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       );
       handleError(emit, error);
     }
-  }
-
-  String? _extractContent(MessageContent? content) {
-    if (content == null) return null;
-
-    if (content is TextMessageContent) {
-      return content.text;
-    } else if (content is ImageMessageContent) {
-      return 'Image';
-    } else if (content is VideoMessageContent) {
-      return 'Video';
-    } else if (content is FileMessageContent) {
-      return 'Attachment';
-    }
-
-    return null;
   }
 
   Future<void> _onLoadMoreMessages(
@@ -369,62 +349,82 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     SendMessageEvent event,
     Emitter<WSDetailState> emit,
   ) async {
-    final userId = this.userId;
-    if (userId == null) return;
-    final reply = state.messageReply;
+    try {
+      final userId = this.userId;
+      if (userId == null) return;
+      final reply = state.messageReply;
 
-    add(CloseReplyMessageEvent());
+      add(CloseReplyMessageEvent());
 
-    dynamic content;
-    if (event.type == SendMessageType.text) {
-      final text = _textEditingController.text.trim();
-      final tagTextSegments = _textEditingController.tagTextSegments;
-      final linkTextSegments = detectLinkTextSegment(text);
-      final textSegments = [...tagTextSegments, ...linkTextSegments];
-      content = TextMessageContent(text: text, textSegments: textSegments);
-      // Clear text editing controller
-      _textEditingController.clear();
-    } else if (event.type == SendMessageType.file) {
-      final result = await _fileManager.pickFile();
-      if (result == null) return;
-      final file = result;
+      dynamic content;
+      if (event.type == SendMessageType.text) {
+        final text = _textEditingController.text.trim();
+        final tagTextSegments = _textEditingController.tagTextSegments;
+        final linkTextSegments = detectLinkTextSegment(text);
+        final textSegments = [...tagTextSegments, ...linkTextSegments];
+        content = TextMessageContent(text: text, textSegments: textSegments);
+        // Clear text editing controller
+        _textEditingController.clear();
+      } else if (event.type == SendMessageType.file) {
+        final result = await _fileManager.pickFile();
+        if (result == null) return;
+        final file = result;
 
-      content = FileMessageContent(
-        fileUrl: '',
-        fileName: file.name,
-        fileSize: file.size,
-        path: file.path,
-      );
-    } else if (event.type == SendMessageType.media) {
-      final result = await _mediaManager.pickMedia();
-      if (result == null) return;
-      bool? isPhoto;
-
-      if (result.path.isImage()) isPhoto = true;
-      if (result.path.isVideo()) isPhoto = false;
-      if (isPhoto == null) return;
-
-      if (isPhoto) {
-        content = ImageMessageContent(imageUrl: '', path: result.path);
-      } else {
-        content = VideoMessageContent(
-          videoUrl: '',
-          duration: Duration(seconds: 0),
-          path: result.path,
+        content = FileMessageContent(
+          fileUrl: '',
+          fileName: file.name,
+          fileSize: file.size,
+          path: file.path,
         );
+      } else if (event.type == SendMessageType.media) {
+        final result = await _mediaManager.pickMedia();
+        if (result == null) return;
+        bool? isPhoto;
+
+        if (result.path.isImage()) isPhoto = true;
+        if (result.path.isVideo()) isPhoto = false;
+        if (isPhoto == null) return;
+
+        if (isPhoto) {
+          content = ImageMessageContent(imageUrl: '', path: result.path);
+        } else {
+          content = VideoMessageContent(
+            videoUrl: '',
+            duration: Duration(seconds: 0),
+            path: result.path,
+          );
+        }
       }
-    }
 
-    await _sendMessageUseCase.call(
-      SendMessageParams(
-        userId: userId,
+      final clientMessageId = const Uuid().v4();
+
+      await _sendMessageUseCase.call(
+        SendMessageParams(
+          groupId: groupId,
+          clientMessageId: clientMessageId,
+          replyMessageId: reply?.id,
+          content: content,
+        ),
+      );
+
+      final message = MessageEntity(
+        clientMessageId: clientMessageId,
         groupId: groupId,
-        replyMessageId: reply?.id,
+        user: UserEntity(
+          id: state.profile?.id ?? '',
+          name: state.profile?.name ?? '',
+          avatar: state.profile?.avatar ?? '',
+        ),
+        createdAt: DateTime.now(),
         content: content,
-      ),
-    );
+        status: MessageStatus.pending,
+        repliedMessage: reply,
+      ).toUIModel();
 
-    // TODO hoannk: Add message to list
+      emit(state.copyWith(chatMessages: [message, ...state.chatMessages]));
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 
   Future<void> _onResetScrollToBottom(
@@ -681,17 +681,15 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     emit(state.copyWith(showTagOverlay: event.showTagOverlay));
   }
 
-  Future<void> _onGetPinnedMessageSummary(
-    GetPinnedMessageSummaryEvent event,
-    Emitter<WSDetailState> emit,
-  ) async {
-    final pinnedMessageSummary = await _getPinnedMessageSummaryGroupUseCase
-        .call(GetPinnedMessageSummaryGroupParams(groupId: groupId));
+  // Future<void> _onGetPinnedMessageSummary(
+  //   GetPinnedMessageSummaryEvent event,
+  //   Emitter<WSDetailState> emit,
+  // ) async {
+  //   final pinnedMessageSummary = await _getPinnedMessageSummaryGroupUseCase
+  //       .call(GetPinnedMessageSummaryGroupParams(groupId: groupId));
 
-    final uiModel = pinnedMessageSummary.toUIModel();
-
-    emit(state.copyWith(pinnedMessageSummary: uiModel));
-  }
+  //   emit(state.copyWith(pinnedMessageSummary: pinnedMessageSummary));
+  // }
 
   Future<void> _onDeleteMessageForEveryone(
     DeleteMessageForEveryoneEvent event,
@@ -961,6 +959,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         ? state.indexSearchMessage + 1
         : state.indexSearchMessage - 1;
     final messageId = state.messageSearchResults[index].id;
+    if (messageId == null) return;
     add(JumpToMessageEvent(messageId: messageId));
     emit(state.copyWith(indexSearchMessage: index));
   }
