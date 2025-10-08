@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 
@@ -13,6 +14,8 @@ enum DateTimeType {
   dateSlashFullTimeSecond,
   monthDay,
   hourMinuteAmPm,
+  dateWithTimeCurrentYear,
+  dateWithTimeFullYear,
 }
 
 extension DateTimeTypeExtenstions on DateTimeType {
@@ -40,6 +43,10 @@ extension DateTimeTypeExtenstions on DateTimeType {
         return 'MMM d';
       case DateTimeType.hourMinuteAmPm:
         return 'h:mm a';
+      case DateTimeType.dateWithTimeCurrentYear:
+        return 'h:mm a, MMM d';
+      case DateTimeType.dateWithTimeFullYear:
+        return 'h:mm a, MMM d, yyyy';
     }
   }
 }
@@ -49,12 +56,12 @@ extension DateTimeExtensions on DateTime {
     return DateFormat(type.getDateFormat()).format(utc ? toUtc() : this);
   }
 
-  String formatMonthDay({bool utc = false}) {
+  String formatDateWithTime({bool utc = false}) {
     final now = DateTime.now();
-    if (year == now.year) {
-      return format(type: DateTimeType.monthDay, utc: utc);
+    if (isAtSameYearAs(now)) {
+      return format(type: DateTimeType.dateWithTimeCurrentYear, utc: utc);
     } else {
-      return DateFormat('MMM d, yyyy').format(this);
+      return format(type: DateTimeType.dateWithTimeFullYear, utc: utc);
     }
   }
 
@@ -138,15 +145,6 @@ extension DateTimeExtension on DateTime {
       return "${(diff.inDays / 30).floor()}m";
     } else {
       return "${(diff.inDays / 365).floor()}y";
-    }
-  }
-
-  String toShortDateString() {
-    final now = DateTime.now();
-    if (year == now.year) {
-      return DateFormat('h:mm a, MMM d').format(this);
-    } else {
-      return DateFormat('h:mm a, MMM d, yyyy').format(this);
     }
   }
 

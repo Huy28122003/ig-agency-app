@@ -77,7 +77,7 @@ class PinnedMessageBubble extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        message.createdAt.formatMonthDay(),
+                        message.createdAt.formatDateWithTime(),
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,
