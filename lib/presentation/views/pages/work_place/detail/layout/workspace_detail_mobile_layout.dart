@@ -189,10 +189,15 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
       titleSpacing: 12,
       title: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () {
-          context.router.push(
+        onTap: () async {
+          final messageId = await context.router.push(
             GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),
           );
+          if (messageId != null && messageId is String && context.mounted) {
+            context.read<WSDetailBloc>().add(
+              JumpToMessageEvent(messageId: messageId),
+            );
+          }
         },
         child: Row(
           children: [

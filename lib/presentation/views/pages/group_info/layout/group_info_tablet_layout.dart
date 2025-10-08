@@ -346,16 +346,19 @@ class GroupInfoTabletLayout extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     final group = bloc.state.workspace;
                     if (group == null) return;
-                    context.router.push(
+                    final messageId = await context.router.push(
                       PinnedMessageListRoute(
                         groupId: "5",
                         groupName: group.workspaceName,
                         groupAvatar: group.workspaceAvatar,
                       ),
                     );
+                    if (messageId != null && context.mounted) {
+                      context.router.pop(messageId);
+                    }
                   },
                 ),
                 GroupInfoItem(

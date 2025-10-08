@@ -74,10 +74,17 @@ class _WorkspaceDetailTabletLayoutState
             padding: const EdgeInsets.only(left: 16, right: 8),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () {
-                context.router.push(
+              onTap: () async {
+                final messageId = await context.router.push(
                   GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),
                 );
+                if (messageId != null &&
+                    messageId is String &&
+                    context.mounted) {
+                  context.read<WSDetailBloc>().add(
+                    JumpToMessageEvent(messageId: messageId),
+                  );
+                }
               },
               child: Row(
                 children: [

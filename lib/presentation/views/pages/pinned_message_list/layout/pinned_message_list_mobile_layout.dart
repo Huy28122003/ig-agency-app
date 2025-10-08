@@ -95,13 +95,7 @@ class _PinnedMessageListMobileLayoutState
                   message: message,
                   hasArrow: true,
                   onTap: () {
-                    // context.router.push(
-                    //   WSDetailRoute(
-                    //     groupId: _bloc.groupId,
-                    //     groupName: _bloc.groupName,
-                    //     groupAvatar: _bloc.groupAvatar,
-                    //   ),
-                    // );
+                    context.router.pop(message.id);
                   },
                   onLongPress: () async {
                     final messageId = message.id;
