@@ -3,7 +3,7 @@ part of 'group_info_bloc.dart';
 class GroupInfoEvent {}
 
 class LoadDataEvent extends GroupInfoEvent {
-  final int groupId;
+  final String groupId;
 
   LoadDataEvent({required this.groupId});
 }

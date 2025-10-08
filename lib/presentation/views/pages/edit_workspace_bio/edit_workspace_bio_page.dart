@@ -21,7 +21,7 @@ class EditWorkspaceBioPage
   });
 
   final String bio;
-  final int workspaceId;
+  final String workspaceId;
 
   @override
   void onInitState(BuildContext context) {

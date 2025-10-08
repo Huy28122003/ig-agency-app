@@ -21,7 +21,7 @@ class PinnedMessageListPage
     required this.groupAvatar,
   });
 
-  final int groupId;
+  final String groupId;
   final String groupAvatar;
   final String groupName;
 

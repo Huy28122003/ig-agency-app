@@ -17,7 +17,7 @@ class FetchMemberInGroupUseCase
 }
 
 class FetchMemberInGroupParams {
-  final int groupId;
+  final String groupId;
 
   FetchMemberInGroupParams({required this.groupId});
 }

@@ -47,7 +47,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<WorkspaceEntity> getWorkspaceById({required int groupId}) async {
+  Future<WorkspaceEntity> getWorkspaceById({required String groupId}) async {
     try {
       final workspace = MockData.getWorkspaces().firstWhere(
         (element) => element.id == groupId,
@@ -60,7 +60,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<bool> updateWorkspaceBio({
-    required int groupId,
+    required String groupId,
     required String bio,
   }) async {
     try {
@@ -72,7 +72,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<bool> updateWorkspaceName({
-    required int groupId,
+    required String groupId,
     required String name,
   }) async {
     try {
@@ -84,7 +84,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<bool> updateWorkspaceNotification({
-    required int groupId,
+    required String groupId,
     required bool isMute,
   }) async {
     try {
@@ -157,7 +157,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<UserEntity>> getUserInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {
@@ -175,7 +175,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<MediaEntity>> getMediasInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {
@@ -193,7 +193,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<FileEntity>> getFileInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {
@@ -211,7 +211,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<List<String>> getLinkInGroup({
-    required int workspaceId,
+    required String workspaceId,
     required int offset,
     required int limit,
   }) async {

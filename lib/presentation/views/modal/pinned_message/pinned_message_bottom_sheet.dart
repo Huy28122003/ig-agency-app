@@ -13,6 +13,7 @@ import '../../../../shared/commons/enums/status.dart';
 import '../../../resources/colors.dart';
 import '../../widgets/app_pull_to_refresh.dart';
 import '../../widgets/pinned_message_bubble.dart';
+import '../unpin_message_modal.dart';
 import 'cubits/pinned_message_bottom_sheet_cubit.dart';
 
 class PinnedMessagesBottomSheet extends StatefulWidget {
@@ -23,7 +24,7 @@ class PinnedMessagesBottomSheet extends StatefulWidget {
 
   static Future<void> show(
     BuildContext context,
-    int groupId, {
+    String groupId, {
     required VoidCallback onUnpinSuccess,
     required Function(String messageId) onTap,
   }) async {
@@ -90,54 +91,6 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
   void dispose() {
     _refreshController.dispose();
     super.dispose();
-  }
-
-  Future<void> _showOptionSheet(BuildContext context, String messageId) async {
-    final cubit = context.read<PinnedMessageBottomSheetCubit>();
-    final result = await showCupertinoModalPopup<bool>(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.68),
-      builder: (BuildContext context) => CupertinoActionSheet(
-        actions: <CupertinoActionSheetAction>[
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(
-              'Unpin',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.colorsBlue,
-                fontSize: 17,
-                fontWeight: FontWeight.w500,
-                height: 1.29,
-                letterSpacing: -0.43,
-              ),
-            ),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
-          child: Text(
-            'Cancel',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.colorsBlue,
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              height: 1.29,
-              letterSpacing: -0.43,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (result == true) {
-      cubit.unpinMessage(messageId);
-    }
   }
 
   @override
@@ -285,10 +238,18 @@ class _PinnedMessagesBottomSheetState extends State<PinnedMessagesBottomSheet> {
                                     if (messageId == null) return;
                                     widget.onTap?.call(messageId);
                                   },
-                                  onLongPress: () {
+                                  onLongPress: () async {
                                     final messageId = message.id;
                                     if (messageId == null) return;
-                                    _showOptionSheet(context, messageId);
+
+                                    final unpin = await UnpinMessageModal.show(
+                                      context,
+                                    );
+                                    if (unpin && context.mounted) {
+                                      context
+                                          .read<PinnedMessageBottomSheetCubit>()
+                                          .unpinMessage(messageId);
+                                    }
                                   },
                                 );
                               },

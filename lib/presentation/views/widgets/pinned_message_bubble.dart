@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
@@ -76,7 +77,7 @@ class PinnedMessageBubble extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        message.pinnedAt.toShortDateString(),
+                        message.createdAt.formatMonthDay(),
                         style: TextStyle(
                           color: AppColors.textDefaultTextSub2,
                           fontSize: 14,
@@ -139,8 +140,14 @@ class PinnedMessageBubble extends StatelessWidget {
         );
       case FileMessageContent _:
         return _PinnedMessageFile(
-          fileFullName: '${content.fileName}.${content.fileExtension}',
+          fileFullName: content.fileName,
           fileSize: content.fileSize,
+        );
+      case StickerMessageContent _:
+        return _PinnedMessageSticker(
+          stickerUrl: content.stickerUrl,
+          width: content.width,
+          height: content.height,
         );
       default:
         return SizedBox.shrink();
@@ -156,6 +163,7 @@ class _PinnedMessageText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hostName = this.hostName;
     return Container(
       padding: const EdgeInsets.only(top: 4, left: 12, right: 12, bottom: 8),
       decoration: ShapeDecoration(
@@ -167,10 +175,10 @@ class _PinnedMessageText extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(text: TextSpan(children: textSpans)),
-          if (hostName != null) ...[
+          if (hostName != null && hostName.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
-              hostName!,
+              hostName,
               style: TextStyle(
                 color: AppColors.textDefaultTextDefault,
                 fontSize: 16,
@@ -328,5 +336,22 @@ class _PinnedMessageFile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _PinnedMessageSticker extends StatelessWidget {
+  const _PinnedMessageSticker({
+    required this.stickerUrl,
+    required this.width,
+    required this.height,
+  });
+
+  final String stickerUrl;
+  final double? width;
+  final double? height;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(); // TODO hoannk
   }
 }

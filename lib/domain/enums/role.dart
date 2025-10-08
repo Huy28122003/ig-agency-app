@@ -14,7 +14,7 @@ enum RoleSystem {
       case 'user':
         return RoleSystem.user;
       default:
-        throw RoleSystem.guest;
+        return RoleSystem.guest;
     }
   }
 }

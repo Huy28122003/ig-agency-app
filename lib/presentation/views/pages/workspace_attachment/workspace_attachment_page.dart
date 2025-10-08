@@ -16,7 +16,7 @@ class WorkspaceAttachmentPage
         > {
   const WorkspaceAttachmentPage({super.key, required this.workspaceId});
 
-  final int workspaceId;
+  final String workspaceId;
 
   @override
   WorkspaceAttachmentBloc get buildBloc =>
