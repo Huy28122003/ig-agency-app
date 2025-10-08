@@ -343,14 +343,14 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   onTap: () async {
-                    final group = bloc.state.workspace;
-                    if (group == null) return;
+                    // final group = bloc.state.workspace;
+                    // if (group == null) return;
                     final messageId = await context.router.push(
                       PinnedMessageListRoute(
                         groupId: "68c7db6d814f50d48db8f735",
                         // TODO hoannk: Change id
-                        groupName: group.workspaceName,
-                        groupAvatar: group.workspaceAvatar,
+                        groupName: 'group.workspaceName',
+                        groupAvatar: 'group.workspaceAvatar',
                       ),
                     );
                     if (messageId != null && context.mounted) {
