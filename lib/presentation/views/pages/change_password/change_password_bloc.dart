@@ -63,15 +63,20 @@ class ChangePasswordBloc
     SavePasswordEvent event,
     Emitter<ChangePasswordState> emit,
   ) async {
-    emit(state.copyWith(processing: true));
+    try {
+      emit(state.copyWith(processing: true));
 
-    await _changePasswordUseCase.call(
-      ChangePasswordParam(
-        currentPassword: state.currentPassword,
-        newPassword: state.newPassword,
-      ),
-    );
+      await _changePasswordUseCase.call(
+        ChangePasswordParam(
+          currentPassword: state.currentPassword,
+          newPassword: state.newPassword,
+          passwordConfirm: state.confirmPassword,
+        ),
+      );
 
-    emit(state.copyWith(processing: false, isSaveSuccess: true));
+      emit(state.copyWith(processing: false, isSaveSuccess: true));
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 }

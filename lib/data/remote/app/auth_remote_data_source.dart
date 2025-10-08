@@ -19,7 +19,11 @@ abstract class AuthRemoteDataSource {
 
   Future<void> sendNewPassword(ForgotPasswordRequestModel request);
 
-  Future<void> changePassword(String currentPassword, String newPassword);
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+    String passwordConfirm,
+  );
 
   Future<void> deleteAccount(String userId);
 }

@@ -14,8 +14,8 @@ import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
 import '../models/requests/send_message_request_model.dart';
 import '../models/requests/delete_message_request_model.dart';
+import '../models/requests/update_profile_request_model.dart';
 import '../models/response/login_response_model.dart';
-import '../models/response/change_password_response_model.dart';
 import '../models/response/profile_info_response.dart';
 import '../models/response/group_detail_response_model.dart';
 import '../models/response/member_response_model.dart';
@@ -36,17 +36,18 @@ abstract class ApiService {
   @POST('/register')
   Future register(@Body() RegistrationRequestModel requestModel);
 
-  @POST('/change-password')
-  Future<ChangePasswordResponseModel> changePassword(
-      @Body() ChangePasswordRequestModel requestModel,);
+  @PUT('/password')
+  Future<void> changePassword(@Body() ChangePasswordRequestModel requestModel);
 
   @POST('/forgot-password')
   Future<ForgotPasswordResponseModel> forgotPassword(
-      @Body() ForgotPasswordRequestModel forgotPasswordRequestModel,);
+    @Body() ForgotPasswordRequestModel forgotPasswordRequestModel,
+  );
 
   @POST('/reset-password')
   Future resetPassword(
-      @Body() ForgotPasswordRequestModel forgotPasswordRequestModel,);
+    @Body() ForgotPasswordRequestModel forgotPasswordRequestModel,
+  );
 
   // Profile
   @GET('/profile')
@@ -55,55 +56,86 @@ abstract class ApiService {
   //Search
   @POST('/')
   Future<PagedResponse<SearchResultResponse>> search(
-      @Body() SearchRequestModel request,);
+    @Body() SearchRequestModel request,
+  );
 
   // Conversation
   @GET('/conversations/{conversationId}/pinned-messages')
   Future<List<MessageResponseModel>> getPinnedMessages(
-      @Path('conversationId') String conversationId,
-      @Query('limit') int limit,
-      @Query('offset') int offset,);
+    @Path('conversationId') String conversationId,
+    @Query('limit') int limit,
+    @Query('offset') int offset,
+  );
 
   @POST('/conversations/{conversationId}/pinned-messages')
-  Future<void> pinMessage(@Path('conversationId') String conversationId,
-      @Body() PinMessageRequestModel request,);
+  Future<void> pinMessage(
+    @Path('conversationId') String conversationId,
+    @Body() PinMessageRequestModel request,
+  );
 
   @DELETE('/conversations/{conversationId}/pinned-messages/{messageId}')
-  Future<void> unpinMessage(@Path('conversationId') String conversationId,
-      @Path('messageId') String messageId,);
+  Future<void> unpinMessage(
+    @Path('conversationId') String conversationId,
+    @Path('messageId') String messageId,
+  );
+
+  @PUT('/profile')
+  Future<ProfileInfoResponse> updateName(
+    @Body() UpdateProfileRequestModel request,
+  );
+
+  @PUT('/profile')
+  Future<ProfileInfoResponse> updateBio(
+    @Body() UpdateProfileRequestModel request,
+  );
+
+  @MultiPart()
+  @PUT('/profile')
+  Future<ProfileInfoResponse> updateAvatar(
+    @Part(name: "avatar") MultipartFile avatar,
+  );
 
   @GET('/conversations/{conversationId}')
   Future<GroupDetailResponseModel> getGroupDetail(
-      @Path('conversationId') String conversationId,);
+    @Path('conversationId') String conversationId,
+  );
 
   @DELETE('/conversations/{conversationId}')
   Future<void> deleteConversation(
-      @Path('conversationId') String conversationId,);
+    @Path('conversationId') String conversationId,
+  );
 
   @GET('/conversations/{conversationId}/messages')
   Future<List<MessageResponseModel>> getMessages(
-      @Path('conversationId') String conversationId,
-      @Query('limit') int limit,
-      @Query('offset') int offset,
-      @Query('search') String? search,
-      @Query('before') String? beforeMessageId,);
+    @Path('conversationId') String conversationId,
+    @Query('limit') int limit,
+    @Query('offset') int offset,
+    @Query('search') String? search,
+    @Query('before') String? beforeMessageId,
+  );
 
   @POST('/conversations/{conversationId}/messages')
-  Future<void> sendMessage(@Path('conversationId') String conversationId,
-      @Body() SendMessageRequestModel request,);
+  Future<void> sendMessage(
+    @Path('conversationId') String conversationId,
+    @Body() SendMessageRequestModel request,
+  );
 
   @DELETE('/conversations/{conversationId}/messages/{messageId}')
-  Future<void> deleteMessage(@Path('conversationId') String conversationId,
-      @Path('messageId') String messageId,
-      @Body() DeleteMessageRequestModel? request,);
+  Future<void> deleteMessage(
+    @Path('conversationId') String conversationId,
+    @Path('messageId') String messageId,
+    @Body() DeleteMessageRequestModel? request,
+  );
 
   // Member
   @GET('/conversations/{conversationId}/members')
   Future<List<MemberResponseModel>> getMembersInGroup(
-      @Path('conversationId') String conversationId,);
+    @Path('conversationId') String conversationId,
+  );
 
   @GET('/conversations/{conversationId}/members')
   Future<List<MemberResponseModel>> searchMembersInGroup(
-      @Path('conversationId') String conversationId,
-      @Query('search') String search,);
+    @Path('conversationId') String conversationId,
+    @Query('search') String search,
+  );
 }
