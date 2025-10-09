@@ -458,7 +458,7 @@ class MessageMockService {
     }
 
     return PinnedMessageSummary(
-      latestMessage: pinnedMessages.lastOrNull,
+      recentPinnedMessage: pinnedMessages.lastOrNull,
       totalPinnedMessages: pinnedMessages.length,
     );
   }

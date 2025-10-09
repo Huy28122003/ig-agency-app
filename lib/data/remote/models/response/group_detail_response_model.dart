@@ -9,9 +9,6 @@ class GroupDetailResponseModel {
     required this.id,
     required this.type,
     required this.title,
-    this.lastMessage,
-    required this.lastMessageDate,
-    required this.pinned,
     required this.status,
     this.recentPinnedMessage,
     required this.pinnedMessageCount,
@@ -25,9 +22,6 @@ class GroupDetailResponseModel {
   final String id;
   final String type;
   final String title;
-  final MessageResponseModel? lastMessage;
-  final int lastMessageDate;
-  final bool pinned;
   final String status;
   final MessageResponseModel? recentPinnedMessage;
   final int pinnedMessageCount;

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:ig_agency_app/data/remote/models/response/user_response_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
 
 part 'member_response_model.g.dart';
 
@@ -10,7 +10,7 @@ class MemberResponseModel {
   factory MemberResponseModel.fromJson(Map<String, dynamic> json) =>
       _$MemberResponseModelFromJson(json);
 
-  final UserResponseModel user;
+  final UserProfileResponseModel user;
   final String status;
 
   Map<String, dynamic> toJson() => _$MemberResponseModelToJson(this);

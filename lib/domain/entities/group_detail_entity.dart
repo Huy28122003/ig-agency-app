@@ -5,9 +5,6 @@ class GroupDetailEntity {
     required this.id,
     required this.type,
     required this.title,
-    // this.lastMessage,
-    // required this.lastMessageDate,
-    // required this.pinned,
     required this.status,
     this.recentPinnedMessage,
     required this.pinnedMessageCount,
@@ -18,9 +15,6 @@ class GroupDetailEntity {
   final String id;
   final String type;
   final String title;
-  // final MessageEntity? lastMessage;
-  // final int lastMessageDate;
-  // final bool pinned;
   final String status;
   final MessageEntity? recentPinnedMessage;
   final int pinnedMessageCount;

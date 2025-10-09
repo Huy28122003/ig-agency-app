@@ -1,6 +1,6 @@
 import 'package:ig_agency_app/data/remote/models/response/message_response_model.dart';
-import 'package:ig_agency_app/data/remote/translators/user_translator.dart';
 import 'package:ig_agency_app/data/remote/translators/entity_translator.dart';
+import 'package:ig_agency_app/data/remote/translators/user_translator.dart';
 import 'package:ig_agency_app/domain/entities/message/message_entity.dart';
 import 'package:ig_agency_app/domain/entities/message/message_content.dart';
 import 'package:ig_agency_app/domain/entities/message/text_segment.dart';

@@ -21,7 +21,8 @@ import '../../../../../domain/entities/user_entity.dart';
 import '../../../../../domain/enums/send_message_type.dart';
 import '../../../../../domain/usecases/group/get_group_detail_use_case.dart';
 import '../../../../../domain/usecases/member/fetch_member_in_group_use_case.dart';
-import '../../../../../domain/usecases/message/get_pinned_message_summary_group_use_case.dart';
+
+// import '../../../../../domain/usecases/message/get_pinned_message_summary_group_use_case.dart';
 import '../../../../../domain/usecases/message/fetch_messages_in_group_use_case.dart';
 import '../../../../../domain/usecases/message/send_message_use_case.dart';
 import '../../../../../domain/usecases/message/unpin_message_use_case.dart';
@@ -46,7 +47,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   WSDetailBloc(
     this._getProfileInfoUseCase,
     this._fetchMessageUseCase,
-    this._getPinnedMessageSummaryGroupUseCase,
+    // this._getPinnedMessageSummaryGroupUseCase,
     this._sendMessageUseCase,
     this._fetchMemberInGroupUseCase,
     this._searchMemberInGroupUseCase,
@@ -68,8 +69,9 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   late final String groupId;
   final GetProfileInfoUseCase _getProfileInfoUseCase;
   final FetchMessagesInGroupUseCase _fetchMessageUseCase;
-  final GetPinnedMessageSummaryGroupUseCase
-  _getPinnedMessageSummaryGroupUseCase;
+
+  // final GetPinnedMessageSummaryGroupUseCase
+  // _getPinnedMessageSummaryGroupUseCase;
   final SendMessageUseCase _sendMessageUseCase;
   final FetchMemberInGroupUseCase _fetchMemberInGroupUseCase;
   final SearchMemberInGroupUseCase _searchMemberInGroupUseCase;
@@ -179,7 +181,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     try {
       final groupDetail = await _getGroupDetailUseCase.call(groupId);
       final pinnedMessageSummary = PinnedMessageSummary(
-        latestMessage: groupDetail.recentPinnedMessage,
+        recentPinnedMessage: groupDetail.recentPinnedMessage,
         totalPinnedMessages: groupDetail.pinnedMessageCount,
       );
 
@@ -247,7 +249,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       final groupDetail = await _getGroupDetailUseCase.call(groupId);
 
       final pinnedMessageSummary = PinnedMessageSummary(
-        latestMessage: groupDetail.recentPinnedMessage,
+        recentPinnedMessage: groupDetail.recentPinnedMessage,
         totalPinnedMessages: groupDetail.pinnedMessageCount,
       );
 
@@ -356,56 +358,51 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
       add(CloseReplyMessageEvent());
 
-      dynamic content;
-      if (event.type == SendMessageType.text) {
-        final text = _textEditingController.text.trim();
-        final tagTextSegments = _textEditingController.tagTextSegments;
-        final linkTextSegments = detectLinkTextSegment(text);
-        final textSegments = [...tagTextSegments, ...linkTextSegments];
-        content = TextMessageContent(text: text, textSegments: textSegments);
-        // Clear text editing controller
-        _textEditingController.clear();
-      } else if (event.type == SendMessageType.file) {
-        final result = await _fileManager.pickFile();
-        if (result == null) return;
-        final file = result;
+      late MessageContent content;
+      switch (event.type) {
+        case SendMessageType.text:
+          final text = _textEditingController.text.trim();
+          final tagTextSegments = _textEditingController.tagTextSegments;
+          final linkTextSegments = detectLinkTextSegment(text);
+          final textSegments = [...tagTextSegments, ...linkTextSegments];
+          content = TextMessageContent(text: text, textSegments: textSegments);
+          // Clear text editing controller
+          _textEditingController.clear();
+          break;
+        case SendMessageType.file:
+          final result = await _fileManager.pickFile();
+          if (result == null) return;
+          final file = result;
 
-        content = FileMessageContent(
-          fileUrl: '',
-          fileName: file.name,
-          fileSize: file.size,
-          path: file.path,
-        );
-      } else if (event.type == SendMessageType.media) {
-        final result = await _mediaManager.pickMedia();
-        if (result == null) return;
-        bool? isPhoto;
-
-        if (result.path.isImage()) isPhoto = true;
-        if (result.path.isVideo()) isPhoto = false;
-        if (isPhoto == null) return;
-
-        if (isPhoto) {
-          content = ImageMessageContent(imageUrl: '', path: result.path);
-        } else {
-          content = VideoMessageContent(
-            videoUrl: '',
-            duration: Duration(seconds: 0),
-            path: result.path,
+          content = FileMessageContent(
+            fileUrl: '',
+            fileName: file.name,
+            fileSize: file.size,
+            path: file.path,
           );
-        }
+          break;
+        case SendMessageType.media:
+          final result = await _mediaManager.pickMedia();
+          if (result == null) return;
+          bool? isPhoto;
+
+          if (result.path.isImage()) isPhoto = true;
+          if (result.path.isVideo()) isPhoto = false;
+          if (isPhoto == null) return;
+
+          if (isPhoto) {
+            content = ImageMessageContent(imageUrl: '', path: result.path);
+          } else {
+            content = VideoMessageContent(
+              videoUrl: '',
+              duration: Duration(seconds: 0),
+              path: result.path,
+            );
+          }
+          break;
       }
 
       final clientMessageId = const Uuid().v4();
-
-      await _sendMessageUseCase.call(
-        SendMessageParams(
-          groupId: groupId,
-          clientMessageId: clientMessageId,
-          replyMessageId: reply?.id,
-          content: content,
-        ),
-      );
 
       final message = MessageEntity(
         clientMessageId: clientMessageId,
@@ -415,13 +412,41 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
           name: state.profile?.name ?? '',
           avatar: state.profile?.avatar ?? '',
         ),
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toLocal(),
         content: content,
         status: MessageStatus.pending,
         repliedMessage: reply,
-      ).toUIModel();
+      );
 
-      emit(state.copyWith(chatMessages: [message, ...state.chatMessages]));
+      final updatedMessages = _addMessageList(trailingMessage: message);
+
+      emit(state.copyWith(chatMessages: updatedMessages));
+
+      final sentMessage = await _sendMessageUseCase.call(
+        SendMessageParams(
+          groupId: groupId,
+          clientMessageId: clientMessageId,
+          replyMessageId: reply?.id,
+          content: content,
+        ),
+      );
+
+      // Cập nhật lại message id và status với clientMessageId
+      // Response api trả về đang không có clientMessageId
+      final messageIndex = updatedMessages.indexWhere(
+        (uiModel) =>
+            uiModel.message.clientMessageId == sentMessage.clientMessageId,
+      );
+      if (messageIndex >= 0) {
+        updatedMessages[messageIndex] = updatedMessages[messageIndex].copyWith(
+          message: sentMessage.copyWith(
+            id: sentMessage.id,
+            status: MessageStatus.sent,
+          ),
+        );
+      }
+
+      emit(state.copyWith(chatMessages: updatedMessages));
     } catch (error) {
       handleError(emit, error);
     }
@@ -861,25 +886,33 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
   List<ChatMessageUIModel> _addMessageList({
     List<MessageEntity>? leadingMessageList,
-    List<MessageEntity>? trailingMessageList,
+    MessageEntity? trailingMessage,
   }) {
     var updatedMessages = List<ChatMessageUIModel>.from(state.chatMessages);
 
     if (leadingMessageList != null && leadingMessageList.isNotEmpty) {
-      final newMessages = _mapMessagesToUIModels(leadingMessageList);
-      // nối vào sau
-      updatedMessages = [...updatedMessages, ...newMessages];
-      final firstLeadingIndex = updatedMessages.length - newMessages.length;
+      if (leadingMessageList.length > 1) {
+        final newMessages = _mapMessagesToUIModels(leadingMessageList);
+        // nối vào sau
+        updatedMessages = [...updatedMessages, ...newMessages];
+        final firstLeadingIndex = updatedMessages.length - newMessages.length;
 
-      updatedMessages = _updateUIModel(updatedMessages, firstLeadingIndex);
+        updatedMessages = _updateUIModel(updatedMessages, firstLeadingIndex);
+      } else if (leadingMessageList.length == 1 && updatedMessages.isNotEmpty) {
+        final nextMessage = updatedMessages.last;
+        final newMessage = leadingMessageList.first.toUIModel(
+          nextMessage: nextMessage.message,
+        );
+        updatedMessages = [...updatedMessages, newMessage];
+      }
     }
 
-    if (trailingMessageList != null) {
-      final newMessages = _mapMessagesToUIModels(trailingMessageList);
-      // nối vào trước
-      updatedMessages = [...newMessages, ...updatedMessages];
-      final firstTrailingIndex = newMessages.length - 1;
-      updatedMessages = _updateUIModel(updatedMessages, firstTrailingIndex);
+    if (trailingMessage != null) {
+      final previousMessage = updatedMessages.first;
+      final newMessage = trailingMessage.toUIModel(
+        previousMessage: previousMessage.message,
+      );
+      updatedMessages = [newMessage, ...updatedMessages];
     }
 
     return updatedMessages;
@@ -965,7 +998,9 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   List<TextSegment> detectLinkTextSegment(String text) {
-    final regex = RegExp(r'https?://\S+');
+    final regex = RegExp(
+      r'((https?://)?(www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))',
+    );
     final match = regex.allMatches(text);
     if (match.isEmpty) {
       return [];

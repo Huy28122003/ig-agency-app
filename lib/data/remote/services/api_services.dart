@@ -109,13 +109,11 @@ abstract class ApiService {
   Future<List<MessageResponseModel>> getMessages(
     @Path('conversationId') String conversationId,
     @Query('limit') int limit,
-    @Query('offset') int offset,
-    @Query('search') String? search,
     @Query('before') String? beforeMessageId,
   );
 
   @POST('/conversations/{conversationId}/messages')
-  Future<void> sendMessage(
+  Future<MessageResponseModel> sendMessage(
     @Path('conversationId') String conversationId,
     @Body() SendMessageRequestModel request,
   );
@@ -127,10 +125,11 @@ abstract class ApiService {
     @Body() DeleteMessageRequestModel? request,
   );
 
-  // Member
   @GET('/conversations/{conversationId}/members')
   Future<List<MemberResponseModel>> getMembersInGroup(
     @Path('conversationId') String conversationId,
+    @Query('limit') int limit,
+    @Query('offset') int offset,
   );
 
   @GET('/conversations/{conversationId}/members')

@@ -42,7 +42,7 @@ class PinnedMessageSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pinnedMessageSummary.latestMessage?.user.name ?? '',
+                          pinnedMessageSummary.recentPinnedMessage?.user.name ?? '',
                           style: TextStyle(
                             color: AppColors.textDefaultTextDefault,
                             fontSize: 14,
@@ -55,7 +55,7 @@ class PinnedMessageSection extends StatelessWidget {
                         ),
                         SizedBox(height: 2),
                         Text(
-                          _extractContent(pinnedMessageSummary.latestMessage),
+                          _extractContent(pinnedMessageSummary.recentPinnedMessage),
                           style: TextStyle(
                             color: AppColors.textDefaultTextDefault,
                             fontSize: 12,
@@ -73,7 +73,7 @@ class PinnedMessageSection extends StatelessWidget {
               ),
             ),
             if (pinnedMessageSummary.totalPinnedMessages > 1 &&
-                pinnedMessageSummary.latestMessage != null) ...[
+                pinnedMessageSummary.recentPinnedMessage != null) ...[
               const SizedBox(width: 6),
               Row(
                 mainAxisSize: MainAxisSize.min,

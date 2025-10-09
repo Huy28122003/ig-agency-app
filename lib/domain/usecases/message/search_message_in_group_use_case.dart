@@ -1,4 +1,4 @@
-import 'package:ig_agency_app/domain/repositories/message_repository.dart';
+import 'package:ig_agency_app/domain/repositories/group_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../entities/message/message.dart';
@@ -7,13 +7,13 @@ import '../use_case.dart';
 @injectable
 class SearchMessageInGroupUseCase
     extends UseCase<List<MessageEntity>, SearchMessageInGroupParams> {
-  final MessageRepository _messageRepository;
+  final GroupRepository _groupRepository;
 
-  SearchMessageInGroupUseCase(this._messageRepository);
+  SearchMessageInGroupUseCase(this._groupRepository);
 
   @override
   Future<List<MessageEntity>> call(SearchMessageInGroupParams params) async {
-    return await _messageRepository.searchMessageInWorkspace(
+    return await _groupRepository.searchMessageInWorkspace(
       limit: params.limit,
       offset: params.offset,
       searchMessage: params.searchMessage,

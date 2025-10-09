@@ -349,8 +349,6 @@ class GroupInfoMobileLayout extends StatelessWidget {
                       PinnedMessageListRoute(
                         groupId: "68c7db6d814f50d48db8f735",
                         // TODO hoannk: Change id
-                        groupName: 'group.workspaceName',
-                        groupAvatar: 'group.workspaceAvatar',
                       ),
                     );
                     if (messageId != null && context.mounted) {

@@ -57,9 +57,7 @@ class GroupChatView extends StatelessWidget {
                             },
                             builder: (context, pinnedMessageSummary) {
                               if (pinnedMessageSummary == null ||
-                                  pinnedMessageSummary.totalPinnedMessages ==
-                                      0 ||
-                                  pinnedMessageSummary.latestMessage == null) {
+                                  pinnedMessageSummary.recentPinnedMessage == null) {
                                 return const SizedBox.shrink();
                               }
 

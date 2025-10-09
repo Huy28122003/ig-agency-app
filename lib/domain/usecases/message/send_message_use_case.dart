@@ -1,18 +1,18 @@
-import 'package:ig_agency_app/domain/repositories/message_repository.dart';
+import 'package:ig_agency_app/domain/repositories/group_repository.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../entities/message/message_content.dart';
+import '../../entities/message/message.dart';
 import '../use_case.dart';
 
 @injectable
-class SendMessageUseCase extends UseCase<void, SendMessageParams> {
-  final MessageRepository _messageRepository;
+class SendMessageUseCase extends UseCase<MessageEntity, SendMessageParams> {
+  final GroupRepository _groupRepository;
 
-  SendMessageUseCase(this._messageRepository);
+  SendMessageUseCase(this._groupRepository);
 
   @override
-  Future<void> call(SendMessageParams params) async {
-    return await _messageRepository.sendMessage(
+  Future<MessageEntity> call(SendMessageParams params) async {
+    return await _groupRepository.sendMessage(
       params.groupId,
       params.clientMessageId,
       params.replyMessageId,

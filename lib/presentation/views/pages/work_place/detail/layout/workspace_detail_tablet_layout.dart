@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/detail/workspace_detail_bloc.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-import '../../../../../../domain/entities/group_detail_entity.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/group_chat_status.dart';
 import '../../../../../resources/colors.dart';
@@ -106,20 +105,18 @@ class _WorkspaceDetailTabletLayoutState
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        BlocSelector<
-                          WSDetailBloc,
-                          WSDetailState,
-                          GroupDetailEntity?
-                        >(
+                        BlocSelector<WSDetailBloc, WSDetailState, (int, int)?>(
                           selector: (state) {
-                            return state.groupDetail;
+                            return (
+                              state.groupDetail?.memberCount ?? 0,
+                              state.groupDetail?.onlineMemberCount ?? 0,
+                            );
                           },
-                          builder: (context, groupDetail) {
-                            final memberCount = groupDetail?.memberCount ?? 0;
-                            final onlineMemberCount =
-                                groupDetail?.onlineMemberCount ?? 0;
+                          builder: (context, data) {
+                            final (totalMemberCount, onlineMemberCount) =
+                                data ?? (0, 0);
                             return Text(
-                              '$memberCount ${memberCount == 1 ? 'Member' : 'Members'}, $onlineMemberCount Online',
+                              '$totalMemberCount ${totalMemberCount > 1 ? 'Member' : 'Members'}, $onlineMemberCount Online',
                               style: TextStyle(
                                 color: AppColors.textDefaultTextSub2,
                                 fontSize: 14,

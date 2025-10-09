@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'user_response_model.dart';
+import 'user_profile_response_model.dart';
 
 part 'message_response_model.g.dart';
 
@@ -30,7 +30,7 @@ class MessageResponseModel {
   final String id;
   final String? clientMessageId;
   final String type;
-  final UserResponseModel from;
+  final UserProfileResponseModel from;
   final ReplyMessageResponseModel? replyToMessage;
   final String? text;
   final List<EntityResponseModel> entities;
@@ -241,7 +241,7 @@ class ReplyMessageResponseModel {
   final String id;
   final String? clientMessageId;
   final String type;
-  final UserResponseModel from;
+  final UserProfileResponseModel from;
   final String? text;
   final List<EntityResponseModel> entities;
   final List<PhotoResponseModel> photo;
