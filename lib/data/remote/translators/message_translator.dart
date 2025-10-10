@@ -25,7 +25,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
   }
 
   MessageContent _mapContent() {
-    final messageContentType = MessageContentType.fromString(type);
+    final messageContentType = MessageContentType.fromCode(type);
     switch (messageContentType) {
       case MessageContentType.text:
         return TextMessageContent(
@@ -104,7 +104,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
   }
 
   MessageContent _mapReplyContent(ReplyMessageResponseModel replyMessage) {
-    final messageContentType = MessageContentType.fromString(replyMessage.type);
+    final messageContentType = MessageContentType.fromCode(replyMessage.type);
     switch (messageContentType) {
       case MessageContentType.text:
         return TextMessageContent(text: replyMessage.text ?? '');

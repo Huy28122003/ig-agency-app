@@ -431,22 +431,32 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
         ),
       );
 
+      // Cập nhật lại message mới (đầu tiên) với id và status
+      final updatedMessage = updatedMessages[0].copyWith(
+        message: updatedMessages[0].message.copyWith(
+          id: sentMessage.id,
+          status: MessageStatus.sent,
+        ),
+      );
+      final newMessages = List<ChatMessageUIModel>.from(updatedMessages);
+      newMessages[0] = updatedMessage;
+
       // Cập nhật lại message id và status với clientMessageId
       // Response api trả về đang không có clientMessageId
-      final messageIndex = updatedMessages.indexWhere(
-        (uiModel) =>
-            uiModel.message.clientMessageId == sentMessage.clientMessageId,
-      );
-      if (messageIndex >= 0) {
-        updatedMessages[messageIndex] = updatedMessages[messageIndex].copyWith(
-          message: sentMessage.copyWith(
-            id: sentMessage.id,
-            status: MessageStatus.sent,
-          ),
-        );
-      }
+      // final messageIndex = updatedMessages.indexWhere(
+      //   (uiModel) =>
+      //       uiModel.message.clientMessageId == sentMessage.clientMessageId,
+      // );
+      // if (messageIndex >= 0) {
+      //   updatedMessages[messageIndex] = updatedMessages[messageIndex].copyWith(
+      //     message: sentMessage.copyWith(
+      //       id: sentMessage.id,
+      //       status: MessageStatus.sent,
+      //     ),
+      //   );
+      // }
 
-      emit(state.copyWith(chatMessages: updatedMessages));
+      emit(state.copyWith(chatMessages: newMessages));
     } catch (error) {
       handleError(emit, error);
     }

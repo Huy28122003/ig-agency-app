@@ -15,7 +15,6 @@ class MessageEntity extends Equatable {
     this.groupId,
     this.repliedMessage,
     this.isPinned = false,
-    // this.pinnedAt,
   });
 
   final String? id;
@@ -27,7 +26,6 @@ class MessageEntity extends Equatable {
   final String? groupId;
   final MessageEntity? repliedMessage;
   final bool isPinned;
-  // final DateTime? pinnedAt;
 
   bool get hasNotReply => repliedMessage == null;
 
@@ -52,7 +50,6 @@ class MessageEntity extends Equatable {
     groupId: groupId ?? this.groupId,
     repliedMessage: repliedMessage ?? this.repliedMessage,
     isPinned: isPinned ?? this.isPinned,
-    // pinnedAt: pinnedAt ?? this.pinnedAt,
   );
 
   @override
@@ -66,6 +63,5 @@ class MessageEntity extends Equatable {
     groupId,
     repliedMessage,
     isPinned,
-    // pinnedAt,
   ];
 }

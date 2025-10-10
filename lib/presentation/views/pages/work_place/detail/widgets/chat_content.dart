@@ -276,14 +276,15 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                           final bool isContinuation = uiModel.isContinuation;
                           final bool shouldShowTime =
                               uiModel.showTime || uiModel.shouldShowTime;
+                          final message = uiModel.message;
 
                           final double bottomPadding =
                               chatMessages.isNotEmpty && index == 0 ? 20 : 0;
                           return Padding(
                             padding: EdgeInsets.only(bottom: bottomPadding),
                             child: ChatMessageBubble(
-                              key: ValueKey(uiModel.message.id),
-                              message: uiModel.message,
+                              key: ValueKey(message.id),
+                              message: message,
                               maxWidth: maxWidthChatBubble,
                               maxWidthReply: maxWidthChatReply,
                               horizontalPadding: widget.horizontalPadding,
@@ -294,7 +295,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                               searchText: 'alabama',
                               userId: _bloc.userId,
                               onTap: () {
-                                final messageId = uiModel.message.id;
+                                final messageId = message.id;
                                 if (messageId == null) return;
                                 _bloc.add(
                                   ToggleShowTimeEvent(messageId: messageId),
@@ -311,7 +312,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                                 );
                               },
                               onPin: () {
-                                final messageId = uiModel.message.id;
+                                final messageId = message.id;
                                 if (messageId == null) return;
                                 _bloc.add(
                                   TogglePinMessageFromDetailEvent(
@@ -320,7 +321,7 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                                 );
                               },
                               onDelete: () {
-                                final messageId = uiModel.message.id;
+                                final messageId = message.id;
                                 if (messageId == null) return;
                                 _showDeleteOptionSheet(context, messageId);
                               },
@@ -329,9 +330,8 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                         },
                         childCount: chatMessages.length,
                         onItemKey: (index) {
-                          final messageId = chatMessages[index].message.id;
-                          if (messageId == null) return '';
-                          return messageId;
+                          final message = chatMessages[index].message;
+                          return message.id ?? message.clientMessageId ?? '';
                         },
                         keepPosition: true,
                         keepPositionOffset: 56,
