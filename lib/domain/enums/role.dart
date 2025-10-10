@@ -17,7 +17,7 @@ enum RoleSystem {
       case 'telegram_user':
         return RoleSystem.telegramUser;
       default:
-        throw RoleSystem.guest;
+        return RoleSystem.guest;
     }
   }
 }

@@ -14,7 +14,7 @@ part 'group_info_state.dart';
 class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
   final GetGroupInfoUseCase getWorkspaceByIdUseCase;
   final UpdateWorkspaceNotificationUseCase updateWorkspaceNotificationUseCase;
-late final String groupId;
+  late final String groupId;
   GroupInfoBloc({
     required this.getWorkspaceByIdUseCase,
     required this.updateWorkspaceNotificationUseCase,

@@ -125,7 +125,9 @@ class PinnedMessageBottomSheetCubit
   }
 
   void unpinMessage(String messageId) async {
-    await _unpinMessageUseCase.call(UnpinMessageParams(messageId: messageId));
+    await _unpinMessageUseCase.call(
+      UnpinMessageParams(groupId: groupId, messageId: messageId),
+    );
 
     final messages = List<PinnedMessageUIModel>.from(state.pinnedMessages)
       ..removeWhere((e) => e.id == messageId);

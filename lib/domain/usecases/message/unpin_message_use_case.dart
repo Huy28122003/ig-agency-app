@@ -11,12 +11,16 @@ class UnpinMessageUseCase extends UseCase<void, UnpinMessageParams> {
 
   @override
   Future<void> call(UnpinMessageParams params) async {
-    return await _messageRepository.unpinMessage(params.messageId);
+    return await _messageRepository.unpinMessage(
+      params.groupId,
+      params.messageId,
+    );
   }
 }
 
 class UnpinMessageParams {
+  final String groupId;
   final String messageId;
 
-  UnpinMessageParams({required this.messageId});
+  UnpinMessageParams({required this.groupId, required this.messageId});
 }

@@ -13,7 +13,7 @@ part 'edit_workspace_name_state.dart';
 class EditWorkspaceNameBloc
     extends BaseBloc<EditWorkspaceNameEvent, EditWorkspaceNameState> {
   String initBio = "";
-  late final int workspaceId;
+  late final String workspaceId;
 
   final UpdateWorkspaceNameUseCase _updateWorkspaceNameUseCase;
 

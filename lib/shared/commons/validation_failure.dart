@@ -8,3 +8,13 @@ class ValidationFailure extends Failure {
 class OtpExpiredFailure extends ValidationFailure {
   OtpExpiredFailure() : super(message: 'An unknown error occurred');
 }
+
+class SameAsCurrentPasswordFailure extends ValidationFailure {
+  SameAsCurrentPasswordFailure()
+    : super(message: 'An unknown error occurred');
+}
+
+class PasswordConfirmationMismatchFailure extends ValidationFailure {
+  PasswordConfirmationMismatchFailure()
+    : super(message: 'An unknown error occurred');
+}

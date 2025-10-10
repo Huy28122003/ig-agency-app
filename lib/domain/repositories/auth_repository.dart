@@ -21,7 +21,11 @@ abstract class AuthRepository {
 
   Future sendNewPassword(ForgotPasswordRequestModel request);
 
-  Future changePassword(String currentPassword, String newPassword);
+  Future changePassword(
+    String currentPassword,
+    String newPassword,
+    String passwordConfirm,
+  );
 
   Future deleteAccount(String userId);
 

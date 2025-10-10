@@ -47,10 +47,14 @@ class EditBioBloc extends BaseBloc<EditBioEvent, EditBioState> {
     SaveBioEvent event,
     Emitter<EditBioState> emit,
   ) async {
-    emit(state.copyWith(processing: true));
+    try {
+      emit(state.copyWith(processing: true));
 
-    await _updateUserBioUseCase.call(UpdateUserBioParam(bio: state.bio));
+      await _updateUserBioUseCase.call(UpdateUserBioParam(bio: state.bio));
 
-    emit(state.copyWith(processing: false, isSaveSuccess: true));
+      emit(state.copyWith(processing: false, isSaveSuccess: true));
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 }

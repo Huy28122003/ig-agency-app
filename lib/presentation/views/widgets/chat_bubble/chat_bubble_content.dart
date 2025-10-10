@@ -36,7 +36,7 @@ class ChatBubbleContent extends StatelessWidget {
       case TextMessageContent _:
         return _TextMessageContent(
           textContent: content,
-          createdAt: message.createdAt.toShortTimeString(),
+          createdAt: message.createdAt.formatHourMinuteAmPm(),
           maxWidth: maxWidth,
           searchText: searchText,
           isMe: isMe,
@@ -417,7 +417,7 @@ class _FileMessageContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${fileContent.fileName}.${fileContent.fileExtension}',
+                  fileContent.fileName,
                   style: const TextStyle(
                     color: AppColors.textDefaultTextDefault,
                     fontSize: 14,

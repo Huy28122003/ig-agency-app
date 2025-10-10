@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
+import 'package:ig_agency_app/shared/commons/validation_failure.dart';
 import 'package:injectable/injectable.dart';
 
 import '../repositories/auth_repository.dart';
@@ -11,9 +12,18 @@ class ChangePasswordUseCase extends UseCase<void, ChangePasswordParam> {
 
   @override
   Future call(ChangePasswordParam param) async {
+    if (param.currentPassword == param.newPassword) {
+      throw SameAsCurrentPasswordFailure();
+    }
+
+    if (param.newPassword != param.passwordConfirm) {
+      throw PasswordConfirmationMismatchFailure();
+    }
+
     return await _authRepository.changePassword(
       param.currentPassword,
       param.newPassword,
+      param.passwordConfirm,
     );
   }
 }
@@ -22,8 +32,10 @@ class ChangePasswordParam {
   ChangePasswordParam({
     required this.currentPassword,
     required this.newPassword,
+    required this.passwordConfirm,
   });
 
   final String currentPassword;
   final String newPassword;
+  final String passwordConfirm;
 }
