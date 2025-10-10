@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_group_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';

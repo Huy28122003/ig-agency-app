@@ -11,9 +11,9 @@ import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:injectable/injectable.dart';
 
-part 'workspace_list_event.dart';
+part 'group_list_event.dart';
 
-part 'workspace_list_state.dart';
+part 'group_list_state.dart';
 
 @injectable
 class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {

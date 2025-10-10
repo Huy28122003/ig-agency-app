@@ -26,6 +26,8 @@ extension GroupTranslator on GroupResponse {
       groupAvatar: "https://i.pravatar.cc/150?img=1",
       isSeen: true,
       isMute: true,
+      countPin: pinnedMessageCount,
+      countMember: memberCount,
     );
   }
 

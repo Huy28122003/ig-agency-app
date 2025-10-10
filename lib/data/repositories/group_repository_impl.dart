@@ -1,5 +1,5 @@
-import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
-import 'package:ig_agency_app/data/remote/translators/workspace_translator.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_group_request_model.dart';
+import 'package:ig_agency_app/data/remote/translators/group_translator.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
@@ -9,7 +9,7 @@ import 'package:injectable/injectable.dart';
 import '../../domain/repositories/workspace_repository.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../../shared/utils/mock_data.dart';
-import '../remote/app/workspace_remote_data_source.dart';
+import '../remote/app/group_remote_data_source.dart';
 
 @Injectable(as: GroupRepository)
 class GroupRepositoryImpl implements GroupRepository {

@@ -1,5 +1,5 @@
 import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
-import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_group_request_model.dart';
 
 import 'package:ig_agency_app/data/remote/models/response/get_workspaces_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
@@ -7,7 +7,7 @@ import 'package:ig_agency_app/data/remote/models/response/user_profile_response_
 import 'package:injectable/injectable.dart';
 
 import '../../../shared/commons/exception_converter.dart';
-import '../app/workspace_remote_data_source.dart';
+import '../app/group_remote_data_source.dart';
 import '../services/api_services.dart';
 
 @Injectable(as: GroupRemoteDataSource)
