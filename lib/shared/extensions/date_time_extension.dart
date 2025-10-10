@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 
@@ -11,6 +12,10 @@ enum DateTimeType {
   dateSlash,
   dateSlashFull,
   dateSlashFullTimeSecond,
+  monthDay,
+  hourMinuteAmPm,
+  dateWithTimeCurrentYear,
+  dateWithTimeFullYear,
 }
 
 extension DateTimeTypeExtenstions on DateTimeType {
@@ -34,6 +39,14 @@ extension DateTimeTypeExtenstions on DateTimeType {
         return 'yyyy/MM/dd';
       case DateTimeType.dateSlashFullTimeSecond:
         return 'yyyy/MM/dd HH:mm:ss';
+      case DateTimeType.monthDay:
+        return 'MMM d';
+      case DateTimeType.hourMinuteAmPm:
+        return 'h:mm a';
+      case DateTimeType.dateWithTimeCurrentYear:
+        return 'h:mm a, MMM d';
+      case DateTimeType.dateWithTimeFullYear:
+        return 'h:mm a, MMM d, yyyy';
     }
   }
 }
@@ -41,6 +54,30 @@ extension DateTimeTypeExtenstions on DateTimeType {
 extension DateTimeExtensions on DateTime {
   String format({DateTimeType type = DateTimeType.date, bool utc = false}) {
     return DateFormat(type.getDateFormat()).format(utc ? toUtc() : this);
+  }
+
+  String formatDateWithTime({bool utc = false}) {
+    final now = DateTime.now();
+    if (isAtSameYearAs(now)) {
+      return format(type: DateTimeType.dateWithTimeCurrentYear, utc: utc);
+    } else {
+      return format(type: DateTimeType.dateWithTimeFullYear, utc: utc);
+    }
+  }
+
+  String formatHourMinuteAmPm({bool utc = false}) {
+    return format(type: DateTimeType.hourMinuteAmPm, utc: utc);
+  }
+}
+
+extension DateTimeNumExtensions on int {
+  DateTime toLocalTime({bool isSecond = false, bool utc = false}) {
+    if (utc) {
+      return DateTime.fromMillisecondsSinceEpoch(
+        isSecond ? this * 1000 : this,
+      ).toUtc();
+    }
+    return DateTime.fromMillisecondsSinceEpoch(isSecond ? this * 1000 : this);
   }
 }
 
@@ -108,15 +145,6 @@ extension DateTimeExtension on DateTime {
       return "${(diff.inDays / 30).floor()}m";
     } else {
       return "${(diff.inDays / 365).floor()}y";
-    }
-  }
-
-  String toShortDateString() {
-    final now = DateTime.now();
-    if (year == now.year) {
-      return DateFormat('MMM d').format(this);
-    } else {
-      return DateFormat('MMM d, yyyy').format(this);
     }
   }
 

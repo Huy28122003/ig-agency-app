@@ -67,7 +67,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
             children: [
               _buildHeaderInfo(context),
               SizedBox(height: 20),
-              _buildBody(context,bloc),
+              _buildBody(context, bloc),
               SizedBox(height: 12),
               _buildLeaveGroupButton(),
             ],
@@ -342,16 +342,20 @@ class GroupInfoMobileLayout extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     final group = bloc.state.workspace;
                     if (group == null) return;
-                    context.router.push(
+                    final messageId = await context.router.push(
                       PinnedMessageListRoute(
-                        groupId: "5",
+                        groupId: "68c7db6d814f50d48db8f735",
+                        // TODO hoannk: Change id
                         groupName: group.groupName,
                         groupAvatar: group.groupAvatar,
                       ),
                     );
+                    if (messageId != null && context.mounted) {
+                      context.router.pop(messageId);
+                    }
                   },
                 ),
                 GroupInfoItem(

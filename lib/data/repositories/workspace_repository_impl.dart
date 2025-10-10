@@ -69,7 +69,7 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<bool> updateWorkspaceName({
-    required int groupId,
+    required String groupId,
     required String name,
   }) async {
     try {

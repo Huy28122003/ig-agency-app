@@ -6,7 +6,6 @@ import 'package:injectable/injectable.dart';
 import '../../../../data/cache/ram_cache.dart';
 import '../../../../domain/entities/message/message.dart';
 import '../../../../domain/entities/pinned_message_summary.dart';
-import '../../../../domain/entities/user.dart';
 import '../../../../domain/entities/user_entity.dart';
 import '../../../../domain/enums/message_enums.dart';
 
@@ -37,15 +36,50 @@ class MessageMockService {
       'id': '1',
       'name': 'Trần Văn A',
       'avatarUrl': 'https://placehold.co/44x44/4CAF50/FFFFFF?text=TA',
-    }
+    },
+    {
+      'id': '2',
+      'name': 'Nguyễn Thị B',
+      'avatarUrl': 'https://placehold.co/44x44/2196F3/FFFFFF?text=NB',
+    },
+    {
+      'id': '3',
+      'name': 'Lê Văn C',
+      'avatarUrl': 'https://placehold.co/44x44/FF9800/FFFFFF?text=LC',
+    },
+    {
+      'id': '4',
+      'name': 'Phạm Thị D',
+      'avatarUrl': 'https://placehold.co/44x44/9C27B0/FFFFFF?text=PD',
+    },
+    {
+      'id': '5',
+      'name': 'Hoàng Văn E',
+      'avatarUrl': 'https://placehold.co/44x44/F44336/FFFFFF?text=HE',
+    },
+    {
+      'id': '6',
+      'name': 'Vũ Thị F',
+      'avatarUrl': 'https://placehold.co/44x44/607D8B/FFFFFF?text=VF',
+    },
+    {
+      'id': '7',
+      'name': 'Đặng Văn G',
+      'avatarUrl': 'https://placehold.co/44x44/795548/FFFFFF?text=DG',
+    },
+    {
+      'id': '8',
+      'name': 'Bùi Thị H',
+      'avatarUrl': 'https://placehold.co/44x44/009688/FFFFFF?text=BH',
+    },
   ];
 
   static final List<Map<String, dynamic>> _mockGroups = [
-    {'id': "1", 'name': 'Vaga bala blo'},
-    {'id': "2", 'name': 'Team Development'},
-    {'id': "3", 'name': 'Marketing Team'},
-    {'id': "4", 'name': 'Design Team'},
-    {'id': "5", 'name': 'Project Alpha'},
+    {'id': '1', 'name': 'Vaga bala blo'},
+    {'id': '2', 'name': 'Team Development'},
+    {'id': '3', 'name': 'Marketing Team'},
+    {'id': '4', 'name': 'Design Team'},
+    {'id': '5', 'name': 'Project Alpha'},
   ];
 
   static final List<String> _mockTexts = [
@@ -94,16 +128,8 @@ class MessageMockService {
     {
       "fileUrl": "https://example.com/file1.pdf",
       "fileName": "Tài liệu A",
-      "fileExtension": "pdf",
       "fileSize": 10240,
       "fileType": FileType.document,
-    },
-    {
-      "fileUrl": "https://example.com/file2.zip",
-      "fileName": "Source Code",
-      "fileExtension": "zip",
-      "fileSize": 20480,
-      "fileType": FileType.archive,
     },
   ];
 
@@ -182,7 +208,7 @@ class MessageMockService {
     return (buffer.toString(), segments);
   }
 
-  List<MessageEntity> _createMockMessages(String groupId, {int count = 100}) {
+  List<MessageEntity> _createMockMessages(String groupId, {int count = 50}) {
     DateTime current = DateTime.now();
     current = current.subtract(Duration(days: 365));
 
@@ -191,7 +217,8 @@ class MessageMockService {
     for (int i = 0; i < count; i++) {
       current = current.add(_timeSteps[_random.nextInt(_timeSteps.length)]);
 
-      final type = MessageContentType.text;
+      final type = MessageContentType
+          .values[_random.nextInt(MessageContentType.values.length)];
       final content = _generateContent(type);
 
       MessageEntity? reply;
@@ -207,7 +234,7 @@ class MessageMockService {
       messages.add(
         MessageEntity(
           id: "msg_${groupId}_${i}_${current.millisecondsSinceEpoch}",
-          user: UserSummary(
+          user: UserEntity(
             id: user['id']!,
             name: user['name']!,
             avatar: user['avatarUrl']!,
@@ -220,7 +247,7 @@ class MessageMockService {
           isPinned: type == MessageContentType.system
               ? false
               : _random.nextBool(),
-          pinnedAt: type == MessageContentType.system ? null : current,
+          // pinnedAt: type == MessageContentType.system ? null : current,
         ),
       );
     }
@@ -233,7 +260,7 @@ class MessageMockService {
       case MessageContentType.text:
         final (text, segments) = mockText();
         return TextMessageContent(text: text, textSegments: segments);
-      case MessageContentType.image:
+      case MessageContentType.photo:
         final imageUrl = _mockImages[_random.nextInt(_mockImages.length)];
         final (width, height) = extractDimensions(imageUrl);
         return ImageMessageContent(
@@ -252,12 +279,11 @@ class MessageMockService {
           width: width,
           height: height,
         );
-      case MessageContentType.file:
+      case MessageContentType.document:
         final file = _mockFiles[_random.nextInt(_mockFiles.length)];
         return FileMessageContent(
           fileUrl: file['fileUrl'],
           fileName: file['fileName'],
-          fileExtension: file['fileExtension'],
           fileSize: file['fileSize'],
           fileType: file['fileType'],
         );
@@ -267,6 +293,8 @@ class MessageMockService {
           systemType: sys['systemType'],
           message: sys['message'],
         );
+      default:
+        return TextMessageContent(text: 'Unknown message content');
     }
   }
 
@@ -354,7 +382,7 @@ class MessageMockService {
       );
       if (messageIndex != -1) {
         targetMessage = messages[messageIndex];
-        targetGroupId = groupId;
+        targetGroupId = groupId.toString();
         targetMessageIndex = messageIndex;
         break;
       }
@@ -394,7 +422,7 @@ class MessageMockService {
       );
       if (messageIndex != -1) {
         targetMessage = messages[messageIndex];
-        targetGroupId = groupId;
+        targetGroupId = groupId.toString();
         targetMessageIndex = messageIndex;
         break;
       }
@@ -502,13 +530,14 @@ class MessageMockService {
 
   Future<void> addMessage(
     String userId,
-      String groupId,
+    String groupId,
     String? replyMessageId,
     dynamic content,
   ) async {
-    final messages= _messageMockData[groupId] ?? [];
+    final messages = _messageMockData[groupId] ?? [];
 
-    final messageId = "msg_${groupId}_${messages.length}_${DateTime.now().millisecondsSinceEpoch}";
+    final messageId =
+        "msg_${groupId}_${messages.length}_${DateTime.now().millisecondsSinceEpoch}";
 
     final user =
         getUserById(userId) ??
@@ -516,9 +545,9 @@ class MessageMockService {
 
     final type = switch (content) {
       TextMessageContent _ => MessageContentType.text,
-      ImageMessageContent _ => MessageContentType.image,
+      ImageMessageContent _ => MessageContentType.photo,
       VideoMessageContent _ => MessageContentType.video,
-      FileMessageContent _ => MessageContentType.file,
+      FileMessageContent _ => MessageContentType.document,
       _ => throw Exception(),
     };
 
@@ -532,7 +561,7 @@ class MessageMockService {
 
     final sentMessage = MessageEntity(
       id: messageId,
-      user: UserSummary(id: user.id, name: user.name, avatar: user.avatar),
+      user: UserEntity(id: user.id, name: user.name, avatar: user.avatar),
       repliedMessage: reply,
       status: MessageStatus.sent,
       createdAt: DateTime.now(),

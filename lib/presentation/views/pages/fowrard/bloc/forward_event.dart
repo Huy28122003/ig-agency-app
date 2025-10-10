@@ -2,11 +2,11 @@ part of 'forward_bloc.dart';
 
 class ForwardEvent {}
 
-class LoadDataEvent extends ForwardEvent{}
+class LoadDataEvent extends ForwardEvent {}
 
-class GetDataEvent extends ForwardEvent{}
+class GetDataEvent extends ForwardEvent {}
 
-class ChangeKeyWordEvent extends ForwardEvent{
+class ChangeKeyWordEvent extends ForwardEvent {
   final String value;
 
   ChangeKeyWordEvent({required this.value});
@@ -24,9 +24,8 @@ class SearchEvent extends ForwardEvent {
   SearchEvent({required this.value});
 }
 
-class SendMessageToGroupEvent extends ForwardEvent{
+class SendMessageToGroupEvent extends ForwardEvent {
   final String groupId;
 
   SendMessageToGroupEvent({required this.groupId});
 }
-

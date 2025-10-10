@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
 import 'package:injectable/injectable.dart';
 
@@ -36,20 +37,18 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future unpinMessage(String messageId) async {
+  Future unpinMessage(String groupId, String messageId) async {
     try {
-      return await _messageRemoteDataSource.unpinMessage(messageId);
+      return await _messageRemoteDataSource.unpinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future pinMessage(String messageId) async {
+  Future pinMessage(String groupId, String messageId) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
-      return await _messageMockService.mockPinMessage(messageId);
+      return await _messageRemoteDataSource.pinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -57,20 +56,18 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> fetchPinnedMessagesInGroup(
-      String groupId,
+    String groupId,
     int limit,
     int offset,
   ) async {
-    // Todo: hoannk: rehandle this
-    // TODO: Sử dụng tạm mock tại repository
     try {
-      final pinnedMessages = _messageMockService.mockFetchPinnedMessages(
-        groupId: groupId,
-        limit: limit,
-        offset: offset,
+      final pinnedMessages = await _messageRemoteDataSource.fetchPinnedMessage(
+        groupId,
+        limit,
+        offset,
       );
 
-      return pinnedMessages;
+      return pinnedMessages.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -78,7 +75,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<PinnedMessageSummary> getPinnedMessageSummaryInGroup(
-      String groupId,
+    String groupId,
   ) async {
     // Todo: hoannk: rehandle this
     // TODO: Sử dụng tạm mock tại repository
@@ -92,7 +89,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<List<MessageEntity>> fetchMessagesInGroup(
-      String groupId,
+    String groupId,
     int limit,
     String? oldestMessageId,
     String? targetMessageId,
@@ -116,7 +113,7 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> sendMessage(
     String userId,
-      String groupId,
+    String groupId,
     String? replyMessageId,
     dynamic content,
   ) async {

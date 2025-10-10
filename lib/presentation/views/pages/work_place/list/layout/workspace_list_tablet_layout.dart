@@ -118,25 +118,24 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child:
-                  BlocSelector<GroupListBloc, GroupListState, String>(
-                    selector: (state) {
-                      return state.searchKeyWord;
-                    },
-                    builder: (_, state) {
-                      return AppSearchTextField(
-                        value: state,
-                        onSearchEnable: (value) {},
-                        onChanged: (value) {
-                          _workspaceBloc.add(
-                            SearchKeyWorkChangeEvent(value: value),
-                          );
-                          _workspaceBloc.add(SearchEvent(value: value));
-                        },
-                        hintText: "workspace.hint_text_search".tr(),
+              child: BlocSelector<GroupListBloc, GroupListState, String>(
+                selector: (state) {
+                  return state.searchKeyWord;
+                },
+                builder: (_, state) {
+                  return AppSearchTextField(
+                    value: state,
+                    onSearchEnable: (value) {},
+                    onChanged: (value) {
+                      _workspaceBloc.add(
+                        SearchKeyWorkChangeEvent(value: value),
                       );
+                      _workspaceBloc.add(SearchEvent(value: value));
                     },
-                  ),
+                    hintText: "workspace.hint_text_search".tr(),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -152,11 +151,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
       builder: (_, searchModeState) {
         return Stack(
           children: [
-            BlocSelector<
-              GroupListBloc,
-              GroupListState,
-              List<GroupEntity>
-            >(
+            BlocSelector<GroupListBloc, GroupListState, List<GroupEntity>>(
               selector: (state) {
                 return state.workspaces;
               },
@@ -320,8 +315,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                           isPin: workspace.isPin,
                                           workspaceAvatar:
                                               workspace.groupAvatar,
-                                          workspaceName:
-                                              workspace.groupName,
+                                          workspaceName: workspace.groupName,
                                           lastMessage: workspace.lastMessage,
                                           lastMessageTime:
                                               workspace.lastMessageTime,

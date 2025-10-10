@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
@@ -9,6 +8,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 
 import '../../../../resources/colors.dart';
+import '../../../modal/unpin_message_modal.dart';
 import '../../../widgets/app_pull_to_refresh.dart';
 import '../../../widgets/pinned_message_bubble.dart';
 import '../pinned_message_bloc.dart';
@@ -37,55 +37,6 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
   void dispose() {
     _refreshController.dispose();
     super.dispose();
-  }
-
-  Future<void> _showOptionSheet(BuildContext context, String messageId) async {
-    final result = await showCupertinoModalPopup<bool>(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.68),
-      builder: (BuildContext context) => CupertinoActionSheet(
-        actions: <CupertinoActionSheetAction>[
-          CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(
-              'Unpin',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.colorsBlue,
-                fontSize: 17,
-                // fontFamily: 'SF Pro',
-                fontWeight: FontWeight.w500,
-                height: 1.29,
-                letterSpacing: -0.43,
-              ),
-            ),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
-          child: Text(
-            'Cancel',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.colorsBlue,
-              fontSize: 17,
-              // fontFamily: 'SF Pro',
-              fontWeight: FontWeight.w600,
-              height: 1.29,
-              letterSpacing: -0.43,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (result == true) {
-      _pinnedMessageBloc.add(UnpinMessageEvent(messageId: messageId));
-    }
   }
 
   void _onRefresh() {
@@ -167,10 +118,16 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
                   return PinnedMessageBubble(
                     key: ValueKey(message.id),
                     message: message,
-                    onTap: () {
+                    onTap: () async {
                       final messageId = message.id;
                       if (messageId == null) return;
-                      _showOptionSheet(context, messageId);
+
+                      final unpin = await UnpinMessageModal.show(context);
+                      if (unpin && context.mounted) {
+                        _pinnedMessageBloc.add(
+                          UnpinMessageEvent(messageId: messageId),
+                        );
+                      }
                     },
                   );
                 },
@@ -190,4 +147,3 @@ class _PinnedMessageMobileLayoutState extends State<PinnedMessageMobileLayout> {
     );
   }
 }
-

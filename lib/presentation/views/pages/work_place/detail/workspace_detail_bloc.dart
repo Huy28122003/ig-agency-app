@@ -316,7 +316,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
       content = FileMessageContent(
         fileUrl: '',
         fileName: file.name,
-        fileExtension: file.extension ?? '',
         fileSize: file.size,
         path: file.path,
       );
@@ -566,11 +565,11 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
 
     if (isPinned) {
       await _unpinMessageUseCase.call(
-        UnpinMessageParams(messageId: event.messageId),
+        UnpinMessageParams(groupId: groupId, messageId: event.messageId),
       );
     } else {
       await _pinMessageUseCase.call(
-        PinMessageParams(messageId: event.messageId),
+        PinMessageParams(groupId: groupId, messageId: event.messageId),
       );
     }
 

@@ -150,11 +150,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future changePassword(String currentPassword, String newPassword) async {
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+    String passwordConfirm,
+  ) async {
     try {
-      return await _remoteDataSource.changePassword(
+      await _remoteDataSource.changePassword(
         currentPassword,
         newPassword,
+        passwordConfirm,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
