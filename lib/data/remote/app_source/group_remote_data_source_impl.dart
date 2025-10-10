@@ -1,5 +1,5 @@
 import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
-import 'package:ig_agency_app/data/remote/models/requests/get_group_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_group_request.dart';
 
 import 'package:ig_agency_app/data/remote/models/response/get_workspaces_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
@@ -18,7 +18,7 @@ class GroupRemoteDataSourceImpl extends GroupRemoteDataSource {
 
   @override
   Future<List<GroupResponse>> getWorkspaces({
-    required GetWorkspacesRequestModel getWorkspacesRequest,
+    required GetGroupRequest getWorkspacesRequest,
   }) async {
     try {
       return await _apiService.getGroups(getWorkspacesRequest);

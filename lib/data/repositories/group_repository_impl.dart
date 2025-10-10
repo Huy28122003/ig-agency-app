@@ -1,4 +1,4 @@
-import 'package:ig_agency_app/data/remote/models/requests/get_group_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_group_request.dart';
 import 'package:ig_agency_app/data/remote/translators/group_translator.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
@@ -25,7 +25,7 @@ class GroupRepositoryImpl implements GroupRepository {
   }) async {
     try {
       final response = await _workspaceRemoteDataSource.getWorkspaces(
-        getWorkspacesRequest: GetWorkspacesRequestModel(
+        getWorkspacesRequest: GetGroupRequest(
           limit: limit,
           offset: offset,
           search: keyWord,
