@@ -1,7 +1,5 @@
-import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
-import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
-import 'package:ig_agency_app/data/remote/translators/user_profile_translator.dart';
-import 'package:ig_agency_app/data/remote/translators/workspace_translator.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_group_request.dart';
+import 'package:ig_agency_app/data/remote/translators/group_translator.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
@@ -11,7 +9,7 @@ import 'package:injectable/injectable.dart';
 import '../../domain/repositories/workspace_repository.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../../shared/utils/mock_data.dart';
-import '../remote/app/workspace_remote_data_source.dart';
+import '../remote/app/group_remote_data_source.dart';
 
 @Injectable(as: GroupRepository)
 class GroupRepositoryImpl implements GroupRepository {
@@ -27,7 +25,7 @@ class GroupRepositoryImpl implements GroupRepository {
   }) async {
     try {
       final response = await _workspaceRemoteDataSource.getWorkspaces(
-        getWorkspacesRequest: GetWorkspacesRequestModel(
+        getWorkspacesRequest: GetGroupRequest(
           limit: limit,
           offset: offset,
           search: keyWord,
@@ -69,7 +67,7 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<bool> updateWorkspaceName({
-    required int groupId,
+    required String groupId,
     required String name,
   }) async {
     try {
@@ -159,14 +157,12 @@ class GroupRepositoryImpl implements GroupRepository {
     required int limit,
   }) async {
     try {
-      final response = await _workspaceRemoteDataSource.getUserInGroup(
-        GetDataInGroupRequest(
-          limit: limit,
-          offset: offset,
-          groupId: workspaceId,
-        ),
+      return MockData().users.sublist(
+        offset,
+        offset + limit > MockData().users.length
+            ? MockData().users.length
+            : offset + limit,
       );
-      return response.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

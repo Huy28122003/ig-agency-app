@@ -13,6 +13,9 @@ class GroupResponse {
     required this.status,
     required this.type,
     this.lastMessage,
+    required this.pinnedMessageCount,
+    required this.memberCount,
+    required this.onlineMemberCount,
   });
 
   final String id;
@@ -21,6 +24,9 @@ class GroupResponse {
   final int? lastMessageDate;
   final bool pinned;
   final String status;
+  final int pinnedMessageCount;
+  final int memberCount;
+  final int onlineMemberCount;
   final LastMessageResponseModel? lastMessage;
 
   factory GroupResponse.fromJson(Map<String, dynamic> json) =>

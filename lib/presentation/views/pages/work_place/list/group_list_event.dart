@@ -1,4 +1,4 @@
-part of 'workspace_list_bloc.dart';
+part of 'group_list_bloc.dart';
 
 sealed class GroupListEvent {}
 

@@ -1,4 +1,4 @@
-part of 'workspace_list_bloc.dart';
+part of 'group_list_bloc.dart';
 
 class GroupListState extends BaseState<GroupListState> {
   const GroupListState({

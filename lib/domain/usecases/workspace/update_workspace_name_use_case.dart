@@ -19,7 +19,7 @@ class UpdateWorkspaceNameUseCase
 }
 
 class UpdateWorkspaceNameParams {
-  final int workspaceId;
+  final String workspaceId;
   final String name;
 
   UpdateWorkspaceNameParams({required this.workspaceId, required this.name});

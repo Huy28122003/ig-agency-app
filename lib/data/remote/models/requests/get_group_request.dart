@@ -1,18 +1,18 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'get_workspaces_request_model.g.dart';
+part 'get_group_request.g.dart';
 
 @JsonSerializable()
-class GetWorkspacesRequestModel {
+class GetGroupRequest {
   final int limit;
   final int offset;
   final String? search;
 
-  GetWorkspacesRequestModel({
+  GetGroupRequest({
     required this.limit,
     required this.offset,
     this.search,
   });
 
-  Map<String, dynamic> toJson() => _$GetWorkspacesRequestModelToJson(this);
+  Map<String, dynamic> toJson() => _$GetGroupRequestToJson(this);
 }

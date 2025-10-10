@@ -80,7 +80,7 @@ class MessageSearchResultsListBloc
       state.copyWith(
         pagingStatus: pagingStatus,
         messages: result,
-        pageStatus: PageStatus.loaded
+        pageStatus: PageStatus.loaded,
       ),
     );
   }

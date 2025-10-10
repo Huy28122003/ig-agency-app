@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/work_place/list/workspace_list_bloc.dart';
+import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
 import '../../../../../../domain/entities/workspace_entity.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
