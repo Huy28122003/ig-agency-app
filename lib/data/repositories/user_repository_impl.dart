@@ -88,7 +88,8 @@ class UserRepositoryImpl implements UserRepository {
         file.path,
         filename: file.path.split('/').last,
       );
-      final profileInfo = await _remote.updateProfile(avatar: multipartFile);
+      final response = await _remote.updateAvatar(multipartFile);
+      final profileInfo = response.toEntity();
       _local.saveProfileInfo(profileInfo);
       _ramCache.saveProfileInfo(profileInfo);
     } catch (e) {

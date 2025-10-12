@@ -52,7 +52,7 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                 AppLifecycleChangedEvent(AppLifecycleState.inactive),
               );
               final aspectRatio = _cameraBloc.controller?.value.aspectRatio;
-              await context.router.push(
+              final path = await context.router.push(
                 MediaPreviewRoute(
                   avatar:
                       "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
@@ -61,9 +61,13 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                   aspectRatio: 1 / (aspectRatio ?? 0),
                 ),
               );
-              _cameraBloc.add(
-                AppLifecycleChangedEvent(AppLifecycleState.resumed),
-              );
+              if (path is String && context.mounted) {
+                context.router.pop(path);
+              } else {
+                _cameraBloc.add(
+                  AppLifecycleChangedEvent(AppLifecycleState.resumed),
+                );
+              }
             }
           },
         ),
@@ -119,7 +123,6 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                           builder: (context, data) {
                             return AnimatedSize(
                               duration: Duration(milliseconds: 350),
-
                               child: data.$2
                                   ? SizedBox()
                                   : AppButton.icon(

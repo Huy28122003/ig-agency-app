@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
+import '../../../../../shared/commons/enums/camera_mode.dart';
 import '../../../../routers/app_router.dart';
 import '../../../../resources/colors.dart';
 import '../profile_bloc.dart';
@@ -85,9 +86,13 @@ class _ProfileMobileLayoutState extends State<ProfileMobileLayout> {
               spacing: 20,
               children: [
                 ProfileHeader(
-                  onChangeAvatar: () {
-                    // TODO hoannk: Demo
-                    context.read<ProfileBloc>().add(const UpdateAvatarEvent());
+                  onChangeAvatar: () async {
+                    final path = await context.router.push(
+                      CameraRoute(cameraMode: CameraMode.updateAvatar),
+                    );
+                    if (path is String) {
+                      _profileBloc.add(UpdateAvatarFromAccountEvent(path));
+                    }
                   },
                   onEditName: () {
                     final name = _profileBloc.state.user?.name ?? '';

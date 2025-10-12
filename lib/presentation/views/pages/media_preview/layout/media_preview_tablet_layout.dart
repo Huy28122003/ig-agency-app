@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/routers/app_router.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
@@ -107,7 +106,15 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
             Positioned(
               bottom: 0,
               child: SafeArea(
-                child: SendButtonWidget(avatar: _bloc.avatar, onTap: () {}),
+                child: SendButtonWidget(
+                  avatar: _bloc.avatar,
+                  onTap: () {
+                    // TODO hoannk:
+                    final path = _bloc.state.path;
+                    if (path.isEmpty) return;
+                    context.router.pop(path);
+                  },
+                ),
               ),
             ),
           ],

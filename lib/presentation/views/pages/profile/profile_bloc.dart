@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
 import 'package:ig_agency_app/domain/repositories/user_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
@@ -10,7 +11,6 @@ import 'package:ig_agency_app/domain/usecases/update_avatar_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
-import '../../../../dependencies/media/media_manager.dart';
 import '../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../base/base_state.dart';
 
@@ -24,8 +24,8 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     this._deleteAccountUseCase,
     this._fetchCurrentUserUseCase,
     this._userRepository,
-    this._mediaManager,
     this._updateAvatarUseCase,
+    this._authRepository,
   ) : super(ProfileState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -34,8 +34,8 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   final DeleteAccountUseCase _deleteAccountUseCase;
   final GetProfileInfoUseCase _fetchCurrentUserUseCase;
   final UserRepository _userRepository;
-  final MediaManager _mediaManager;
   final UpdateAvatarUseCase _updateAvatarUseCase;
+  final AuthRepository _authRepository;
 
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
   late final String email;
@@ -47,7 +47,7 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
 
     handleSubEvent<UpdateUserEvent>(_onUpdateUser);
 
-    handleSubEvent<UpdateAvatarEvent>(_onUpdateAvatar);
+    handleSubEvent<UpdateAvatarFromAccountEvent>(_onUpdateAvatar);
   }
 
   void _initializeUserListener() {
@@ -60,22 +60,41 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     LoadDataEvent event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(state.copyWith(pageStatus: PageStatus.loading));
+    try {
+      emit(state.copyWith(pageStatus: PageStatus.loading));
 
-    final userResult = await _fetchCurrentUserUseCase.call();
+      final result = await Future.wait([
+        _fetchCurrentUserUseCase.call(),
+        _authRepository.getEmail(),
+      ]);
 
-    emit(state.copyWith(pageStatus: PageStatus.loaded, user: userResult));
+      final userResult = result[0] as ProfileInfoEntity;
+      final email = result[1] as String?;
+
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.loaded,
+          user: userResult,
+          email: email,
+        ),
+      );
+    } catch (error) {
+      emit(state.copyWith(pageStatus: PageStatus.failure));
+      handleError(emit, error);
+    }
   }
 
   Future<void> _onDeleteAccount(
     DeleteAccountEvent event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(state.copyWith(processing: true));
-
-    await _deleteAccountUseCase(NoParam());
-
-    emit(state.copyWith(processing: false, isDeleteAccountSuccess: true));
+    try {
+      emit(state.copyWith(processing: true, isDeleteAccountSuccess: false));
+      await _deleteAccountUseCase(NoParam());
+      emit(state.copyWith(processing: false, isDeleteAccountSuccess: true));
+    } catch (error) {
+      handleError(emit, error);
+    }
   }
 
   Future<void> _onUpdateUser(
@@ -86,14 +105,17 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   }
 
   Future<void> _onUpdateAvatar(
-    UpdateAvatarEvent event,
+    UpdateAvatarFromAccountEvent event,
     Emitter<ProfileState> emit,
   ) async {
-    final file = await _mediaManager.pickMedia();
-    if (file != null) {
+    try {
       emit(state.copyWith(processing: true));
-      await _updateAvatarUseCase.call(UpdateAvatarParam(avatarPath: file.path));
+      await _updateAvatarUseCase.call(
+        UpdateAvatarParam(avatarPath: event.path),
+      );
       emit(state.copyWith(processing: false));
+    } catch (error) {
+      handleError(emit, error);
     }
   }
 

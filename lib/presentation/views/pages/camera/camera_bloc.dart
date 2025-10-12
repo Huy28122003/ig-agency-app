@@ -9,6 +9,7 @@ import 'package:ig_agency_app/shared/commons/enums/permission.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../shared/commons/enums/status.dart';
+import '../../../../shared/commons/enums/camera_mode.dart';
 import '../../../base/base_state.dart';
 
 part 'camera_event.dart';
@@ -27,6 +28,8 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
   CameraController? _cameraController;
   AppLifecycleState? _oldLifecycleState;
   List<CameraDescription> _cameras = [];
+
+  late CameraMode cameraMode;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -134,6 +137,8 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
   ) async {
     try {
       if (!state.status.isReady) return;
+      if (cameraMode.isCaptureOnly) return;
+
       await _cameraController?.startVideoRecording();
       emit(state.copyWith(inProgress: true));
     } catch (e) {
@@ -148,6 +153,9 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     try {
       if (!state.status.isReady) return;
       emit(state.copyWith(inProgress: false));
+
+      if (cameraMode.isCaptureOnly) return add(TakePhotoEvent());
+
       final file = await _cameraController?.stopVideoRecording();
       await Future.delayed(Duration(milliseconds: 250));
       emit(state.copyWith(media: file?.path ?? '', isPhoto: false));

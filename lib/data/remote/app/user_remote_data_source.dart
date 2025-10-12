@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import '../models/response/profile_info_response.dart';
 
 abstract class UserRemoteDataSource {
@@ -6,4 +7,6 @@ abstract class UserRemoteDataSource {
   Future<ProfileInfoResponse> updateName(String name);
 
   Future<ProfileInfoResponse> updateBio(String bio);
+
+  Future<ProfileInfoResponse> updateAvatar(MultipartFile avatar);
 }

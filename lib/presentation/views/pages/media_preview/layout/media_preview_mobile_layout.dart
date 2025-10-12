@@ -105,7 +105,15 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
             Positioned(
               bottom: 0,
               child: SafeArea(
-                child: SendButtonWidget(avatar: _bloc.avatar, onTap: () {}),
+                child: SendButtonWidget(
+                  avatar: _bloc.avatar,
+                  onTap: () {
+                    // TODO hoannk:
+                    final path = _bloc.state.path;
+                    if (path.isEmpty) return;
+                    context.router.pop(path);
+                  },
+                ),
               ),
             ),
           ],
