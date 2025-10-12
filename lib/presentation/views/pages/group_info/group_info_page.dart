@@ -13,7 +13,7 @@ class GroupInfoPage
     extends BasePage<GroupInfoBloc, GroupInfoEvent, GroupInfoState> {
   const GroupInfoPage({super.key, required this.groupId});
 
-  final int groupId;
+  final String groupId;
 
   @override
   GroupInfoBloc get buildBloc => super.buildBloc..groupId = groupId;

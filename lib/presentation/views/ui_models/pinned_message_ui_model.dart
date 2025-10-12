@@ -7,18 +7,18 @@ class PinnedMessageUIModel extends Equatable {
     this.id,
     required this.userName,
     required this.userAvatar,
-    required this.pinnedAt,
+    required this.createdAt,
     required this.content,
   });
 
   final String? id;
   final String userName;
   final String userAvatar;
-  final DateTime pinnedAt;
+  final DateTime createdAt;
   final MessageContent content;
 
   @override
-  List<Object?> get props => [id, userName, userAvatar, pinnedAt, content];
+  List<Object?> get props => [id, userName, userAvatar, createdAt, content];
 }
 
 extension PinnedMessageUIModelMapper on MessageEntity {
@@ -27,7 +27,7 @@ extension PinnedMessageUIModelMapper on MessageEntity {
       id: id,
       userName: user.name,
       userAvatar: user.avatar,
-      pinnedAt: pinnedAt ?? DateTime.now(),
+      createdAt: createdAt,
       content: content,
     );
   }

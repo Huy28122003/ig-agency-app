@@ -95,13 +95,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> changePassword(
     String currentPassword,
     String newPassword,
+    String passwordConfirm,
   ) async {
     try {
       final changePasswordRequestModel = ChangePasswordRequestModel(
         currentPassword: currentPassword,
-        newPassword: newPassword,
+        password: newPassword,
+        passwordConfirmation: passwordConfirm,
       );
-      // return _apiService.changePassword(changePasswordRequestModel);
+      await _apiService.changePassword(changePasswordRequestModel);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

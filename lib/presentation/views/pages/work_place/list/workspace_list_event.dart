@@ -37,31 +37,31 @@ class UpdateWorkspaceLastMessageEvent extends WorkspaceListEvent {
 class ListenWorkspaceLastMessageEvent extends WorkspaceListEvent {}
 
 class PinWorkspaceEvent extends WorkspaceListEvent {
-  final int workspaceId;
+  final String workspaceId;
 
   PinWorkspaceEvent({required this.workspaceId});
 }
 
 class MuteWorkspaceEvent extends WorkspaceListEvent {
-  final int workspaceId;
+  final String workspaceId;
 
   MuteWorkspaceEvent({required this.workspaceId});
 }
 
 class SeenWorkspaceEvent extends WorkspaceListEvent {
-  final int workspaceId;
+  final String workspaceId;
 
   SeenWorkspaceEvent({required this.workspaceId});
 }
 
 class DeleteWorkspaceEvent extends WorkspaceListEvent {
-  final int workspaceId;
+  final String workspaceId;
 
   DeleteWorkspaceEvent({required this.workspaceId});
 }
 
 class SelectWorkspaceEvent extends WorkspaceListEvent {
-  final int id;
+  final String id;
 
   SelectWorkspaceEvent({required this.id});
 }

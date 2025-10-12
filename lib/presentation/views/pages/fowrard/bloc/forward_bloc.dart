@@ -97,7 +97,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     SendMessageToGroupEvent event,
     Emitter<ForwardState> emit,
   ) async {
-    List<int> sentGroups = List.from(state.sentGroups);
+    List<String> sentGroups = List.from(state.sentGroups);
     // neu thanh cong thi update
     sentGroups.add(event.groupId);
     emit(state.copyWith(sentGroups: sentGroups));

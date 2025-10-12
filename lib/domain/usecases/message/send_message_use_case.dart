@@ -22,7 +22,7 @@ class SendMessageUseCase extends UseCase<void, SendMessageParams> {
 
 class SendMessageParams {
   final String userId;
-  final int groupId;
+  final String groupId;
   final String? replyMessageId;
   final dynamic content;
 

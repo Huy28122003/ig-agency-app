@@ -17,7 +17,7 @@ class DeleteConversationUseCase
 }
 
 class DeleteConversationParams {
-  final int groupId;
+  final String groupId;
 
   DeleteConversationParams({required this.groupId});
 }

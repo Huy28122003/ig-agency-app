@@ -1,9 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/models/response/profile_info_response.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
-import 'package:ig_agency_app/data/remote/translators/profile_info_translator.dart';
 import 'package:injectable/injectable.dart';
-import '../../../domain/entities/user/profile_info_entity.dart';
 import '../../../shared/commons/exception_converter.dart';
 import '../app/user_remote_data_source.dart';
 
@@ -23,18 +20,24 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<ProfileInfoEntity> updateProfile({
-    String? name,
-    String? bio,
-    MultipartFile? avatar,
-  }) async {
+  Future<ProfileInfoResponse> updateName(String name) async {
     try {
-      final response = await _apiService.updateProfile(
-        name: name,
-        bio: bio,
-        avatar: avatar,
+      final response = await _apiService.updateName(
+        UpdateProfileRequestModel(name: name),
       );
-      return response.toEntity();
+      return response;
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<ProfileInfoResponse> updateBio(String bio) async {
+    try {
+      final response = await _apiService.updateBio(
+        UpdateProfileRequestModel(bio: bio),
+      );
+      return response;
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

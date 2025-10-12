@@ -141,7 +141,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 onTap: () {
                   context.router.push(
                     WSDetailRoute(
-                      groupId: 1, // TODO hoannk: change id
+                      groupId: '1', // TODO hoannk: change id
                       groupName: workspace.workspaceName,
                       groupAvatar: workspace.workspaceAvatar,
                     ),

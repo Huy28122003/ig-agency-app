@@ -16,7 +16,7 @@ class MessageSearchResultsListBloc
     extends
         BaseBloc<MessageSearchResultsListEvent, MessageSearchResultsListState> {
   late final String searchMessage;
-  late final int workspaceId;
+  late final String workspaceId;
   late final List<int> messageIds;
   int _offset = 0;
   final int _limit = 15;
@@ -80,7 +80,7 @@ class MessageSearchResultsListBloc
       state.copyWith(
         pagingStatus: pagingStatus,
         messages: result,
-        pageStatus: PageStatus.loaded
+        pageStatus: PageStatus.loaded,
       ),
     );
   }

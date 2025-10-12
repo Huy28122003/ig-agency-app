@@ -180,7 +180,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                       return BlocSelector<
                         WorkspaceListBloc,
                         WorkspaceListState,
-                        int?
+                        String?
                       >(
                         selector: (state) {
                           return state.workspaceSelectedId;
@@ -228,7 +228,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: 1, // TODO hoannk: change id
+                                    groupId: '1', // TODO hoannk: change id
                                     groupName: workspace.workspaceName,
                                     groupAvatar: workspace.workspaceAvatar,
                                   ),
@@ -294,7 +294,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                   return BlocSelector<
                                     WorkspaceListBloc,
                                     WorkspaceListState,
-                                    int?
+                                    String?
                                   >(
                                     selector: (state) {
                                       return state.workspaceSelectedId;

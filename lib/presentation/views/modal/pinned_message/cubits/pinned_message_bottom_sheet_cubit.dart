@@ -25,7 +25,7 @@ class PinnedMessageBottomSheetCubit
   final int _limit = 10;
   int _offset = 0;
 
-  final int groupId;
+  final String groupId;
 
   final FetchPinnedMessageInGroupUseCase _fetchPinnedMessageUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
@@ -125,7 +125,9 @@ class PinnedMessageBottomSheetCubit
   }
 
   void unpinMessage(String messageId) async {
-    await _unpinMessageUseCase.call(UnpinMessageParams(messageId: messageId));
+    await _unpinMessageUseCase.call(
+      UnpinMessageParams(groupId: groupId, messageId: messageId),
+    );
 
     final messages = List<PinnedMessageUIModel>.from(state.pinnedMessages)
       ..removeWhere((e) => e.id == messageId);
