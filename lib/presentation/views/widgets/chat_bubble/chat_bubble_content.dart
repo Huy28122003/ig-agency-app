@@ -166,30 +166,35 @@ class _TextMessageContent extends StatelessWidget {
   Widget _buildContentWithoutLink({required List<TextSpan> textSpans}) {
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: RichText(text: TextSpan(children: textSpans)),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              createdAt,
-              style: TextStyle(
-                color: isMe
-                    ? AppColors.textDefaultTextInverted
-                    : AppColors.textDefaultTextSub2,
-                fontSize: 12,
-                fontFamily: FontFamily.segoeUI,
-                fontWeight: FontWeight.w400,
-                height: 1.33,
+      child: IntrinsicWidth(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: RichText(text: TextSpan(children: textSpans)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  createdAt,
+                  style: TextStyle(
+                    color: isMe
+                        ? AppColors.textDefaultTextInverted
+                        : AppColors.textDefaultTextSub2,
+                    fontSize: 12,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w400,
+                    height: 1.33,
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

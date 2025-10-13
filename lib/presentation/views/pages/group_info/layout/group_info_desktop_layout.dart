@@ -331,13 +331,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
                   onTap: () {
                     final group = bloc.state.workspace;
                     if (group == null) return;
-                    context.router.push(
-                      PinnedMessageListRoute(
-                        groupId: "5",
-                        groupName: group.workspaceName,
-                        groupAvatar: group.workspaceAvatar,
-                      ),
-                    );
+                    context.router.push(PinnedMessageListRoute(groupId: "5"));
                   },
                 ),
                 GroupInfoItem(

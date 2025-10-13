@@ -1,24 +1,35 @@
-import 'package:dartx/dartx.dart';
+import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
+import 'package:ig_agency_app/data/remote/translators/group_detail_translator.dart';
+import 'package:ig_agency_app/domain/entities/group_detail_entity.dart';
+import 'package:ig_agency_app/domain/repositories/group_repository.dart';
+import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
-import 'package:injectable/injectable.dart';
-
 import '../../domain/entities/message/message.dart';
 import '../../domain/entities/pinned_message_summary.dart';
-import '../../domain/repositories/message_repository.dart';
 import '../../shared/commons/failure_converter.dart';
-import '../remote/app/message_remote_data_source.dart';
 import '../remote/services/mock/message_mock_service.dart';
+import '../../domain/entities/member_entity.dart';
+import 'package:ig_agency_app/data/remote/translators/member_translator.dart';
 
-@Injectable(as: MessageRepository)
-class MessageRepositoryImpl implements MessageRepository {
-  MessageRepositoryImpl(
-    this._messageRemoteDataSource,
-    this._messageMockService,
-  );
+@Injectable(as: GroupRepository)
+class GroupRepositoryImpl implements GroupRepository {
+  GroupRepositoryImpl(this._groupRemoteDataSource, this._messageMockService);
 
-  final MessageRemoteDataSource _messageRemoteDataSource;
+  final GroupRemoteDataSource _groupRemoteDataSource;
   final MessageMockService _messageMockService;
+
+  @override
+  Future<GroupDetailEntity> getGroupDetail(String conversationId) async {
+    try {
+      final groupDetailResponse = await _groupRemoteDataSource.getGroupDetail(
+        conversationId,
+      );
+      return groupDetailResponse.toEntity();
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 
   @override
   Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset) async {
@@ -39,7 +50,7 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future unpinMessage(String groupId, String messageId) async {
     try {
-      return await _messageRemoteDataSource.unpinMessage(groupId, messageId);
+      return await _groupRemoteDataSource.unpinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -48,7 +59,7 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future pinMessage(String groupId, String messageId) async {
     try {
-      return await _messageRemoteDataSource.pinMessage(groupId, messageId);
+      return await _groupRemoteDataSource.pinMessage(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -61,7 +72,7 @@ class MessageRepositoryImpl implements MessageRepository {
     int offset,
   ) async {
     try {
-      final pinnedMessages = await _messageRemoteDataSource.fetchPinnedMessage(
+      final pinnedMessages = await _groupRemoteDataSource.fetchPinnedMessage(
         groupId,
         limit,
         offset,
@@ -91,70 +102,63 @@ class MessageRepositoryImpl implements MessageRepository {
   Future<List<MessageEntity>> fetchMessagesInGroup(
     String groupId,
     int limit,
-    String? oldestMessageId,
+    String? beforeMessageId,
     String? targetMessageId,
   ) async {
-    // Todo: hoannk: rehandle this
-    // TODO: Sử dụng tạm mock tại repository
     try {
-      final messages = _messageMockService.mockFetchMessagesByGroupId(
-        groupId: groupId,
-        limit: limit,
-        oldestMessageId: oldestMessageId,
-        targetMessageId: targetMessageId,
+      final messages = await _groupRemoteDataSource.fetchMessagesInGroup(
+        groupId,
+        limit,
+        beforeMessageId,
+        targetMessageId,
       );
 
-      return messages;
+      return messages.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<void> sendMessage(
-    String userId,
+  Future<MessageEntity> sendMessage(
     String groupId,
+    String? clientMessageId,
     String? replyMessageId,
-    dynamic content,
+    MessageContent content,
   ) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
-      await _messageMockService.addMessage(
-        userId,
+      final messageResponse = await _groupRemoteDataSource.sendMessage(
         groupId,
+        clientMessageId,
         replyMessageId,
         content,
       );
+      return messageResponse.toEntity();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<void> deleteMessageForEveryone(String messageId) async {
+  Future deleteMessageForEveryone(String groupId, String messageId) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
-      await _messageMockService.mockDeleteMessageForEveryone(messageId);
+      await _groupRemoteDataSource.deleteMessageForEveryone(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<void> deleteMessageForYou(String messageId) async {
+  Future deleteMessageForYou(String groupId, String messageId) async {
     try {
-      // Todo: hoannk: rehandle this
-      // TODO: Sử dụng tạm mock tại repository
-      await _messageMockService.mockDeleteMessageForYou(messageId);
+      await _groupRemoteDataSource.deleteMessageForYou(groupId, messageId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<void> deleteConversation(String groupId) async {
+  Future deleteConversation(String groupId) async {
     try {
       // Todo: hoannk: rehandle this
     } catch (e) {
@@ -172,13 +176,46 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final start = offset ?? 0;
       final end = start + (limit ?? MockData().mockMessages().length);
-      await 500.milliseconds.delay;
       return MockData().mockMessages().sublist(
         start,
         end > MockData().mockMessages().length
             ? MockData().mockMessages().length
             : (end),
       );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<List<MemberEntity>> fetchMembersInGroup({
+    required String groupId,
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    try {
+      final membersResponse = await _groupRemoteDataSource.fetchMembersInGroup(
+        groupId: groupId,
+        limit: limit,
+        offset: offset,
+      );
+      return membersResponse.map((e) => e.toEntity()).toList();
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<List<MemberEntity>> searchMembersInGroup({
+    required String groupId,
+    required String query,
+  }) async {
+    try {
+      final membersResponse = await _groupRemoteDataSource.searchMembersInGroup(
+        groupId: groupId,
+        query: query,
+      );
+      return membersResponse.map((e) => e.toEntity()).toList();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

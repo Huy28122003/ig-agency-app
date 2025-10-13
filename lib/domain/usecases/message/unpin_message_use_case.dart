@@ -1,17 +1,17 @@
-import 'package:ig_agency_app/domain/repositories/message_repository.dart';
+import 'package:ig_agency_app/domain/repositories/group_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../use_case.dart';
 
 @injectable
 class UnpinMessageUseCase extends UseCase<void, UnpinMessageParams> {
-  final MessageRepository _messageRepository;
+  final GroupRepository _groupRepository;
 
-  UnpinMessageUseCase(this._messageRepository);
+  UnpinMessageUseCase(this._groupRepository);
 
   @override
   Future<void> call(UnpinMessageParams params) async {
-    return await _messageRepository.unpinMessage(
+    return await _groupRepository.unpinMessage(
       params.groupId,
       params.messageId,
     );
