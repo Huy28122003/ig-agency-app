@@ -1,5 +1,7 @@
 import 'package:path/path.dart' as path;
 
+import '../../flavor_settings.dart';
+
 extension PathFileExtension on String {
   bool isImage() {
     final ext = path.extension(this).toLowerCase();
@@ -36,5 +38,12 @@ extension StringNullableExtension on String? {
 
   bool isNotNullOrEmpty() {
     return (this ?? '').isNotEmpty;
+  }
+}
+
+extension BaseUrlExtension on String {
+  String withBaseUrl() {
+    if (startsWith('http')) return this;
+    return FlavorSettings().baseUrl + this;
   }
 }

@@ -2,7 +2,7 @@ part of 'workspace_detail_bloc.dart';
 
 class WSDetailState extends BaseState<WSDetailState> {
   const WSDetailState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing,
     this.chatMessages = const [],

@@ -217,8 +217,6 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     try {
-      emit(state.copyWith(pageStatus: PageStatus.loading));
-
       final profile = await _getProfileInfoUseCase.call();
 
       final messagesResult = await _fetchMessageUseCase.call(
