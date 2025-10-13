@@ -41,9 +41,11 @@ extension StringNullableExtension on String? {
   }
 }
 
-extension BaseUrlExtension on String {
+extension BaseUrlExtension on String? {
   String withBaseUrl() {
-    if (startsWith('http')) return this;
-    return FlavorSettings().baseUrl + this;
+    if (this == null || this!.isEmpty) {
+      return '';
+    }
+    return '${FlavorSettings().baseUrl}/$this';
   }
 }
