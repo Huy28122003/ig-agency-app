@@ -7,15 +7,15 @@ part 'get_workspaces_response_model.g.dart';
 class GroupResponse {
   const GroupResponse({
     required this.id,
-    required this.title,
+    this.title = '',
     this.lastMessageDate,
-    required this.pinned,
-    required this.status,
-    required this.type,
+    this.pinned = false,
+    this.status = '',
+    this.type = '',
     this.lastMessage,
-    required this.pinnedMessageCount,
-    required this.memberCount,
-    required this.onlineMemberCount,
+    this.pinnedMessageCount = 0,
+    this.memberCount = 0,
+    this.onlineMemberCount = 0,
   });
 
   final String id;
