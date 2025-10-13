@@ -6,7 +6,7 @@ import 'package:ig_agency_app/domain/entities/message/message_content.dart';
 import 'package:ig_agency_app/domain/entities/message/text_segment.dart';
 import 'package:ig_agency_app/domain/enums/message_enums.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
-import 'package:ig_agency_app/shared/extensions/string_ext.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 
 extension MessageTranslatorExtension on MessageResponseModel {
   MessageEntity toEntity() {
