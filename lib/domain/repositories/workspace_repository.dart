@@ -4,9 +4,10 @@ import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import '../../shared/commons/models/pagination.dart';
 
 import '../entities/file_entity.dart';
+import '../entities/group_summary.dart';
 
 abstract class GroupRepository {
-  Future<List<GroupEntity>> getWorkspaces({
+  Future<List<GroupSummary>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,

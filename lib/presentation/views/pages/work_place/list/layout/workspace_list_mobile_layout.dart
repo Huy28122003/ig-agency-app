@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/workspace_list_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
-import '../../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../../domain/entities/group_summary.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
@@ -146,19 +146,19 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                   context.router.push(
                     WSDetailRoute(
                       groupId: workspace.id,
-                      groupName: workspace.groupName,
-                      groupAvatar: workspace.groupAvatar,
+                      groupName: workspace.name,
+                      groupAvatar: workspace.avatar,
                     ),
                   );
                 },
                 isMute: workspace.isMute,
                 isPin: workspace.isPin,
-                workspaceAvatar: workspace.groupAvatar,
-                workspaceName: workspace.groupName,
+                workspaceAvatar: workspace.avatar,
+                workspaceName: workspace.name,
                 lastMessage: workspace.lastMessage,
                 lastMessageTime: workspace.lastMessageTime,
                 isSeen: workspace.isSeen,
-                countNewMessage: workspace.countNewMessage,
+                countNewMessage: 10,
               ),
             );
           },
@@ -171,7 +171,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
     return BlocSelector<
       GroupListBloc,
       GroupListState,
-      (List<GroupEntity>, PageStatus, PagingStatus)
+      (List<GroupSummary>, PageStatus, PagingStatus)
     >(
       selector: (state) {
         return (
@@ -228,12 +228,13 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                     isSearchMode: true,
                     isMute: workspace.isMute,
                     isPin: workspace.isPin,
-                    workspaceAvatar: workspace.groupAvatar,
-                    workspaceName: workspace.groupName,
+                    workspaceAvatar: workspace.avatar,
+                    workspaceName: workspace.name,
                     lastMessage: workspace.lastMessage,
                     lastMessageTime: workspace.lastMessageTime,
                     isSeen: workspace.isSeen,
-                    countNewMessage: workspace.countNewMessage,
+                    //todo
+                    countNewMessage: 0,
                   ),
                 );
               },

@@ -1,6 +1,7 @@
 import 'package:ig_agency_app/data/remote/models/requests/get_workspaces_request_model.dart';
-import 'package:ig_agency_app/data/remote/translators/group_translator.dart';
+import 'package:ig_agency_app/data/remote/translators/group_summary_translator.dart';
 import 'package:ig_agency_app/domain/entities/file_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_summary.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
@@ -18,7 +19,7 @@ class GroupRepositoryImpl implements GroupRepository {
   GroupRepositoryImpl(this._workspaceRemoteDataSource);
 
   @override
-  Future<List<GroupEntity>> getWorkspaces({
+  Future<List<GroupSummary>> getWorkspaces({
     required int limit,
     required int offset,
     String? keyWord,

@@ -48,10 +48,8 @@ enum MessageContentType {
         return "general.photo".tr();
       case MessageContentType.video:
         return "general.video".tr();
-      case MessageContentType.system:
-        return "general.message".tr();
       default:
-        return "general.file".tr();
+        return "general.message".tr();
     }
   }
 }

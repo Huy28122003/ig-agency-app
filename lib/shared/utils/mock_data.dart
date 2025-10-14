@@ -5,7 +5,7 @@ import 'package:ig_agency_app/domain/entities/paged_result.dart';
 import 'package:ig_agency_app/domain/enums/filter_type.dart';
 
 import '../../domain/entities/file_entity.dart';
-import '../../domain/entities/group.dart';
+import '../../domain/entities/group_summary.dart';
 import '../../domain/entities/media_entity.dart';
 import '../../domain/entities/message/message_content.dart';
 import '../../domain/entities/message/message_entity.dart';
