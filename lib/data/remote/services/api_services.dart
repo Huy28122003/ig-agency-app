@@ -13,7 +13,7 @@ import 'package:retrofit/retrofit.dart';
 import '../models/requests/pin_message_request_model.dart';
 import '../models/requests/registration_request_model.dart';
 import '../models/requests/change_password_request_model.dart';
-import '../models/response/get_workspaces_response_model.dart';
+import '../models/response/group_response.dart';
 import '../models/requests/update_profile_request_model.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/profile_info_response.dart';
@@ -95,7 +95,7 @@ abstract class ApiService {
 
   //Group
   @GET('/conversations')
-  Future<List<GetWorkspacesResponseModel>> getGroups(
+  Future<List<GroupResponse>> getGroups(
     @Queries() GetWorkspacesRequestModel request,
   );
 
