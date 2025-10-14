@@ -1,4 +1,4 @@
-import 'package:ig_agency_app/domain/repositories/message_repository.dart';
+import 'package:ig_agency_app/domain/repositories/group_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../entities/message/message.dart';
@@ -7,13 +7,13 @@ import '../use_case.dart';
 @injectable
 class FetchPinnedMessageUseCase
     extends UseCase<List<MessageEntity>, FetchPinnedMessageParams> {
-  final MessageRepository _messageRepository;
+  final GroupRepository _groupRepository;
 
-  FetchPinnedMessageUseCase(this._messageRepository);
+  FetchPinnedMessageUseCase(this._groupRepository);
 
   @override
   Future<List<MessageEntity>> call(FetchPinnedMessageParams params) async {
-    return await _messageRepository.fetchPinnedMessages(
+    return await _groupRepository.fetchPinnedMessages(
       params.limit,
       params.offset,
     );

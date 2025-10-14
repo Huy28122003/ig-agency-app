@@ -1,4 +1,4 @@
-import 'package:ig_agency_app/domain/repositories/message_repository.dart';
+import 'package:ig_agency_app/domain/repositories/group_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../use_case.dart';
@@ -6,18 +6,22 @@ import '../use_case.dart';
 @injectable
 class DeleteMessageForYouUseCase
     extends UseCase<void, DeleteMessageForYouParams> {
-  final MessageRepository _messageRepository;
+  final GroupRepository _groupRepository;
 
-  DeleteMessageForYouUseCase(this._messageRepository);
+  DeleteMessageForYouUseCase(this._groupRepository);
 
   @override
   Future<void> call(DeleteMessageForYouParams params) async {
-    return await _messageRepository.deleteMessageForYou(params.messageId);
+    return await _groupRepository.deleteMessageForYou(
+      params.groupId,
+      params.messageId,
+    );
   }
 }
 
 class DeleteMessageForYouParams {
+  final String groupId;
   final String messageId;
 
-  DeleteMessageForYouParams({required this.messageId});
+  DeleteMessageForYouParams({required this.groupId, required this.messageId});
 }

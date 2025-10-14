@@ -23,21 +23,22 @@ class PinnedMessageBottomSheetCubit
   }
 
   final int _limit = 10;
-  int _offset = 0;
+  var _offset = 0;
 
   final String groupId;
 
   final FetchPinnedMessageInGroupUseCase _fetchPinnedMessageUseCase;
   final UnpinMessageUseCase _unpinMessageUseCase;
 
-  Future<(List<PinnedMessageUIModel>, PagingStatus)?> _getPinnedMessages(
-    int offset, {
+  Future<(List<PinnedMessageUIModel>, PagingStatus)?> _getPinnedMessages({
+    required int limit,
+    required int offset,
     bool isRefresh = false,
   }) async {
     final result = await _fetchPinnedMessageUseCase.call(
       FetchPinnedMessageInGroupParams(
         groupId: groupId,
-        limit: _limit,
+        limit: limit,
         offset: offset,
       ),
     );
@@ -47,7 +48,7 @@ class PinnedMessageBottomSheetCubit
 
     final fetchStatus = messages.isEmpty
         ? PagingStatus.empty
-        : (messages.length < _limit
+        : (messages.length < limit
               ? PagingStatus.noMoreData
               : (isRefresh
                     ? PagingStatus.refreshCompleted
@@ -61,7 +62,7 @@ class PinnedMessageBottomSheetCubit
       emit(state.copyWith(pageStatus: PageStatus.loading));
       _offset = 0;
 
-      final result = await _getPinnedMessages(_offset);
+      final result = await _getPinnedMessages(limit: _limit, offset: _offset);
       if (result == null) {
         emit(state.copyWith(pageStatus: PageStatus.failure));
         return;
@@ -87,7 +88,11 @@ class PinnedMessageBottomSheetCubit
     _offset = 0;
     emit(state.copyWith(pagingStatus: PagingStatus.refreshing));
 
-    final result = await _getPinnedMessages(_offset, isRefresh: true);
+    final result = await _getPinnedMessages(
+      isRefresh: true,
+      limit: _limit,
+      offset: _offset,
+    );
     if (result == null) {
       emit(state.copyWith(pagingStatus: PagingStatus.refreshFailed));
       return;
@@ -106,7 +111,7 @@ class PinnedMessageBottomSheetCubit
 
     emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-    final result = await _getPinnedMessages(_offset);
+    final result = await _getPinnedMessages(limit: _limit, offset: _offset);
     if (result == null) {
       emit(state.copyWith(pagingStatus: PagingStatus.loadFailed));
       return;

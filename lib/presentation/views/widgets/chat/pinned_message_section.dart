@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../../domain/entities/message/message.dart';
+import '../../../../domain/entities/pinned_message_summary.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../gen/fonts.gen.dart';
-import '../../ui_models/pinned_message_summary_ui_model.dart';
 import '../../../resources/colors.dart';
 
 class PinnedMessageSection extends StatelessWidget {
@@ -12,7 +13,7 @@ class PinnedMessageSection extends StatelessWidget {
     required this.onTap,
   });
 
-  final PinnedMessageSummaryUiModel pinnedMessageSummary;
+  final PinnedMessageSummary pinnedMessageSummary;
   final VoidCallback onTap;
 
   @override
@@ -41,7 +42,7 @@ class PinnedMessageSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pinnedMessageSummary.latestSenderName ?? '',
+                          pinnedMessageSummary.recentPinnedMessage?.user.name ?? '',
                           style: TextStyle(
                             color: AppColors.textDefaultTextDefault,
                             fontSize: 14,
@@ -54,7 +55,7 @@ class PinnedMessageSection extends StatelessWidget {
                         ),
                         SizedBox(height: 2),
                         Text(
-                          pinnedMessageSummary.latestPinnedMessageContent ?? '',
+                          _extractContent(pinnedMessageSummary.recentPinnedMessage),
                           style: TextStyle(
                             color: AppColors.textDefaultTextDefault,
                             fontSize: 12,
@@ -71,7 +72,8 @@ class PinnedMessageSection extends StatelessWidget {
                 ],
               ),
             ),
-            if (pinnedMessageSummary.hasMorePinnedMessages) ...[
+            if (pinnedMessageSummary.totalPinnedMessages > 1 &&
+                pinnedMessageSummary.recentPinnedMessage != null) ...[
               const SizedBox(width: 6),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -98,5 +100,25 @@ class PinnedMessageSection extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _extractContent(MessageEntity? message) {
+    if (message == null) return '';
+
+    final content = message.content;
+    switch (content) {
+      case TextMessageContent _:
+        return content.text;
+      case ImageMessageContent _:
+        return 'Image';
+      case VideoMessageContent _:
+        return 'Video';
+      case FileMessageContent _:
+        return 'Attachment';
+      case StickerMessageContent _:
+        return 'Sticker';
+      default:
+        return '';
+    }
   }
 }

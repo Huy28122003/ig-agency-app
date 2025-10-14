@@ -57,7 +57,9 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
     super.didChangeMetrics();
     final bottomInset = View.of(context).viewInsets.bottom;
     if (bottomInset > 0) {
-      _scrollToBottom();
+      if (mounted) {
+        _scrollToBottom();
+      }
     }
   }
 
@@ -193,8 +195,10 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
               listener: (context, state) {
                 if (state.scrollToBottom) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _scrollToBottom();
-                    _bloc.add(ResetScrollToBottomEvent());
+                    if (mounted) {
+                      _scrollToBottom();
+                      _bloc.add(ResetScrollToBottomEvent());
+                    }
                   });
                 }
               },
@@ -206,7 +210,9 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                 final messageId = state.jumpToMessageId;
                 if (messageId != null) {
                   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                    _jumpToMessage(messageId);
+                    if (mounted) {
+                      _jumpToMessage(messageId);
+                    }
                   });
                 }
               },
@@ -270,14 +276,15 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                           final bool isContinuation = uiModel.isContinuation;
                           final bool shouldShowTime =
                               uiModel.showTime || uiModel.shouldShowTime;
+                          final message = uiModel.message;
 
                           final double bottomPadding =
                               chatMessages.isNotEmpty && index == 0 ? 20 : 0;
                           return Padding(
                             padding: EdgeInsets.only(bottom: bottomPadding),
                             child: ChatMessageBubble(
-                              key: ValueKey(uiModel.message.id),
-                              message: uiModel.message,
+                              key: ValueKey(message.id),
+                              message: message,
                               maxWidth: maxWidthChatBubble,
                               maxWidthReply: maxWidthChatReply,
                               horizontalPadding: widget.horizontalPadding,
@@ -288,7 +295,8 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                               searchText: 'alabama',
                               userId: _bloc.userId,
                               onTap: () {
-                                final messageId = uiModel.message.id;
+                                final messageId = message.id;
+                                if (messageId == null) return;
                                 _bloc.add(
                                   ToggleShowTimeEvent(messageId: messageId),
                                 );
@@ -304,23 +312,27 @@ class _ChatContentState extends State<ChatContent> with WidgetsBindingObserver {
                                 );
                               },
                               onPin: () {
+                                final messageId = message.id;
+                                if (messageId == null) return;
                                 _bloc.add(
                                   TogglePinMessageFromDetailEvent(
-                                    messageId: uiModel.message.id,
+                                    messageId: messageId,
                                   ),
                                 );
                               },
                               onDelete: () {
-                                _showDeleteOptionSheet(
-                                  context,
-                                  uiModel.message.id,
-                                );
+                                final messageId = message.id;
+                                if (messageId == null) return;
+                                _showDeleteOptionSheet(context, messageId);
                               },
                             ),
                           );
                         },
                         childCount: chatMessages.length,
-                        onItemKey: (index) => chatMessages[index].message.id,
+                        onItemKey: (index) {
+                          final message = chatMessages[index].message;
+                          return message.id ?? message.clientMessageId ?? '';
+                        },
                         keepPosition: true,
                         keepPositionOffset: 56,
                         firstItemAlign: FirstItemAlign.end,

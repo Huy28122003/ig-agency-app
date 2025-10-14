@@ -6,7 +6,8 @@ import 'message_content.dart';
 
 class MessageEntity extends Equatable {
   const MessageEntity({
-    required this.id,
+    this.id,
+    this.clientMessageId,
     required this.user,
     required this.createdAt,
     required this.content,
@@ -14,10 +15,10 @@ class MessageEntity extends Equatable {
     this.groupId,
     this.repliedMessage,
     this.isPinned = false,
-    // this.pinnedAt,
   });
 
-  final String id;
+  final String? id;
+  final String? clientMessageId;
   final UserEntity user;
   final DateTime createdAt;
   final MessageContent content;
@@ -25,12 +26,12 @@ class MessageEntity extends Equatable {
   final String? groupId;
   final MessageEntity? repliedMessage;
   final bool isPinned;
-  // final DateTime? pinnedAt;
 
   bool get hasNotReply => repliedMessage == null;
 
   MessageEntity copyWith({
     String? id,
+    String? clientMessageId,
     UserEntity? user,
     DateTime? createdAt,
     MessageContent? content,
@@ -41,6 +42,7 @@ class MessageEntity extends Equatable {
     DateTime? pinnedAt,
   }) => MessageEntity(
     id: id ?? this.id,
+    clientMessageId: clientMessageId ?? this.clientMessageId,
     user: user ?? this.user,
     createdAt: createdAt ?? this.createdAt,
     content: content ?? this.content,
@@ -48,12 +50,12 @@ class MessageEntity extends Equatable {
     groupId: groupId ?? this.groupId,
     repliedMessage: repliedMessage ?? this.repliedMessage,
     isPinned: isPinned ?? this.isPinned,
-    // pinnedAt: pinnedAt ?? this.pinnedAt,
   );
 
   @override
   List<Object?> get props => [
     id,
+    clientMessageId,
     user,
     createdAt,
     content,
@@ -61,6 +63,5 @@ class MessageEntity extends Equatable {
     groupId,
     repliedMessage,
     isPinned,
-    // pinnedAt,
   ];
 }

@@ -24,13 +24,13 @@ void main() {
     () async {
       WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+      await configureDependencies();
       await _setupFirebase();
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
       EasyLocalization.ensureInitialized();
       Bloc.observer = AppBlocObserver();
-      await configureDependencies();
       getIt.registerSingleton(AppRouter());
       await getIt<NotificationService>().init();
       _startApp();

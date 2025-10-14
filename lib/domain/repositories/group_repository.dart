@@ -1,7 +1,11 @@
+import 'package:ig_agency_app/domain/entities/group_detail_entity.dart';
 import '../entities/message/message.dart';
 import '../entities/pinned_message_summary.dart';
+import 'package:ig_agency_app/domain/entities/member_entity.dart';
 
-abstract class MessageRepository {
+abstract class GroupRepository {
+  Future<GroupDetailEntity> getGroupDetail(String conversationId);
+
   Future<List<MessageEntity>> fetchPinnedMessages(int limit, int offset);
 
   Future unpinMessage(String groupId, String messageId);
@@ -19,20 +23,20 @@ abstract class MessageRepository {
   Future<List<MessageEntity>> fetchMessagesInGroup(
     String groupId,
     int limit,
-    String? oldestMessageId,
+    String? beforeMessageId,
     String? targetMessageId,
   );
 
-  Future<void> sendMessage(
-    String userId,
+  Future<MessageEntity> sendMessage(
     String groupId,
+    String? clientMessageId,
     String? replyMessageId,
-    dynamic content,
+    MessageContent content,
   );
 
-  Future<void> deleteMessageForEveryone(String messageId);
+  Future<void> deleteMessageForEveryone(String groupId, String messageId);
 
-  Future<void> deleteMessageForYou(String messageId);
+  Future<void> deleteMessageForYou(String groupId, String messageId);
 
   Future<void> deleteConversation(String groupId);
 
@@ -41,5 +45,16 @@ abstract class MessageRepository {
     required String searchMessage,
     int? limit,
     int? offset,
+  });
+
+  Future<List<MemberEntity>> fetchMembersInGroup({
+    required String groupId,
+    int limit = 10,
+    int offset = 0,
+  });
+
+  Future<List<MemberEntity>> searchMembersInGroup({
+    required String groupId,
+    required String query,
   });
 }
