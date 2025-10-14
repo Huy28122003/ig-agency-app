@@ -1,7 +1,7 @@
 import 'package:ig_agency_app/data/remote/models/response/group_response.dart';
 import 'package:ig_agency_app/domain/enums/message_enums.dart';
 
-import '../../../domain/entities/workspace_entity.dart';
+import '../../../domain/entities/group_entity.dart';
 
 extension GroupTranslator on GroupResponse {
   GroupEntity toEntity() {

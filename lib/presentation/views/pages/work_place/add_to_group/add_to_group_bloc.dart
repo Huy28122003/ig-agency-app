@@ -10,7 +10,7 @@ import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../domain/entities/group_entity.dart';
 import '../../../../../domain/repositories/workspace_repository.dart';
 import '../../../../../shared/commons/models/pagination.dart';
 

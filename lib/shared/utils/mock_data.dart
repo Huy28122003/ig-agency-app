@@ -12,7 +12,7 @@ import '../../domain/entities/message/message_entity.dart';
 import '../../domain/entities/search.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/user_entity.dart';
-import '../../domain/entities/workspace_entity.dart';
+import '../../domain/entities/group_entity.dart';
 import '../../domain/enums/message_enums.dart';
 
 class MockData {

@@ -4,7 +4,7 @@ import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/group_summary.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/shared/commons/models/pagination.dart';
 import 'package:injectable/injectable.dart';
 import '../../domain/repositories/workspace_repository.dart';

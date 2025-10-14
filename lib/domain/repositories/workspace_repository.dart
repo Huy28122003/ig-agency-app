@@ -1,6 +1,6 @@
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import '../../shared/commons/models/pagination.dart';
 
 import '../entities/file_entity.dart';

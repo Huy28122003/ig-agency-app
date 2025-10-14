@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/usecases/workspace/get_workspaces_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:injectable/injectable.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/delete_group_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/workspace/get_workspaces_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/listen_workspace_last_message_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/pin_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/unpin_group_use_case.dart';
