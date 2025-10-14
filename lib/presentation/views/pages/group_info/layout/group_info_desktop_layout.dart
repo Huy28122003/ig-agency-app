@@ -333,9 +333,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
                     if (group == null) return;
                     context.router.push(
                       PinnedMessageListRoute(
-                        groupId: '5',
-                        groupName: group.groupName,
-                        groupAvatar: group.groupAvatar,
+                        groupId: '68c7db6d814f50d48db8f735',
                       ),
                     );
                   },

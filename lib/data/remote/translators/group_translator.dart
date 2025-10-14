@@ -6,7 +6,7 @@ import '../../../domain/entities/group_entity.dart';
 extension GroupTranslator on GroupResponse {
   GroupEntity toEntity() {
     final lastMsg = lastMessage;
-    final messageType = MessageContentType.fromString(lastMsg?.type ?? '');
+    final messageType = MessageContentType.fromCode(lastMsg?.type ?? '');
 
     final lastMessageTime = lastMessageDate == null
         ? null

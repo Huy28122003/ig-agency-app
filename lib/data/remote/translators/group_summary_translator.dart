@@ -6,7 +6,7 @@ import '../../../domain/enums/message_enums.dart';
 
 extension GroupSummaryTranslator on GroupSummaryResponse {
   GroupSummary toEntity() {
-    final messageType = MessageContentType.fromString(lastMessage?.type ?? '');
+    final messageType = MessageContentType.fromCode(lastMessage?.type ?? '');
 
     final lastMessageTime = lastMessageDate == null
         ? null

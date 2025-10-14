@@ -353,9 +353,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
                     final messageId = await context.router.push(
                       PinnedMessageListRoute(
                         // TODO hoannk: Change id
-                      groupId: '68c7db6d814f50d48db8f735',
-                        groupName: group.groupName,
-                        groupAvatar: group.groupAvatar,
+                        groupId: '68c7db6d814f50d48db8f735',
                       ),
                     );
                     if (messageId != null && context.mounted) {
