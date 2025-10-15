@@ -22,7 +22,7 @@ enum MessageContentType {
     );
   }
 
-  String get value {
+  String get title {
     switch (this) {
       case MessageContentType.text:
         return "general.text".tr();

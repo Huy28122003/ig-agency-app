@@ -223,7 +223,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: "68c7db6d814f50d48db8f735", // TODO hoannk: change id
+                                    groupId: workspace.id,
                                     groupName: workspace.name,
                                     groupAvatar: workspace.avatar,
                                   ),

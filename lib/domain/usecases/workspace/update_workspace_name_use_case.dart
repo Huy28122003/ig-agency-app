@@ -1,6 +1,7 @@
-import 'package:ig_agency_app/domain/repositories/workspace_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
+
+import '../../repositories/group_repository.dart';
 
 @injectable
 class UpdateWorkspaceNameUseCase
@@ -11,7 +12,7 @@ class UpdateWorkspaceNameUseCase
 
   @override
   Future<bool> call(UpdateWorkspaceNameParams param) async {
-    return await _workspaceRepository.updateWorkspaceName(
+    return await _workspaceRepository.updateGroupName(
       groupId: param.workspaceId,
       name: param.name,
     );

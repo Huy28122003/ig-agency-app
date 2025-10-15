@@ -10,10 +10,11 @@ import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../../../../domain/repositories/workspace_repository.dart';
+import '../../../../../domain/repositories/group_repository.dart';
 import '../../../../../shared/commons/models/pagination.dart';
 
 part 'create_group_event.dart';
+
 part 'create_group_state.dart';
 
 @injectable

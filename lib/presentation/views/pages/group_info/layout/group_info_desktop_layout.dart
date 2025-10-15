@@ -332,9 +332,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
                     final group = bloc.state.workspace;
                     if (group == null) return;
                     context.router.push(
-                      PinnedMessageListRoute(
-                        groupId: '68c7db6d814f50d48db8f735',
-                      ),
+                      PinnedMessageListRoute(groupId: bloc.groupId),
                     );
                   },
                 ),

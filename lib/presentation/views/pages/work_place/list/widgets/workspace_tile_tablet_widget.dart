@@ -121,27 +121,26 @@ class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
                                   ),
                                 ),
 
-                                if (widget.lastMessageTime != null) ...[
-                                  SizedBox(width: 4),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.textDefaultTextSub2,
-                                    ),
-                                    width: 4,
-                                    height: 4,
+                                SizedBox(width: 4),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.textDefaultTextSub2,
                                   ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    widget.lastMessageTime!
-                                        .convertDateTimeToString(),
-                                    style: TextStyle(
-                                      fontFamily: FontFamily.segoeUI,
-                                      fontSize: 14,
-                                      height: 20 / 14,
-                                    ),
+                                  width: 4,
+                                  height: 4,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  widget.lastMessageTime
+                                          ?.convertDateTimeToString() ??
+                                      '',
+                                  style: TextStyle(
+                                    fontFamily: FontFamily.segoeUI,
+                                    fontSize: 14,
+                                    height: 20 / 14,
                                   ),
-                                ],
+                                ),
                               ],
                             ),
                           ],

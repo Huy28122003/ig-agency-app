@@ -1,16 +1,14 @@
 import 'package:ig_agency_app/data/remote/models/response/group_summary_response.dart';
 import 'package:ig_agency_app/domain/entities/group_summary.dart';
-import 'package:ig_agency_app/flavor_settings.dart';
-
+import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 import '../../../domain/enums/message_enums.dart';
 
 extension GroupSummaryTranslator on GroupSummaryResponse {
   GroupSummary toEntity() {
     final messageType = MessageContentType.fromCode(lastMessage?.type ?? '');
 
-    final lastMessageTime = lastMessageDate == null
-        ? null
-        : DateTime.fromMillisecondsSinceEpoch(lastMessageDate! * 1000);
+    final lastMessageTime = lastMessageDate?.toLocalTime(isSecond: true);
 
     final lastMessageContent = lastMessage == null
         ? ''
@@ -18,13 +16,12 @@ extension GroupSummaryTranslator on GroupSummaryResponse {
     return GroupSummary(
       id: id,
       name: title,
-      avatar:
-          "${FlavorEnvironment.development.baseUrl}/${photo?.bigFilePath ?? ''}",
+      avatar: photo?.bigFilePath.withBaseUrl() ?? '',
       lastMessage: lastMessageContent,
       lastMessageTime: lastMessageTime,
       isPin: pinned,
-      isSeen: true,
-      isMute: true,
+      isSeen: isSeen,
+      isMute: isMute,
     );
   }
 
@@ -32,6 +29,6 @@ extension GroupSummaryTranslator on GroupSummaryResponse {
     if (type == MessageContentType.text) {
       return text ?? '';
     }
-    return type.value;
+    return type.title;
   }
 }

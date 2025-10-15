@@ -224,7 +224,7 @@ class _WorkspaceListDesktopLayoutState
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: '1', // TODO hoannk: change id
+                                    groupId: workspace.id,
                                     groupName: workspace.name,
                                     groupAvatar: workspace.avatar,
                                   ),

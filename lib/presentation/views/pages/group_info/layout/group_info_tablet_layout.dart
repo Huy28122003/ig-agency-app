@@ -96,9 +96,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: () {
-            //todo
-          },
+          onTap: () {},
           child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
@@ -351,10 +349,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
                     final group = bloc.state.workspace;
                     if (group == null) return;
                     final messageId = await context.router.push(
-                      PinnedMessageListRoute(
-                        // TODO hoannk: Change id
-                        groupId: '68c7db6d814f50d48db8f735',
-                      ),
+                      PinnedMessageListRoute(groupId: bloc.groupId),
                     );
                     if (messageId != null && context.mounted) {
                       context.router.pop(messageId);

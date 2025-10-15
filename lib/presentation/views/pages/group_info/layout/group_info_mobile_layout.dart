@@ -95,9 +95,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: () {
-            //todo
-          },
+          onTap: () {},
           child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
@@ -347,8 +345,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     if (group == null) return;
                     final messageId = await context.router.push(
                       PinnedMessageListRoute(
-                        groupId: "68c7db6d814f50d48db8f735",
-                        // TODO hoannk: Change id
+                        groupId: bloc.groupId,
                       ),
                     );
                     if (messageId != null && context.mounted) {
@@ -365,11 +362,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   ),
                   title: "group_info.mute_notification".tr(),
                   trailing:
-                      BlocSelector<
-                        GroupInfoBloc,
-                        GroupInfoState,
-                        GroupEntity?
-                      >(
+                      BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
                         selector: (state) => state.workspace,
                         builder: (context, workspace) {
                           return SizedBox(

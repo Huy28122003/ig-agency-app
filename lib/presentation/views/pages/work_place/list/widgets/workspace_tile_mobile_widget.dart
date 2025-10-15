@@ -128,26 +128,25 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
                                   ),
                                 ),
 
-                                if (lastMessageTime != null) ...[
-                                  const SizedBox(width: 4),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.textDefaultTextSub2,
-                                    ),
-                                    width: 4,
-                                    height: 4,
+                                const SizedBox(width: 4),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.textDefaultTextSub2,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    lastMessageTime!.convertDateTimeToString(),
-                                    style: TextStyle(
-                                      fontFamily: FontFamily.segoeUI,
-                                      fontSize: 14,
-                                      height: 20 / 14,
-                                    ),
+                                  width: 4,
+                                  height: 4,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  lastMessageTime?.convertDateTimeToString() ??
+                                      '',
+                                  style: TextStyle(
+                                    fontFamily: FontFamily.segoeUI,
+                                    fontSize: 14,
+                                    height: 20 / 14,
                                   ),
-                                ],
+                                ),
                               ],
                             ),
                           ],

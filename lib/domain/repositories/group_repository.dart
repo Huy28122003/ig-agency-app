@@ -1,7 +1,14 @@
 import 'package:ig_agency_app/domain/entities/group_detail_entity.dart';
+import '../../shared/commons/models/pagination.dart';
+import '../entities/file_entity.dart';
+import '../entities/group_entity.dart';
+import '../entities/group_summary.dart';
+import '../entities/media_entity.dart';
 import '../entities/message/message.dart';
 import '../entities/pinned_message_summary.dart';
 import 'package:ig_agency_app/domain/entities/member_entity.dart';
+
+import '../entities/user_entity.dart';
 
 abstract class GroupRepository {
   Future<GroupDetailEntity> getGroupDetail(String conversationId);
@@ -57,4 +64,68 @@ abstract class GroupRepository {
     required String groupId,
     required String query,
   });
+
+  Future<List<GroupSummary>> getGroups({
+    required int limit,
+    required int offset,
+    String? keyWord,
+  });
+
+  Future<GroupEntity> getGroupInfo({required String groupId});
+
+  Stream<GroupEntity> listenLastMessages();
+
+  Future<bool> updateGroupBio({required String groupId, required String bio});
+
+  Future<bool> updateGroupName({required String groupId, required String name});
+
+  Future<List<UserEntity>> getUserInGroup({
+    required String workspaceId,
+    required int offset,
+    required int limit,
+  });
+
+  Future<bool> updateGroupNotification({
+    required String groupId,
+    required bool isMute,
+  });
+
+  Future<List<MediaEntity>> getMediasInGroup({
+    required String workspaceId,
+    required int offset,
+    required int limit,
+  });
+
+  Future<List<FileEntity>> getFileInGroup({
+    required String workspaceId,
+    required int offset,
+    required int limit,
+  });
+
+  Future<List<String>> getLinkInGroup({
+    required String workspaceId,
+    required int offset,
+    required int limit,
+  });
+
+  Future<List<UserEntity>> getListUser({
+    required Pagination pagination,
+    String? keySearch,
+  });
+
+  // TODO: tương tự hàm getWorkspaces => quy về dùng chung 1 hàm
+  Future<List<GroupEntity>> getListGroup({
+    required Pagination pagination,
+    String? keySearch,
+  });
+
+  Future<bool> createGroup(String groupName, List<UserEntity> members);
+
+  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups);
+
+  Future<void> pinGroup(String workspaceId);
+
+  Future<void> unpinGroup(String workspaceId);
+
+  Future<void> deleteGroup(String workspaceId);
 }

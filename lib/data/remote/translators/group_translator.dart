@@ -33,6 +33,6 @@ extension GroupTranslator on GroupResponse {
     if (type == MessageContentType.text) {
       return text ?? '';
     }
-    return type.value;
+    return type.title;
   }
 }
