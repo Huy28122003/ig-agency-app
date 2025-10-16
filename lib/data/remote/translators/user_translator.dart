@@ -6,12 +6,12 @@ import '../../../../domain/entities/user_entity.dart';
 extension UserTranslatorExtension on UserProfileResponseModel {
   UserEntity toEntity() {
     return UserEntity(
-      id: user.id ?? "",
-      name: user.name ?? '',
-      avatar: user.avatar ?? '',
-      bio: user.bio ?? '',
+      id: id ?? "",
+      name: name ?? '',
+      avatar: avatar ?? '',
+      bio: bio ?? '',
       lastActiveAt: DateTime.now(),
-      isAdmin: RoleSystem.fromString(user.role ?? '').isAdmin,
+      isAdmin: RoleSystem.fromString(role ?? '').isAdmin,
     );
   }
 }
