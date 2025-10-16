@@ -14,22 +14,12 @@ class PinnedMessageListPage
           PinnedMessageListEvent,
           PinnedMessageListState
         > {
-  const PinnedMessageListPage({
-    super.key,
-    required this.groupId,
-    required this.groupName,
-    required this.groupAvatar,
-  });
+  const PinnedMessageListPage({super.key, required this.groupId});
 
   final String groupId;
-  final String groupAvatar;
-  final String groupName;
 
   @override
-  PinnedMessageListBloc get buildBloc => super.buildBloc
-    ..groupId = groupId
-    ..groupName = groupName
-    ..groupAvatar = groupAvatar;
+  PinnedMessageListBloc get buildBloc => super.buildBloc..groupId = groupId;
 
   @override
   void onInitState(BuildContext context) {

@@ -1,19 +1,19 @@
-import 'package:ig_agency_app/domain/entities/paged_result.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
-import 'package:ig_agency_app/domain/repositories/workspace_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../entities/group_summary.dart';
+import '../../repositories/group_repository.dart';
+
 @injectable
 class GetGroupUseCase
-    extends UseCase<List<GroupEntity>, GetWorkspacesParams> {
+    extends UseCase<List<GroupSummary>, GetWorkspacesParams> {
   GetGroupUseCase(this._workspaceRepository);
 
   final GroupRepository _workspaceRepository;
 
   @override
-  Future<List<GroupEntity>> call(GetWorkspacesParams param) async {
-    return await _workspaceRepository.getWorkspaces(
+  Future<List<GroupSummary>> call(GetWorkspacesParams param) async {
+    return await _workspaceRepository.getGroups(
       limit: param.limit,
       offset: param.offset,
       keyWord: param.keyWord,

@@ -1,12 +1,12 @@
-import 'package:ig_agency_app/data/remote/models/response/get_workspaces_response_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/group_response.dart';
 import 'package:ig_agency_app/domain/enums/message_enums.dart';
 
-import '../../../domain/entities/workspace_entity.dart';
+import '../../../domain/entities/group_entity.dart';
 
 extension GroupTranslator on GroupResponse {
   GroupEntity toEntity() {
     final lastMsg = lastMessage;
-    final messageType = MessageContentType.fromString(lastMsg?.type ?? '');
+    final messageType = MessageContentType.fromCode(lastMsg?.type ?? '');
 
     final lastMessageTime = lastMessageDate == null
         ? null
@@ -35,6 +35,6 @@ extension GroupTranslator on GroupResponse {
     if (type == MessageContentType.text) {
       return text ?? '';
     }
-    return type.value;
+    return type.title;
   }
 }

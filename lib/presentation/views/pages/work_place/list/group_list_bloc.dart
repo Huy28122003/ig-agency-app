@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/delete_group_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/workspace/get_workspaces_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/listen_workspace_last_message_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/pin_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/unpin_group_use_case.dart';
@@ -10,6 +10,8 @@ import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:injectable/injectable.dart';
+
+import '../../../../../domain/entities/group_summary.dart';
 
 part 'group_list_event.dart';
 
@@ -24,7 +26,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   final DeleteGroupUseCase deleteGroupUseCase;
 
   Timer? _timer;
-  StreamSubscription<GroupEntity>? _streamSubscription;
+  StreamSubscription<GroupSummary>? _streamSubscription;
 
   final int _limit = 15;
   int _offset = 0;
@@ -62,7 +64,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     MuteWorkspaceEvent event,
     Emitter<GroupListState> emit,
   ) async {
-    List<GroupEntity> workspaces = List.from(state.workspaces);
+    List<GroupSummary> workspaces = List.from(state.workspaces);
     int indexWorkspace = workspaces.indexWhere(
       (e) => e.id == event.workspaceId,
     );
@@ -80,7 +82,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   ) async {
     try {
       await pinGroupUseCase.call(event.workspaceId);
-      List<GroupEntity> workspaces = List.from(state.workspaces);
+      List<GroupSummary> workspaces = List.from(state.workspaces);
       int indexWorkspace = workspaces.indexWhere(
         (e) => e.id == event.workspaceId,
       );
@@ -101,7 +103,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   ) async {
     try {
       await unpinGroupUseCase.call(event.workspaceId);
-      List<GroupEntity> workspaces = List.from(state.workspaces);
+      List<GroupSummary> workspaces = List.from(state.workspaces);
 
       int indexWorkspace = workspaces.indexWhere(
         (e) => e.id == event.workspaceId,
@@ -136,7 +138,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     SeenWorkspaceEvent event,
     Emitter<GroupListState> emit,
   ) async {
-    List<GroupEntity> workspaces = List.from(state.workspaces);
+    List<GroupSummary> workspaces = List.from(state.workspaces);
     int indexWorkspace = workspaces.indexWhere(
       (e) => e.id == event.workspaceId,
     );
@@ -152,7 +154,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     UpdateWorkspaceLastMessageEvent event,
     Emitter<GroupListState> emit,
   ) async {
-    List<GroupEntity> workspaces = List.from(state.workspaces);
+    List<GroupSummary> workspaces = List.from(state.workspaces);
 
     final idx = workspaces.indexWhere(
       (e) => e.id == event.workspaceLastMessage.id,
@@ -179,11 +181,12 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     Emitter<GroupListState> emit,
   ) async {
     _streamSubscription?.cancel();
-    _streamSubscription = listenWorkspaceLastMessageUseCase.call().listen((
-      value,
-    ) {
-      add(UpdateWorkspaceLastMessageEvent(workspaceLastMessage: value));
-    });
+    //todo
+    // _streamSubscription = listenWorkspaceLastMessageUseCase.call().listen((
+    //   value,
+    // ) {
+    //   add(UpdateWorkspaceLastMessageEvent(workspaceLastMessage: value));
+    // });
   }
 
   Future<void> _onSearch(
@@ -251,7 +254,8 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
 
-    final next = List<GroupEntity>.from(state.workspacesSearch)..addAll(result);
+    final next = List<GroupSummary>.from(state.workspacesSearch)
+      ..addAll(result);
     emit(
       state.copyWith(pagingStatusSearch: pagingStatus, workspacesSearch: next),
     );
@@ -273,7 +277,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
-      List<GroupEntity> workspaces = result;
+      List<GroupSummary> workspaces = result;
       // @Huy20031228: api sap xep truoc khi tra ve nen se khong can sap xep nua
       // _sort(workspaces);
       emit(
@@ -302,7 +306,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
 
       _offset += result.length;
 
-      List<GroupEntity>? workspaces = result;
+      List<GroupSummary>? workspaces = result;
       // _sort(workspaces);
       emit(
         state.copyWith(
@@ -330,7 +334,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
       final pagingStatus = _limit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
-      final next = List<GroupEntity>.from(state.workspaces)..addAll(result);
+      final next = List<GroupSummary>.from(state.workspaces)..addAll(result);
       emit(state.copyWith(pagingStatus: pagingStatus, workspaces: next));
     } catch (e) {
       handleError(emit, e);
@@ -344,11 +348,11 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     try {
       await deleteGroupUseCase.call(event.workspaceId);
       _offset -= 1;
-      List<GroupEntity> workspaces = List.from(state.workspaces);
+      List<GroupSummary> workspaces = List.from(state.workspaces);
       workspaces.removeWhere((e) => e.id == event.workspaceId);
 
       if (state.isSearchMode) {
-        List<GroupEntity> workspacesSearch = List.from(state.workspacesSearch);
+        List<GroupSummary> workspacesSearch = List.from(state.workspacesSearch);
         workspacesSearch.removeWhere((e) => e.id == event.workspaceId);
         emit(state.copyWith(workspacesSearch: workspacesSearch));
       }
@@ -358,12 +362,12 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     }
   }
 
-  void _sort(List<GroupEntity> workspaces) {
+  void _sort(List<GroupSummary> workspaces) {
     _sortWorkspacesByTime(workspaces);
     _sortWorkspacesByPin(workspaces);
   }
 
-  void _sortWorkspacesByPin(List<GroupEntity> workspaces) {
+  void _sortWorkspacesByPin(List<GroupSummary> workspaces) {
     if (workspaces.isEmpty) return;
     workspaces.sort((a, b) {
       if (a.isPin == b.isPin) return 0;
@@ -371,7 +375,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     });
   }
 
-  void _sortWorkspacesByTime(List<GroupEntity> workspaces) {
+  void _sortWorkspacesByTime(List<GroupSummary> workspaces) {
     if (workspaces.isEmpty) return;
     //tao thoi gian trong qua khu de cac group chua co tin nhan moi nao se sap xep ve cuoi
     final defaultTime = DateTime(2023);

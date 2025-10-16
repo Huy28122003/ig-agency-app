@@ -54,7 +54,6 @@
     "photo": "Photo",
     "video": "Video",
     "file": "File",
-    "location": "Location",
     "message": "Message",
     "audio": "Audio"
   },

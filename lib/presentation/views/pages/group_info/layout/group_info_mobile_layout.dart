@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/group_info/widgets/group_info_card_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
@@ -95,9 +95,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: () {
-            //todo
-          },
+          onTap: () {},
           child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
@@ -347,10 +345,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     if (group == null) return;
                     final messageId = await context.router.push(
                       PinnedMessageListRoute(
-                        groupId: "68c7db6d814f50d48db8f735",
-                        // TODO hoannk: Change id
-                        groupName: group.groupName,
-                        groupAvatar: group.groupAvatar,
+                        groupId: bloc.groupId,
                       ),
                     );
                     if (messageId != null && context.mounted) {
@@ -367,11 +362,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   ),
                   title: "group_info.mute_notification".tr(),
                   trailing:
-                      BlocSelector<
-                        GroupInfoBloc,
-                        GroupInfoState,
-                        GroupEntity?
-                      >(
+                      BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
                         selector: (state) => state.workspace,
                         builder: (context, workspace) {
                           return SizedBox(

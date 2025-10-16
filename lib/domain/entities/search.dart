@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:ig_agency_app/domain/entities/group.dart';
+import 'package:ig_agency_app/domain/entities/group_summary.dart';
 import 'package:ig_agency_app/domain/entities/message.dart';
 import 'package:ig_agency_app/domain/entities/user.dart';
 

@@ -1,12 +1,12 @@
 import 'package:ig_agency_app/data/remote/models/response/message_response_model.dart';
-import 'package:ig_agency_app/data/remote/translators/user_translator.dart';
 import 'package:ig_agency_app/data/remote/translators/entity_translator.dart';
+import 'package:ig_agency_app/data/remote/translators/user_translator.dart';
 import 'package:ig_agency_app/domain/entities/message/message_entity.dart';
 import 'package:ig_agency_app/domain/entities/message/message_content.dart';
 import 'package:ig_agency_app/domain/entities/message/text_segment.dart';
 import 'package:ig_agency_app/domain/enums/message_enums.dart';
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
-import 'package:ig_agency_app/shared/extensions/string_ext.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 
 extension MessageTranslatorExtension on MessageResponseModel {
   MessageEntity toEntity() {
@@ -25,7 +25,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
   }
 
   MessageContent _mapContent() {
-    final messageContentType = MessageContentType.fromString(type);
+    final messageContentType = MessageContentType.fromCode(type);
     switch (messageContentType) {
       case MessageContentType.text:
         return TextMessageContent(
@@ -104,7 +104,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
   }
 
   MessageContent _mapReplyContent(ReplyMessageResponseModel replyMessage) {
-    final messageContentType = MessageContentType.fromString(replyMessage.type);
+    final messageContentType = MessageContentType.fromCode(replyMessage.type);
     switch (messageContentType) {
       case MessageContentType.text:
         return TextMessageContent(text: replyMessage.text ?? '');

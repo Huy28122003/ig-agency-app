@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../domain/entities/group_entity.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
@@ -96,9 +96,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: () {
-            //todo
-          },
+          onTap: () {},
           child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
@@ -351,11 +349,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
                     final group = bloc.state.workspace;
                     if (group == null) return;
                     final messageId = await context.router.push(
-                      PinnedMessageListRoute(
-                        groupId: '5',
-                        groupName: group.groupName,
-                        groupAvatar: group.groupAvatar,
-                      ),
+                      PinnedMessageListRoute(groupId: bloc.groupId),
                     );
                     if (messageId != null && context.mounted) {
                       context.router.pop(messageId);

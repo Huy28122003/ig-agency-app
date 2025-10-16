@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
 
+import '../../../../../domain/entities/group_summary.dart';
 import '../../../../resources/colors.dart';
 
 class ForwardTile extends StatelessWidget {
-  final GroupEntity workspaceEntity;
+  final GroupSummary workspaceEntity;
   final bool isSent;
   final VoidCallback onTap;
 
@@ -29,13 +29,13 @@ class ForwardTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleNetworkAvatar(
-                imageUrl: workspaceEntity.groupAvatar,
+                imageUrl: workspaceEntity.avatar,
                 isGroupAvt: true,
               ),
               SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  workspaceEntity.groupName,
+                  workspaceEntity.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,

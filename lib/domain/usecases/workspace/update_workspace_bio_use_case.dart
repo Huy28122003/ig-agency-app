@@ -1,6 +1,6 @@
-import 'package:ig_agency_app/domain/repositories/workspace_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
+import '../../repositories/group_repository.dart';
 
 @injectable
 class UpdateWorkspaceBioUseCase
@@ -11,7 +11,7 @@ class UpdateWorkspaceBioUseCase
 
   @override
   Future<bool> call(UpdateWorkspaceBioParams param) async {
-    return await _workspaceRepository.updateWorkspaceBio(
+    return await _workspaceRepository.updateGroupBio(
       groupId: param.workspaceId,
       bio: param.bio,
     );

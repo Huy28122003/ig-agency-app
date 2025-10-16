@@ -18,8 +18,8 @@ class GroupListState extends BaseState<GroupListState> {
 
   final PagingStatus pagingStatus;
   final PagingStatus pagingStatusSearch;
-  final List<GroupEntity> workspaces;
-  final List<GroupEntity> workspacesSearch;
+  final List<GroupSummary> workspaces;
+  final List<GroupSummary> workspacesSearch;
   final String searchKeyWord;
   final PageStatus searchStatus;
   final bool isSearchMode;
@@ -34,8 +34,8 @@ class GroupListState extends BaseState<GroupListState> {
     bool? processing,
     PagingStatus? pagingStatus,
     PagingStatus? pagingStatusSearch,
-    List<GroupEntity>? workspaces,
-    List<GroupEntity>? workspacesSearch,
+    List<GroupSummary>? workspaces,
+    List<GroupSummary>? workspacesSearch,
     String? searchKeyWord,
     bool? isSearchMode,
     bool? isHaveChangeFromSearchMode,

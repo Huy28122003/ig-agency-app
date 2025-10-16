@@ -7,7 +7,7 @@ import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/w
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import '../../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../../domain/entities/group_summary.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
@@ -152,7 +152,7 @@ class _WorkspaceListDesktopLayoutState
       builder: (_, searchModeState) {
         return Stack(
           children: [
-            BlocSelector<GroupListBloc, GroupListState, List<GroupEntity>>(
+            BlocSelector<GroupListBloc, GroupListState, List<GroupSummary>>(
               selector: (state) {
                 return state.workspaces;
               },
@@ -224,20 +224,21 @@ class _WorkspaceListDesktopLayoutState
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: '1', // TODO hoannk: change id
-                                    groupName: workspace.groupName,
-                                    groupAvatar: workspace.groupAvatar,
+                                    groupId: workspace.id,
+                                    groupName: workspace.name,
+                                    groupAvatar: workspace.avatar,
                                   ),
                                 ]);
                               },
                               isMute: workspace.isMute,
                               isPin: workspace.isPin,
-                              workspaceAvatar: workspace.groupAvatar,
-                              workspaceName: workspace.groupName,
+                              workspaceAvatar: workspace.avatar,
+                              workspaceName: workspace.name,
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              countNewMessage: workspace.countNewMessage,
+                              //todo
+                              countNewMessage: 10,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -261,7 +262,7 @@ class _WorkspaceListDesktopLayoutState
                     BlocSelector<
                       GroupListBloc,
                       GroupListState,
-                      (List<GroupEntity>, PageStatus)
+                      (List<GroupSummary>, PageStatus)
                     >(
                       selector: (state) {
                         return (state.workspacesSearch, state.searchStatus);
@@ -314,15 +315,14 @@ class _WorkspaceListDesktopLayoutState
                                           },
                                           isMute: workspace.isMute,
                                           isPin: workspace.isPin,
-                                          workspaceAvatar:
-                                              workspace.groupAvatar,
-                                          workspaceName: workspace.groupName,
+                                          workspaceAvatar: workspace.avatar,
+                                          workspaceName: workspace.name,
                                           lastMessage: workspace.lastMessage,
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          countNewMessage:
-                                              workspace.countNewMessage,
+                                          //todo
+                                          countNewMessage: 10,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),

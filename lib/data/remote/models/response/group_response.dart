@@ -1,7 +1,7 @@
 import 'package:ig_agency_app/data/remote/models/response/last_message_response_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'get_workspaces_response_model.g.dart';
+part 'group_response.g.dart';
 
 @JsonSerializable()
 class GroupResponse {
