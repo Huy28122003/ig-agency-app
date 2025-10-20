@@ -119,7 +119,8 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                           ),
                         ),
                         Spacer(),
-                        if (_bloc.isPhoto)
+                        if (_bloc.isPhoto &&
+                            _bloc.cameraMode != CameraMode.updateAvatar)
                           AppButton.icon(
                             onPressed: () {
                               _bloc.add(EditMediaEvent());
