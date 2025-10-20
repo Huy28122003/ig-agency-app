@@ -1,12 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../../shared/commons/enums/camera_mode.dart';
 import '../../../../resources/colors.dart';
 import '../../../../routers/app_router.dart';
+import '../../../modal/select_image_modal.dart';
 import '../profile_bloc.dart';
 import '../widgets/delete_account_button.dart';
 import '../widgets/profile_header.dart';
@@ -87,11 +89,20 @@ class _ProfileTabletLayoutState extends State<ProfileTabletLayout> {
               children: [
                 ProfileHeader(
                   onChangeAvatar: () async {
-                    final path = await context.router.push(
-                      CameraRoute(cameraMode: CameraMode.updateAvatar),
-                    );
-                    if (path is String) {
-                      _profileBloc.add(UpdateAvatarFromAccountEvent(path));
+                    final imageSource = await SelectImageModal.show(context);
+                    if (imageSource != null && context.mounted) {
+                      if (imageSource == ImageSource.camera) {
+                        final path = await context.router.push(
+                          CameraRoute(cameraMode: CameraMode.updateAvatar),
+                        );
+                        if (path is String) {
+                          _profileBloc.add(UpdateAvatarFromAccountEvent(path));
+                        }
+                      } else if (imageSource == ImageSource.gallery) {
+                        _profileBloc.add(
+                          ChooseImageFromLibraryAndUpdateAvatarEvent(),
+                        );
+                      }
                     }
                   },
                   onEditName: () {

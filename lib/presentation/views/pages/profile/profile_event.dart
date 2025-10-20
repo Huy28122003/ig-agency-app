@@ -23,3 +23,7 @@ class UpdateAvatarFromAccountEvent extends ProfileEvent {
 
   final String path;
 }
+
+class ChooseImageFromLibraryAndUpdateAvatarEvent extends ProfileEvent {
+  const ChooseImageFromLibraryAndUpdateAvatarEvent();
+}

@@ -11,6 +11,7 @@ import 'package:ig_agency_app/domain/usecases/update_avatar_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
+import '../../../../dependencies/media/media_manager.dart';
 import '../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../base/base_state.dart';
 
@@ -26,6 +27,7 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
     this._userRepository,
     this._updateAvatarUseCase,
     this._authRepository,
+    this._mediaManager,
   ) : super(ProfileState()) {
     _registerHandlers();
     _initializeUserListener();
@@ -36,18 +38,19 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   final UserRepository _userRepository;
   final UpdateAvatarUseCase _updateAvatarUseCase;
   final AuthRepository _authRepository;
+  final MediaManager _mediaManager;
 
   StreamSubscription<ProfileInfoEntity>? _userSubscription;
   late final String email;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
-
     handleSubEvent<DeleteAccountEvent>(_onDeleteAccount);
-
     handleSubEvent<UpdateUserEvent>(_onUpdateUser);
-
     handleSubEvent<UpdateAvatarFromAccountEvent>(_onUpdateAvatar);
+    handleSubEvent<ChooseImageFromLibraryAndUpdateAvatarEvent>(
+      _onChooseImageFromLibraryAndUpdate,
+    );
   }
 
   void _initializeUserListener() {
@@ -114,6 +117,20 @@ class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
         UpdateAvatarParam(avatarPath: event.path),
       );
       emit(state.copyWith(processing: false));
+    } catch (error) {
+      handleError(emit, error);
+    }
+  }
+
+  Future<void> _onChooseImageFromLibraryAndUpdate(
+    ChooseImageFromLibraryAndUpdateAvatarEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      final path = await _mediaManager.pickMedia();
+      if (path != null) {
+        add(UpdateAvatarFromAccountEvent(path.path));
+      }
     } catch (error) {
       handleError(emit, error);
     }
