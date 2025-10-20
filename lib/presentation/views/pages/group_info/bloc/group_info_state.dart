@@ -8,14 +8,14 @@ class GroupInfoState extends BaseState<GroupInfoState> {
     this.workspace,
   });
 
-  final WorkspaceEntity? workspace;
+  final GroupEntity? workspace;
 
   @override
   GroupInfoState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
-    WorkspaceEntity? workspace,
+    GroupEntity? workspace,
   }) {
     return GroupInfoState(
       pageStatus: pageStatus ?? this.pageStatus,

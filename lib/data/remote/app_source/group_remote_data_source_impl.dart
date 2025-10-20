@@ -6,8 +6,10 @@ import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/models/requests/pin_message_request_model.dart';
 import '../../../domain/entities/message/message_content.dart';
 import '../../../domain/enums/message_enums.dart';
+import '../models/requests/get_groups_request.dart';
 import '../models/requests/send_message_request_model.dart';
 import '../models/requests/delete_message_request_model.dart';
+import '../models/response/group_summary_response.dart';
 import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
 
@@ -165,6 +167,44 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     try {
       final members = await _apiService.searchMembersInGroup(groupId, query);
       return members;
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<List<GroupSummaryResponse>> getGroups({
+    required GetGroupsRequest getWorkspacesRequest,
+  }) async {
+    try {
+      return await _apiService.getGroups(getWorkspacesRequest);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> pinGroup(String groupId) async {
+    try {
+      return await _apiService.pinGroup(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> unpinGroup(String groupId) async {
+    try {
+      return await _apiService.unpinGroup(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> deleteGroup(String groupId) async {
+    try {
+      return await _apiService.deleteGroup(groupId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

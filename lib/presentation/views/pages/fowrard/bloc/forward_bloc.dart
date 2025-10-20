@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
-import 'package:ig_agency_app/domain/usecases/workspace/get_workspaces_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../../domain/entities/group_summary.dart';
 import '../../../../../shared/commons/enums/status.dart';
 
 part 'forward_event.dart';
@@ -18,7 +18,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
   final int _limit = 15;
   int _offset = 0;
   int _searchOffset = 0;
-  final GetWorkspacesUseCase getWorkspacesUseCase;
+  final GetGroupUseCase getWorkspacesUseCase;
   Timer? _timer;
 
   ForwardBloc({required this.getWorkspacesUseCase}) : super(ForwardState()) {
@@ -57,7 +57,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
-    List<WorkspaceEntity> currentList = List.from(state.workspacesSearch);
+    List<GroupSummary> currentList = List.from(state.workspacesSearch);
     currentList.addAll(result);
     emit(
       state.copyWith(
@@ -88,7 +88,7 @@ class ForwardBloc extends BaseBloc<ForwardEvent, ForwardState> {
     final pagingStatus = _limit > result.length
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
-    List<WorkspaceEntity> currentList = List.from(state.workspaces);
+    List<GroupSummary> currentList = List.from(state.workspaces);
     currentList.addAll(result);
     emit(state.copyWith(pagingStatus: pagingStatus, workspaces: currentList));
   }

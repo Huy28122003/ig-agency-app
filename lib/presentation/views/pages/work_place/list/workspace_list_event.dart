@@ -1,66 +1,72 @@
 part of 'workspace_list_bloc.dart';
 
-sealed class WorkspaceListEvent {}
+sealed class GroupListEvent {}
 
-class LoadDataEvent extends WorkspaceListEvent {}
+class LoadDataEvent extends GroupListEvent {}
 
-class RefreshDataEvent extends WorkspaceListEvent {}
+class RefreshDataEvent extends GroupListEvent {}
 
-class LoadMoreDataEvent extends WorkspaceListEvent {}
+class LoadMoreDataEvent extends GroupListEvent {}
 
-class SearchEvent extends WorkspaceListEvent {
+class SearchEvent extends GroupListEvent {
   final String value;
 
   SearchEvent({required this.value});
 }
 
-class SearchDebouncedEvent extends WorkspaceListEvent {
+class SearchDebouncedEvent extends GroupListEvent {
   final String value;
 
   SearchDebouncedEvent(this.value);
 }
 
-class SearchKeyWorkChangeEvent extends WorkspaceListEvent {
+class SearchKeyWorkChangeEvent extends GroupListEvent {
   final String value;
 
   SearchKeyWorkChangeEvent({required this.value});
 }
 
-class SearchLoadMoreEvent extends WorkspaceListEvent {}
+class SearchLoadMoreEvent extends GroupListEvent {}
 
-class UpdateWorkspaceLastMessageEvent extends WorkspaceListEvent {
-  final WorkspaceEntity workspaceLastMessage;
+class UpdateWorkspaceLastMessageEvent extends GroupListEvent {
+  final GroupEntity workspaceLastMessage;
 
   UpdateWorkspaceLastMessageEvent({required this.workspaceLastMessage});
 }
 
-class ListenWorkspaceLastMessageEvent extends WorkspaceListEvent {}
+class ListenWorkspaceLastMessageEvent extends GroupListEvent {}
 
-class PinWorkspaceEvent extends WorkspaceListEvent {
+class PinWorkspaceEvent extends GroupListEvent {
   final String workspaceId;
 
   PinWorkspaceEvent({required this.workspaceId});
 }
 
-class MuteWorkspaceEvent extends WorkspaceListEvent {
+class UnpinWorkspaceEvent extends GroupListEvent {
+  final String workspaceId;
+
+  UnpinWorkspaceEvent({required this.workspaceId});
+}
+
+class MuteWorkspaceEvent extends GroupListEvent {
   final String workspaceId;
 
   MuteWorkspaceEvent({required this.workspaceId});
 }
 
-class SeenWorkspaceEvent extends WorkspaceListEvent {
+class SeenWorkspaceEvent extends GroupListEvent {
   final String workspaceId;
 
   SeenWorkspaceEvent({required this.workspaceId});
 }
 
-class DeleteWorkspaceEvent extends WorkspaceListEvent {
+class DeleteWorkspaceEvent extends GroupListEvent {
   final String workspaceId;
 
   DeleteWorkspaceEvent({required this.workspaceId});
 }
 
-class SelectWorkspaceEvent extends WorkspaceListEvent {
+class SelectWorkspaceEvent extends GroupListEvent {
   final String id;
 
   SelectWorkspaceEvent({required this.id});

@@ -3,7 +3,7 @@ import 'package:dartx/dartx.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../../domain/entities/group_entity.dart';
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
@@ -195,7 +195,7 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
     return BlocSelector<
       AddToGroupBloc,
       AddToGroupState,
-      (List<WorkspaceEntity>, List<WorkspaceEntity>)
+      (List<GroupEntity>, List<GroupEntity>)
     >(
       selector: (state) {
         return (state.listGroup, state.listSelectedGroup);
@@ -222,8 +222,8 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
             final isSelected =
                 listUser.$2.firstOrNullWhere((e) => e.id == item.id) != null;
             return AvatarTitleCheckboxRow(
-              imageUrl: item.workspaceAvatar,
-              title: item.workspaceName,
+              imageUrl: item.groupAvatar,
+              title: item.groupName,
               isSelected: isSelected,
               onTap: () {
                 context.read<AddToGroupBloc>().add(
@@ -238,7 +238,7 @@ class _AddToGroupMobileLayoutState extends State<AddToGroupMobileLayout> {
   }
 
   Widget _buildButtonCreate() {
-    return BlocSelector<AddToGroupBloc, AddToGroupState, List<WorkspaceEntity>>(
+    return BlocSelector<AddToGroupBloc, AddToGroupState, List<GroupEntity>>(
       selector: (state) {
         return state.listSelectedGroup;
       },

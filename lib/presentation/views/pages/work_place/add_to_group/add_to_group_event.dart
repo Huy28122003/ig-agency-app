@@ -21,7 +21,7 @@ class SearchKeyWordChangedEvent extends AddToGroupEvent {
 class SelectGroupEvent extends AddToGroupEvent {
   SelectGroupEvent(this.group, this.isSelected);
 
-  final WorkspaceEntity group;
+  final GroupEntity group;
   final bool isSelected;
 
   @override
