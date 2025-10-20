@@ -38,124 +38,140 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
     final double imageHeight = (screenWidth / _bloc.aspectRatio);
     final double circleRadius = (min(imageWidth, imageHeight) / 2);
 
-    return Scaffold(
-      backgroundColor: AppColors.surfaceContainerGrayStrong95,
-      body: SafeArea(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Positioned(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                  ),
-                  child:
-                      BlocSelector<MediaPreviewBloc, MediaPreviewState, String>(
-                        selector: (state) => state.path,
-                        builder: (context, path) {
-                          return (path.isEmpty)
-                              ? Center(child: CircularProgressIndicator())
-                              : AspectRatio(
-                                  aspectRatio: _bloc.aspectRatio,
-                                  child: _bloc.isPhoto
-                                      ? Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            FittedBox(
-                                              child: Image.file(File(path)),
-                                            ),
-                                            if (_bloc.cameraMode ==
-                                                CameraMode.updateAvatar)
-                                              Positioned.fill(
-                                                child: CircularCropMask(
-                                                  radius: circleRadius,
-                                                ),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<MediaPreviewBloc, MediaPreviewState>(
+          listenWhen: (pre, cur) => pre.isCropSuccess != cur.isCropSuccess,
+          listener: (context, state) {
+            if (state.isCropSuccess) {
+              context.router.pop(state.path);
+            }
+          },
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: AppColors.surfaceContainerGrayStrong95,
+        body: SafeArea(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Positioned(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
+                    child:
+                        BlocSelector<
+                          MediaPreviewBloc,
+                          MediaPreviewState,
+                          String
+                        >(
+                          selector: (state) => state.path,
+                          builder: (context, path) {
+                            return (path.isEmpty)
+                                ? Center(child: CircularProgressIndicator())
+                                : AspectRatio(
+                                    aspectRatio: _bloc.aspectRatio,
+                                    child: _bloc.isPhoto
+                                        ? Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              FittedBox(
+                                                child: Image.file(File(path)),
                                               ),
-                                          ],
-                                        )
-                                      : AppVideoPlayer(
-                                          path: path,
-                                          isAutoPlay: true,
-                                        ),
-                                );
-                        },
-                      ),
+                                              if (_bloc.cameraMode ==
+                                                  CameraMode.updateAvatar)
+                                                Positioned.fill(
+                                                  child: CircularCropMask(
+                                                    radius: circleRadius,
+                                                  ),
+                                                ),
+                                            ],
+                                          )
+                                        : AppVideoPlayer(
+                                            path: path,
+                                            isAutoPlay: true,
+                                          ),
+                                  );
+                          },
+                        ),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              left: 0,
-              top: 0,
-              right: 0,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 8, right: 10),
-                  child: Row(
-                    children: [
-                      AppButton.icon(
-                        onPressed: () {
-                          context.router.pop();
-                        },
-                        icon: Assets.icons.icCloseSize24.svg(
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                      Spacer(),
-                      if (_bloc.isPhoto)
+              Positioned(
+                left: 0,
+                top: 0,
+                right: 0,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, top: 8, right: 10),
+                    child: Row(
+                      children: [
                         AppButton.icon(
                           onPressed: () {
-                            _bloc.add(EditMediaEvent());
+                            context.router.pop();
                           },
-                          icon: Assets.icons.icCrop.svg(width: 24, height: 24),
+                          icon: Assets.icons.icCloseSize24.svg(
+                            width: 24,
+                            height: 24,
+                          ),
                         ),
-                      AppButton.icon(
-                        onPressed: () {
-                          _bloc.add(SaveMediaEvent());
-                        },
-                        icon: Assets.icons.icDownload.svg(
-                          width: 24,
-                          height: 24,
+                        Spacer(),
+                        if (_bloc.isPhoto)
+                          AppButton.icon(
+                            onPressed: () {
+                              _bloc.add(EditMediaEvent());
+                            },
+                            icon: Assets.icons.icCrop.svg(
+                              width: 24,
+                              height: 24,
+                            ),
+                          ),
+                        AppButton.icon(
+                          onPressed: () {
+                            _bloc.add(SaveMediaEvent());
+                          },
+                          icon: Assets.icons.icDownload.svg(
+                            width: 24,
+                            height: 24,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: SafeArea(
-                child: _bloc.cameraMode == CameraMode.updateAvatar
-                    ? SetAvatarButton(
-                        avatar: _bloc.avatar,
-                        onTap: () {
-                          _bloc.add(
-                            CropAvatarEvent(
-                              circleRadius: circleRadius,
-                              imageWidth: imageWidth,
-                              imageHeight: imageHeight,
-                              onComplete: (path) {
-                                context.router.pop(path);
-                              },
-                            ),
-                          );
-                        },
-                      )
-                    : SendButtonWidget(
-                        avatar: _bloc.avatar,
-                        onTap: () {
-                          final path = _bloc.state.path;
-                          if (path.isEmpty) return;
+              Positioned(
+                bottom: 0,
+                child: SafeArea(
+                  child: _bloc.cameraMode == CameraMode.updateAvatar
+                      ? SetAvatarButton(
+                          avatar: _bloc.avatar,
+                          onTap: () {
+                            _bloc.add(
+                              CropAvatarEvent(
+                                circleRadius: circleRadius,
+                                imageWidth: imageWidth,
+                                imageHeight: imageHeight,
+                              ),
+                            );
+                          },
+                        )
+                      : SendButtonWidget(
+                          avatar: _bloc.avatar,
+                          onTap: () {
+                            final path = _bloc.state.path;
+                            if (path.isEmpty) return;
 
-                          context.router.pop(path);
-                        },
-                      ),
+                            context.router.pop(path);
+                          },
+                        ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

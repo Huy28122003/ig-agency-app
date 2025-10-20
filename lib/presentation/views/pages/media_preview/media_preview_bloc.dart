@@ -111,7 +111,7 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
     Emitter<MediaPreviewState> emit,
   ) async {
     try {
-      emit(state.copyWith(processing: true));
+      emit(state.copyWith(processing: true, isCropSuccess: false));
 
       final double circleDiameter = event.circleRadius * 2;
       final double circleX = (event.imageWidth - circleDiameter) / 2;
@@ -153,8 +153,13 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
         tempPath,
       ).writeAsBytes(img.encodePng(croppedImage));
 
-      emit(state.copyWith(processing: false));
-      event.onComplete(croppedFile.path);
+      emit(
+        state.copyWith(
+          processing: false,
+          isCropSuccess: true,
+          path: croppedFile.path,
+        ),
+      );
     } catch (error) {
       handleError(emit, error);
     }
