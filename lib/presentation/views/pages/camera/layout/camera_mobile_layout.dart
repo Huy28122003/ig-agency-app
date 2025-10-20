@@ -58,7 +58,8 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                       "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
-                  aspectRatio: 1 / (aspectRatio ?? 0),
+                  aspectRatio: aspectRatio != null ? 1 / aspectRatio : 1,
+                  cameraMode: _cameraBloc.cameraMode,
                 ),
               );
               if (path is String && context.mounted) {
