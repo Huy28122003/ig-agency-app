@@ -3,9 +3,6 @@ import 'package:ig_agency_app/data/remote/models/requests/update_group_info_requ
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
-import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
-import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
-
 import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/models/requests/pin_message_request_model.dart';
 import '../../../domain/entities/message/message_content.dart';
@@ -224,20 +221,20 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     }
   }
 
-  @override
-  Future<List<UserProfileResponseModel>> getUserInGroup(
-    GetDataInGroupRequest request,
-  ) async {
-    try {
-      return await _apiService.getUserInGroup(
-        request.groupId,
-        request.limit,
-        request.offset,
-      );
-    } catch (e) {
-      throw ExceptionConverter.convert(e);
-    }
-  }
+  // @override
+  // Future<List<UserProfileResponseModel>> getUserInGroup(
+  //   GetDataInGroupRequest request,
+  // ) async {
+  //   try {
+  //     return await _apiService.getUserInGroup(
+  //       request.groupId,
+  //       request.limit,
+  //       request.offset,
+  //     );
+  //   } catch (e) {
+  //     throw ExceptionConverter.convert(e);
+  //   }
+  // }
 
   @override
   Future<void> updateGroupBio(String groupId, String bio) async {
