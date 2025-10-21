@@ -7,32 +7,32 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
-import '../bloc/edit_group_name_bloc.dart';
+import '../bloc/edit_group_bio_bloc.dart';
 
-class EditWorkspaceBioTabletLayout extends StatefulWidget {
-  const EditWorkspaceBioTabletLayout({super.key});
+class EditGroupBioMobileLayout extends StatefulWidget {
+  const EditGroupBioMobileLayout({super.key});
 
   @override
-  State<EditWorkspaceBioTabletLayout> createState() =>
-      _EditWorkspaceBioTabletLayoutState();
+  State<EditGroupBioMobileLayout> createState() =>
+      _EditGroupBioMobileLayoutState();
 }
 
-class _EditWorkspaceBioTabletLayoutState
-    extends State<EditWorkspaceBioTabletLayout> {
-  late final EditGroupNameBloc _editWorkspaceBioBloc;
+class _EditGroupBioMobileLayoutState
+    extends State<EditGroupBioMobileLayout> {
+  late final EditGroupBioBloc _editWorkspaceBioBloc;
 
   @override
   void initState() {
     super.initState();
-    _editWorkspaceBioBloc = context.read<EditGroupNameBloc>();
+    _editWorkspaceBioBloc = context.read<EditGroupBioBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditGroupNameBloc, EditGroupNameState>(
+    return BlocListener<EditGroupBioBloc, EditGroupBioState>(
       listener: (_, state) {
         if (state.updateStatus ?? false) {
-          context.router.pop(state.name);
+          context.router.pop(state.bio);
         }
       },
       child: Scaffold(
@@ -77,9 +77,9 @@ class _EditWorkspaceBioTabletLayoutState
             child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
           actions: [
-            BlocSelector<EditGroupNameBloc, EditGroupNameState, String>(
+            BlocSelector<EditGroupBioBloc, EditGroupBioState, String>(
               selector: (state) {
-                return state.name;
+                return state.bio;
               },
               builder: (context, state) {
                 return Padding(
@@ -113,12 +113,12 @@ class _EditWorkspaceBioTabletLayoutState
             padding: const EdgeInsets.symmetric(vertical: 20),
             child:
                 BlocSelector<
-                  EditGroupNameBloc,
-                  EditGroupNameState,
+                  EditGroupBioBloc,
+                  EditGroupBioState,
                   String
                 >(
                   selector: (state) {
-                    return state.name;
+                    return state.bio;
                   },
                   builder: (context, state) {
                     return AppTextField(

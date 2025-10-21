@@ -134,11 +134,15 @@ class GroupInfoMobileLayout extends StatelessWidget {
   }
 
   Widget _buildGroupName(BuildContext context) {
+    final bloc = context.read<GroupInfoBloc>();
     return GestureDetector(
-      onTap: () {
-        final name =
-            context.read<GroupInfoBloc>().state.workspace?.groupName ?? "";
-        context.router.push(EditNameRoute(name: name));
+      onTap: () async {
+        final name = bloc.state.workspace?.groupName ?? "";
+        final result = await context.router.push(
+          EditGroupNameRoute(name: name, workspaceId: bloc.groupId),
+        );
+        if(result == null) return;
+        bloc.add(UpdateWorkspaceEvent(groupName: result as String));
       },
       child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
         selector: (state) {
@@ -345,9 +349,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     final group = bloc.state.workspace;
                     if (group == null) return;
                     final messageId = await context.router.push(
-                      PinnedMessageListRoute(
-                        groupId: bloc.groupId,
-                      ),
+                      PinnedMessageListRoute(groupId: bloc.groupId),
                     );
                     if (messageId != null && context.mounted) {
                       context.router.pop(messageId);

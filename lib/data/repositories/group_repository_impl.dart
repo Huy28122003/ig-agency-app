@@ -272,7 +272,7 @@ class GroupRepositoryImpl implements GroupRepository {
     required String bio,
   }) async {
     try {
-      await _groupRemoteDataSource.updateGroupBio(groupId, bio);
+      await _groupRemoteDataSource.updateGroupInfo(groupId, bio: bio);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -284,7 +284,7 @@ class GroupRepositoryImpl implements GroupRepository {
     required String name,
   }) async {
     try {
-      await _groupRemoteDataSource.updateGroupBio(groupId, name);
+      await _groupRemoteDataSource.updateGroupInfo(groupId, name: name);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

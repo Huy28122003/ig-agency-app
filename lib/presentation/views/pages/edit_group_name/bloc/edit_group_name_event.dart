@@ -9,10 +9,10 @@ class LoadDataEvent extends EditGroupNameEvent {
   LoadDataEvent({required this.bio, required this.workspaceId});
 }
 
-class BioChangeEvent extends EditGroupNameEvent {
+class NameChangeEvent extends EditGroupNameEvent {
   final String value;
 
-  BioChangeEvent({required this.value});
+  NameChangeEvent({required this.value});
 }
 
-class SubmitBioEvent extends EditGroupNameEvent {}
+class SubmitNameEvent extends EditGroupNameEvent {}

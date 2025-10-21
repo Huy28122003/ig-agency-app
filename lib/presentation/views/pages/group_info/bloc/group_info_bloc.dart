@@ -41,7 +41,7 @@ class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
       if (current == null) return;
 
       final updated = current.copyWith(
-        groupName: event.workspaceName,
+        groupName: event.groupName,
         bio: event.bio,
         isMute: event.isMute,
         countMember: event.countMember,

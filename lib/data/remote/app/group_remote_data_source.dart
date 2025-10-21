@@ -60,5 +60,5 @@ abstract class GroupRemoteDataSource {
 
   Future<GroupResponse> getGroupInfo(String groupId);
 
-  Future<void> updateGroupBio(String groupId, String bio);
+  Future<void> updateGroupInfo(String groupId, {String? bio, String? name});
 }

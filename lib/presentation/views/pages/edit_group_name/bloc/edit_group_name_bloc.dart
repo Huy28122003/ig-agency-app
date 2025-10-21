@@ -25,10 +25,10 @@ class EditGroupNameBloc
       workspaceId = event.workspaceId;
       emit(state.copyWith(pageStatus: PageStatus.loaded, bio: event.bio));
     });
-    handleSubEvent<BioChangeEvent>((event, emit) async {
+    handleSubEvent<NameChangeEvent>((event, emit) async {
       emit(state.copyWith(bio: event.value));
     });
-    handleSubEvent<SubmitBioEvent>((event, emit) async {
+    handleSubEvent<SubmitNameEvent>((event, emit) async {
       try {
         await _updateWorkspaceNameUseCase.call(
           UpdateWorkspaceNameParams(workspaceId: workspaceId, name: state.name),
@@ -40,5 +40,5 @@ class EditGroupNameBloc
     });
   }
 
-  bool get isBioChanged => state.name.trim() != initBio.trim();
+  bool get isNameChanged => state.name.trim() != initBio.trim();
 }

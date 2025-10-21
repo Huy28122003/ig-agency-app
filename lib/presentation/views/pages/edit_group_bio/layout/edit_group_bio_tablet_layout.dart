@@ -2,23 +2,23 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/edit_group_bio/bloc/edit_group_bio_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
+import '../bloc/edit_group_bio_bloc.dart';
 
-class EditWorkspaceBioMobileLayout extends StatefulWidget {
-  const EditWorkspaceBioMobileLayout({super.key});
+class EditGroupBioTabletLayout extends StatefulWidget {
+  const EditGroupBioTabletLayout({super.key});
 
   @override
-  State<EditWorkspaceBioMobileLayout> createState() =>
-      _EditWorkspaceBioMobileLayoutState();
+  State<EditGroupBioTabletLayout> createState() =>
+      _EditGroupBioTabletLayoutState();
 }
 
-class _EditWorkspaceBioMobileLayoutState
-    extends State<EditWorkspaceBioMobileLayout> {
+class _EditGroupBioTabletLayoutState
+    extends State<EditGroupBioTabletLayout> {
   late final EditGroupBioBloc _editWorkspaceBioBloc;
 
   @override

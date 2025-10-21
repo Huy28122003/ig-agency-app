@@ -237,11 +237,15 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   // }
 
   @override
-  Future<void> updateGroupBio(String groupId, String bio) async {
+  Future<void> updateGroupInfo(
+    String groupId, {
+    String? bio,
+    String? name,
+  }) async {
     try {
       await _apiService.updateGroupInfo(
         groupId,
-        UpdateGroupInfoRequest(bio: bio),
+        UpdateGroupInfoRequest(bio: bio, title: name),
       );
     } catch (e) {
       throw ExceptionConverter.convert(e);
