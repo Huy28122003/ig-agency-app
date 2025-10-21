@@ -79,7 +79,7 @@ abstract class GroupRepository {
 
   Future<void> updateGroupName({required String groupId, required String name});
 
-  Future<List<UserEntity>> getUserInGroup({
+  Future<List<MemberEntity>> getUserInGroup({
     required String workspaceId,
     required int offset,
     required int limit,

@@ -11,7 +11,7 @@ class MembersState extends BaseState<MembersState> {
     this.pagingStatus = PagingStatus.idle,
   });
 
-  final List<UserEntity> members;
+  final List<MemberEntity> members;
   final int countActiveMember;
   final int countMember;
   final PagingStatus pagingStatus;
@@ -23,7 +23,7 @@ class MembersState extends BaseState<MembersState> {
     bool? processing,
     int? countActiveMember,
     int? countMember,
-    List<UserEntity>? members,
+    List<MemberEntity>? members,
     PagingStatus? pagingStatus,
   }) {
     return MembersState(

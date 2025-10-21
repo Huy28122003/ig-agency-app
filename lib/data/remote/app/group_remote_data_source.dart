@@ -7,7 +7,6 @@ import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
 
 import '../models/requests/get_data_in_group_request.dart';
-import '../models/response/user_profile_response_model.dart';
 
 abstract class GroupRemoteDataSource {
   Future<GroupDetailResponseModel> getGroupDetail(String conversationId);
@@ -69,7 +68,7 @@ abstract class GroupRemoteDataSource {
 
   Future<void> markUnread(String groupId);
 
-  Future<List<UserProfileResponseModel>> getUserInGroup(
+  Future<List<MemberResponseModel>> getUserInGroup(
     GetDataInGroupRequest request,
   );
 }

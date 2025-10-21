@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/update_group_info_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
@@ -221,20 +222,20 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     }
   }
 
-  // @override
-  // Future<List<UserProfileResponseModel>> getUserInGroup(
-  //   GetDataInGroupRequest request,
-  // ) async {
-  //   try {
-  //     return await _apiService.getUserInGroup(
-  //       request.groupId,
-  //       request.limit,
-  //       request.offset,
-  //     );
-  //   } catch (e) {
-  //     throw ExceptionConverter.convert(e);
-  //   }
-  // }
+  @override
+  Future<List<MemberResponseModel>> getUserInGroup(
+    GetDataInGroupRequest request,
+  ) async {
+    try {
+      return await _apiService.getUserInGroup(
+        request.groupId,
+        request.limit,
+        request.offset,
+      );
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
 
   @override
   Future<void> updateGroupInfo(
