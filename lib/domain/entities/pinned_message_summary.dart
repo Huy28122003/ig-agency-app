@@ -4,23 +4,23 @@ import 'message/message.dart';
 
 class PinnedMessageSummary extends Equatable {
   const PinnedMessageSummary({
-    this.latestMessage,
+    this.recentPinnedMessage,
     required this.totalPinnedMessages,
   });
 
-  final MessageEntity? latestMessage;
+  final MessageEntity? recentPinnedMessage;
   final int totalPinnedMessages;
 
   PinnedMessageSummary copyWith({
-    MessageEntity? latestMessage,
+    MessageEntity? recentPinnedMessage,
     int? totalPinnedMessages,
   }) {
     return PinnedMessageSummary(
-      latestMessage: latestMessage ?? this.latestMessage,
+      recentPinnedMessage: recentPinnedMessage ?? this.recentPinnedMessage,
       totalPinnedMessages: totalPinnedMessages ?? this.totalPinnedMessages,
     );
   }
 
   @override
-  List<Object?> get props => [latestMessage, totalPinnedMessages];
+  List<Object?> get props => [recentPinnedMessage, totalPinnedMessages];
 }

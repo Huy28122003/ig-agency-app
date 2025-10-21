@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/group_info/widgets/group_info_card_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
@@ -95,9 +95,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: () {
-            //todo
-          },
+          onTap: () {},
           child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
@@ -106,6 +104,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
               return CircleNetworkAvatar(
                 size: 80,
                 imageUrl: state?.groupAvatar ?? "",
+                isGroupAvt: true,
               );
             },
           ),
@@ -135,11 +134,15 @@ class GroupInfoMobileLayout extends StatelessWidget {
   }
 
   Widget _buildGroupName(BuildContext context) {
+    final bloc = context.read<GroupInfoBloc>();
     return GestureDetector(
-      onTap: () {
-        final name =
-            context.read<GroupInfoBloc>().state.workspace?.groupName ?? "";
-        context.router.push(EditNameRoute(name: name));
+      onTap: () async {
+        final name = bloc.state.workspace?.groupName ?? "";
+        final result = await context.router.push(
+          EditGroupNameRoute(name: name, workspaceId: bloc.groupId),
+        );
+        if(result == null) return;
+        bloc.add(UpdateWorkspaceEvent(groupName: result as String));
       },
       child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
         selector: (state) {
@@ -209,7 +212,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     final workspace = state;
                     if (workspace == null) return;
                     final result = await context.router.push(
-                      EditWorkspaceBioRoute(
+                      EditGroupBioRoute(
                         bio: workspace.bio ?? "",
                         workspaceId: workspace.id,
                       ),
@@ -346,12 +349,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     final group = bloc.state.workspace;
                     if (group == null) return;
                     final messageId = await context.router.push(
-                      PinnedMessageListRoute(
-                        groupId: "68c7db6d814f50d48db8f735",
-                        // TODO hoannk: Change id
-                        groupName: group.groupName,
-                        groupAvatar: group.groupAvatar,
-                      ),
+                      PinnedMessageListRoute(groupId: bloc.groupId),
                     );
                     if (messageId != null && context.mounted) {
                       context.router.pop(messageId);
@@ -367,11 +365,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   ),
                   title: "group_info.mute_notification".tr(),
                   trailing:
-                      BlocSelector<
-                        GroupInfoBloc,
-                        GroupInfoState,
-                        GroupEntity?
-                      >(
+                      BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
                         selector: (state) => state.workspace,
                         builder: (context, workspace) {
                           return SizedBox(

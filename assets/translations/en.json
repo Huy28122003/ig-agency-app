@@ -54,7 +54,6 @@
     "photo": "Photo",
     "video": "Video",
     "file": "File",
-    "location": "Location",
     "message": "Message",
     "audio": "Audio"
   },
@@ -124,6 +123,10 @@
   },
   "workspace_bio": {
     "title": "Bio",
+    "done": "Done"
+  },
+  "workspace_name": {
+    "title": "Name",
     "done": "Done"
   },
   "members": {

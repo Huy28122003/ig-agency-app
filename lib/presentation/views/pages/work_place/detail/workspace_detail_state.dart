@@ -2,7 +2,7 @@ part of 'workspace_detail_bloc.dart';
 
 class WSDetailState extends BaseState<WSDetailState> {
   const WSDetailState({
-    super.pageStatus = PageStatus.initial,
+    super.pageStatus = PageStatus.loaded,
     super.pageErrorMessage,
     super.processing,
     this.chatMessages = const [],
@@ -29,10 +29,11 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.searchKeyword = "",
     this.messageSearchResults = const [],
     this.showGroupInfo = false,
+    this.groupDetail,
   });
 
   final List<ChatMessageUIModel> chatMessages;
-  final PinnedMessageSummaryUiModel? pinnedMessageSummary;
+  final PinnedMessageSummary? pinnedMessageSummary;
   final MessageEntity? messageReply;
   final bool scrollToBottom;
   final bool showScrollToBottomIcon;
@@ -57,6 +58,8 @@ class WSDetailState extends BaseState<WSDetailState> {
   final List<MessageEntity> messageSearchResults;
   final bool showGroupInfo;
 
+  final GroupDetailEntity? groupDetail;
+
   bool get needLoadMoreOldMessages =>
       pagingStatus != PagingStatus.empty &&
       pagingStatus != PagingStatus.noMoreData;
@@ -67,7 +70,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     String? pageErrorMessage,
     bool? processing,
     List<ChatMessageUIModel>? chatMessages,
-    PinnedMessageSummaryUiModel? pinnedMessageSummary,
+    PinnedMessageSummary? pinnedMessageSummary,
     MessageEntity? messageReply,
     bool forceCloseReplyMessage = false,
     bool? scrollToBottom,
@@ -92,6 +95,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     String? searchKeyword,
     List<MessageEntity>? messageSearchResults,
     bool? showGroupInfo,
+    GroupDetailEntity? groupDetail,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -127,6 +131,7 @@ class WSDetailState extends BaseState<WSDetailState> {
       messageSearchResults: messageSearchResults ?? this.messageSearchResults,
       groupSearchStatus: groupSearchStatus ?? this.groupSearchStatus,
       showGroupInfo: showGroupInfo ?? this.showGroupInfo,
+      groupDetail: groupDetail ?? this.groupDetail,
     );
   }
 
@@ -156,5 +161,6 @@ class WSDetailState extends BaseState<WSDetailState> {
     searchKeyword,
     messageSearchResults,
     showGroupInfo,
+    groupDetail,
   ];
 }

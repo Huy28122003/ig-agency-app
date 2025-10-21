@@ -1,6 +1,6 @@
-import 'package:ig_agency_app/domain/repositories/workspace_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
+import '../../repositories/group_repository.dart';
 
 @injectable
 class UnpinGroupUseCase extends UseCase<void, String> {
@@ -10,6 +10,6 @@ class UnpinGroupUseCase extends UseCase<void, String> {
 
   @override
   Future<void> call(String groupId) async {
-    return await _workspaceRepository.unpinWorkspace(groupId);
+    return await _workspaceRepository.unpinGroup(groupId);
   }
 }

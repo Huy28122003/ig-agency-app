@@ -15,32 +15,14 @@ enum MessageContentType {
 
   const MessageContentType(this.code);
 
-  static MessageContentType fromString(String type) {
-    switch (type.toLowerCase()) {
-      case 'text':
-        return MessageContentType.text;
-      case 'photo':
-        return MessageContentType.photo;
-      case 'video':
-        return MessageContentType.video;
-      case 'document':
-        return MessageContentType.document;
-      case 'audio':
-        return MessageContentType.audio;
-      case 'voice':
-        return MessageContentType.voice;
-      case 'sticker':
-        return MessageContentType.sticker;
-      case 'system':
-        return MessageContentType.system;
-      case 'unknown':
-        return MessageContentType.unknown;
-      default:
-        return MessageContentType.text;
-    }
+  static MessageContentType fromCode(String code) {
+    return MessageContentType.values.firstWhere(
+      (e) => e.code == code,
+      orElse: () => MessageContentType.unknown,
+    );
   }
 
-  String get value {
+  String get title {
     switch (this) {
       case MessageContentType.text:
         return "general.text".tr();
@@ -48,10 +30,8 @@ enum MessageContentType {
         return "general.photo".tr();
       case MessageContentType.video:
         return "general.video".tr();
-      case MessageContentType.system:
-        return "general.message".tr();
       default:
-        return "general.file".tr();
+        return "general.message".tr();
     }
   }
 }
@@ -69,17 +49,11 @@ enum FileType {
 
   const FileType(this.code);
 
-  static FileType fromString(String type) {
-    switch (type.toLowerCase()) {
-      case 'document':
-        return FileType.document;
-      case 'audio':
-        return FileType.audio;
-      case 'voice':
-        return FileType.voice;
-      default:
-        return FileType.document;
-    }
+  static FileType fromCode(String code) {
+    return FileType.values.firstWhere(
+      (e) => e.code == code,
+      orElse: () => FileType.document,
+    );
   }
 }
 
@@ -93,17 +67,10 @@ enum TextSegmentType {
 
   const TextSegmentType(this.code);
 
-  static TextSegmentType fromString(String type) {
-    switch (type.toLowerCase()) {
-      case 'text-mention':
-      case 'mention':
-        return TextSegmentType.tag;
-      case 'url':
-        return TextSegmentType.link;
-      case 'search':
-        return TextSegmentType.search;
-      default:
-        return TextSegmentType.normal;
-    }
+  static TextSegmentType fromCode(String code) {
+    return TextSegmentType.values.firstWhere(
+      (e) => e.code == code,
+      orElse: () => TextSegmentType.normal,
+    );
   }
 }

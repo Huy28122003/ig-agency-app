@@ -1,9 +1,9 @@
-import 'package:ig_agency_app/domain/repositories/workspace_repository.dart';
 import 'package:ig_agency_app/domain/usecases/use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_data_in_group_params.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../entities/file_entity.dart';
+import '../../repositories/group_repository.dart';
 
 @injectable
 class GetFilesInGroupUseCase

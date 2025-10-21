@@ -3,11 +3,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/workspace_tile_tablet_widget.dart';
+import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/group_tile_tablet_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import '../../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../../domain/entities/group_summary.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
@@ -18,15 +18,14 @@ import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/menu_dialog.dart';
 import '../widgets/menu_popup_tablet_widget.dart';
 
-class WorkspaceListTabletLayout extends StatefulWidget {
-  const WorkspaceListTabletLayout({super.key});
+class GroupListTabletLayout extends StatefulWidget {
+  const GroupListTabletLayout({super.key});
 
   @override
-  State<WorkspaceListTabletLayout> createState() =>
-      _WorkspaceListTabletLayoutState();
+  State<GroupListTabletLayout> createState() => _GroupListTabletLayoutState();
 }
 
-class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
+class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
   late RefreshController _searchRefreshController;
   late RefreshController _refreshController;
   late GroupListBloc _workspaceBloc;
@@ -151,7 +150,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
       builder: (_, searchModeState) {
         return Stack(
           children: [
-            BlocSelector<GroupListBloc, GroupListState, List<GroupEntity>>(
+            BlocSelector<GroupListBloc, GroupListState, List<GroupSummary>>(
               selector: (state) {
                 return state.workspaces;
               },
@@ -216,27 +215,27 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                 PinWorkspaceEvent(workspaceId: workspace.id),
                               );
                             },
-                            child: WorkspaceTileTabletWidget(
+                            child: GroupTileTabletWidget(
                               onTap: () {
                                 _workspaceBloc.add(
                                   SelectWorkspaceEvent(id: workspace.id),
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: "1", // TODO hoannk: change id
-                                    groupName: workspace.groupName,
-                                    groupAvatar: workspace.groupAvatar,
+                                    groupId: workspace.id,
+                                    groupName: workspace.name,
+                                    groupAvatar: workspace.avatar,
                                   ),
                                 ]);
                               },
                               isMute: workspace.isMute,
                               isPin: workspace.isPin,
-                              workspaceAvatar: workspace.groupAvatar,
-                              workspaceName: workspace.groupName,
+                              workspaceAvatar: workspace.avatar,
+                              workspaceName: workspace.name,
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              countNewMessage: workspace.countNewMessage,
+                              // countNewMessage: 0,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -260,7 +259,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                     BlocSelector<
                       GroupListBloc,
                       GroupListState,
-                      (List<GroupEntity>, PageStatus)
+                      (List<GroupSummary>, PageStatus)
                     >(
                       selector: (state) {
                         return (state.workspacesSearch, state.searchStatus);
@@ -303,7 +302,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                         onTapMask: () {},
                                         onTapMute: () {},
                                         onTapPin: () {},
-                                        child: WorkspaceTileTabletWidget(
+                                        child: GroupTileTabletWidget(
                                           onTap: () {
                                             _workspaceBloc.add(
                                               SelectWorkspaceEvent(
@@ -313,15 +312,13 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                           },
                                           isMute: workspace.isMute,
                                           isPin: workspace.isPin,
-                                          workspaceAvatar:
-                                              workspace.groupAvatar,
-                                          workspaceName: workspace.groupName,
+                                          workspaceAvatar: workspace.avatar,
+                                          workspaceName: workspace.name,
                                           lastMessage: workspace.lastMessage,
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          countNewMessage:
-                                              workspace.countNewMessage,
+                                          // countNewMessage: 0,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),

@@ -6,13 +6,13 @@ import 'package:ig_agency_app/domain/enums/role.dart';
 extension UserProfileTranslator on UserProfileResponseModel {
   UserEntity toEntity() {
     return UserEntity(
-      id: user.id ?? '',
-      name: user.name ?? '',
-      avatar: user.avatar ?? '',
-      bio: user.bio ?? '',
-      isAdmin: RoleSystem.fromString(user.role ?? 'user') == RoleSystem.admin,
+      id: id ?? '',
+      name: name ?? '',
+      avatar: avatar ?? '',
+      bio: bio ?? '',
+      isAdmin: RoleSystem.fromString(role ?? 'user') == RoleSystem.admin,
       isOnline:
-          ActivityStatus.fromString(user.status ?? 'offline') ==
+          ActivityStatus.fromString(status ?? 'offline') ==
           ActivityStatus.offline,
     );
   }

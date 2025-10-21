@@ -29,7 +29,7 @@ class SearchKeyWorkChangeEvent extends GroupListEvent {
 class SearchLoadMoreEvent extends GroupListEvent {}
 
 class UpdateWorkspaceLastMessageEvent extends GroupListEvent {
-  final GroupEntity workspaceLastMessage;
+  final GroupSummary workspaceLastMessage;
 
   UpdateWorkspaceLastMessageEvent({required this.workspaceLastMessage});
 }

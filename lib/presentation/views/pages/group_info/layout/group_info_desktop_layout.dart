@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../domain/entities/group_entity.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
@@ -124,7 +124,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
         final name = group?.groupName ?? "";
         final id = group?.id ?? '0';
         context.router.push(
-          EditWorkspaceNameRoute(name: name, workspaceId: id),
+          EditGroupNameRoute(name: name, workspaceId: id),
         );
       },
       child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
@@ -195,7 +195,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
                     final workspace = state;
                     if (workspace == null) return;
                     final result = await context.router.push(
-                      EditWorkspaceBioRoute(
+                      EditGroupBioRoute(
                         bio: workspace.bio ?? "",
                         workspaceId: workspace.id,
                       ),
@@ -332,11 +332,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
                     final group = bloc.state.workspace;
                     if (group == null) return;
                     context.router.push(
-                      PinnedMessageListRoute(
-                        groupId: '5',
-                        groupName: group.groupName,
-                        groupAvatar: group.groupAvatar,
-                      ),
+                      PinnedMessageListRoute(groupId: bloc.groupId),
                     );
                   },
                 ),

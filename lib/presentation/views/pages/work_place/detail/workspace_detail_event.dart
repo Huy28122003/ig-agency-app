@@ -82,9 +82,9 @@ class TogglePinMessageFromDetailEvent extends WSDetailEvent {
   final String messageId;
 }
 
-class GetPinnedMessageSummaryEvent extends WSDetailEvent {
-  const GetPinnedMessageSummaryEvent();
-}
+// class GetPinnedMessageSummaryEvent extends WSDetailEvent {
+//   const GetPinnedMessageSummaryEvent();
+// }
 
 class LoadMoreChatMessagesEvent extends WSDetailEvent {
   const LoadMoreChatMessagesEvent();
@@ -132,4 +132,8 @@ class GoToMessageEvent extends WSDetailEvent {
 
 class OnShowGroupInfoEvent extends WSDetailEvent {
   OnShowGroupInfoEvent();
+}
+
+class FetchGroupDetailEvent extends WSDetailEvent {
+  const FetchGroupDetailEvent();
 }
