@@ -9,10 +9,10 @@ import 'layout/group_list_mobile_layout.dart';
 import 'group_list_bloc.dart';
 
 @RoutePage()
-class WorkspaceListPage
+class GroupListPage
     extends
         BasePage<GroupListBloc, GroupListEvent, GroupListState> {
-  const WorkspaceListPage({super.key});
+  const GroupListPage({super.key});
 
   @override
   void onInitState(BuildContext context) {
@@ -22,16 +22,16 @@ class WorkspaceListPage
 
   @override
   Widget mobileBuilder(BuildContext context) {
-    return WorkspaceListMobileLayout();
+    return GroupListMobileLayout();
   }
 
   @override
   Widget? tabletBuilder(BuildContext context) {
-    return WorkspaceListTabletLayout();
+    return GroupListTabletLayout();
   }
 
   @override
   Widget? desktopBuilder(BuildContext context) {
-    return WorkspaceListDesktopLayout();
+    return GroupListDesktopLayout();
   }
 }

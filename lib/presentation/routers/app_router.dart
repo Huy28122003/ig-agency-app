@@ -63,7 +63,7 @@ class AppRouter extends RootStackRouter {
       initial: true,
       children: [
         CustomRoute(
-          page: WorkspaceListRoute.page,
+          page: GroupListRoute.page,
           // transitionsBuilder: TransitionsBuilders.noTransition,
           children: [AutoRoute(page: CreateGroupRoute.page)],
         ),

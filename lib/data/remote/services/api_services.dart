@@ -173,4 +173,10 @@ abstract class ApiService {
     @Path('conversationId') String groupId,
     @Body() UpdateGroupInfoRequest updateGroupInfoRequest,
   );
+
+  @POST('/conversations/{conversationId}/read')
+  Future<void> markAsRead(@Path('conversationId') String groupId);
+
+  @POST('/conversations/{conversationId}/unread')
+  Future<void> markUnread(@Path('conversationId') String groupId);
 }

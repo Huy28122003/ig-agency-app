@@ -5,8 +5,8 @@ import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 
 import '../../../../../../gen/assets.gen.dart';
 
-class WorkspaceTileTabletWidget extends StatefulWidget {
-  const WorkspaceTileTabletWidget({
+class GroupTileTabletWidget extends StatefulWidget {
+  const GroupTileTabletWidget({
     super.key,
     required this.workspaceAvatar,
     required this.workspaceName,
@@ -15,7 +15,7 @@ class WorkspaceTileTabletWidget extends StatefulWidget {
     required this.isSeen,
     required this.isMute,
     required this.isPin,
-    required this.countNewMessage,
+    // required this.countNewMessage,
     required this.onTap,
     required this.isSelected,
   });
@@ -27,16 +27,16 @@ class WorkspaceTileTabletWidget extends StatefulWidget {
   final bool isSeen;
   final bool isMute;
   final bool isPin;
-  final int countNewMessage;
+
+  // final int countNewMessage;
   final VoidCallback onTap;
   final bool isSelected;
 
   @override
-  State<WorkspaceTileTabletWidget> createState() =>
-      _WorkspaceTileTabletWidgetState();
+  State<GroupTileTabletWidget> createState() => _GroupTileTabletWidgetState();
 }
 
-class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
+class _GroupTileTabletWidgetState extends State<GroupTileTabletWidget> {
   final now = DateTime.now();
 
   @override
@@ -104,10 +104,11 @@ class _WorkspaceTileTabletWidgetState extends State<WorkspaceTileTabletWidget> {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    (widget.countNewMessage > 1 &&
-                                            !widget.isSeen)
-                                        ? "${widget.countNewMessage} new messages"
-                                        : widget.lastMessage,
+                                    // (widget.countNewMessage > 1 &&
+                                    //         !widget.isSeen)
+                                    //     ? "${widget.countNewMessage} new messages"
+                                    //     : widget.lastMessage,
+                                    widget.lastMessage,
                                     style: TextStyle(
                                       fontFamily: FontFamily.segoeUI,
                                       fontSize: 14,

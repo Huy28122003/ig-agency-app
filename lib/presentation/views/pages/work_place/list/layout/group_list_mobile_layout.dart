@@ -15,17 +15,17 @@ import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/header_home_view.dart';
 import '../../../../widgets/menu_dialog.dart';
 import '../widgets/menu_popup_mobile_widget.dart';
-import '../widgets/workspace_tile_mobile_widget.dart';
+import '../widgets/group_tile_mobile_widget.dart';
 
-class WorkspaceListMobileLayout extends StatefulWidget {
-  const WorkspaceListMobileLayout({super.key});
+class GroupListMobileLayout extends StatefulWidget {
+  const GroupListMobileLayout({super.key});
 
   @override
-  State<WorkspaceListMobileLayout> createState() =>
-      _WorkspaceListMobileLayoutState();
+  State<GroupListMobileLayout> createState() =>
+      _GroupListMobileLayoutState();
 }
 
-class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
+class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
   late GroupListBloc _workspaceBloc;
 
   @override
@@ -141,7 +141,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                   PinWorkspaceEvent(workspaceId: workspace.id),
                 );
               },
-              child: WorkspaceTileMobileWidget(
+              child: GroupTileMobileWidget(
                 onTap: () {
                   context.router.push(
                     WSDetailRoute(
@@ -158,7 +158,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 lastMessage: workspace.lastMessage,
                 lastMessageTime: workspace.lastMessageTime,
                 isSeen: workspace.isSeen,
-                countNewMessage: 10,
+                // countNewMessage: 10,
               ),
             );
           },
@@ -223,7 +223,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                       PinWorkspaceEvent(workspaceId: workspace.id),
                     );
                   },
-                  child: WorkspaceTileMobileWidget(
+                  child: GroupTileMobileWidget(
                     onTap: () {},
                     isSearchMode: true,
                     isMute: workspace.isMute,
@@ -234,7 +234,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                     lastMessageTime: workspace.lastMessageTime,
                     isSeen: workspace.isSeen,
                     //todo
-                    countNewMessage: 0,
+                    // countNewMessage: 0,
                   ),
                 );
               },

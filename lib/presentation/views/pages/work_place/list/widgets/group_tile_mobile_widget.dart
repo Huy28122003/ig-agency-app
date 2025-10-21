@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
@@ -6,8 +5,8 @@ import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.d
 import 'package:ig_agency_app/shared/extensions/date_time_extension.dart';
 import '../../../../../../gen/assets.gen.dart';
 
-class WorkspaceTileMobileWidget extends StatelessWidget {
-  const WorkspaceTileMobileWidget({
+class GroupTileMobileWidget extends StatelessWidget {
+  const GroupTileMobileWidget({
     super.key,
     required this.workspaceAvatar,
     required this.workspaceName,
@@ -16,7 +15,7 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
     required this.isSeen,
     required this.isMute,
     required this.isPin,
-    required this.countNewMessage,
+    // required this.countNewMessage,
     required this.onTap,
     this.isSearchMode = false,
   });
@@ -28,7 +27,8 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
   final bool isSeen;
   final bool isMute;
   final bool isPin;
-  final int countNewMessage;
+
+  // final int countNewMessage;
   final bool isSearchMode;
   final VoidCallback onTap;
 
@@ -108,47 +108,50 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    (countNewMessage > 1 && !isSeen)
-                                        ? "$countNewMessage ${'workspace.new_message'.tr()}"
-                                        : lastMessage,
+                            if (lastMessage.isNotEmpty)
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      // (countNewMessage > 1 && !isSeen)
+                                      //     ? "$countNewMessage ${'workspace.new_message'.tr()}"
+                                      //     : lastMessage,
+                                      lastMessage,
+                                      style: TextStyle(
+                                        fontFamily: FontFamily.segoeUI,
+                                        fontSize: 14,
+                                        height: 20 / 14,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontWeight: isSeen
+                                            ? FontWeight.w400
+                                            : FontWeight.w700,
+                                      ),
+                                      maxLines: 1,
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 4),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.textDefaultTextSub2,
+                                    ),
+                                    width: 4,
+                                    height: 4,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    lastMessageTime
+                                            ?.convertDateTimeToString() ??
+                                        '',
                                     style: TextStyle(
                                       fontFamily: FontFamily.segoeUI,
                                       fontSize: 14,
                                       height: 20 / 14,
-                                      overflow: TextOverflow.ellipsis,
-                                      fontWeight: isSeen
-                                          ? FontWeight.w400
-                                          : FontWeight.w700,
                                     ),
-                                    maxLines: 1,
                                   ),
-                                ),
-
-                                const SizedBox(width: 4),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.textDefaultTextSub2,
-                                  ),
-                                  width: 4,
-                                  height: 4,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  lastMessageTime?.convertDateTimeToString() ??
-                                      '',
-                                  style: TextStyle(
-                                    fontFamily: FontFamily.segoeUI,
-                                    fontSize: 14,
-                                    height: 20 / 14,
-                                  ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                           ],
                         ),
                       ),
