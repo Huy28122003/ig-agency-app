@@ -4,6 +4,7 @@ import 'package:ig_agency_app/data/remote/models/requests/forgot_password_reques
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/search_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/update_group_info_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/message_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/forgot_password_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
@@ -165,5 +166,11 @@ abstract class ApiService {
     @Path("conversationId") String groupId,
     @Query("limit") int limit,
     @Query("offset") int offset,
+  );
+
+  @PUT('/conversations/{conversationId}')
+  Future<void> updateGroupBio(
+    @Path('conversationId') String groupId,
+    @Body() UpdateGroupInfoRequest updateGroupInfoRequest,
   );
 }

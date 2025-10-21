@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/data/remote/models/response/group_response.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 
 import '../../../domain/entities/group_entity.dart';
 
@@ -22,7 +23,7 @@ extension GroupTranslator on GroupResponse {
       // lastMessageTime: lastMessageTime,
       // isPin: pinned,
       //todo
-      groupAvatar: "https://i.pravatar.cc/150?img=1",
+      groupAvatar: photo?.bigFilePath.withBaseUrl() ?? '',
       // isSeen: true,
       isMute: true,
       countPin: pinnedMessageCount,

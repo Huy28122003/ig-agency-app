@@ -59,4 +59,6 @@ abstract class GroupRemoteDataSource {
   Future<void> deleteGroup(String groupId);
 
   Future<GroupResponse> getGroupInfo(String groupId);
+
+  Future<void> updateGroupBio(String groupId, String bio);
 }

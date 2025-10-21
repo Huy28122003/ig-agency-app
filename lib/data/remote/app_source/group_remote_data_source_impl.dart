@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
+import 'package:ig_agency_app/data/remote/models/requests/update_group_info_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
@@ -232,6 +233,18 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         request.groupId,
         request.limit,
         request.offset,
+      );
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> updateGroupBio(String groupId, String bio) async {
+    try {
+      await _apiService.updateGroupBio(
+        groupId,
+        UpdateGroupInfoRequest(bio: bio),
       );
     } catch (e) {
       throw ExceptionConverter.convert(e);

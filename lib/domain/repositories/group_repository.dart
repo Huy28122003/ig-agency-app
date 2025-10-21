@@ -75,7 +75,7 @@ abstract class GroupRepository {
 
   Stream<GroupEntity> listenLastMessages();
 
-  Future<bool> updateGroupBio({required String groupId, required String bio});
+  Future<void> updateGroupBio({required String groupId, required String bio});
 
   Future<bool> updateGroupName({required String groupId, required String name});
 

@@ -104,6 +104,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
               return CircleNetworkAvatar(
                 size: 80,
                 imageUrl: state?.groupAvatar ?? "",
+                isGroupAvt: true,
               );
             },
           ),
