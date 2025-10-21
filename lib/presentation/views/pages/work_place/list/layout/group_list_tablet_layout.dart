@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/workspace_tile_tablet_widget.dart';
+import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/group_tile_tablet_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
@@ -18,16 +18,15 @@ import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/menu_dialog.dart';
 import '../widgets/menu_popup_tablet_widget.dart';
 
-class WorkspaceListDesktopLayout extends StatefulWidget {
-  const WorkspaceListDesktopLayout({super.key});
+class GroupListTabletLayout extends StatefulWidget {
+  const GroupListTabletLayout({super.key});
 
   @override
-  State<WorkspaceListDesktopLayout> createState() =>
-      _WorkspaceListDesktopLayoutState();
+  State<GroupListTabletLayout> createState() =>
+      _GroupListTabletLayoutState();
 }
 
-class _WorkspaceListDesktopLayoutState
-    extends State<WorkspaceListDesktopLayout> {
+class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
   late RefreshController _searchRefreshController;
   late RefreshController _refreshController;
   late GroupListBloc _workspaceBloc;
@@ -217,7 +216,7 @@ class _WorkspaceListDesktopLayoutState
                                 PinWorkspaceEvent(workspaceId: workspace.id),
                               );
                             },
-                            child: WorkspaceTileTabletWidget(
+                            child: GroupTileTabletWidget(
                               onTap: () {
                                 _workspaceBloc.add(
                                   SelectWorkspaceEvent(id: workspace.id),
@@ -237,8 +236,7 @@ class _WorkspaceListDesktopLayoutState
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              //todo
-                              countNewMessage: 10,
+                              // countNewMessage: 0,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -305,7 +303,7 @@ class _WorkspaceListDesktopLayoutState
                                         onTapMask: () {},
                                         onTapMute: () {},
                                         onTapPin: () {},
-                                        child: WorkspaceTileTabletWidget(
+                                        child: GroupTileTabletWidget(
                                           onTap: () {
                                             _workspaceBloc.add(
                                               SelectWorkspaceEvent(
@@ -321,8 +319,7 @@ class _WorkspaceListDesktopLayoutState
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          //todo
-                                          countNewMessage: 10,
+                                          // countNewMessage: 0,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),

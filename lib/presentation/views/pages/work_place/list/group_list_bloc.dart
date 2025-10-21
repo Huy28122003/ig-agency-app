@@ -64,8 +64,6 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleSubEvent<SearchDebouncedEvent>(_onSearchDebounced);
     handleSubEvent<SearchKeyWorkChangeEvent>(_onSearchKeyWordChange);
     handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
-    handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
-    handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
   }
 
   Future<void> _onMuteWorkspace(
@@ -146,24 +144,28 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     SeenWorkspaceEvent event,
     Emitter<GroupListState> emit,
   ) async {
-    List<GroupSummary> workspaces = List.from(state.workspaces);
-    int indexWorkspace = workspaces.indexWhere(
-      (e) => e.id == event.workspaceId,
-    );
-    if (indexWorkspace == -1) return;
+    try {
+      List<GroupSummary> workspaces = List.from(state.workspaces);
+      int indexWorkspace = workspaces.indexWhere(
+        (e) => e.id == event.workspaceId,
+      );
+      if (indexWorkspace == -1) return;
 
-    if (workspaces[indexWorkspace].isSeen) {
-      await _markUnreadUseCase.call(event.workspaceId);
-    } else {
-      await _markAsReadUseCase.call(event.workspaceId);
+      if (workspaces[indexWorkspace].isSeen) {
+        await _markUnreadUseCase.call(event.workspaceId);
+      } else {
+        await _markAsReadUseCase.call(event.workspaceId);
+      }
+
+      // Tu cap nhat lai ui o local khong can fetch lai data
+      workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
+        isSeen: !workspaces[indexWorkspace].isSeen,
+      );
+      _sort(workspaces);
+      emit(state.copyWith(workspaces: workspaces));
+    } catch (e) {
+      handleError(emit, e);
     }
-
-    // Tu cap nhat lai ui o local khong can fetch lai data
-    workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
-      isSeen: !workspaces[indexWorkspace].isSeen,
-    );
-    _sort(workspaces);
-    emit(state.copyWith(workspaces: workspaces));
   }
 
   Future<void> _onUpdateWorkspaceLastMessage(

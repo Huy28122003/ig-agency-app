@@ -11,6 +11,6 @@ class MarkUnreadUseCase extends UseCase<void, String> {
 
   @override
   Future<void> call(String groupId) async {
-    return await _workspaceRepository.markAsRead(groupId);
+    return await _workspaceRepository.markUnread(groupId);
   }
 }

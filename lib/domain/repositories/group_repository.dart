@@ -130,4 +130,6 @@ abstract class GroupRepository {
   Future<void> deleteGroup(String workspaceId);
 
   Future<void> markAsRead(String groupId);
+
+  Future<void> markUnread(String groupId);
 }
