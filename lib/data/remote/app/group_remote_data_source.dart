@@ -1,5 +1,7 @@
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import '../../../domain/entities/message/message.dart';
+import '../models/requests/get_groups_request.dart';
+import '../models/response/group_summary_response.dart';
 import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
 
@@ -44,4 +46,14 @@ abstract class GroupRemoteDataSource {
     required String groupId,
     required String query,
   });
+
+  Future<List<GroupSummaryResponse>> getGroups({
+    required GetGroupsRequest getWorkspacesRequest,
+  });
+
+  Future<void> pinGroup(String groupId);
+
+  Future<void> unpinGroup(String groupId);
+
+  Future<void> deleteGroup(String groupId);
 }

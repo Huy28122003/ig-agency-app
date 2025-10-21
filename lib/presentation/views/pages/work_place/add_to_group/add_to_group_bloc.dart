@@ -1,27 +1,25 @@
 import 'dart:async';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:rxdart/rxdart.dart';
-
-import '../../../../../domain/entities/workspace_entity.dart';
-import '../../../../../domain/repositories/workspace_repository.dart';
+import '../../../../../domain/entities/group_entity.dart';
+import '../../../../../domain/repositories/group_repository.dart';
 import '../../../../../shared/commons/models/pagination.dart';
 
 part 'add_to_group_event.dart';
+
 part 'add_to_group_state.dart';
 
 @injectable
 class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
-  final WorkspaceRepository _repo;
+  final GroupRepository _repo;
 
-  AddToGroupBloc({required WorkspaceRepository repo})
+  AddToGroupBloc({required GroupRepository repo})
     : _repo = repo,
       super(AddToGroupState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -47,7 +45,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
       ),
     );
 
-    final List<WorkspaceEntity> listGroup = await _repo.getListGroup(
+    final List<GroupEntity> listGroup = await _repo.getListGroup(
       pagination: state.pagination,
       keySearch: state.searchKeyWord,
     );
@@ -81,7 +79,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
       page: state.pagination.page + 1,
     );
 
-    final List<WorkspaceEntity> listGroup = await _repo.getListGroup(
+    final List<GroupEntity> listGroup = await _repo.getListGroup(
       pagination: pagination,
       keySearch: state.searchKeyWord,
     );
@@ -108,9 +106,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
     SelectGroupEvent event,
     Emitter<AddToGroupState> emit,
   ) async {
-    final List<WorkspaceEntity> listSelectedGroup = [
-      ...state.listSelectedGroup,
-    ];
+    final List<GroupEntity> listSelectedGroup = [...state.listSelectedGroup];
     if (event.isSelected) {
       listSelectedGroup.add(event.group);
     } else {

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:ig_agency_app/data/remote/models/requests/get_groups_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
@@ -15,6 +16,7 @@ import '../models/requests/change_password_request_model.dart';
 import '../models/requests/send_message_request_model.dart';
 import '../models/requests/delete_message_request_model.dart';
 import '../models/requests/update_profile_request_model.dart';
+import '../models/response/group_summary_response.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/profile_info_response.dart';
 import '../models/response/group_detail_response_model.dart';
@@ -140,4 +142,19 @@ abstract class ApiService {
     @Path('conversationId') String conversationId,
     @Query('search') String search,
   );
+
+  //Group
+  @GET('/conversations')
+  Future<List<GroupSummaryResponse>> getGroups(
+    @Queries() GetGroupsRequest request,
+  );
+
+  @POST('/pinned-conversations/{conversationId}')
+  Future<void> pinGroup(@Path('conversationId') String groupId);
+
+  @DELETE('/pinned-conversations/{conversationId}')
+  Future<void> unpinGroup(@Path('conversationId') String groupId);
+
+  @DELETE('/conversations/{conversationId}')
+  Future<void> deleteGroup(@Path('conversationId') String groupId);
 }

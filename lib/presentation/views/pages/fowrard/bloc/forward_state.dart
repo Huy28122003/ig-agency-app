@@ -16,8 +16,8 @@ class ForwardState extends BaseState<ForwardState> {
 
   final PageStatus searchStatus;
 
-  final List<WorkspaceEntity> workspaces;
-  final List<WorkspaceEntity> workspacesSearch;
+  final List<GroupSummary> workspaces;
+  final List<GroupSummary> workspacesSearch;
   final PagingStatus pagingStatus;
   final PagingStatus searchPagingStatus;
   final String searchKeyWord;
@@ -30,8 +30,8 @@ class ForwardState extends BaseState<ForwardState> {
     String? pageErrorMessage,
     String? searchKeyWord,
     bool? processing,
-    List<WorkspaceEntity>? workspaces,
-    List<WorkspaceEntity>? workspacesSearch,
+    List<GroupSummary>? workspaces,
+    List<GroupSummary>? workspacesSearch,
     List<String>? sentGroups,
     PagingStatus? pagingStatus,
     PagingStatus? searchPagingStatus,

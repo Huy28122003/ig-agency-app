@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 enum MessageContentType {
   text("text"),
   photo("photo"),
@@ -18,6 +20,19 @@ enum MessageContentType {
       (e) => e.code == code,
       orElse: () => MessageContentType.unknown,
     );
+  }
+
+  String get title {
+    switch (this) {
+      case MessageContentType.text:
+        return "general.text".tr();
+      case MessageContentType.photo:
+        return "general.photo".tr();
+      case MessageContentType.video:
+        return "general.video".tr();
+      default:
+        return "general.message".tr();
+    }
   }
 }
 

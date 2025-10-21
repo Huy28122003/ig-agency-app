@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/workspace_list_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
-import '../../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../../domain/entities/group_summary.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../../shared/commons/enums/status.dart';
 import '../../../../../resources/colors.dart';
@@ -26,13 +26,13 @@ class WorkspaceListMobileLayout extends StatefulWidget {
 }
 
 class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
-  late WorkspaceListBloc _workspaceBloc;
+  late GroupListBloc _workspaceBloc;
 
   @override
   void initState() {
     super.initState();
 
-    _workspaceBloc = context.read<WorkspaceListBloc>();
+    _workspaceBloc = context.read<GroupListBloc>();
   }
 
   @override
@@ -49,7 +49,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+    return BlocSelector<GroupListBloc, GroupListState, String>(
       selector: (state) {
         return state.searchKeyWord;
       },
@@ -82,7 +82,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
   }
 
   Widget _buildNormalModel() {
-    return BlocBuilder<WorkspaceListBloc, WorkspaceListState>(
+    return BlocBuilder<GroupListBloc, GroupListState>(
       buildWhen: (pre, cur) {
         return pre.pagingStatus != cur.pagingStatus ||
             pre.workspaces != cur.workspaces;
@@ -106,7 +106,11 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
               isMute: workspace.isMute,
               isPin: workspace.isPin,
               isSeen: workspace.isSeen,
-              onTapDelete: () async {},
+              onTapDelete: () async {
+                _workspaceBloc.add(
+                  DeleteWorkspaceEvent(workspaceId: workspace.id),
+                );
+              },
               onTapMask: () {
                 _workspaceBloc.add(
                   SeenWorkspaceEvent(workspaceId: workspace.id),
@@ -141,21 +145,20 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 onTap: () {
                   context.router.push(
                     WSDetailRoute(
-                      groupId:
-                          '68c7db6d814f50d48db8f735', // TODO hoannk: change id
-                      groupName: workspace.workspaceName,
-                      groupAvatar: workspace.workspaceAvatar,
+                      groupId: workspace.id,
+                      groupName: workspace.name,
+                      groupAvatar: workspace.avatar,
                     ),
                   );
                 },
                 isMute: workspace.isMute,
                 isPin: workspace.isPin,
-                workspaceAvatar: workspace.workspaceAvatar,
-                workspaceName: workspace.workspaceName,
+                workspaceAvatar: workspace.avatar,
+                workspaceName: workspace.name,
                 lastMessage: workspace.lastMessage,
                 lastMessageTime: workspace.lastMessageTime,
                 isSeen: workspace.isSeen,
-                countNewMessage: workspace.countNewMessage,
+                countNewMessage: 10,
               ),
             );
           },
@@ -166,9 +169,9 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
 
   Widget _buildSearchMode() {
     return BlocSelector<
-      WorkspaceListBloc,
-      WorkspaceListState,
-      (List<WorkspaceEntity>, PageStatus, PagingStatus)
+      GroupListBloc,
+      GroupListState,
+      (List<GroupSummary>, PageStatus, PagingStatus)
     >(
       selector: (state) {
         return (
@@ -204,21 +207,34 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                   isMute: workspace.isMute,
                   isPin: workspace.isPin,
                   isSeen: workspace.isSeen,
-                  onTapDelete: () {},
+                  onTapDelete: () {
+                    _workspaceBloc.add(
+                      DeleteWorkspaceEvent(workspaceId: workspace.id),
+                    );
+                  },
                   onTapMask: () {},
-                  onTapMute: () {},
-                  onTapPin: () {},
+                  onTapMute: () {
+                    _workspaceBloc.add(
+                      MuteWorkspaceEvent(workspaceId: workspace.id),
+                    );
+                  },
+                  onTapPin: () {
+                    _workspaceBloc.add(
+                      PinWorkspaceEvent(workspaceId: workspace.id),
+                    );
+                  },
                   child: WorkspaceTileMobileWidget(
                     onTap: () {},
                     isSearchMode: true,
                     isMute: workspace.isMute,
                     isPin: workspace.isPin,
-                    workspaceAvatar: workspace.workspaceAvatar,
-                    workspaceName: workspace.workspaceName,
+                    workspaceAvatar: workspace.avatar,
+                    workspaceName: workspace.name,
                     lastMessage: workspace.lastMessage,
                     lastMessageTime: workspace.lastMessageTime,
                     isSeen: workspace.isSeen,
-                    countNewMessage: workspace.countNewMessage,
+                    //todo
+                    countNewMessage: 0,
                   ),
                 );
               },
@@ -239,7 +255,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(100),
         ),
-        child: BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
+        child: BlocSelector<GroupListBloc, GroupListState, String>(
           selector: (state) {
             return state.searchKeyWord;
           },

@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/group_info/widgets/group_info_card_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
@@ -95,17 +95,15 @@ class GroupInfoMobileLayout extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: () {
-            //todo
-          },
-          child: BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+          onTap: () {},
+          child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
             selector: (state) {
               return state.workspace;
             },
             builder: (context, state) {
               return CircleNetworkAvatar(
                 size: 80,
-                imageUrl: state?.workspaceAvatar ?? "",
+                imageUrl: state?.groupAvatar ?? "",
               );
             },
           ),
@@ -138,10 +136,10 @@ class GroupInfoMobileLayout extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final name =
-            context.read<GroupInfoBloc>().state.workspace?.workspaceName ?? "";
+            context.read<GroupInfoBloc>().state.workspace?.groupName ?? "";
         context.router.push(EditNameRoute(name: name));
       },
-      child: BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+      child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
         selector: (state) {
           return state.workspace;
         },
@@ -151,7 +149,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  state?.workspaceName ?? "",
+                  state?.groupName ?? "",
                   style: TextStyle(
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w700,
@@ -180,7 +178,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
   Widget _buildBody(BuildContext context, GroupInfoBloc bloc) {
     return Column(
       children: [
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -225,7 +223,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
         ),
 
         SizedBox(height: 12),
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -251,8 +249,8 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     context.router.push(
                       WSDetailRoute(
                         groupId: workspace.id,
-                        groupName: workspace.workspaceName,
-                        groupAvatar: workspace.workspaceAvatar,
+                        groupName: workspace.groupName,
+                        groupAvatar: workspace.groupAvatar,
                         isSearchMode: true,
                       ),
                     );
@@ -291,7 +289,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
         ),
         SizedBox(height: 12),
 
-        BlocSelector<GroupInfoBloc, GroupInfoState, WorkspaceEntity?>(
+        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
           selector: (state) {
             return state.workspace;
           },
@@ -343,12 +341,11 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   onTap: () async {
-                    // final group = bloc.state.workspace;
-                    // if (group == null) return;
+                    final group = bloc.state.workspace;
+                    if (group == null) return;
                     final messageId = await context.router.push(
                       PinnedMessageListRoute(
-                        groupId: "68c7db6d814f50d48db8f735",
-                        // TODO hoannk: Change id
+                        groupId: bloc.groupId,
                       ),
                     );
                     if (messageId != null && context.mounted) {
@@ -365,11 +362,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   ),
                   title: "group_info.mute_notification".tr(),
                   trailing:
-                      BlocSelector<
-                        GroupInfoBloc,
-                        GroupInfoState,
-                        WorkspaceEntity?
-                      >(
+                      BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
                         selector: (state) => state.workspace,
                         builder: (context, workspace) {
                           return SizedBox(

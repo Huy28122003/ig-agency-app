@@ -156,6 +156,7 @@ class _OtpMobileLayoutState extends State<OtpMobileLayout> {
                       fontWeight: FontWeight.w500,
                       color: AppColors.outlinePrimaryDefault,
                       fontSize: 24,
+                      height: 1,
                     ),
                     fieldBorderRadius: 8.8,
                     fieldBorderWidth: 1.1,

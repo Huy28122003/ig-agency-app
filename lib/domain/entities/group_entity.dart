@@ -1,9 +1,9 @@
-class WorkspaceEntity {
+class GroupEntity {
   final String id;
-  final String workspaceAvatar;
-  final String workspaceName;
+  final String groupAvatar;
+  final String groupName;
   final String lastMessage;
-  final DateTime lastMessageTime;
+  final DateTime? lastMessageTime;
   final bool isSeen;
   final bool isMute;
   final bool isPin;
@@ -12,12 +12,12 @@ class WorkspaceEntity {
   final String? bio;
   final int countPin;
 
-  WorkspaceEntity({
+  GroupEntity({
     required this.id,
-    required this.workspaceAvatar,
-    required this.workspaceName,
-    required this.lastMessage,
-    required this.lastMessageTime,
+    required this.groupAvatar,
+    required this.groupName,
+    this.lastMessage = "",
+     this.lastMessageTime,
     required this.isSeen,
     required this.isMute,
     required this.isPin,
@@ -27,10 +27,10 @@ class WorkspaceEntity {
     this.bio,
   });
 
-  WorkspaceEntity copyWith({
+  GroupEntity copyWith({
     String? id,
-    String? workspaceAvatar,
-    String? workspaceName,
+    String? groupAvatar,
+    String? groupName,
     String? lastMessage,
     DateTime? lastMessageTime,
     bool? isSeen,
@@ -41,10 +41,10 @@ class WorkspaceEntity {
     int? countPin,
     String? bio,
   }) {
-    return WorkspaceEntity(
+    return GroupEntity(
       id: id ?? this.id,
-      workspaceAvatar: workspaceAvatar ?? this.workspaceAvatar,
-      workspaceName: workspaceName ?? this.workspaceName,
+      groupAvatar: groupAvatar ?? this.groupAvatar,
+      groupName: groupName ?? this.groupName,
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
       isSeen: isSeen ?? this.isSeen,

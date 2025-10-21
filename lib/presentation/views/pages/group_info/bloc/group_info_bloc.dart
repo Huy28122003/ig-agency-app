@@ -1,4 +1,4 @@
-import 'package:ig_agency_app/domain/entities/workspace_entity.dart';
+import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_workspace_by_id_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/update_workspace_notification_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
@@ -41,7 +41,7 @@ class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
       if (current == null) return;
 
       final updated = current.copyWith(
-        workspaceName: event.workspaceName,
+        groupName: event.workspaceName,
         bio: event.bio,
         isMute: event.isMute,
         countMember: event.countMember,

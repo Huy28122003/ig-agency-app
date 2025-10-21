@@ -12,7 +12,7 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
     required this.workspaceAvatar,
     required this.workspaceName,
     required this.lastMessage,
-    required this.lastMessageTime,
+    this.lastMessageTime,
     required this.isSeen,
     required this.isMute,
     required this.isPin,
@@ -24,7 +24,7 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
   final String workspaceAvatar;
   final String workspaceName;
   final String lastMessage;
-  final DateTime lastMessageTime;
+  final DateTime? lastMessageTime;
   final bool isSeen;
   final bool isMute;
   final bool isPin;
@@ -127,6 +127,7 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
                                     maxLines: 1,
                                   ),
                                 ),
+
                                 const SizedBox(width: 4),
                                 Container(
                                   decoration: BoxDecoration(
@@ -138,7 +139,8 @@ class WorkspaceTileMobileWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  lastMessageTime.convertDateTimeToString(),
+                                  lastMessageTime?.convertDateTimeToString() ??
+                                      '',
                                   style: TextStyle(
                                     fontFamily: FontFamily.segoeUI,
                                     fontSize: 14,

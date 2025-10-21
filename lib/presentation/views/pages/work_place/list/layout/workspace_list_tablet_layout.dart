@@ -7,7 +7,7 @@ import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/w
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/workspace_list_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import '../../../../../../domain/entities/workspace_entity.dart';
+import '../../../../../../domain/entities/group_summary.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../../gen/fonts.gen.dart';
 import '../../../../../../shared/commons/enums/status.dart';
@@ -29,7 +29,7 @@ class WorkspaceListTabletLayout extends StatefulWidget {
 class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
   late RefreshController _searchRefreshController;
   late RefreshController _refreshController;
-  late WorkspaceListBloc _workspaceBloc;
+  late GroupListBloc _workspaceBloc;
 
   @override
   void initState() {
@@ -37,17 +37,17 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
     _refreshController = RefreshController();
     _searchRefreshController = RefreshController();
 
-    _workspaceBloc = context.read<WorkspaceListBloc>();
+    _workspaceBloc = context.read<GroupListBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<WorkspaceListBloc, WorkspaceListState>(
+    return BlocListener<GroupListBloc, GroupListState>(
       listener: (_, state) {
         _refreshController.refresh(state.pagingStatus);
       },
       listenWhen: (prev, curr) => prev.pagingStatus != curr.pagingStatus,
-      child: BlocListener<WorkspaceListBloc, WorkspaceListState>(
+      child: BlocListener<GroupListBloc, GroupListState>(
         listener: (_, state) {
           if (state.pageStatus == PageStatus.failure) {
             // todo
@@ -118,25 +118,24 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child:
-                  BlocSelector<WorkspaceListBloc, WorkspaceListState, String>(
-                    selector: (state) {
-                      return state.searchKeyWord;
-                    },
-                    builder: (_, state) {
-                      return AppSearchTextField(
-                        value: state,
-                        onSearchEnable: (value) {},
-                        onChanged: (value) {
-                          _workspaceBloc.add(
-                            SearchKeyWorkChangeEvent(value: value),
-                          );
-                          _workspaceBloc.add(SearchEvent(value: value));
-                        },
-                        hintText: "workspace.hint_text_search".tr(),
+              child: BlocSelector<GroupListBloc, GroupListState, String>(
+                selector: (state) {
+                  return state.searchKeyWord;
+                },
+                builder: (_, state) {
+                  return AppSearchTextField(
+                    value: state,
+                    onSearchEnable: (value) {},
+                    onChanged: (value) {
+                      _workspaceBloc.add(
+                        SearchKeyWorkChangeEvent(value: value),
                       );
+                      _workspaceBloc.add(SearchEvent(value: value));
                     },
-                  ),
+                    hintText: "workspace.hint_text_search".tr(),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -145,18 +144,14 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
   }
 
   Widget _buildBody() {
-    return BlocSelector<WorkspaceListBloc, WorkspaceListState, bool>(
+    return BlocSelector<GroupListBloc, GroupListState, bool>(
       selector: (searchModeState) {
         return searchModeState.isSearchMode;
       },
       builder: (_, searchModeState) {
         return Stack(
           children: [
-            BlocSelector<
-              WorkspaceListBloc,
-              WorkspaceListState,
-              List<WorkspaceEntity>
-            >(
+            BlocSelector<GroupListBloc, GroupListState, List<GroupSummary>>(
               selector: (state) {
                 return state.workspaces;
               },
@@ -178,8 +173,8 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                     itemBuilder: (_, index) {
                       final workspace = state[index];
                       return BlocSelector<
-                        WorkspaceListBloc,
-                        WorkspaceListState,
+                        GroupListBloc,
+                        GroupListState,
                         String?
                       >(
                         selector: (state) {
@@ -228,21 +223,20 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                 );
                                 context.router.replaceAll([
                                   WSDetailRoute(
-                                    groupId: '68c7db6d814f50d48db8f735',
-                                    // TODO hoannk: change id
-                                    groupName: workspace.workspaceName,
-                                    groupAvatar: workspace.workspaceAvatar,
+                                    groupId: workspace.id,
+                                    groupName: workspace.name,
+                                    groupAvatar: workspace.avatar,
                                   ),
                                 ]);
                               },
                               isMute: workspace.isMute,
                               isPin: workspace.isPin,
-                              workspaceAvatar: workspace.workspaceAvatar,
-                              workspaceName: workspace.workspaceName,
+                              workspaceAvatar: workspace.avatar,
+                              workspaceName: workspace.name,
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              countNewMessage: workspace.countNewMessage,
+                              countNewMessage: 0,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -256,7 +250,7 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
               },
             ),
             if (searchModeState)
-              BlocListener<WorkspaceListBloc, WorkspaceListState>(
+              BlocListener<GroupListBloc, GroupListState>(
                 listener: (_, state) {
                   _searchRefreshController.refresh(state.pagingStatusSearch);
                 },
@@ -264,9 +258,9 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                     prev.pagingStatusSearch != curr.pagingStatusSearch,
                 child:
                     BlocSelector<
-                      WorkspaceListBloc,
-                      WorkspaceListState,
-                      (List<WorkspaceEntity>, PageStatus)
+                      GroupListBloc,
+                      GroupListState,
+                      (List<GroupSummary>, PageStatus)
                     >(
                       selector: (state) {
                         return (state.workspacesSearch, state.searchStatus);
@@ -293,8 +287,8 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                   final workspace = workspaces[index];
 
                                   return BlocSelector<
-                                    WorkspaceListBloc,
-                                    WorkspaceListState,
+                                    GroupListBloc,
+                                    GroupListState,
                                     String?
                                   >(
                                     selector: (state) {
@@ -319,16 +313,13 @@ class _WorkspaceListTabletLayoutState extends State<WorkspaceListTabletLayout> {
                                           },
                                           isMute: workspace.isMute,
                                           isPin: workspace.isPin,
-                                          workspaceAvatar:
-                                              workspace.workspaceAvatar,
-                                          workspaceName:
-                                              workspace.workspaceName,
+                                          workspaceAvatar: workspace.avatar,
+                                          workspaceName: workspace.name,
                                           lastMessage: workspace.lastMessage,
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          countNewMessage:
-                                              workspace.countNewMessage,
+                                          countNewMessage: 0,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),

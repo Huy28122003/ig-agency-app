@@ -23,7 +23,13 @@
     "done": "Hoàn thành",
     "send_to": "Gửi đến",
     "search": "Tìm kiếm",
-    "send": "Gửi"
+    "send": "Gửi",
+    "text": "Văn bản",
+    "photo": "Ảnh",
+    "video": "Video",
+    "file": "Tệp",
+    "message": "Tin nhắn",
+    "audio": "Âm thanh"
   },
   "forgot_password": {
     "forgot_password": "Quên mật khẩu?",
