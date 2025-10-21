@@ -343,21 +343,23 @@ class GroupRepositoryImpl implements GroupRepository {
   Future<List<GroupEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
-  }) {
+  }) async {
     try {
-      final allData = MockData.getWorkspaces();
-
-      final filtered = keySearch != null && keySearch.isNotEmpty
-          ? allData
-                .where(
-                  (e) => e.groupName.toLowerCase().contains(
-                    keySearch.toLowerCase(),
-                  ),
-                )
-                .toList()
-          : allData;
-
-      return Future.value(filtered);
+      //todo
+      // final allData = MockData.getWorkspaces();
+      //
+      // final filtered = keySearch != null && keySearch.isNotEmpty
+      //     ? allData
+      //           .where(
+      //             (e) => e.groupName.toLowerCase().contains(
+      //               keySearch.toLowerCase(),
+      //             ),
+      //           )
+      //           .toList()
+      //     : allData;
+      //
+      // return Future.value(filtered);
+      return [];
     } catch (e) {
       throw FailureConverter.convert(e);
     }

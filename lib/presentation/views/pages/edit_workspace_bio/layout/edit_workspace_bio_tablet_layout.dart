@@ -7,7 +7,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
-import '../bloc/edit_workspace_bio_bloc.dart';
+import '../bloc/edit_group_bio_bloc.dart';
 
 class EditWorkspaceNameTabletLayout extends StatefulWidget {
   const EditWorkspaceNameTabletLayout({super.key});
@@ -19,17 +19,17 @@ class EditWorkspaceNameTabletLayout extends StatefulWidget {
 
 class _EditWorkspaceNameTabletLayoutState
     extends State<EditWorkspaceNameTabletLayout> {
-  late final EditWorkspaceNameBloc _editWorkspaceBioBloc;
+  late final EditGroupBioBloc _editWorkspaceBioBloc;
 
   @override
   void initState() {
     super.initState();
-    _editWorkspaceBioBloc = context.read<EditWorkspaceNameBloc>();
+    _editWorkspaceBioBloc = context.read<EditGroupBioBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditWorkspaceNameBloc, EditWorkspaceNameState>(
+    return BlocListener<EditGroupBioBloc, EditGroupBioState>(
       listener: (_, state) {
         if (state.updateStatus ?? false) {
           context.router.pop(state.bio);
@@ -77,7 +77,7 @@ class _EditWorkspaceNameTabletLayoutState
             child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
           actions: [
-            BlocSelector<EditWorkspaceNameBloc, EditWorkspaceNameState, String>(
+            BlocSelector<EditGroupBioBloc, EditGroupBioState, String>(
               selector: (state) {
                 return state.bio;
               },
@@ -113,8 +113,8 @@ class _EditWorkspaceNameTabletLayoutState
             padding: const EdgeInsets.symmetric(vertical: 20),
             child:
                 BlocSelector<
-                  EditWorkspaceNameBloc,
-                  EditWorkspaceNameState,
+                  EditGroupBioBloc,
+                  EditGroupBioState,
                   String
                 >(
                   selector: (state) {

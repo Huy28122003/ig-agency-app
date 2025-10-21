@@ -4,20 +4,20 @@ import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:injectable/injectable.dart';
 
-part 'edit_workspace_bio_event.dart';
+part 'edit_group_bio_event.dart';
 
-part 'edit_workspace_bio_state.dart';
+part 'edit_group_bio_state.dart';
 
 @injectable
-class EditWorkspaceNameBloc
-    extends BaseBloc<EditWorkspaceNameEvent, EditWorkspaceNameState> {
+class EditGroupBioBloc
+    extends BaseBloc<EditGroupBioEvent, EditGroupBioState> {
   String initBio = "";
   late final String workspaceId;
 
   final UpdateWorkspaceBioUseCase updateWorkspaceBioUseCase;
 
-  EditWorkspaceNameBloc({required this.updateWorkspaceBioUseCase})
-    : super(EditWorkspaceNameState()) {
+  EditGroupBioBloc({required this.updateWorkspaceBioUseCase})
+    : super(EditGroupBioState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       initBio = event.bio;
       workspaceId = event.workspaceId;

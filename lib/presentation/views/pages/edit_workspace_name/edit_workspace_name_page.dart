@@ -2,7 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
-import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/bloc/edit_workspace_bio_bloc.dart';
+import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/bloc/edit_group_bio_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/layout/edit_workspace_bio_mobile_layout.dart';
 import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/layout/edit_workspace_bio_tablet_layout.dart';
 
@@ -10,9 +10,9 @@ import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/layout
 class EditWorkspaceNamePage
     extends
         BasePage<
-          EditWorkspaceNameBloc,
-          EditWorkspaceNameEvent,
-          EditWorkspaceNameState
+          EditGroupBioBloc,
+          EditGroupBioEvent,
+          EditGroupBioState
         > {
   const EditWorkspaceNamePage({
     super.key,
@@ -26,7 +26,7 @@ class EditWorkspaceNamePage
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<EditWorkspaceNameBloc>().add(
+    context.read<EditGroupBioBloc>().add(
       LoadDataEvent(bio: name, workspaceId: workspaceId),
     );
   }

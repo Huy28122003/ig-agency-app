@@ -2,11 +2,11 @@ class GroupEntity {
   final String id;
   final String groupAvatar;
   final String groupName;
-  final String lastMessage;
-  final DateTime? lastMessageTime;
-  final bool isSeen;
+  // final String lastMessage;
+  // final DateTime? lastMessageTime;
+  // final bool isSeen;
   final bool isMute;
-  final bool isPin;
+  // final bool isPin;
   final int countNewMessage;
   final int countMember;
   final String? bio;
@@ -16,11 +16,11 @@ class GroupEntity {
     required this.id,
     required this.groupAvatar,
     required this.groupName,
-    this.lastMessage = "",
-     this.lastMessageTime,
-    required this.isSeen,
+    // this.lastMessage = "",
+    //  this.lastMessageTime,
+    // required this.isSeen,
     required this.isMute,
-    required this.isPin,
+    // required this.isPin,
     this.countNewMessage = 0,
     this.countMember = 0,
     this.countPin = 0,
@@ -45,11 +45,11 @@ class GroupEntity {
       id: id ?? this.id,
       groupAvatar: groupAvatar ?? this.groupAvatar,
       groupName: groupName ?? this.groupName,
-      lastMessage: lastMessage ?? this.lastMessage,
-      lastMessageTime: lastMessageTime ?? this.lastMessageTime,
-      isSeen: isSeen ?? this.isSeen,
+      // lastMessage: lastMessage ?? this.lastMessage,
+      // lastMessageTime: lastMessageTime ?? this.lastMessageTime,
+      // isSeen: isSeen ?? this.isSeen,
       isMute: isMute ?? this.isMute,
-      isPin: isPin ?? this.isPin,
+      // isPin: isPin ?? this.isPin,
       countNewMessage: countNewMessage ?? this.countNewMessage,
       countMember: countMember ?? this.countMember,
       countPin: countPin ?? this.countPin,

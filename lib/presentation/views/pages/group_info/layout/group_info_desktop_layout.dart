@@ -195,7 +195,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
                     final workspace = state;
                     if (workspace == null) return;
                     final result = await context.router.push(
-                      EditWorkspaceBioRoute(
+                      EditGroupBioRoute(
                         bio: workspace.bio ?? "",
                         workspaceId: workspace.id,
                       ),
