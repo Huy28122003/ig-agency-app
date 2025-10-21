@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../resources/colors.dart';
 
@@ -25,7 +26,7 @@ class SelectImageModal extends StatelessWidget {
             Navigator.pop(context, ImageSource.camera);
           },
           child: Text(
-            'Take a photo',
+            'select_image_modal.take_a_photo'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.colorsBlue,
@@ -41,7 +42,7 @@ class SelectImageModal extends StatelessWidget {
             Navigator.pop(context, ImageSource.gallery);
           },
           child: Text(
-            'Choose from library',
+            'select_image_modal.choose_from_library'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.colorsBlue,
@@ -58,7 +59,7 @@ class SelectImageModal extends StatelessWidget {
           Navigator.pop(context);
         },
         child: Text(
-          'Cancel',
+          'general.cancel'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             color: AppColors.colorsBlue,

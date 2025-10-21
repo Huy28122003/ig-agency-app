@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,7 +48,7 @@ class _ProfileMobileLayoutState extends State<ProfileMobileLayout> {
           elevation: 0,
           toolbarHeight: 60,
           title: Text(
-            'My Account',
+            'profile.my_account'.tr(),
             style: TextStyle(
               color: AppColors.textDefaultTextInverted,
               fontSize: 22,

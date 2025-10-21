@@ -73,6 +73,19 @@
     "forward": "Chuyển tiếp",
     "copy": "Sao chép"
   },
+  "profile": {
+    "my_account": "Tài khoản của tôi",
+    "bio": "Tiểu sử",
+    "reset_password": "Đặt lại mật khẩu",
+    "delete_account": "Xóa tài khoản"
+  },
+  "media_preview": {
+    "set_as_avatar": "Đặt làm ảnh đại diện"
+  },
+  "select_image_modal": {
+    "take_a_photo": "Chụp ảnh",
+    "choose_from_library": "Chọn từ thư viện"
+  },
   "search": {
     "search": "Tìm kiếm",
     "group": "Nhóm",

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
@@ -27,7 +28,7 @@ class DeleteAccountButton extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Delete Account',
+                  'profile.delete_account'.tr(),
                   style: TextStyle(
                     color: AppColors.textAlertTextError,
                     fontSize: 16,

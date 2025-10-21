@@ -143,6 +143,13 @@
     "forward": "Forward",
     "copy": "Copy"
   },
+  "media_preview": {
+    "set_as_avatar": "Set as Avatar"
+  },
+  "select_image_modal": {
+    "take_a_photo": "Take a photo",
+    "choose_from_library": "Choose from library"
+  },
   "setting": {
     "title": "Settings",
     "dark_mode": "Dark Mode",
@@ -155,6 +162,12 @@
     "error": "Error",
     "this_otp_has_expired": "This OTP has expired.",
     "the_otp_is_invalid.": "The OTP is invalid."
+  },
+  "profile": {
+    "my_account": "My Account",
+    "bio": "Bio",
+    "reset_password": "Reset Password",
+    "delete_account": "Delete Account"
   },
   "pinned_message_list": {
     "title": "Pinned Messages",
