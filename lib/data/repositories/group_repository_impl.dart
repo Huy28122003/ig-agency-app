@@ -462,4 +462,13 @@ class GroupRepositoryImpl implements GroupRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> markAsRead(String groupId) async {
+    try {
+      await _groupRemoteDataSource.markAsRead(groupId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }

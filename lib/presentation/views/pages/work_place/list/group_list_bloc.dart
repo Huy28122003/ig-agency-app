@@ -4,6 +4,8 @@ import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/delete_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/listen_workspace_last_message_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/mark_as_read_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/mark_unread_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/pin_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/unpin_group_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
@@ -13,17 +15,19 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../../domain/entities/group_summary.dart';
 
-part 'workspace_list_event.dart';
+part 'group_list_event.dart';
 
-part 'workspace_list_state.dart';
+part 'group_list_state.dart';
 
 @injectable
 class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
-  final GetGroupUseCase getWorkspacesUseCase;
-  final ListenWorkspaceLastMessageUseCase listenWorkspaceLastMessageUseCase;
-  final PinGroupUseCase pinGroupUseCase;
-  final UnpinGroupUseCase unpinGroupUseCase;
-  final DeleteGroupUseCase deleteGroupUseCase;
+  final GetGroupUseCase _getWorkspacesUseCase;
+  final ListenWorkspaceLastMessageUseCase _listenWorkspaceLastMessageUseCase;
+  final PinGroupUseCase _pinGroupUseCase;
+  final UnpinGroupUseCase _unpinGroupUseCase;
+  final DeleteGroupUseCase _deleteGroupUseCase;
+  final MarkUnreadUseCase _markUnreadUseCase;
+  final MarkAsReadUseCase _markAsReadUseCase;
 
   Timer? _timer;
   StreamSubscription<GroupSummary>? _streamSubscription;
@@ -32,13 +36,15 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   int _offset = 0;
   int _searchOffset = 0;
 
-  GroupListBloc({
-    required this.getWorkspacesUseCase,
-    required this.listenWorkspaceLastMessageUseCase,
-    required this.pinGroupUseCase,
-    required this.unpinGroupUseCase,
-    required this.deleteGroupUseCase,
-  }) : super(GroupListState()) {
+  GroupListBloc(
+    this._getWorkspacesUseCase,
+    this._listenWorkspaceLastMessageUseCase,
+    this._pinGroupUseCase,
+    this._unpinGroupUseCase,
+    this._deleteGroupUseCase,
+    this._markUnreadUseCase,
+    this._markAsReadUseCase,
+  ) : super(GroupListState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
     handleSubEvent<LoadMoreDataEvent>(_onLoadMoreData);
@@ -57,6 +63,8 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleSubEvent<SearchEvent>(_onSearch);
     handleSubEvent<SearchDebouncedEvent>(_onSearchDebounced);
     handleSubEvent<SearchKeyWorkChangeEvent>(_onSearchKeyWordChange);
+    handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
+    handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
     handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
   }
 
@@ -81,7 +89,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     Emitter<GroupListState> emit,
   ) async {
     try {
-      await pinGroupUseCase.call(event.workspaceId);
+      await _pinGroupUseCase.call(event.workspaceId);
       List<GroupSummary> workspaces = List.from(state.workspaces);
       int indexWorkspace = workspaces.indexWhere(
         (e) => e.id == event.workspaceId,
@@ -102,7 +110,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     Emitter<GroupListState> emit,
   ) async {
     try {
-      await unpinGroupUseCase.call(event.workspaceId);
+      await _unpinGroupUseCase.call(event.workspaceId);
       List<GroupSummary> workspaces = List.from(state.workspaces);
 
       int indexWorkspace = workspaces.indexWhere(
@@ -143,6 +151,14 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
       (e) => e.id == event.workspaceId,
     );
     if (indexWorkspace == -1) return;
+
+    if (workspaces[indexWorkspace].isSeen) {
+      await _markUnreadUseCase.call(event.workspaceId);
+    } else {
+      await _markAsReadUseCase.call(event.workspaceId);
+    }
+
+    // Tu cap nhat lai ui o local khong can fetch lai data
     workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
       isSeen: !workspaces[indexWorkspace].isSeen,
     );
@@ -206,7 +222,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     emit(state.copyWith(searchStatus: PageStatus.loading));
     _searchOffset = 0;
 
-    final result = await getWorkspacesUseCase.call(
+    final result = await _getWorkspacesUseCase.call(
       GetWorkspacesParams(
         keyWord: event.value,
         limit: _limit,
@@ -241,7 +257,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     emit(state.copyWith(pagingStatusSearch: PagingStatus.loading));
 
     await Future.delayed(Duration(seconds: 1));
-    final result = await getWorkspacesUseCase.call(
+    final result = await _getWorkspacesUseCase.call(
       GetWorkspacesParams(
         limit: _limit,
         offset: _searchOffset,
@@ -254,7 +270,8 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
         ? PagingStatus.noMoreData
         : PagingStatus.loadCompleted;
 
-    final next = List<GroupSummary>.from(state.workspacesSearch)..addAll(result);
+    final next = List<GroupSummary>.from(state.workspacesSearch)
+      ..addAll(result);
     emit(
       state.copyWith(pagingStatusSearch: pagingStatus, workspacesSearch: next),
     );
@@ -266,7 +283,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   ) async {
     try {
       emit(state.copyWith(pageStatus: PageStatus.loaded));
-      final result = await getWorkspacesUseCase.call(
+      final result = await _getWorkspacesUseCase.call(
         GetWorkspacesParams(limit: 15, offset: _offset),
       );
 
@@ -299,7 +316,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
       emit(state.copyWith(pagingStatus: PagingStatus.refreshing));
 
       _offset = 0;
-      final result = await getWorkspacesUseCase.call(
+      final result = await _getWorkspacesUseCase.call(
         GetWorkspacesParams(limit: _limit, offset: _offset),
       );
 
@@ -325,7 +342,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     try {
       emit(state.copyWith(pagingStatus: PagingStatus.loading));
 
-      final result = await getWorkspacesUseCase.call(
+      final result = await _getWorkspacesUseCase.call(
         GetWorkspacesParams(limit: _limit, offset: _offset),
       );
 
@@ -345,7 +362,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     Emitter<GroupListState> emit,
   ) async {
     try {
-      await deleteGroupUseCase.call(event.workspaceId);
+      await _deleteGroupUseCase.call(event.workspaceId);
       _offset -= 1;
       List<GroupSummary> workspaces = List.from(state.workspaces);
       workspaces.removeWhere((e) => e.id == event.workspaceId);

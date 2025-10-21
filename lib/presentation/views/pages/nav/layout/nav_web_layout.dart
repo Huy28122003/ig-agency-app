@@ -36,7 +36,7 @@ class NavDesktopLayout extends StatelessWidget {
                         return AutoTabsRouter(
                           lazyLoad: true,
                           routes: const [
-                            WorkspaceListRoute(),
+                            GroupListRoute(),
                             SearchRoute(),
                             SettingRoute(),
                           ],

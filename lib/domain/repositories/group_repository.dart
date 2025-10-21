@@ -128,4 +128,6 @@ abstract class GroupRepository {
   Future<void> unpinGroup(String workspaceId);
 
   Future<void> deleteGroup(String workspaceId);
+
+  Future<void> markAsRead(String groupId);
 }

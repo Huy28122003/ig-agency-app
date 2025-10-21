@@ -39,12 +39,12 @@ class NavTabletLayout extends StatelessWidget {
                           ),
                           child: BlocBuilder<NavBloc, NavState>(
                             buildWhen: (pre, cur) =>
-                            pre.currentIndex != cur.currentIndex,
+                                pre.currentIndex != cur.currentIndex,
                             builder: (context, state) {
                               return AutoTabsRouter(
                                 lazyLoad: true,
                                 routes: [
-                                  WorkspaceListRoute(),
+                                  GroupListRoute(),
                                   SearchRoute(),
                                   if (isAdmin) DashboardHomeRoute(),
                                   SettingRoute(),
@@ -126,7 +126,7 @@ class NavTabletLayout extends StatelessWidget {
           ),
         ),
         label: 'Workspace',
-        page: WorkspaceListRoute(),
+        page: GroupListRoute(),
       ),
       AppBottomNavigationItem(
         selectedIcon: Assets.icons.icSearch.svg(

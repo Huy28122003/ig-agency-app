@@ -36,7 +36,7 @@ import '../views/pages/setting/shell/setting_page.dart';
 import '../views/pages/shared_content/shared_content_page.dart';
 import '../views/pages/work_place/add_to_group/add_to_group_page.dart';
 import '../views/pages/work_place/detail/workspace_detail_page.dart';
-import '../views/pages/work_place/list/workspace_list_page.dart';
+import '../views/pages/work_place/list/group_list_page.dart';
 import '../views/pages/dashboard/home/dashboard_home_page.dart';
 import '../views/pages/work_place/create_group/create_group_page.dart';
 import '../views/pages/work_place/user_profile/user_profile_page.dart';
@@ -63,7 +63,7 @@ class AppRouter extends RootStackRouter {
       initial: true,
       children: [
         CustomRoute(
-          page: WorkspaceListRoute.page,
+          page: GroupListRoute.page,
           // transitionsBuilder: TransitionsBuilders.noTransition,
           children: [AutoRoute(page: CreateGroupRoute.page)],
         ),

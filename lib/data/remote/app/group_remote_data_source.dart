@@ -56,4 +56,8 @@ abstract class GroupRemoteDataSource {
   Future<void> unpinGroup(String groupId);
 
   Future<void> deleteGroup(String groupId);
+
+  Future<void> markAsRead(String groupId);
+
+  Future<void> markUnread(String groupId);
 }

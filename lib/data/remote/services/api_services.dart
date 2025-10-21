@@ -154,4 +154,10 @@ abstract class ApiService {
 
   @DELETE('/conversations/{conversationId}')
   Future<void> deleteGroup(@Path('conversationId') String groupId);
+
+  @POST('/conversations/{conversationId}/read')
+  Future<void> markAsRead(@Path('conversationId') String groupId);
+
+  @POST('/conversations/{conversationId}/unread')
+  Future<void> markUnread(@Path('conversationId') String groupId);
 }

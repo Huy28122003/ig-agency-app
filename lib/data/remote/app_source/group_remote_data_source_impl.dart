@@ -209,4 +209,22 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       throw ExceptionConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> markAsRead(String groupId) async {
+    try {
+      return await _apiService.markAsRead(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> markUnread(String groupId) async {
+    try {
+      return await _apiService.markAsRead(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
 }
