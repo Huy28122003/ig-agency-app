@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/group_tile_tablet_widget.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/work_place/list/widgets/workspace_tile_tablet_widget.dart';
-import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/shared/extensions/widget.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import '../../../../../../domain/entities/group_summary.dart';
