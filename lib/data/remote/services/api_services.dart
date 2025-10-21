@@ -169,7 +169,7 @@ abstract class ApiService {
   );
 
   @PUT('/conversations/{conversationId}')
-  Future<void> updateGroupBio(
+  Future<void> updateGroupInfo(
     @Path('conversationId') String groupId,
     @Body() UpdateGroupInfoRequest updateGroupInfoRequest,
   );

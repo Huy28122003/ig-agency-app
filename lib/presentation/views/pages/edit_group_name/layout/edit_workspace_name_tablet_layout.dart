@@ -2,37 +2,37 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/bloc/edit_group_bio_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
+import '../bloc/edit_group_name_bloc.dart';
 
-class EditWorkspaceNameMobileLayout extends StatefulWidget {
-  const EditWorkspaceNameMobileLayout({super.key});
+class EditWorkspaceBioTabletLayout extends StatefulWidget {
+  const EditWorkspaceBioTabletLayout({super.key});
 
   @override
-  State<EditWorkspaceNameMobileLayout> createState() =>
-      _EditWorkspaceNameMobileLayoutState();
+  State<EditWorkspaceBioTabletLayout> createState() =>
+      _EditWorkspaceBioTabletLayoutState();
 }
 
-class _EditWorkspaceNameMobileLayoutState
-    extends State<EditWorkspaceNameMobileLayout> {
-  late final EditGroupBioBloc _editWorkspaceBioBloc;
+class _EditWorkspaceBioTabletLayoutState
+    extends State<EditWorkspaceBioTabletLayout> {
+  late final EditGroupNameBloc _editWorkspaceBioBloc;
 
   @override
   void initState() {
     super.initState();
-    _editWorkspaceBioBloc = context.read<EditGroupBioBloc>();
+    _editWorkspaceBioBloc = context.read<EditGroupNameBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditGroupBioBloc, EditGroupBioState>(
+    return BlocListener<EditGroupNameBloc, EditGroupNameState>(
       listener: (_, state) {
         if (state.updateStatus ?? false) {
-          context.router.pop(state.bio);
+          context.router.pop(state.name);
         }
       },
       child: Scaffold(
@@ -77,9 +77,9 @@ class _EditWorkspaceNameMobileLayoutState
             child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
           actions: [
-            BlocSelector<EditGroupBioBloc, EditGroupBioState, String>(
+            BlocSelector<EditGroupNameBloc, EditGroupNameState, String>(
               selector: (state) {
-                return state.bio;
+                return state.name;
               },
               builder: (context, state) {
                 return Padding(
@@ -113,12 +113,12 @@ class _EditWorkspaceNameMobileLayoutState
             padding: const EdgeInsets.symmetric(vertical: 20),
             child:
                 BlocSelector<
-                  EditGroupBioBloc,
-                  EditGroupBioState,
+                  EditGroupNameBloc,
+                  EditGroupNameState,
                   String
                 >(
                   selector: (state) {
-                    return state.bio;
+                    return state.name;
                   },
                   builder: (context, state) {
                     return AppTextField(

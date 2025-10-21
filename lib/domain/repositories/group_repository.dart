@@ -77,7 +77,7 @@ abstract class GroupRepository {
 
   Future<void> updateGroupBio({required String groupId, required String bio});
 
-  Future<bool> updateGroupName({required String groupId, required String name});
+  Future<void> updateGroupName({required String groupId, required String name});
 
   Future<List<UserEntity>> getUserInGroup({
     required String workspaceId,

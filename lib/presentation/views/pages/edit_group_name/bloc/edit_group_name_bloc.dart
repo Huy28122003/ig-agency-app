@@ -5,21 +5,22 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../../domain/usecases/workspace/update_workspace_name_use_case.dart';
 
-part 'edit_workspace_name_event.dart';
+part 'edit_group_name_event.dart';
 
-part 'edit_workspace_name_state.dart';
+part 'edit_group_name_state.dart';
 
 @injectable
-class EditWorkspaceNameBloc
-    extends BaseBloc<EditWorkspaceNameEvent, EditWorkspaceNameState> {
+class EditGroupNameBloc
+    extends BaseBloc<EditGroupNameEvent, EditGroupNameState> {
   String initBio = "";
   late final String workspaceId;
 
   final UpdateWorkspaceNameUseCase _updateWorkspaceNameUseCase;
 
-  EditWorkspaceNameBloc(this._updateWorkspaceNameUseCase)
-    : super(EditWorkspaceNameState()) {
+  EditGroupNameBloc(this._updateWorkspaceNameUseCase)
+    : super(EditGroupNameState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
+      emit(state.copyWith(pageStatus: PageStatus.loading));
       initBio = event.bio;
       workspaceId = event.workspaceId;
       emit(state.copyWith(pageStatus: PageStatus.loaded, bio: event.bio));
@@ -28,10 +29,14 @@ class EditWorkspaceNameBloc
       emit(state.copyWith(bio: event.value));
     });
     handleSubEvent<SubmitBioEvent>((event, emit) async {
-      final result = await _updateWorkspaceNameUseCase.call(
-        UpdateWorkspaceNameParams(workspaceId: workspaceId, name: state.name),
-      );
-      emit(state.copyWith(updateStatus: result));
+      try {
+        await _updateWorkspaceNameUseCase.call(
+          UpdateWorkspaceNameParams(workspaceId: workspaceId, name: state.name),
+        );
+        emit(state.copyWith(updateStatus: true));
+      } catch (e) {
+        handleError(emit, e);
+      }
     });
   }
 

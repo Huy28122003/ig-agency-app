@@ -124,7 +124,7 @@ class GroupInfoDesktopLayout extends StatelessWidget {
         final name = group?.groupName ?? "";
         final id = group?.id ?? "0";
         context.router.push(
-          EditWorkspaceNameRoute(name: name, workspaceId: id),
+          EditGroupNameRoute(name: name, workspaceId: id),
         );
       },
       child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(

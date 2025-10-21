@@ -279,12 +279,12 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<bool> updateGroupName({
+  Future<void> updateGroupName({
     required String groupId,
     required String name,
   }) async {
     try {
-      return true;
+      await _groupRemoteDataSource.updateGroupBio(groupId, name);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

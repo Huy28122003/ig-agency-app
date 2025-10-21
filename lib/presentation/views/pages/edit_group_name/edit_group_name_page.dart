@@ -2,19 +2,19 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
-import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/bloc/edit_group_bio_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/layout/edit_workspace_bio_mobile_layout.dart';
-import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/layout/edit_workspace_bio_tablet_layout.dart';
+import 'package:ig_agency_app/presentation/views/pages/edit_group_bio/bloc/edit_group_bio_bloc.dart';
+import 'package:ig_agency_app/presentation/views/pages/edit_group_bio/layout/edit_workspace_bio_mobile_layout.dart';
+import 'package:ig_agency_app/presentation/views/pages/edit_group_bio/layout/edit_workspace_bio_tablet_layout.dart';
 
 @RoutePage()
-class EditWorkspaceNamePage
+class EditGroupNamePage
     extends
         BasePage<
           EditGroupBioBloc,
           EditGroupBioEvent,
           EditGroupBioState
         > {
-  const EditWorkspaceNamePage({
+  const EditGroupNamePage({
     super.key,
     required this.name,
     required this.workspaceId,
