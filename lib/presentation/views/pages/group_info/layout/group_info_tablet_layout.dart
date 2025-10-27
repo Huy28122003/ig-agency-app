@@ -114,7 +114,7 @@ class GroupInfoTabletLayout extends StatelessWidget {
           bottom: 0,
           child: GestureDetector(
             onTap: () {
-              context.router.push(CameraRoute());
+              context.router.push(CameraRoute(groupId: context.read<GroupInfoBloc>().groupId));
             },
             child: Padding(
               padding: const EdgeInsets.all(4.0),

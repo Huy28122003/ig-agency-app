@@ -61,6 +61,7 @@ class _SettingHomeTabletLayoutState extends State<SettingHomeTabletLayout>
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
                   aspectRatio: 1 / (aspectRatio ?? 0),
+                  groupId: _cameraBloc.groupId,
                 ),
               );
               _cameraBloc.add(

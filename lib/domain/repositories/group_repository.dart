@@ -79,6 +79,11 @@ abstract class GroupRepository {
 
   Future<void> updateGroupName({required String groupId, required String name});
 
+  Future<void> updateGroupAvatar({
+    required String groupId,
+    required String image,
+  });
+
   Future<List<UserEntity>> getUserInGroup({
     required String workspaceId,
     required int offset,

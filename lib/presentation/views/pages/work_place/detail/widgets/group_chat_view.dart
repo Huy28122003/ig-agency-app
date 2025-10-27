@@ -57,7 +57,8 @@ class GroupChatView extends StatelessWidget {
                             },
                             builder: (context, pinnedMessageSummary) {
                               if (pinnedMessageSummary == null ||
-                                  pinnedMessageSummary.recentPinnedMessage == null) {
+                                  pinnedMessageSummary.recentPinnedMessage ==
+                                      null) {
                                 return const SizedBox.shrink();
                               }
 
@@ -157,7 +158,9 @@ class GroupChatView extends StatelessWidget {
                             );
                           },
                           onCameraTap: () {
-                            context.router.push(CameraRoute());
+                            context.router.push(
+                              CameraRoute(groupId: bloc.groupId),
+                            );
                           },
                           onMediaTap: () {
                             bloc.add(

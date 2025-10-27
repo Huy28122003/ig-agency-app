@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/dependencies/media/media_manager.dart';
 import 'package:ig_agency_app/dependencies/permission/permission_manager.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/update_group_avatar_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/shared/utils/logger.dart';
@@ -16,8 +17,11 @@ part 'media_preview_state.dart';
 
 @injectable
 class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
-  MediaPreviewBloc(this._mediaManager, this._permissionManager)
-    : super(MediaPreviewState()) {
+  MediaPreviewBloc(
+    this._mediaManager,
+    this._permissionManager,
+    this._updateGroupAvatarUseCase,
+  ) : super(MediaPreviewState()) {
     _registerHandlers();
   }
 
@@ -27,6 +31,9 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
   late String avatar;
   late bool isPhoto;
   late double aspectRatio;
+  late final String groupId;
+
+  final UpdateGroupAvatarUseCase _updateGroupAvatarUseCase;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -57,7 +64,15 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
   Future<void> _onSendMedia(
     SendMediaEvent event,
     Emitter<MediaPreviewState> emit,
-  ) async {}
+  ) async {
+    try {
+      await _updateGroupAvatarUseCase.call(
+        UpdateGroupAvatarParams(workspaceId: groupId, image: path),
+      );
+    } catch (e) {
+      handleError(emit, e);
+    }
+  }
 
   Future<void> _onEditMedia(
     EditMediaEvent event,

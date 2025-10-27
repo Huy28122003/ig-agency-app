@@ -241,6 +241,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     String groupId, {
     String? bio,
     String? name,
+    String? image,
   }) async {
     try {
       await _apiService.updateGroupInfo(

@@ -9,7 +9,9 @@ import 'camera_bloc.dart';
 
 @RoutePage()
 class CameraPage extends BasePage<CameraBloc, CameraEvent, CameraState> {
-  const CameraPage({super.key});
+  const CameraPage({super.key, required this.groupId});
+
+  final String groupId;
 
   @override
   void onInitState(BuildContext context) {
