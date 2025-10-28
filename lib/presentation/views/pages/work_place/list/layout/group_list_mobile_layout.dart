@@ -121,7 +121,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   final result = await MenuDialog.show<UnMuteTimeEnum>(
                     onTap: (value) {},
                     context: context,
-                    title: "workspace.mute_title".tr(),
+                    title: "workspace.unmute_title".tr(),
                     items: UnMuteTimeEnum.values
                         .map(
                           (e) => MenuItem(

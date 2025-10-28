@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/group_entity.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/change_notification_status_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/delete_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/listen_workspace_last_message_use_case.dart';
@@ -28,6 +29,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   final DeleteGroupUseCase _deleteGroupUseCase;
   final MarkUnreadUseCase _markUnreadUseCase;
   final MarkAsReadUseCase _markAsReadUseCase;
+  final ChangeNotificationStatusUseCase _changeNotificationStatusUseCase;
 
   Timer? _timer;
   StreamSubscription<GroupSummary>? _streamSubscription;
@@ -44,6 +46,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     this._deleteGroupUseCase,
     this._markUnreadUseCase,
     this._markAsReadUseCase,
+    this._changeNotificationStatusUseCase,
   ) : super(GroupListState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
@@ -70,16 +73,26 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     MuteWorkspaceEvent event,
     Emitter<GroupListState> emit,
   ) async {
-    List<GroupSummary> workspaces = List.from(state.workspaces);
-    int indexWorkspace = workspaces.indexWhere(
-      (e) => e.id == event.workspaceId,
-    );
-    if (indexWorkspace == -1) return;
-    workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
-      isMute: !workspaces[indexWorkspace].isMute,
-    );
-    _sort(workspaces);
-    emit(state.copyWith(workspaces: workspaces));
+    try {
+      List<GroupSummary> workspaces = List.from(state.workspaces);
+      int indexWorkspace = workspaces.indexWhere(
+        (e) => e.id == event.workspaceId,
+      );
+      if (indexWorkspace == -1) return;
+      await _changeNotificationStatusUseCase.call(
+        ChangeNotificationStatusParams(
+          groupId: event.workspaceId,
+          enable: !workspaces[indexWorkspace].isMute,
+        ),
+      );
+      workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
+        isMute: !workspaces[indexWorkspace].isMute,
+      );
+      // _sort(workspaces);
+      emit(state.copyWith(workspaces: workspaces));
+    } catch (e) {
+      handleError(emit, e);
+    }
   }
 
   Future<void> _onPinWorkspace(
@@ -417,10 +430,5 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     _timer?.cancel();
     _streamSubscription?.cancel();
     return super.close();
-  }
-
-  @override
-  void handleError(Emitter<GroupListState> emit, Object error) {
-    super.handleError(emit, error);
   }
 }

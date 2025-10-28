@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
+import 'package:ig_agency_app/data/remote/models/requests/change_notification_status_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
@@ -223,6 +224,18 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<void> markUnread(String groupId) async {
     try {
       return await _apiService.markAsRead(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> changeNotificationStatus(String groupId, bool enable) async {
+    try {
+      return await _apiService.changeNotificationStatus(
+        groupId,
+        ChangeNotificationStatusRequest(enabled: enable),
+      );
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

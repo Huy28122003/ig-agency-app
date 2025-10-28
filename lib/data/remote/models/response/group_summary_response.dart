@@ -15,7 +15,7 @@ class GroupSummaryResponse {
     this.pinned = false,
     this.status = '',
     this.isSeen = false,
-    this.isMute = true,
+    this.notificationEnabled = true,
   });
 
   final String id;
@@ -26,7 +26,7 @@ class GroupSummaryResponse {
   final String status;
   final LastMessageResponseModel? lastMessage;
   final bool isSeen;
-  final bool isMute;
+  final bool notificationEnabled;
 
   factory GroupSummaryResponse.fromJson(Map<String, dynamic> json) =>
       _$GroupSummaryResponseFromJson(json);

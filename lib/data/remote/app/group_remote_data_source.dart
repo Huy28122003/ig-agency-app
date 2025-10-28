@@ -60,4 +60,6 @@ abstract class GroupRemoteDataSource {
   Future<void> markAsRead(String groupId);
 
   Future<void> markUnread(String groupId);
+
+  Future<void> changeNotificationStatus(String groupId, bool enable);
 }

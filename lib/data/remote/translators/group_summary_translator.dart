@@ -21,7 +21,7 @@ extension GroupSummaryTranslator on GroupSummaryResponse {
       lastMessageTime: lastMessageTime,
       isPin: pinned,
       isSeen: isSeen,
-      isMute: isMute,
+      isMute: notificationEnabled,
     );
   }
 
