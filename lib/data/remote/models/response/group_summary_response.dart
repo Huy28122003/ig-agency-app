@@ -20,7 +20,8 @@ class GroupSummaryResponse {
 
   final String id;
   final String title;
-  final GroupAvatarResponse? photo;
+  // final GroupAvatarResponse? photo;
+  final String? photo;
   final int? lastMessageDate;
   final bool pinned;
   final String status;

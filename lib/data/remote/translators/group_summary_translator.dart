@@ -16,7 +16,8 @@ extension GroupSummaryTranslator on GroupSummaryResponse {
     return GroupSummary(
       id: id,
       name: title,
-      avatar: photo?.bigFilePath.withBaseUrl() ?? '',
+      // avatar: photo?.bigFilePath.withBaseUrl() ?? '',
+      avatar: photo?.withBaseUrl() ?? '',
       lastMessage: lastMessageContent,
       lastMessageTime: lastMessageTime,
       isPin: pinned,
