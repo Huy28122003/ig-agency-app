@@ -15,14 +15,19 @@ class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
   final GetGroupInfoUseCase getWorkspaceByIdUseCase;
   final UpdateWorkspaceNotificationUseCase updateWorkspaceNotificationUseCase;
   late final String groupId;
+
   GroupInfoBloc({
     required this.getWorkspaceByIdUseCase,
     required this.updateWorkspaceNotificationUseCase,
   }) : super(GroupInfoState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
-      emit(state.copyWith(pageStatus: PageStatus.loading));
-      final result = await getWorkspaceByIdUseCase.call(event.groupId);
-      emit(state.copyWith(pageStatus: PageStatus.loaded, workspace: result));
+      try {
+        emit(state.copyWith(pageStatus: PageStatus.loading));
+        final result = await getWorkspaceByIdUseCase.call(event.groupId);
+        emit(state.copyWith(pageStatus: PageStatus.loaded, workspace: result));
+      } catch (e) {
+        handleError(emit, e);
+      }
     });
     handleSubEvent<ToggleNotificationEvent>((event, emit) async {
       if (state.workspace == null) return;

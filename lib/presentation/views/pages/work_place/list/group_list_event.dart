@@ -71,3 +71,11 @@ class SelectWorkspaceEvent extends GroupListEvent {
 
   SelectWorkspaceEvent({required this.id});
 }
+
+class UpdateGroupEvent extends GroupListEvent {
+  final String groupId;
+  final String? groupName;
+  final String? groupAvatar;
+
+  UpdateGroupEvent({required this.groupId, this.groupName, this.groupAvatar});
+}

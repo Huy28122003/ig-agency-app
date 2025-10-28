@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'group_avatar_response.dart';
-
 part 'group_response.g.dart';
 
 @JsonSerializable()
@@ -34,7 +32,8 @@ class GroupResponse {
   final int onlineMemberCount;
 
   // final LastMessageResponseModel? lastMessage;
-  final GroupAvatarResponse? photo;
+  final String? photo;
+  // final GroupAvatarResponse? photo;
 
   factory GroupResponse.fromJson(Map<String, dynamic> json) =>
       _$GroupResponseFromJson(json);

@@ -142,7 +142,12 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
       toolbarHeight: 60,
       scrolledUnderElevation: 0,
       leading: GestureDetector(
-        onTap: () => context.router.pop(),
+        onTap: () => context.router.pop(
+          GroupInfoArguments(
+            groupName: _wsDetailBloc.state.groupName,
+            groupAvatar: _wsDetailBloc.state.groupAvatar,
+          ),
+        ),
         child: Stack(
           children: [
             Positioned(
@@ -154,7 +159,12 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
                 width: 24,
                 alignment: Alignment.center,
                 child: GestureDetector(
-                  onTap: () => context.router.pop(),
+                  onTap: () => context.router.pop(
+                    GroupInfoArguments(
+                      groupName: _wsDetailBloc.state.groupName,
+                      groupAvatar: _wsDetailBloc.state.groupAvatar,
+                    ),
+                  ),
                   child: Assets.icons.icArrowLeft.svg(
                     height: 24,
                     width: 24,
