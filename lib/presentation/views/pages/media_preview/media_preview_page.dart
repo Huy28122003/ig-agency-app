@@ -30,7 +30,8 @@ class MediaPreviewPage
     ..avatar = avatar
     ..path = mediaPath
     ..isPhoto = isPhoto
-    ..aspectRatio = aspectRatio;
+    ..aspectRatio = aspectRatio
+    ..groupId = groupId;
 
   @override
   void onInitState(BuildContext context) {
