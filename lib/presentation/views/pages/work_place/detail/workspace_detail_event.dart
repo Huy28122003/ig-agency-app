@@ -6,8 +6,10 @@ sealed class WSDetailEvent {
 
 class LoadDataEvent extends WSDetailEvent {
   final bool isSearchMode;
+  final String groupName;
+  final String groupAvatar;
 
-  const LoadDataEvent(this.isSearchMode);
+  const LoadDataEvent(this.isSearchMode, this.groupName, this.groupAvatar);
 }
 
 class ReplyToMessageEvent extends WSDetailEvent {
@@ -136,4 +138,11 @@ class OnShowGroupInfoEvent extends WSDetailEvent {
 
 class FetchGroupDetailEvent extends WSDetailEvent {
   const FetchGroupDetailEvent();
+}
+
+class UpdateGroupInfoEvent extends WSDetailEvent {
+  final String? groupName;
+  final String? groupAvatar;
+
+  UpdateGroupInfoEvent({this.groupName, this.groupAvatar});
 }

@@ -67,6 +67,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
   }
 
   late final String groupId;
+  late String groupName;
   final GetProfileInfoUseCase _getProfileInfoUseCase;
   final FetchMessagesInGroupUseCase _fetchMessageUseCase;
 
@@ -145,6 +146,7 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     handleSubEvent<GoToMessageEvent>(_onGoToMessage);
     handleSubEvent<OnShowGroupInfoEvent>(_onShowGroupInfo);
     handleSubEvent<FetchGroupDetailEvent>(_onFetchGroupDetail);
+    handleSubEvent<UpdateGroupInfoEvent>(_onUpdateGroupInfo);
   }
 
   void _initializeListener() {
@@ -217,6 +219,12 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     try {
+      emit(
+        state.copyWith(
+          groupAvatar: event.groupAvatar,
+          groupName: event.groupName,
+        ),
+      );
       final profile = await _getProfileInfoUseCase.call();
 
       final messagesResult = await _fetchMessageUseCase.call(
@@ -1030,6 +1038,18 @@ class WSDetailBloc extends BaseBloc<WSDetailEvent, WSDetailState> {
     Emitter<WSDetailState> emit,
   ) async {
     emit(state.copyWith(showGroupInfo: !state.showGroupInfo));
+  }
+
+  Future<void> _onUpdateGroupInfo(
+    UpdateGroupInfoEvent event,
+    Emitter<WSDetailState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        groupAvatar: event.groupAvatar,
+        groupName: event.groupName,
+      ),
+    );
   }
 
   @override
