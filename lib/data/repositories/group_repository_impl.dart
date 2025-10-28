@@ -483,6 +483,15 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
+  Future<void> changeNotificationStatus(String groupId, bool enable) async {
+    try {
+      await _groupRemoteDataSource.changeNotificationStatus(groupId, enable);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<void> updateGroupAvatar({
     required String groupId,
     required String image,
