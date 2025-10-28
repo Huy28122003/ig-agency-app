@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'update_group_info_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class UpdateGroupInfoRequest {
   final String? title;
   final String? photo;

@@ -9,7 +9,7 @@ class GroupResponse {
   const GroupResponse({
     required this.id,
     this.title = '',
-    this.lastMessageDate,
+    // this.lastMessageDate,
     // this.pinned = false,
     // this.status = '',
     // this.type = '',
@@ -18,14 +18,15 @@ class GroupResponse {
     this.memberCount = 0,
     this.onlineMemberCount = 0,
     this.photo,
+    this.bio,
   });
 
   final String id;
 
   // final String type;
   final String title;
-  final int? lastMessageDate;
-
+  // final int? lastMessageDate;
+  final String? bio;
   // final bool pinned;
   // final String status;
   final int pinnedMessageCount;

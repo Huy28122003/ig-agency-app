@@ -14,6 +14,9 @@ class CameraPage extends BasePage<CameraBloc, CameraEvent, CameraState> {
   final String groupId;
 
   @override
+  CameraBloc get buildBloc => super.buildBloc..groupId = groupId;
+
+  @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
     context.read<CameraBloc>().add(LoadDataEvent());
