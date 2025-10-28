@@ -137,9 +137,16 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                 );
               },
               onTapPin: () {
-                _workspaceBloc.add(
-                  PinWorkspaceEvent(workspaceId: workspace.id),
-                );
+                if(workspace.isPin){
+                  _workspaceBloc.add(
+                    UnpinWorkspaceEvent(workspaceId: workspace.id),
+                  );
+                }else{
+                  _workspaceBloc.add(
+                    PinWorkspaceEvent(workspaceId: workspace.id),
+                  );
+                }
+
               },
               child: GroupTileMobileWidget(
                 onTap: () {
