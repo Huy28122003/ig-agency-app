@@ -61,7 +61,7 @@ class GeneralSettingHomeSection extends StatelessWidget {
               isShowArrow: true,
               onTap: () {
                 // TODO route
-                context.router.push(CameraRoute());
+                // context.router.push(CameraRoute());
               },
             ),
             SettingItem(

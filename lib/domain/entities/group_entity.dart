@@ -9,7 +9,7 @@ class GroupEntity {
   // final bool isPin;
   final int countNewMessage;
   final int countMember;
-  final String? bio;
+  final String bio;
   final int countPin;
 
   GroupEntity({
@@ -24,17 +24,17 @@ class GroupEntity {
     this.countNewMessage = 0,
     this.countMember = 0,
     this.countPin = 0,
-    this.bio,
+    this.bio = '',
   });
 
   GroupEntity copyWith({
     String? id,
     String? groupAvatar,
     String? groupName,
-    String? lastMessage,
-    DateTime? lastMessageTime,
-    bool? isSeen,
-    bool? isPin,
+    // String? lastMessage,
+    // DateTime? lastMessageTime,
+    // bool? isSeen,
+    // bool? isPin,
     bool? isMute,
     int? countNewMessage,
     int? countMember,

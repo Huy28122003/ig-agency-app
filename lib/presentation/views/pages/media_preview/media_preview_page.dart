@@ -16,19 +16,22 @@ class MediaPreviewPage
     required this.mediaPath,
     this.isPhoto = false,
     this.aspectRatio = 1,
+    required this.groupId,
   });
 
   final String avatar;
   final String mediaPath;
   final bool isPhoto;
   final double aspectRatio;
+  final String groupId;
 
   @override
   MediaPreviewBloc get buildBloc => super.buildBloc
     ..avatar = avatar
     ..path = mediaPath
     ..isPhoto = isPhoto
-    ..aspectRatio = aspectRatio;
+    ..aspectRatio = aspectRatio
+    ..groupId = groupId;
 
   @override
   void onInitState(BuildContext context) {

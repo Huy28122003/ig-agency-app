@@ -242,11 +242,12 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     String groupId, {
     String? bio,
     String? name,
+    String? image,
   }) async {
     try {
       await _apiService.updateGroupInfo(
         groupId,
-        UpdateGroupInfoRequest(bio: bio, title: name),
+        UpdateGroupInfoRequest(bio: bio, title: name, photo: image),
       );
     } catch (e) {
       throw ExceptionConverter.convert(e);

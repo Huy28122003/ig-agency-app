@@ -59,6 +59,7 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
                   aspectRatio: 1 / (aspectRatio ?? 0),
+                  groupId: _cameraBloc.groupId,
                 ),
               );
               _cameraBloc.add(

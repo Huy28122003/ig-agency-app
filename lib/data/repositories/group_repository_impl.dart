@@ -484,4 +484,16 @@ class GroupRepositoryImpl implements GroupRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> updateGroupAvatar({
+    required String groupId,
+    required String image,
+  }) async {
+    try {
+      await _groupRemoteDataSource.updateGroupInfo(groupId, image: image);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }

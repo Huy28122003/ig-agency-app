@@ -28,6 +28,7 @@ extension GroupTranslator on GroupResponse {
       isMute: true,
       countPin: pinnedMessageCount,
       countMember: memberCount,
+      bio: bio ?? '',
     );
   }
 
