@@ -21,8 +21,7 @@ class GroupListMobileLayout extends StatefulWidget {
   const GroupListMobileLayout({super.key});
 
   @override
-  State<GroupListMobileLayout> createState() =>
-      _GroupListMobileLayoutState();
+  State<GroupListMobileLayout> createState() => _GroupListMobileLayoutState();
 }
 
 class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
@@ -119,7 +118,14 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               onTapMute: () async {
                 if (workspace.isMute) {
                   final result = await MenuDialog.show<UnMuteTimeEnum>(
-                    onTap: (value) {},
+                    onTap: (value) {
+                      _workspaceBloc.add(
+                        MuteWorkspaceEvent(
+                          workspaceId: workspace.id,
+                          unMuteTimeCode: value.code,
+                        ),
+                      );
+                    },
                     context: context,
                     title: "workspace.unmute_title".tr(),
                     items: UnMuteTimeEnum.values
@@ -131,22 +137,22 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                         )
                         .toList(),
                   );
+                } else {
+                  _workspaceBloc.add(
+                    MuteWorkspaceEvent(workspaceId: workspace.id),
+                  );
                 }
-                _workspaceBloc.add(
-                  MuteWorkspaceEvent(workspaceId: workspace.id),
-                );
               },
               onTapPin: () {
-                if(workspace.isPin){
+                if (workspace.isPin) {
                   _workspaceBloc.add(
                     UnpinWorkspaceEvent(workspaceId: workspace.id),
                   );
-                }else{
+                } else {
                   _workspaceBloc.add(
                     PinWorkspaceEvent(workspaceId: workspace.id),
                   );
                 }
-
               },
               child: GroupTileMobileWidget(
                 onTap: () {

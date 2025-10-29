@@ -482,9 +482,17 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<void> changeNotificationStatus(String groupId, bool enable) async {
+  Future<void> changeNotificationStatus({
+    required String groupId,
+    required bool enable,
+    String? unMuteTimeCode,
+  }) async {
     try {
-      await _groupRemoteDataSource.changeNotificationStatus(groupId, enable);
+      await _groupRemoteDataSource.changeNotificationStatus(
+        groupId: groupId,
+        enable: enable,
+        unMuteTimeCode: unMuteTimeCode,
+      );
     } catch (e) {
       throw FailureConverter.convert(e);
     }

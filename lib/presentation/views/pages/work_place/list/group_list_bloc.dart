@@ -83,6 +83,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
         ChangeNotificationStatusParams(
           groupId: event.workspaceId,
           enable: !workspaces[indexWorkspace].isMute,
+          unMuteTimeCode: event.unMuteTimeCode,
         ),
       );
       workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(

@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'group_avatar_response.dart';
 import 'last_message_response_model.dart';
 
 part 'group_summary_response.g.dart';
@@ -20,7 +19,8 @@ class GroupSummaryResponse {
 
   final String id;
   final String title;
-  final GroupAvatarResponse? photo;
+  // final GroupAvatarResponse? photo;
+  final String? photo;
   final int? lastMessageDate;
   final bool pinned;
   final String status;
