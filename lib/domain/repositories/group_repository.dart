@@ -139,4 +139,6 @@ abstract class GroupRepository {
   Future<void> markUnread(String groupId);
 
   Future<void> changeNotificationStatus(String groupId, bool enable);
+
+  Future<void> leaveGroup(String groupId, String userId);
 }

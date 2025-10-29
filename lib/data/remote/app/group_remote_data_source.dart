@@ -72,4 +72,6 @@ abstract class GroupRemoteDataSource {
   Future<void> markUnread(String groupId);
 
   Future<void> changeNotificationStatus(String groupId, bool enable);
+
+  Future<void> leaveGroup(String groupId, String userId);
 }

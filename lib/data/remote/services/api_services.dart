@@ -186,4 +186,10 @@ abstract class ApiService {
     @Path('conversationId') String groupId,
     @Body() ChangeNotificationStatusRequest request,
   );
+
+  @DELETE('/conversations/{conversationId}/members/leave/{userId}')
+  Future<void> leaveGroup(
+    @Path('conversationId') String groupId,
+    @Path('userId') String userId,
+  );
 }

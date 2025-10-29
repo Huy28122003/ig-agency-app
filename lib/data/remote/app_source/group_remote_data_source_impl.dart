@@ -283,4 +283,13 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       throw ExceptionConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> leaveGroup(String groupId, String userId) async {
+    try {
+      return await _apiService.leaveGroup(groupId, userId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
 }

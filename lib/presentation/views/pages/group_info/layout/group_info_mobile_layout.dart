@@ -19,64 +19,73 @@ class GroupInfoMobileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<GroupInfoBloc>();
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.surfaceContainerPrimaryPrimaryDefault,
-        elevation: 0,
-        toolbarHeight: 60,
-        title: Text(
-          'group_info.title'.tr(),
-          style: TextStyle(
-            color: AppColors.textDefaultTextInverted,
-            fontSize: 22,
-            fontFamily: FontFamily.segoeUI,
-            fontWeight: FontWeight.w700,
-            height: 1.27,
+    return BlocListener<GroupInfoBloc, GroupInfoState>(
+      listenWhen: (prev, curr) =>
+          prev.isLeaveGroupSuccess != curr.isLeaveGroupSuccess,
+      listener: (context, state) {
+        if (state.isLeaveGroupSuccess == true) {
+          context.router.replace(GroupListRoute());
+        }
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: AppColors.surfaceContainerPrimaryPrimaryDefault,
+          elevation: 0,
+          toolbarHeight: 60,
+          title: Text(
+            'group_info.title'.tr(),
+            style: TextStyle(
+              color: AppColors.textDefaultTextInverted,
+              fontSize: 22,
+              fontFamily: FontFamily.segoeUI,
+              fontWeight: FontWeight.w700,
+              height: 1.27,
+            ),
           ),
-        ),
-        centerTitle: true,
-        leadingWidth: 52,
-        leading: Container(
-          padding: const EdgeInsets.only(left: 12),
-          alignment: Alignment.centerLeft,
-          child: IconButton(
-            padding: EdgeInsets.all(8),
-            onPressed: () {
-              context.router.pop(
-                GroupInfoArguments(
-                  groupName: bloc.state.workspace?.groupName,
-                  groupAvatar: bloc.state.workspace?.groupAvatar,
+          centerTitle: true,
+          leadingWidth: 52,
+          leading: Container(
+            padding: const EdgeInsets.only(left: 12),
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              padding: EdgeInsets.all(8),
+              onPressed: () {
+                context.router.pop(
+                  GroupInfoArguments(
+                    groupName: bloc.state.workspace?.groupName,
+                    groupAvatar: bloc.state.workspace?.groupAvatar,
+                  ),
+                );
+              },
+              icon: Assets.icons.icArrowLeft.svg(
+                height: 24,
+                width: 24,
+                colorFilter: ColorFilter.mode(
+                  AppColors.iconDefaultDefaultInverted,
+                  BlendMode.srcIn,
                 ),
-              );
-            },
-            icon: Assets.icons.icArrowLeft.svg(
-              height: 24,
-              width: 24,
-              colorFilter: ColorFilter.mode(
-                AppColors.iconDefaultDefaultInverted,
-                BlendMode.srcIn,
               ),
             ),
           ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(color: AppColors.outlineGrayStrong200, height: 1),
+          ),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.outlineGrayStrong200, height: 1),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              _buildHeaderInfo(context),
-              SizedBox(height: 20),
-              _buildBody(context, bloc),
-              SizedBox(height: 12),
-              _buildLeaveGroupButton(),
-            ],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                _buildHeaderInfo(context),
+                SizedBox(height: 20),
+                _buildBody(context, bloc),
+                SizedBox(height: 12),
+                _buildLeaveGroupButton(bloc),
+              ],
+            ),
           ),
         ),
       ),
@@ -399,9 +408,11 @@ class GroupInfoMobileLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildLeaveGroupButton() {
+  Widget _buildLeaveGroupButton(GroupInfoBloc bloc) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        bloc.add(LeaveGroupEvent());
+      },
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

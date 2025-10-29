@@ -502,4 +502,13 @@ class GroupRepositoryImpl implements GroupRepository {
       throw FailureConverter.convert(e);
     }
   }
+
+  @override
+  Future<void> leaveGroup(String groupId, String userId) async {
+    try {
+      await _groupRemoteDataSource.leaveGroup(groupId, userId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
 }
