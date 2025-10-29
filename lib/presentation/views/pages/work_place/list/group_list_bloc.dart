@@ -54,7 +54,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleSubEvent<MuteWorkspaceEvent>(_onMuteWorkspace);
     handleSubEvent<PinWorkspaceEvent>(_onPinWorkspace);
     handleSubEvent<UnpinWorkspaceEvent>(_onUnpinWorkspace);
-    handleSubEvent<SeenWorkspaceEvent>(_onSeenWorkspace);
+    handleSubEvent<MarkGroupEvent>(_onMarkGroup);
     handleSubEvent<UpdateWorkspaceLastMessageEvent>(
       _onUpdateWorkspaceLastMessage,
     );
@@ -154,8 +154,8 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     }
   }
 
-  Future<void> _onSeenWorkspace(
-    SeenWorkspaceEvent event,
+  Future<void> _onMarkGroup(
+    MarkGroupEvent event,
     Emitter<GroupListState> emit,
   ) async {
     try {

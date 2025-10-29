@@ -189,7 +189,7 @@ class _GroupListDesktopLayoutState
                             onTapDelete: () async {},
                             onTapMask: () {
                               _workspaceBloc.add(
-                                SeenWorkspaceEvent(workspaceId: workspace.id),
+                                MarkGroupEvent(workspaceId: workspace.id),
                               );
                             },
                             onTapMute: () async {
