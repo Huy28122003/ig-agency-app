@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/domain/entities/group_entity.dart';
+import 'package:ig_agency_app/presentation/models/group_info_arguments.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/group_info/widgets/group_info_card_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
@@ -18,59 +19,73 @@ class GroupInfoMobileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<GroupInfoBloc>();
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.surfaceContainerPrimaryPrimaryDefault,
-        elevation: 0,
-        toolbarHeight: 60,
-        title: Text(
-          'group_info.title'.tr(),
-          style: TextStyle(
-            color: AppColors.textDefaultTextInverted,
-            fontSize: 22,
-            fontFamily: FontFamily.segoeUI,
-            fontWeight: FontWeight.w700,
-            height: 1.27,
+    return BlocListener<GroupInfoBloc, GroupInfoState>(
+      listenWhen: (prev, curr) =>
+          prev.isLeaveGroupSuccess != curr.isLeaveGroupSuccess,
+      listener: (context, state) {
+        if (state.isLeaveGroupSuccess == true) {
+          context.router.replace(GroupListRoute());
+        }
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: AppColors.surfaceContainerPrimaryPrimaryDefault,
+          elevation: 0,
+          toolbarHeight: 60,
+          title: Text(
+            'group_info.title'.tr(),
+            style: TextStyle(
+              color: AppColors.textDefaultTextInverted,
+              fontSize: 22,
+              fontFamily: FontFamily.segoeUI,
+              fontWeight: FontWeight.w700,
+              height: 1.27,
+            ),
           ),
-        ),
-        centerTitle: true,
-        leadingWidth: 52,
-        leading: Container(
-          padding: const EdgeInsets.only(left: 12),
-          alignment: Alignment.centerLeft,
-          child: IconButton(
-            padding: EdgeInsets.all(8),
-            onPressed: () {
-              context.router.pop();
-            },
-            icon: Assets.icons.icArrowLeft.svg(
-              height: 24,
-              width: 24,
-              colorFilter: ColorFilter.mode(
-                AppColors.iconDefaultDefaultInverted,
-                BlendMode.srcIn,
+          centerTitle: true,
+          leadingWidth: 52,
+          leading: Container(
+            padding: const EdgeInsets.only(left: 12),
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              padding: EdgeInsets.all(8),
+              onPressed: () {
+                context.router.pop(
+                  GroupInfoArguments(
+                    groupName: bloc.state.workspace?.groupName,
+                    groupAvatar: bloc.state.workspace?.groupAvatar,
+                  ),
+                );
+              },
+              icon: Assets.icons.icArrowLeft.svg(
+                height: 24,
+                width: 24,
+                colorFilter: ColorFilter.mode(
+                  AppColors.iconDefaultDefaultInverted,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(color: AppColors.outlineGrayStrong200, height: 1),
+          ),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.outlineGrayStrong200, height: 1),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              _buildHeaderInfo(context),
-              SizedBox(height: 20),
-              _buildBody(context, bloc),
-              SizedBox(height: 12),
-              _buildLeaveGroupButton(),
-            ],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                _buildHeaderInfo(context),
+                SizedBox(height: 20),
+                _buildBody(context, bloc),
+                SizedBox(height: 12),
+                _buildLeaveGroupButton(bloc),
+              ],
+            ),
           ),
         ),
       ),
@@ -114,7 +129,9 @@ class GroupInfoMobileLayout extends StatelessWidget {
           bottom: 0,
           child: GestureDetector(
             onTap: () {
-              context.router.push(CameraRoute(groupId: context.read<GroupInfoBloc>().groupId));
+              context.router.push(
+                CameraRoute(groupId: context.read<GroupInfoBloc>().groupId),
+              );
             },
             child: Padding(
               padding: const EdgeInsets.all(4.0),
@@ -138,11 +155,11 @@ class GroupInfoMobileLayout extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         final name = bloc.state.workspace?.groupName ?? "";
-        final result = await context.router.push(
+        final result = await context.router.push<String>(
           EditGroupNameRoute(name: name, workspaceId: bloc.groupId),
         );
-        if(result == null) return;
-        bloc.add(UpdateWorkspaceEvent(groupName: result as String));
+        if (result == null || result == name) return;
+        bloc.add(UpdateWorkspaceEvent(groupName: result));
       },
       child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
         selector: (state) {
@@ -213,7 +230,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     if (workspace == null) return;
                     final result = await context.router.push(
                       EditGroupBioRoute(
-                        bio: workspace.bio ?? "",
+                        bio: workspace.bio,
                         workspaceId: workspace.id,
                       ),
                     );
@@ -348,11 +365,13 @@ class GroupInfoMobileLayout extends StatelessWidget {
                   onTap: () async {
                     final group = bloc.state.workspace;
                     if (group == null) return;
-                    final messageId = await context.router.push(
+                    final messageId = await context.router.push<String>(
                       PinnedMessageListRoute(groupId: bloc.groupId),
                     );
                     if (messageId != null && context.mounted) {
-                      context.router.pop(messageId);
+                      context.router.pop(
+                        GroupInfoArguments(messageId: messageId),
+                      );
                     }
                   },
                 ),
@@ -389,9 +408,11 @@ class GroupInfoMobileLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildLeaveGroupButton() {
+  Widget _buildLeaveGroupButton(GroupInfoBloc bloc) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        bloc.add(LeaveGroupEvent());
+      },
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

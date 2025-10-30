@@ -25,12 +25,16 @@ class WSDetailPage
   final bool isSearchMode;
 
   @override
-  WSDetailBloc get buildBloc => super.buildBloc..groupId = groupId;
+  WSDetailBloc get buildBloc => super.buildBloc
+    ..groupId = groupId
+    ..groupName = groupName;
 
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<WSDetailBloc>().add(LoadDataEvent(isSearchMode));
+    context.read<WSDetailBloc>().add(
+      LoadDataEvent(isSearchMode, groupName, groupAvatar),
+    );
   }
 
   @override

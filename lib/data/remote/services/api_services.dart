@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:ig_agency_app/data/remote/models/requests/change_notification_status_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_groups_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/forgot_password_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
@@ -178,4 +179,16 @@ abstract class ApiService {
 
   @POST('/conversations/{conversationId}/unread')
   Future<void> markUnread(@Path('conversationId') String groupId);
+
+  @PATCH('/conversations/{conversationId}/notification')
+  Future<void> changeNotificationStatus(
+    @Path('conversationId') String groupId,
+    @Body() ChangeNotificationStatusRequest request,
+  );
+
+  @DELETE('/conversations/{conversationId}/members/leave/{userId}')
+  Future<void> leaveGroup(
+    @Path('conversationId') String groupId,
+    @Path('userId') String userId,
+  );
 }

@@ -23,7 +23,8 @@ extension GroupTranslator on GroupResponse {
       // lastMessageTime: lastMessageTime,
       // isPin: pinned,
       //todo
-      groupAvatar: photo?.bigFilePath.withBaseUrl() ?? '',
+      groupAvatar: photo?.withBaseUrl() ?? '',
+      // groupAvatar: photo?.bigFilePath.withBaseUrl() ?? '',
       // isSeen: true,
       isMute: true,
       countPin: pinnedMessageCount,

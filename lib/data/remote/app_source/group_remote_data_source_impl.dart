@@ -1,4 +1,5 @@
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
+import 'package:ig_agency_app/data/remote/models/requests/change_notification_status_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/update_group_info_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
@@ -267,6 +268,34 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<void> markUnread(String groupId) async {
     try {
       return await _apiService.markAsRead(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> changeNotificationStatus({
+    required String groupId,
+    required bool enable,
+    String? unMuteTimeCode,
+  }) async {
+    try {
+      return await _apiService.changeNotificationStatus(
+        groupId,
+        ChangeNotificationStatusRequest(
+          enabled: enable,
+          dndDuration: unMuteTimeCode,
+        ),
+      );
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> leaveGroup(String groupId, String userId) async {
+    try {
+      return await _apiService.leaveGroup(groupId, userId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

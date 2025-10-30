@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/group_entity.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/change_notification_status_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/delete_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/listen_workspace_last_message_use_case.dart';
@@ -28,6 +28,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   final DeleteGroupUseCase _deleteGroupUseCase;
   final MarkUnreadUseCase _markUnreadUseCase;
   final MarkAsReadUseCase _markAsReadUseCase;
+  final ChangeNotificationStatusUseCase _changeNotificationStatusUseCase;
 
   Timer? _timer;
   StreamSubscription<GroupSummary>? _streamSubscription;
@@ -44,6 +45,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     this._deleteGroupUseCase,
     this._markUnreadUseCase,
     this._markAsReadUseCase,
+    this._changeNotificationStatusUseCase,
   ) : super(GroupListState()) {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
@@ -51,7 +53,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleSubEvent<MuteWorkspaceEvent>(_onMuteWorkspace);
     handleSubEvent<PinWorkspaceEvent>(_onPinWorkspace);
     handleSubEvent<UnpinWorkspaceEvent>(_onUnpinWorkspace);
-    handleSubEvent<SeenWorkspaceEvent>(_onSeenWorkspace);
+    handleSubEvent<MarkGroupEvent>(_onMarkGroup);
     handleSubEvent<UpdateWorkspaceLastMessageEvent>(
       _onUpdateWorkspaceLastMessage,
     );
@@ -64,22 +66,34 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleSubEvent<SearchDebouncedEvent>(_onSearchDebounced);
     handleSubEvent<SearchKeyWorkChangeEvent>(_onSearchKeyWordChange);
     handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
+    handleSubEvent<UpdateGroupEvent>(_onUpdateGroup);
   }
 
   Future<void> _onMuteWorkspace(
     MuteWorkspaceEvent event,
     Emitter<GroupListState> emit,
   ) async {
-    List<GroupSummary> workspaces = List.from(state.workspaces);
-    int indexWorkspace = workspaces.indexWhere(
-      (e) => e.id == event.workspaceId,
-    );
-    if (indexWorkspace == -1) return;
-    workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
-      isMute: !workspaces[indexWorkspace].isMute,
-    );
-    _sort(workspaces);
-    emit(state.copyWith(workspaces: workspaces));
+    try {
+      List<GroupSummary> workspaces = List.from(state.workspaces);
+      int indexWorkspace = workspaces.indexWhere(
+        (e) => e.id == event.workspaceId,
+      );
+      if (indexWorkspace == -1) return;
+      await _changeNotificationStatusUseCase.call(
+        ChangeNotificationStatusParams(
+          groupId: event.workspaceId,
+          enable: !workspaces[indexWorkspace].isMute,
+          unMuteTimeCode: event.unMuteTimeCode,
+        ),
+      );
+      workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
+        isMute: !workspaces[indexWorkspace].isMute,
+      );
+      // _sort(workspaces);
+      emit(state.copyWith(workspaces: workspaces));
+    } catch (e) {
+      handleError(emit, e);
+    }
   }
 
   Future<void> _onPinWorkspace(
@@ -140,8 +154,8 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     }
   }
 
-  Future<void> _onSeenWorkspace(
-    SeenWorkspaceEvent event,
+  Future<void> _onMarkGroup(
+    MarkGroupEvent event,
     Emitter<GroupListState> emit,
   ) async {
     try {
@@ -161,7 +175,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
       workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
         isSeen: !workspaces[indexWorkspace].isSeen,
       );
-      _sort(workspaces);
+      // _sort(workspaces);
       emit(state.copyWith(workspaces: workspaces));
     } catch (e) {
       handleError(emit, e);
@@ -412,15 +426,26 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     emit(state.copyWith(workspaceSelectedId: event.id));
   }
 
+  Future<void> _onUpdateGroup(
+    UpdateGroupEvent event,
+    Emitter<GroupListState> emit,
+  ) async {
+    List<GroupSummary> workspaces = List.from(state.workspaces);
+
+    int indexWorkspace = workspaces.indexWhere((e) => e.id == event.groupId);
+    if (indexWorkspace == -1) return;
+
+    workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
+      name: event.groupName,
+      avatar: event.groupAvatar,
+    );
+    emit(state.copyWith(workspaces: workspaces));
+  }
+
   @override
   Future<void> close() {
     _timer?.cancel();
     _streamSubscription?.cancel();
     return super.close();
-  }
-
-  @override
-  void handleError(Emitter<GroupListState> emit, Object error) {
-    super.handleError(emit, error);
   }
 }

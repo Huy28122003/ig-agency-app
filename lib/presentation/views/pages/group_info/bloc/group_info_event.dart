@@ -23,3 +23,5 @@ class UpdateWorkspaceEvent extends GroupInfoEvent {
     this.countMember,
   });
 }
+
+class LeaveGroupEvent extends GroupInfoEvent {}

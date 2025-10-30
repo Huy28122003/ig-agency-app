@@ -486,12 +486,38 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
+  Future<void> changeNotificationStatus({
+    required String groupId,
+    required bool enable,
+    String? unMuteTimeCode,
+  }) async {
+    try {
+      await _groupRemoteDataSource.changeNotificationStatus(
+        groupId: groupId,
+        enable: enable,
+        unMuteTimeCode: unMuteTimeCode,
+      );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<void> updateGroupAvatar({
     required String groupId,
     required String image,
   }) async {
     try {
       await _groupRemoteDataSource.updateGroupInfo(groupId, image: image);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> leaveGroup(String groupId, String userId) async {
+    try {
+      await _groupRemoteDataSource.leaveGroup(groupId, userId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
