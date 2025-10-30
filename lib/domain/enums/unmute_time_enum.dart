@@ -8,4 +8,20 @@ enum UnMuteTimeEnum {
   final String title;
 
   const UnMuteTimeEnum(this.title);
+
+  String get code{
+    switch(this){
+      case UnMuteTimeEnum.m15:
+        return "15m";
+      case UnMuteTimeEnum.h1:
+        return "1h";
+      case UnMuteTimeEnum.h8:
+        return "8h";
+      case UnMuteTimeEnum.h24:
+        return "24h";
+      case UnMuteTimeEnum.life:
+        return "until_opened";
+    }
+  }
+
 }

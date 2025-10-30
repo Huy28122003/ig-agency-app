@@ -13,15 +13,21 @@ class ChangeNotificationStatusUseCase
   @override
   Future<void> call(ChangeNotificationStatusParams params) async {
     return await _workspaceRepository.changeNotificationStatus(
-      params.groupId,
-      params.enable,
+      groupId: params.groupId,
+      enable: params.enable,
+      unMuteTimeCode: params.unMuteTimeCode,
     );
   }
 }
 
 class ChangeNotificationStatusParams {
-  ChangeNotificationStatusParams({required this.groupId, required this.enable});
+  ChangeNotificationStatusParams({
+    required this.groupId,
+    required this.enable,
+    this.unMuteTimeCode,
+  });
 
   final String groupId;
   final bool enable;
+  final String? unMuteTimeCode;
 }

@@ -138,7 +138,11 @@ abstract class GroupRepository {
 
   Future<void> markUnread(String groupId);
 
-  Future<void> changeNotificationStatus(String groupId, bool enable);
+  Future<void> changeNotificationStatus({
+    required String groupId,
+    required bool enable,
+    String? unMuteTimeCode,
+  });
 
   Future<void> leaveGroup(String groupId, String userId);
 }

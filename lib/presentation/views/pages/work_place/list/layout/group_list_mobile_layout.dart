@@ -112,14 +112,19 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                 );
               },
               onTapMask: () {
-                _workspaceBloc.add(
-                  SeenWorkspaceEvent(workspaceId: workspace.id),
-                );
+                _workspaceBloc.add(MarkGroupEvent(workspaceId: workspace.id));
               },
               onTapMute: () async {
                 if (workspace.isMute) {
                   final result = await MenuDialog.show<UnMuteTimeEnum>(
-                    onTap: (value) {},
+                    onTap: (value) {
+                      _workspaceBloc.add(
+                        MuteWorkspaceEvent(
+                          workspaceId: workspace.id,
+                          unMuteTimeCode: value.code,
+                        ),
+                      );
+                    },
                     context: context,
                     title: "workspace.unmute_title".tr(),
                     items: UnMuteTimeEnum.values
@@ -131,10 +136,11 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                         )
                         .toList(),
                   );
+                } else {
+                  _workspaceBloc.add(
+                    MuteWorkspaceEvent(workspaceId: workspace.id),
+                  );
                 }
-                _workspaceBloc.add(
-                  MuteWorkspaceEvent(workspaceId: workspace.id),
-                );
               },
               onTapPin: () {
                 if (workspace.isPin) {
@@ -149,6 +155,11 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               },
               child: GroupTileMobileWidget(
                 onTap: () async {
+                  if (!workspace.isSeen) {
+                    _workspaceBloc.add(
+                      MarkGroupEvent(workspaceId: workspace.id),
+                    );
+                  }
                   final result = await context.router.push<GroupInfoArguments>(
                     WSDetailRoute(
                       groupId: workspace.id,
@@ -231,16 +242,49 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                       DeleteWorkspaceEvent(workspaceId: workspace.id),
                     );
                   },
-                  onTapMask: () {},
-                  onTapMute: () {
+                  onTapMask: () {
                     _workspaceBloc.add(
-                      MuteWorkspaceEvent(workspaceId: workspace.id),
+                      MarkGroupEvent(workspaceId: workspace.id),
                     );
                   },
+                  onTapMute: () async {
+                    if (workspace.isMute) {
+                      final result = await MenuDialog.show<UnMuteTimeEnum>(
+                        onTap: (value) {
+                          _workspaceBloc.add(
+                            MuteWorkspaceEvent(
+                              workspaceId: workspace.id,
+                              unMuteTimeCode: value.code,
+                            ),
+                          );
+                        },
+                        context: context,
+                        title: "workspace.unmute_title".tr(),
+                        items: UnMuteTimeEnum.values
+                            .map(
+                              (e) => MenuItem(
+                                content: 'workspace.${e.title}'.tr(),
+                                value: e,
+                              ),
+                            )
+                            .toList(),
+                      );
+                    } else {
+                      _workspaceBloc.add(
+                        MuteWorkspaceEvent(workspaceId: workspace.id),
+                      );
+                    }
+                  },
                   onTapPin: () {
-                    _workspaceBloc.add(
-                      PinWorkspaceEvent(workspaceId: workspace.id),
-                    );
+                    if (workspace.isPin) {
+                      _workspaceBloc.add(
+                        UnpinWorkspaceEvent(workspaceId: workspace.id),
+                      );
+                    } else {
+                      _workspaceBloc.add(
+                        PinWorkspaceEvent(workspaceId: workspace.id),
+                      );
+                    }
                   },
                   child: GroupTileMobileWidget(
                     onTap: () {},
