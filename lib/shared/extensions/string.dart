@@ -70,3 +70,13 @@ extension MultipartFilePathExt on String? {
     );
   }
 }
+
+// anh.trandang. check file size
+// Future<bool> checkFileSize(File file, {int maxSizeMB = 5}) async {
+//   final fileBytes = await file.length(); // bytes
+//   final fileSizeMB = fileBytes / (1024 * 1024);
+//
+//   print("Size file: ${fileSizeMB.toStringAsFixed(2)} MB");
+//
+//   return fileSizeMB <= maxSizeMB;
+// }

@@ -149,22 +149,13 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
                   child: _bloc.cameraMode == MediaUseCase.updateAvatar
                       ? SetAvatarButton(
                           onTap: () {
-                            _bloc.add(
-                              CropAvatarEvent(
-                                circleRadius: circleRadius,
-                                imageWidth: imageWidth,
-                                imageHeight: imageHeight,
-                              ),
-                            );
+                            _bloc.add(ConfirmEvent());
                           },
                         )
                       : SendButtonWidget(
                           avatar: _bloc.avatar ?? '',
                           onTap: () {
-                            // TODO hoannk:
-                            final path = _bloc.state.path;
-                            if (path.isEmpty) return;
-                            context.router.pop(path);
+                            _bloc.add(ConfirmEvent());
                           },
                         ),
                 ),

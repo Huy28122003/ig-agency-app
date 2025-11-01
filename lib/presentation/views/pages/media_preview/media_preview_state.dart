@@ -18,14 +18,14 @@ class MediaPreviewState extends BaseState<MediaPreviewState> {
     String? pageErrorMessage,
     bool? processing,
     String? path,
-    bool? isCropSuccess,
+    bool? isCompleted,
   }) {
     return MediaPreviewState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
       path: path ?? this.path,
-      isCropSuccess: isCropSuccess ?? this.isCropSuccess,
+      isCropSuccess: isCompleted ?? this.isCropSuccess,
     );
   }
 

@@ -11,7 +11,6 @@ import 'package:ig_agency_app/domain/usecases/update_avatar_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../shared/commons/enums/status.dart';
-import '../../../../dependencies/media/media_manager.dart';
 import '../../../../domain/entities/user/profile_info_entity.dart';
 import '../../../base/base_state.dart';
 

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -33,11 +32,6 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double imageWidth = screenWidth;
-    final double imageHeight = (screenWidth / (_bloc.aspectRatio ?? 1.0));
-    final double circleRadius = (min(imageWidth, imageHeight) / 2);
-
     final aspectRatio = _bloc.aspectRatio;
     return MultiBlocListener(
       listeners: [
@@ -75,7 +69,7 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                               builder: (context, path) {
                                 return (path.isEmpty)
                                     ? Center(child: CircularProgressIndicator())
-                                    : aspectRatio == null
+                                    : (aspectRatio == null)
                                     ? SizedBox(
                                         height: constraints.maxHeight * 0.9,
                                         width: constraints.maxWidth,
@@ -90,6 +84,7 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                                         child: _buildCenter(
                                           _bloc.isPhoto,
                                           path,
+                                          constraints.maxWidth / 2,
                                         ),
                                       );
                               },
@@ -150,22 +145,13 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                       child: _bloc.cameraMode == MediaUseCase.updateAvatar
                           ? SetAvatarButton(
                               onTap: () {
-                                _bloc.add(
-                                  CropAvatarEvent(
-                                    circleRadius: circleRadius,
-                                    imageWidth: imageWidth,
-                                    imageHeight: imageHeight,
-                                  ),
-                                );
+                                _bloc.add(ConfirmEvent());
                               },
                             )
                           : SendButtonWidget(
                               avatar: _bloc.avatar ?? '',
                               onTap: () {
-                                final path = _bloc.state.path;
-                                if (path.isEmpty) return;
-
-                                context.router.pop(path);
+                                _bloc.add(ConfirmEvent());
                               },
                             ),
                     ),
