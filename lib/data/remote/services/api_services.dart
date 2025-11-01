@@ -175,6 +175,12 @@ abstract class ApiService {
     @Body() UpdateGroupInfoRequest updateGroupInfoRequest,
   );
 
+  @PUT('/conversations/{conversationId}')
+  Future<void> updateGroupAvatar(
+    @Path('conversationId') String groupId,
+    @Part(name: "photo") MultipartFile photo,
+  );
+
   @POST('/conversations/{conversationId}/read')
   Future<void> markAsRead(@Path('conversationId') String groupId);
 

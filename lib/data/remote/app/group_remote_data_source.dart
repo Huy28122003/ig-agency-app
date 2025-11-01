@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import '../../../domain/entities/message/message.dart';
 import '../models/requests/get_groups_request.dart';
@@ -64,8 +65,10 @@ abstract class GroupRemoteDataSource {
     String groupId, {
     String? bio,
     String? name,
-    String? image,
+    MultipartFile? image,
   });
+
+  Future<void> updateGroupAvatar(String groupId, MultipartFile image);
 
   Future<void> markAsRead(String groupId);
 
