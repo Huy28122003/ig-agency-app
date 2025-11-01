@@ -33,7 +33,7 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
     return BlocListener<MediaPreviewBloc, MediaPreviewState>(
       listener: (context, state) {
         if (state.updateAvatarSuccess == true) {
-          context.router.replace(GroupInfoRoute(groupId: _bloc.groupId));
+          context.router.popUntilRouteWithName(GroupInfoRoute.name);
         }
       },
       listenWhen: (prev, curr) =>
