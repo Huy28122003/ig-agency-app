@@ -69,6 +69,7 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
       await _updateGroupAvatarUseCase.call(
         UpdateGroupAvatarParams(workspaceId: groupId, image: path),
       );
+      emit(state.copyWith(updateAvatarSuccess: true));
     } catch (e) {
       handleError(emit, e);
     }
