@@ -13,7 +13,7 @@ import 'package:ig_agency_app/shared/utils/logger.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../shared/commons/enums/status.dart';
-import '../../../../shared/commons/enums/camera_mode.dart';
+import '../../../../shared/commons/enums/media_use_case.dart';
 import '../../../base/base_state.dart';
 
 part 'media_preview_event.dart';
@@ -30,10 +30,10 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
   final MediaManager _mediaManager;
   final PermissionManager _permissionManager;
   late String path;
-  late String avatar;
+  late String? avatar;
   late bool isPhoto;
-  late double aspectRatio;
-  late CameraMode cameraMode;
+  late double? aspectRatio;
+  late MediaUseCase cameraMode;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);

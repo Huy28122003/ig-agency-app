@@ -1,4 +1,4 @@
-enum CameraMode {
+enum MediaUseCase {
   sendMessage,
   updateAvatar;
 

@@ -18,12 +18,8 @@ class UpdateUserEvent extends ProfileEvent {
   final ProfileInfoEntity user;
 }
 
-class UpdateAvatarFromAccountEvent extends ProfileEvent {
-  const UpdateAvatarFromAccountEvent(this.path);
+class UpdateAvatarEvent extends ProfileEvent {
+  const UpdateAvatarEvent(this.path);
 
   final String path;
-}
-
-class ChooseImageFromLibraryAndUpdateAvatarEvent extends ProfileEvent {
-  const ChooseImageFromLibraryAndUpdateAvatarEvent();
 }

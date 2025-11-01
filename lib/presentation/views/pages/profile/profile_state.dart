@@ -8,11 +8,13 @@ class ProfileState extends BaseState<ProfileState> {
     this.isDeleteAccountSuccess = false,
     this.user,
     this.email = '',
+    this.newAvatar = '',
   });
 
   final bool isDeleteAccountSuccess;
   final ProfileInfoEntity? user;
   final String email;
+  final String newAvatar;
 
   @override
   ProfileState copyWith({
@@ -22,6 +24,7 @@ class ProfileState extends BaseState<ProfileState> {
     bool? isDeleteAccountSuccess,
     ProfileInfoEntity? user,
     String? email,
+    String? newAvatar,
   }) {
     return ProfileState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -31,6 +34,7 @@ class ProfileState extends BaseState<ProfileState> {
           isDeleteAccountSuccess ?? this.isDeleteAccountSuccess,
       user: user ?? this.user,
       email: email ?? this.email,
+      newAvatar: newAvatar ?? this.newAvatar,
     );
   }
 
@@ -40,5 +44,6 @@ class ProfileState extends BaseState<ProfileState> {
     isDeleteAccountSuccess,
     user,
     email,
+    newAvatar,
   ];
 }

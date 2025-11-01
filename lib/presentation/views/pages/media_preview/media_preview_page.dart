@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_page.dart';
 
-import '../../../../shared/commons/enums/camera_mode.dart';
+import '../../../../shared/commons/enums/media_use_case.dart';
 import 'layout/media_preview_mobile_layout.dart';
 import 'layout/media_preview_tablet_layout.dart';
 import 'media_preview_bloc.dart';
@@ -13,18 +13,18 @@ class MediaPreviewPage
     extends BasePage<MediaPreviewBloc, MediaPreviewEvent, MediaPreviewState> {
   const MediaPreviewPage({
     super.key,
-    required this.avatar,
+    this.avatar,
     required this.mediaPath,
-    this.isPhoto = false,
-    this.aspectRatio = 1,
-    this.cameraMode = CameraMode.sendMessage,
+    this.isPhoto = true,
+    this.aspectRatio,
+    this.mediaUseCase = MediaUseCase.sendMessage,
   });
 
-  final String avatar;
+  final String? avatar;
   final String mediaPath;
   final bool isPhoto;
-  final double aspectRatio;
-  final CameraMode cameraMode;
+  final double? aspectRatio;
+  final MediaUseCase mediaUseCase;
 
   @override
   MediaPreviewBloc get buildBloc => super.buildBloc
@@ -32,7 +32,7 @@ class MediaPreviewPage
     ..path = mediaPath
     ..isPhoto = isPhoto
     ..aspectRatio = aspectRatio
-    ..cameraMode = cameraMode;
+    ..cameraMode = mediaUseCase;
 
   @override
   void onInitState(BuildContext context) {

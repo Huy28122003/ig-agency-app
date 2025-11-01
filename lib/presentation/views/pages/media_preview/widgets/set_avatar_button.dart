@@ -8,9 +8,8 @@ import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 
 class SetAvatarButton extends StatelessWidget {
-  const SetAvatarButton({super.key, required this.avatar, required this.onTap});
+  const SetAvatarButton({super.key, required this.onTap});
 
-  final String avatar;
   final VoidCallback onTap;
 
   @override

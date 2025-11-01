@@ -54,12 +54,11 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
               final aspectRatio = _cameraBloc.controller?.value.aspectRatio;
               final path = await context.router.push(
                 MediaPreviewRoute(
-                  avatar:
-                      "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
+                  avatar: _cameraBloc.avatar,
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
                   aspectRatio: 1 / (aspectRatio ?? 1),
-                  cameraMode: _cameraBloc.cameraMode,
+                  mediaUseCase: _cameraBloc.cameraMode,
                 ),
               );
               if (path is String && context.mounted) {
@@ -165,15 +164,17 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                                 opacity: inProgress ? 0 : 1,
                                 child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: AppButton.icon(
-                                    onPressed: () {
-                                      _cameraBloc.add(PickMediaEvent());
-                                    },
-                                    icon: Assets.icons.icAlbum.svg(
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                  ),
+                                  child: _cameraBloc.cameraMode.isCaptureOnly
+                                      ? SizedBox()
+                                      : AppButton.icon(
+                                          onPressed: () {
+                                            _cameraBloc.add(PickMediaEvent());
+                                          },
+                                          icon: Assets.icons.icAlbum.svg(
+                                            width: 24,
+                                            height: 24,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ),

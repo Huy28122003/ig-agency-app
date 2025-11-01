@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/commons/enums/camera_mode.dart';
+import '../../../../../shared/commons/enums/media_use_case.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_video_player.dart';
@@ -36,7 +36,7 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double imageWidth = screenWidth;
-    final double imageHeight = (screenWidth / _bloc.aspectRatio);
+    final double imageHeight = (screenWidth / (_bloc.aspectRatio ?? 1.0));
     final double circleRadius = (min(imageWidth, imageHeight) / 2);
     return MultiBlocListener(
       listeners: [
@@ -85,7 +85,7 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
                                         ),
                                       ),
                                       if (_bloc.cameraMode ==
-                                          CameraMode.updateAvatar)
+                                          MediaUseCase.updateAvatar)
                                         Positioned.fill(
                                           child: CircularCropMask(
                                             radius: circleRadius,
@@ -119,7 +119,7 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
                         ),
                         Spacer(),
                         if (_bloc.isPhoto &&
-                            _bloc.cameraMode != CameraMode.updateAvatar)
+                            _bloc.cameraMode != MediaUseCase.updateAvatar)
                           AppButton.icon(
                             onPressed: () {
                               _bloc.add(EditMediaEvent());
@@ -146,9 +146,8 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
               Positioned(
                 bottom: 0,
                 child: SafeArea(
-                  child: _bloc.cameraMode == CameraMode.updateAvatar
+                  child: _bloc.cameraMode == MediaUseCase.updateAvatar
                       ? SetAvatarButton(
-                          avatar: _bloc.avatar,
                           onTap: () {
                             _bloc.add(
                               CropAvatarEvent(
@@ -160,7 +159,7 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
                           },
                         )
                       : SendButtonWidget(
-                          avatar: _bloc.avatar,
+                          avatar: _bloc.avatar ?? '',
                           onTap: () {
                             // TODO hoannk:
                             final path = _bloc.state.path;
