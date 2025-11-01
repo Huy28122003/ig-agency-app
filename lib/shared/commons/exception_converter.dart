@@ -21,10 +21,10 @@ class ExceptionConverter {
           }
           return ApiException(e.response?.statusCode, null, null);
       }
-    } else if (e is ApiException) {
+    } else if (e is AppException) {
       return e;
     } else {
-      return Exception();
+      return UnknownException();
     }
   }
 }

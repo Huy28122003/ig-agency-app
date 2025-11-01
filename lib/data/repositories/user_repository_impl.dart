@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/local/app/user_local_data_source.dart';
 import 'package:ig_agency_app/data/remote/app/user_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/translators/profile_info_translator.dart';
@@ -10,7 +9,6 @@ import '../../domain/entities/user/profile_info_entity.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../cache/ram_cache.dart';
-import 'dart:io';
 
 @Injectable(as: UserRepository)
 class UserRepositoryImpl implements UserRepository {
@@ -83,12 +81,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> updateUserAvatar(String avatarPath) async {
     try {
-      final file = File(avatarPath);
-      final multipartFile = await MultipartFile.fromFile(
-        file.path,
-        filename: file.path.split('/').last,
-      );
-      final response = await _remote.updateAvatar(multipartFile);
+      final response = await _remote.updateAvatar(avatarPath);
       final profileInfo = response.toEntity();
       _local.saveProfileInfo(profileInfo);
       _ramCache.saveProfileInfo(profileInfo);

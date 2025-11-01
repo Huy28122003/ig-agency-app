@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
 
 import '../../flavor_settings.dart';
@@ -47,5 +51,22 @@ extension BaseUrlExtension on String? {
       return '';
     }
     return '${FlavorSettings().baseUrl}/$this';
+  }
+}
+
+extension MultipartFilePathExt on String? {
+  Future<MultipartFile?> toMultipartFile() async {
+    final pathFile = this;
+    if (pathFile == null) return null;
+
+    final file = File(pathFile);
+    final mimeType = lookupMimeType(file.path) ?? 'image/jpeg';
+    final mime = mimeType.split('/');
+
+    return await MultipartFile.fromFile(
+      file.path,
+      filename: path.basename(file.path),
+      contentType: MediaType(mime[0], mime[1]),
+    );
   }
 }
