@@ -57,6 +57,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final deviceId = await DeviceManager.getOrCreateDeviceId();
       final osVersion = await DeviceManager.getOsVersion() ?? "";
       final model = await DeviceManager.getDeviceModel() ?? "";
+      // todo: anh.trandang mock device token
       final deviceToken =
           'await getIt<NotificationService>().getDeviceToken() ?? '
           '';
