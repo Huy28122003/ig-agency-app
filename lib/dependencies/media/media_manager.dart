@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 abstract class MediaManager {
   Future<XFile?> pickMedia();
 
+  Future<XFile?> pickPhoto();
+
   Future<bool> saveMediaByBoundary(GlobalKey key);
 
   Future<bool> saveMediaToLib(String path);

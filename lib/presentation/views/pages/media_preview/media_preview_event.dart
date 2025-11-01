@@ -4,7 +4,7 @@ sealed class MediaPreviewEvent {}
 
 class LoadDataEvent extends MediaPreviewEvent {}
 
-class SendMediaEvent extends MediaPreviewEvent {}
+class ConfirmEvent extends MediaPreviewEvent {}
 
 class SaveMediaEvent extends MediaPreviewEvent {}
 

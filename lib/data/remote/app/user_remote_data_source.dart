@@ -6,4 +6,6 @@ abstract class UserRemoteDataSource {
   Future<ProfileInfoResponse> updateName(String name);
 
   Future<ProfileInfoResponse> updateBio(String bio);
+
+  Future<ProfileInfoResponse> updateAvatar(String avatar);
 }

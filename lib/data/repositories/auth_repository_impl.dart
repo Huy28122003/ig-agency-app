@@ -4,7 +4,6 @@ import 'package:ig_agency_app/data/remote/models/requests/forgot_password_reques
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
 import 'package:ig_agency_app/data/remote/translators/profile_info_translator.dart';
-import 'package:ig_agency_app/dependencies/notification/notification_service.dart';
 import 'package:ig_agency_app/domain/entities/forgot_password_entity.dart';
 import 'package:ig_agency_app/domain/repositories/auth_repository.dart';
 import 'package:ig_agency_app/domain/translators/forgot_password_translator.dart';
@@ -12,7 +11,6 @@ import 'package:ig_agency_app/shared/commons/failure_converter.dart';
 import 'package:ig_agency_app/shared/utils/device_manager.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../di/di.dart';
 import '../cache/ram_cache.dart';
 import '../remote/app/auth_remote_data_source.dart';
 
@@ -33,7 +31,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future clearAccessToken() async {
     try {
-      // Simulate clearing token
+      _ramCache.clearUserData();
+      await _localDataSource.revokeTokens();
+      await _localDataSource.logout();
       return;
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -57,8 +57,10 @@ class AuthRepositoryImpl implements AuthRepository {
       final deviceId = await DeviceManager.getOrCreateDeviceId();
       final osVersion = await DeviceManager.getOsVersion() ?? "";
       final model = await DeviceManager.getDeviceModel() ?? "";
+      // todo: anh.trandang mock device token
       final deviceToken =
-          await getIt<NotificationService>().getDeviceToken() ?? '';
+          'await getIt<NotificationService>().getDeviceToken() ?? '
+          '';
       final request = LoginRequestModel(
         email: email,
         password: password,
@@ -92,7 +94,6 @@ class AuthRepositoryImpl implements AuthRepository {
         deviceType: deviceType,
       );
 
-      // Simulate login process
       _ramCache.clearUserData();
       await _remoteDataSource.logout(request);
       await _localDataSource.logout();
@@ -167,9 +168,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future deleteAccount(String userId) async {
+  Future deleteAccount() async {
     try {
-      await _remoteDataSource.deleteAccount(userId);
+      await _remoteDataSource.deleteAccount();
       return await clearAccessToken();
     } catch (e) {
       throw FailureConverter.convert(e);

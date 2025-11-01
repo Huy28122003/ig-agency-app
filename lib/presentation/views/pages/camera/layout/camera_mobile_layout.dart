@@ -52,18 +52,22 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                 AppLifecycleChangedEvent(AppLifecycleState.inactive),
               );
               final aspectRatio = _cameraBloc.controller?.value.aspectRatio;
-              await context.router.push(
+              final path = await context.router.push(
                 MediaPreviewRoute(
-                  avatar:
-                      "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
+                  avatar: _cameraBloc.avatar,
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
-                  aspectRatio: 1 / (aspectRatio ?? 0),
+                  aspectRatio: 1 / (aspectRatio ?? 1),
+                  mediaUseCase: _cameraBloc.mediaUseCase,
                 ),
               );
-              _cameraBloc.add(
-                AppLifecycleChangedEvent(AppLifecycleState.resumed),
-              );
+              if (path is String && context.mounted) {
+                context.router.pop(path);
+              } else {
+                _cameraBloc.add(
+                  AppLifecycleChangedEvent(AppLifecycleState.resumed),
+                );
+              }
             }
           },
         ),
@@ -119,7 +123,6 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                           builder: (context, data) {
                             return AnimatedSize(
                               duration: Duration(milliseconds: 350),
-
                               child: data.$2
                                   ? SizedBox()
                                   : AppButton.icon(
@@ -161,15 +164,17 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                                 opacity: inProgress ? 0 : 1,
                                 child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: AppButton.icon(
-                                    onPressed: () {
-                                      _cameraBloc.add(PickMediaEvent());
-                                    },
-                                    icon: Assets.icons.icAlbum.svg(
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                  ),
+                                  child: _cameraBloc.mediaUseCase.isCaptureOnly
+                                      ? SizedBox()
+                                      : AppButton.icon(
+                                          onPressed: () {
+                                            _cameraBloc.add(PickMediaEvent());
+                                          },
+                                          icon: Assets.icons.icAlbum.svg(
+                                            width: 24,
+                                            height: 24,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ),
