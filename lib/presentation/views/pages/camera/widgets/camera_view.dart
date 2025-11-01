@@ -20,7 +20,10 @@ class CameraView extends StatelessWidget {
             if (!status.isReady ||
                 cameraController == null ||
                 previewSize == null) {
-              return SizedBox();
+              return SizedBox(
+                height: constraints.maxHeight * 0.9,
+                width: constraints.maxWidth,
+              );
             }
             return FittedBox(
               fit: BoxFit.cover,
