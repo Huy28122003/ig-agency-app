@@ -60,7 +60,7 @@ class _SettingHomeTabletLayoutState extends State<SettingHomeTabletLayout>
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
                   aspectRatio: 1 / (aspectRatio ?? 1),
-                  mediaUseCase: _cameraBloc.cameraMode,
+                  mediaUseCase: _cameraBloc.mediaUseCase,
                 ),
               );
               if (path is String && context.mounted) {

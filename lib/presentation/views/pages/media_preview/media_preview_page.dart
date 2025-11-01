@@ -32,7 +32,7 @@ class MediaPreviewPage
     ..path = mediaPath
     ..isPhoto = isPhoto
     ..aspectRatio = aspectRatio
-    ..cameraMode = mediaUseCase;
+    ..mediaUseCase = mediaUseCase;
 
   @override
   void onInitState(BuildContext context) {

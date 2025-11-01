@@ -58,7 +58,7 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
                   aspectRatio: 1 / (aspectRatio ?? 1),
-                  mediaUseCase: _cameraBloc.cameraMode,
+                  mediaUseCase: _cameraBloc.mediaUseCase,
                 ),
               );
               if (path is String && context.mounted) {
@@ -164,7 +164,7 @@ class _CameraMobileLayoutState extends State<CameraMobileLayout>
                                 opacity: inProgress ? 0 : 1,
                                 child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: _cameraBloc.cameraMode.isCaptureOnly
+                                  child: _cameraBloc.mediaUseCase.isCaptureOnly
                                       ? SizedBox()
                                       : AppButton.icon(
                                           onPressed: () {

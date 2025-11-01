@@ -142,7 +142,7 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
                   Positioned(
                     bottom: 0,
                     child: SafeArea(
-                      child: _bloc.cameraMode == MediaUseCase.updateAvatar
+                      child: _bloc.mediaUseCase.isCaptureOnly
                           ? SetAvatarButton(
                               onTap: () {
                                 _bloc.add(ConfirmEvent());
@@ -171,7 +171,7 @@ class _MediaPreviewMobileLayoutState extends State<MediaPreviewMobileLayout> {
             alignment: Alignment.center,
             children: [
               FittedBox(child: Image.file(File(path))),
-              if (_bloc.cameraMode == MediaUseCase.updateAvatar)
+              if (_bloc.mediaUseCase == MediaUseCase.updateAvatar)
                 Positioned.fill(child: CircularCropMask(radius: radius)),
             ],
           )

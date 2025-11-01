@@ -84,7 +84,7 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
                                           ),
                                         ),
                                       ),
-                                      if (_bloc.cameraMode ==
+                                      if (_bloc.mediaUseCase ==
                                           MediaUseCase.updateAvatar)
                                         Positioned.fill(
                                           child: CircularCropMask(
@@ -119,7 +119,7 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
                         ),
                         Spacer(),
                         if (_bloc.isPhoto &&
-                            _bloc.cameraMode != MediaUseCase.updateAvatar)
+                            _bloc.mediaUseCase != MediaUseCase.updateAvatar)
                           AppButton.icon(
                             onPressed: () {
                               _bloc.add(EditMediaEvent());
@@ -146,7 +146,7 @@ class _MediaPreviewTabletLayoutState extends State<MediaPreviewTabletLayout> {
               Positioned(
                 bottom: 0,
                 child: SafeArea(
-                  child: _bloc.cameraMode == MediaUseCase.updateAvatar
+                  child: _bloc.mediaUseCase == MediaUseCase.updateAvatar
                       ? SetAvatarButton(
                           onTap: () {
                             _bloc.add(ConfirmEvent());

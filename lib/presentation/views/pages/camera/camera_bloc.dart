@@ -29,7 +29,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
   AppLifecycleState? _oldLifecycleState;
   List<CameraDescription> _cameras = [];
 
-  late MediaUseCase cameraMode;
+  late MediaUseCase mediaUseCase;
   late String? avatar;
 
   void _registerHandlers() {
@@ -139,7 +139,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     Emitter<CameraState> emit,
   ) async {
     try {
-      if (!state.status.isReady || cameraMode.isCaptureOnly) return;
+      if (!state.status.isReady || mediaUseCase.isCaptureOnly) return;
       await _cameraController?.startVideoRecording();
       emit(state.copyWith(inProgress: true));
     } catch (e) {

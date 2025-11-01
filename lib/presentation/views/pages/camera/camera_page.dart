@@ -22,7 +22,7 @@ class CameraPage extends BasePage<CameraBloc, CameraEvent, CameraState> {
   @override
   CameraBloc get buildBloc => super.buildBloc
     ..avatar = avatarGroup
-    ..cameraMode = mediaUseCase;
+    ..mediaUseCase = mediaUseCase;
 
   @override
   void onInitState(BuildContext context) {
