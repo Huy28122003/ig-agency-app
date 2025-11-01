@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
 import 'package:ig_agency_app/data/remote/translators/group_detail_translator.dart';
@@ -508,7 +511,12 @@ class GroupRepositoryImpl implements GroupRepository {
     required String image,
   }) async {
     try {
-      await _groupRemoteDataSource.updateGroupInfo(groupId, image: image);
+      final file = File(image);
+      final multipartFile = await MultipartFile.fromFile(
+        file.path,
+        filename: file.path.split('/').last,
+      );
+      await _groupRemoteDataSource.updateGroupAvatar(groupId, multipartFile);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

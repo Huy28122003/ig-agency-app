@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/change_notification_status_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
@@ -243,13 +244,22 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     String groupId, {
     String? bio,
     String? name,
-    String? image,
+    MultipartFile? image,
   }) async {
     try {
       await _apiService.updateGroupInfo(
         groupId,
-        UpdateGroupInfoRequest(bio: bio, title: name, photo: image),
+        UpdateGroupInfoRequest(bio: bio, title: name),
       );
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> updateGroupAvatar(String groupId, MultipartFile image) async {
+    try {
+      await _apiService.updateGroupAvatar(groupId, image);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
