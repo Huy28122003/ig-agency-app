@@ -29,6 +29,16 @@ class MediaPickerImpl extends MediaManager {
   }
 
   @override
+  Future<XFile?> pickPhoto() async {
+    try {
+      return await _imagePicker.pickImage(source: ImageSource.gallery);
+    } catch (e, s) {
+      logger.e(e, stackTrace: s);
+      return null;
+    }
+  }
+
+  @override
   Future<bool> saveMediaByBoundary(GlobalKey key) async {
     try {
       RenderRepaintBoundary boundary =

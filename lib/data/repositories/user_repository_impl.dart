@@ -79,6 +79,18 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> updateUserAvatar(String avatarPath) async {
+    try {
+      final response = await _remote.updateAvatar(avatarPath);
+      final profileInfo = response.toEntity();
+      _local.saveProfileInfo(profileInfo);
+      _ramCache.saveProfileInfo(profileInfo);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
   Future<UserEntity> getUserInfo(String userId) async {
     try {
       final user = _ramCache.getLatestProfileInfo();

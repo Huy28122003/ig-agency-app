@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../gen/fonts.gen.dart';
@@ -38,8 +39,8 @@ class SendButtonWidget extends StatelessWidget {
                 children: [
                   CircleNetworkAvatar(imageUrl: avatar, size: 24),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Send',
+                  Text(
+                    'general.send'.tr(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textDefaultTextInverted,

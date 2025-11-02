@@ -104,6 +104,8 @@ dependencies:
   # App icons_launcher:
   flutter_launcher_icons: ^0.14.4
 
+  http_parser: ^4.1.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

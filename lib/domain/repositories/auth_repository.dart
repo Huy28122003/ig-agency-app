@@ -27,7 +27,7 @@ abstract class AuthRepository {
     String passwordConfirm,
   );
 
-  Future deleteAccount(String userId);
+  Future deleteAccount();
 
   Future<String?> getEmail();
 
