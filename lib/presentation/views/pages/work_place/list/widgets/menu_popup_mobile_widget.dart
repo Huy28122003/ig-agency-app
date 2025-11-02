@@ -191,8 +191,8 @@ class _MenuPopupState extends State<_MenuPopup> {
           ),
           _buildItem(
             title: widget.isMute
-                ? "workspace.unmute".tr()
-                : "workspace.mute".tr(),
+                ? "workspace.mute".tr()
+                : "workspace.unmute".tr(),
             onTap: widget.onTapMute,
             icon: widget.isMute
                 ? Assets.icons.icBlockNotification.svg()

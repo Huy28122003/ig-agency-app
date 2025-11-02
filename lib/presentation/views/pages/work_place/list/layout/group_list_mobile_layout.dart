@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/work_place/list/workspace_list_bloc.dart';
+import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
 import '../../../../../../domain/entities/group_summary.dart';
 import '../../../../../../domain/enums/unmute_time_enum.dart';
@@ -15,17 +15,16 @@ import '../../../../widgets/app_search_text_field.dart';
 import '../../../../widgets/header_home_view.dart';
 import '../../../../widgets/menu_dialog.dart';
 import '../widgets/menu_popup_mobile_widget.dart';
-import '../widgets/workspace_tile_mobile_widget.dart';
+import '../widgets/group_tile_mobile_widget.dart';
 
-class WorkspaceListMobileLayout extends StatefulWidget {
-  const WorkspaceListMobileLayout({super.key});
+class GroupListMobileLayout extends StatefulWidget {
+  const GroupListMobileLayout({super.key});
 
   @override
-  State<WorkspaceListMobileLayout> createState() =>
-      _WorkspaceListMobileLayoutState();
+  State<GroupListMobileLayout> createState() => _GroupListMobileLayoutState();
 }
 
-class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
+class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
   late GroupListBloc _workspaceBloc;
 
   @override
@@ -113,19 +112,22 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 );
               },
               onTapMask: () {
-                _workspaceBloc.add(
-                  SeenWorkspaceEvent(workspaceId: workspace.id),
-                );
+                _workspaceBloc.add(MarkGroupEvent(workspaceId: workspace.id));
               },
               onTapMute: () async {
                 if (workspace.isMute) {
-
-                  // todo: anh.trandang recheck
-                  final result = await MenuDialog.show<UnMuteTimeEnum>(
-                    onTap: (value) {},
+                  await MenuDialog.show<MuteDurationOption>(
+                    onTap: (value) {
+                      _workspaceBloc.add(
+                        MuteWorkspaceEvent(
+                          workspaceId: workspace.id,
+                          type: value,
+                        ),
+                      );
+                    },
                     context: context,
-                    title: "workspace.mute_title".tr(),
-                    items: UnMuteTimeEnum.values
+                    title: "workspace.unmute_title".tr(),
+                    items: MuteDurationOption.values
                         .map(
                           (e) => MenuItem(
                             content: 'workspace.${e.title}'.tr(),
@@ -134,18 +136,30 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                         )
                         .toList(),
                   );
+                } else {
+                  _workspaceBloc.add(
+                    MuteWorkspaceEvent(workspaceId: workspace.id),
+                  );
                 }
-                _workspaceBloc.add(
-                  MuteWorkspaceEvent(workspaceId: workspace.id),
-                );
               },
               onTapPin: () {
-                _workspaceBloc.add(
-                  PinWorkspaceEvent(workspaceId: workspace.id),
-                );
+                if (workspace.isPin) {
+                  _workspaceBloc.add(
+                    UnpinWorkspaceEvent(workspaceId: workspace.id),
+                  );
+                } else {
+                  _workspaceBloc.add(
+                    PinWorkspaceEvent(workspaceId: workspace.id),
+                  );
+                }
               },
-              child: WorkspaceTileMobileWidget(
+              child: GroupTileMobileWidget(
                 onTap: () {
+                  if (!workspace.isSeen) {
+                    _workspaceBloc.add(
+                      MarkGroupEvent(workspaceId: workspace.id),
+                    );
+                  }
                   context.router.push(
                     WSDetailRoute(
                       groupId: workspace.id,
@@ -161,7 +175,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                 lastMessage: workspace.lastMessage,
                 lastMessageTime: workspace.lastMessageTime,
                 isSeen: workspace.isSeen,
-                countNewMessage: 10,
+                // countNewMessage: 10,
               ),
             );
           },
@@ -215,18 +229,51 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                       DeleteWorkspaceEvent(workspaceId: workspace.id),
                     );
                   },
-                  onTapMask: () {},
-                  onTapMute: () {
+                  onTapMask: () {
                     _workspaceBloc.add(
-                      MuteWorkspaceEvent(workspaceId: workspace.id),
+                      MarkGroupEvent(workspaceId: workspace.id),
                     );
+                  },
+                  onTapMute: () async {
+                    if (workspace.isMute) {
+                      await MenuDialog.show<MuteDurationOption>(
+                        onTap: (value) {
+                          _workspaceBloc.add(
+                            MuteWorkspaceEvent(
+                              workspaceId: workspace.id,
+                              type: value,
+                            ),
+                          );
+                        },
+                        context: context,
+                        title: "workspace.unmute_title".tr(),
+                        items: MuteDurationOption.values
+                            .map(
+                              (e) => MenuItem(
+                                content: 'workspace.${e.title}'.tr(),
+                                value: e,
+                              ),
+                            )
+                            .toList(),
+                      );
+                    } else {
+                      _workspaceBloc.add(
+                        MuteWorkspaceEvent(workspaceId: workspace.id),
+                      );
+                    }
                   },
                   onTapPin: () {
-                    _workspaceBloc.add(
-                      PinWorkspaceEvent(workspaceId: workspace.id),
-                    );
+                    if (workspace.isPin) {
+                      _workspaceBloc.add(
+                        UnpinWorkspaceEvent(workspaceId: workspace.id),
+                      );
+                    } else {
+                      _workspaceBloc.add(
+                        PinWorkspaceEvent(workspaceId: workspace.id),
+                      );
+                    }
                   },
-                  child: WorkspaceTileMobileWidget(
+                  child: GroupTileMobileWidget(
                     onTap: () {},
                     isSearchMode: true,
                     isMute: workspace.isMute,
@@ -237,7 +284,7 @@ class _WorkspaceListMobileLayoutState extends State<WorkspaceListMobileLayout> {
                     lastMessageTime: workspace.lastMessageTime,
                     isSeen: workspace.isSeen,
                     //todo
-                    countNewMessage: 0,
+                    // countNewMessage: 0,
                   ),
                 );
               },

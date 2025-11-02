@@ -13,6 +13,7 @@ import '../../domain/entities/media_entity.dart';
 import '../../domain/entities/message/message.dart';
 import '../../domain/entities/pinned_message_summary.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../domain/enums/unmute_time_enum.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../../shared/commons/models/pagination.dart';
 import '../remote/models/requests/get_groups_request.dart';
@@ -458,6 +459,41 @@ class GroupRepositoryImpl implements GroupRepository {
   Future<void> deleteGroup(String workspaceId) async {
     try {
       await _groupRemoteDataSource.deleteGroup(workspaceId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> markAsRead(String groupId) async {
+    try {
+      await _groupRemoteDataSource.markAsRead(groupId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> markUnread(String groupId) async {
+    try {
+      await _groupRemoteDataSource.markUnread(groupId);
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> changeNotificationStatus({
+    required String groupId,
+    required bool enable,
+    MuteDurationOption? option,
+  }) async {
+    try {
+      await _groupRemoteDataSource.changeNotificationStatus(
+        groupId: groupId,
+        enable: enable,
+        option: option?.code,
+      );
     } catch (e) {
       throw FailureConverter.convert(e);
     }

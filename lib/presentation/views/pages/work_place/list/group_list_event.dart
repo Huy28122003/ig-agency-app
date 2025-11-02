@@ -1,4 +1,4 @@
-part of 'workspace_list_bloc.dart';
+part of 'group_list_bloc.dart';
 
 sealed class GroupListEvent {}
 
@@ -50,14 +50,15 @@ class UnpinWorkspaceEvent extends GroupListEvent {
 
 class MuteWorkspaceEvent extends GroupListEvent {
   final String workspaceId;
+  final MuteDurationOption? type;
 
-  MuteWorkspaceEvent({required this.workspaceId});
+  MuteWorkspaceEvent({required this.workspaceId, this.type});
 }
 
-class SeenWorkspaceEvent extends GroupListEvent {
+class MarkGroupEvent extends GroupListEvent {
   final String workspaceId;
 
-  SeenWorkspaceEvent({required this.workspaceId});
+  MarkGroupEvent({required this.workspaceId});
 }
 
 class DeleteWorkspaceEvent extends GroupListEvent {
