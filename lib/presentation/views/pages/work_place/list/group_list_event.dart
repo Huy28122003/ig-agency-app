@@ -50,9 +50,9 @@ class UnpinWorkspaceEvent extends GroupListEvent {
 
 class MuteWorkspaceEvent extends GroupListEvent {
   final String workspaceId;
-  final String? unMuteTimeCode;
+  final MuteDurationOption? type;
 
-  MuteWorkspaceEvent({required this.workspaceId, this.unMuteTimeCode});
+  MuteWorkspaceEvent({required this.workspaceId, this.type});
 }
 
 class MarkGroupEvent extends GroupListEvent {
@@ -72,4 +72,3 @@ class SelectWorkspaceEvent extends GroupListEvent {
 
   SelectWorkspaceEvent({required this.id});
 }
-

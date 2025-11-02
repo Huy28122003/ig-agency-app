@@ -64,6 +64,6 @@ abstract class GroupRemoteDataSource {
   Future<void> changeNotificationStatus({
     required String groupId,
     required bool enable,
-    String? unMuteTimeCode,
+    String? option,
   });
 }

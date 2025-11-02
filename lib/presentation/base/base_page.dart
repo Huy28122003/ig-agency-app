@@ -26,12 +26,16 @@ abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
 
   Widget buildErrorView(String? errorMessage, VoidCallback onRefresh) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Text(errorMessage ?? 'An error occurred'),
-            AppButton.primary(onPressed: onRefresh, child: Text('Refresh')),
-          ],
+      body: Container(
+        alignment: Alignment.center,
+        child: IntrinsicWidth(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(errorMessage ?? 'An error occurred'),
+              AppButton.primary(onPressed: onRefresh, child: Text('Refresh')),
+            ],
+          ),
         ),
       ),
     );

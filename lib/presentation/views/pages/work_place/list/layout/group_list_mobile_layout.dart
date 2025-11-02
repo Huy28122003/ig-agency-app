@@ -116,20 +116,18 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               },
               onTapMute: () async {
                 if (workspace.isMute) {
-
-                  // todo: anh.trandang recheck
-                  final result = await MenuDialog.show<UnMuteTimeEnum>(
+                  await MenuDialog.show<MuteDurationOption>(
                     onTap: (value) {
                       _workspaceBloc.add(
                         MuteWorkspaceEvent(
                           workspaceId: workspace.id,
-                          unMuteTimeCode: value.code,
+                          type: value,
                         ),
                       );
                     },
                     context: context,
                     title: "workspace.unmute_title".tr(),
-                    items: UnMuteTimeEnum.values
+                    items: MuteDurationOption.values
                         .map(
                           (e) => MenuItem(
                             content: 'workspace.${e.title}'.tr(),
@@ -238,18 +236,18 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   },
                   onTapMute: () async {
                     if (workspace.isMute) {
-                      final result = await MenuDialog.show<UnMuteTimeEnum>(
+                      await MenuDialog.show<MuteDurationOption>(
                         onTap: (value) {
                           _workspaceBloc.add(
                             MuteWorkspaceEvent(
                               workspaceId: workspace.id,
-                              unMuteTimeCode: value.code,
+                              type: value,
                             ),
                           );
                         },
                         context: context,
                         title: "workspace.unmute_title".tr(),
-                        items: UnMuteTimeEnum.values
+                        items: MuteDurationOption.values
                             .map(
                               (e) => MenuItem(
                                 content: 'workspace.${e.title}'.tr(),
