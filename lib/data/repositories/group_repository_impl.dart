@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/translators/group_detail_translator.dart';
 import 'package:ig_agency_app/data/remote/translators/group_summary_translator.dart';
@@ -14,11 +11,10 @@ import 'package:ig_agency_app/shared/commons/models/pagination.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
-import '../../domain/entities/group_entity.dart';
+import '../../domain/entities/group_info_entity.dart';
 import '../../domain/entities/group_summary.dart';
 import '../../domain/entities/message/message.dart';
 import '../../domain/entities/pinned_message_summary.dart';
-import '../../domain/entities/user_entity.dart';
 import '../../domain/enums/unmute_time_enum.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../remote/models/requests/get_groups_request.dart';
@@ -256,13 +252,13 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Stream<GroupEntity> listenLastMessages() {
+  Stream<GroupInfoEntity> listenLastMessages() {
     // TODO: implement listenLastMessages
     throw UnimplementedError();
   }
 
   @override
-  Future<GroupEntity> getGroupInfo({required String groupId}) async {
+  Future<GroupInfoEntity> getGroupInfo({required String groupId}) async {
     try {
       final response = await _groupRemoteDataSource.getGroupInfo(groupId);
       return response.toEntity();
@@ -340,12 +336,12 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups) {
+  Future<bool> addUserToGroups(UserEntity user, List<GroupInfoEntity> groups) {
     return Future.value(true);
   }
 
   @override
-  Future<List<GroupEntity>> getListGroup({
+  Future<List<GroupInfoEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
   }) async {
@@ -510,12 +506,7 @@ class GroupRepositoryImpl implements GroupRepository {
     required String image,
   }) async {
     try {
-      final file = File(image);
-      final multipartFile = await MultipartFile.fromFile(
-        file.path,
-        filename: file.path.split('/').last,
-      );
-      await _groupRemoteDataSource.updateGroupAvatar(groupId, multipartFile);
+      await _groupRemoteDataSource.updateGroupAvatar(groupId, image);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

@@ -5,6 +5,8 @@ import 'package:ig_agency_app/data/remote/models/requests/update_group_info_requ
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
+import 'package:ig_agency_app/shared/commons/exceptions.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/models/requests/pin_message_request_model.dart';
 import '../../../domain/entities/message/message_content.dart';
@@ -256,9 +258,11 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   }
 
   @override
-  Future<void> updateGroupAvatar(String groupId, MultipartFile image) async {
+  Future<void> updateGroupAvatar(String groupId, String image) async {
     try {
-      await _apiService.updateGroupAvatar(groupId, image);
+      final multipartFile = await image.toMultipartFile();
+      if (multipartFile == null) throw NoFileFoundException();
+      await _apiService.updateGroupAvatar(groupId, multipartFile);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
@@ -291,10 +295,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     try {
       return await _apiService.changeNotificationStatus(
         groupId,
-        ChangeNotificationStatusRequest(
-          enabled: enable,
-          dndDuration: option,
-        ),
+        ChangeNotificationStatusRequest(enabled: enable, dndDuration: option),
       );
     } catch (e) {
       throw ExceptionConverter.convert(e);

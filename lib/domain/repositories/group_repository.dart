@@ -1,7 +1,7 @@
 import 'package:ig_agency_app/domain/entities/group_detail_entity.dart';
 import '../../shared/commons/models/pagination.dart';
 import '../entities/file_entity.dart';
-import '../entities/group_entity.dart';
+import '../entities/group_info_entity.dart';
 import '../entities/group_summary.dart';
 import '../entities/media_entity.dart';
 import '../entities/message/message.dart';
@@ -72,9 +72,9 @@ abstract class GroupRepository {
     String? keyWord,
   });
 
-  Future<GroupEntity> getGroupInfo({required String groupId});
+  Future<GroupInfoEntity> getGroupInfo({required String groupId});
 
-  Stream<GroupEntity> listenLastMessages();
+  Stream<GroupInfoEntity> listenLastMessages();
 
   Future<void> updateGroupBio({required String groupId, required String bio});
 
@@ -120,14 +120,14 @@ abstract class GroupRepository {
   });
 
   // TODO: tương tự hàm getWorkspaces => quy về dùng chung 1 hàm
-  Future<List<GroupEntity>> getListGroup({
+  Future<List<GroupInfoEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
   });
 
   Future<bool> createGroup(String groupName, List<UserEntity> members);
 
-  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups);
+  Future<bool> addUserToGroups(UserEntity user, List<GroupInfoEntity> groups);
 
   Future<void> pinGroup(String workspaceId);
 

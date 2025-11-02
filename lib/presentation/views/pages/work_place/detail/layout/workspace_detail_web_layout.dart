@@ -157,7 +157,7 @@ class _WorkspaceDetailDesktopLayoutState
                                           );
                                         },
                                         onCameraTap: () {
-                                          context.router.push(CameraRoute(groupId: _bloc.groupId));
+                                          context.router.push(CameraRoute());
                                         },
                                         onMediaTap: () {
                                           _bloc.add(

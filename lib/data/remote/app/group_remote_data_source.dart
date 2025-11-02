@@ -68,7 +68,7 @@ abstract class GroupRemoteDataSource {
     MultipartFile? image,
   });
 
-  Future<void> updateGroupAvatar(String groupId, MultipartFile image);
+  Future<void> updateGroupAvatar(String groupId, String image);
 
   Future<void> markAsRead(String groupId);
 
