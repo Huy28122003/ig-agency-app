@@ -200,7 +200,11 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
         },
         child: Row(
           children: [
-            CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
+            CircleNetworkAvatar(
+              imageUrl: widget.groupAvatar,
+              size: 40,
+              isGroupAvt: true,
+            ),
             SizedBox(width: 12),
             Expanded(
               child: Column(
