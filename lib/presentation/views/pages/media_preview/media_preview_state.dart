@@ -6,11 +6,11 @@ class MediaPreviewState extends BaseState<MediaPreviewState> {
     super.pageErrorMessage,
     super.processing = false,
     this.path = '',
-    this.updateAvatarSuccess,
+    this.isCropSuccess = false,
   });
 
   final String path;
-  final bool? updateAvatarSuccess;
+  final bool isCropSuccess;
 
   @override
   MediaPreviewState copyWith({
@@ -18,17 +18,17 @@ class MediaPreviewState extends BaseState<MediaPreviewState> {
     String? pageErrorMessage,
     bool? processing,
     String? path,
-    bool? updateAvatarSuccess,
+    bool? isCompleted,
   }) {
     return MediaPreviewState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,
       path: path ?? this.path,
-      updateAvatarSuccess: updateAvatarSuccess ?? this.updateAvatarSuccess,
+      isCropSuccess: isCompleted ?? this.isCropSuccess,
     );
   }
 
   @override
-  List<Object?> get props => [...super.props, path, updateAvatarSuccess];
+  List<Object?> get props => [...super.props, path, isCropSuccess];
 }

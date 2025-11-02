@@ -192,11 +192,11 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                             },
                             onTapMute: () async {
                               if (workspace.isMute) {
-                                await MenuDialog.show<UnMuteTimeEnum>(
+                                await MenuDialog.show<MuteDurationOption>(
                                   onTap: (value) {},
                                   context: context,
                                   title: "workspace.unmute_title".tr(),
-                                  items: UnMuteTimeEnum.values
+                                  items: MuteDurationOption.values
                                       .map(
                                         (e) => MenuItem(
                                           content: 'workspace.${e.title}'.tr(),

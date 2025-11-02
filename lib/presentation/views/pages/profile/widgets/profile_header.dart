@@ -36,7 +36,7 @@ class ProfileHeader extends StatelessWidget {
           spacing: 16,
           children: [
             _buildAvatar(currentUser.avatar),
-            _buildInfo(currentUser.name, 'currentUser.email'),
+            _buildInfo(currentUser.name),
           ],
         );
       },
@@ -44,14 +44,14 @@ class ProfileHeader extends StatelessWidget {
   }
 
   Widget _buildAvatar(String avatar) {
-    return Stack(
-      children: [
-        CircleNetworkAvatar(imageUrl: avatar, size: 80),
-        Positioned(
-          right: 4,
-          bottom: 4,
-          child: GestureDetector(
-            onTap: onChangeAvatar,
+    return GestureDetector(
+      onTap: onChangeAvatar,
+      child: Stack(
+        children: [
+          CircleNetworkAvatar(imageUrl: avatar, size: 80),
+          Positioned(
+            right: 4,
+            bottom: 4,
             child: Container(
               width: 20,
               height: 20,
@@ -77,12 +77,12 @@ class ProfileHeader extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildInfo(String name, String email) {
+  Widget _buildInfo(String name) {
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -120,17 +120,22 @@ class ProfileHeader extends StatelessWidget {
               ),
             ],
           ),
-          Text(
-            email,
-            style: TextStyle(
-              color: AppColors.textDefaultTextSub2,
-              fontSize: 14,
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w400,
-              height: 1.43,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          BlocSelector<ProfileBloc, ProfileState, String>(
+            selector: (state) => state.email,
+            builder: (context, email) {
+              return Text(
+                email,
+                style: TextStyle(
+                  color: AppColors.textDefaultTextSub2,
+                  fontSize: 14,
+                  fontFamily: FontFamily.segoeUI,
+                  fontWeight: FontWeight.w400,
+                  height: 1.43,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              );
+            },
           ),
         ],
       ),

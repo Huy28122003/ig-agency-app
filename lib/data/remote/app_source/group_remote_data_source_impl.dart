@@ -286,14 +286,14 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<void> changeNotificationStatus({
     required String groupId,
     required bool enable,
-    String? unMuteTimeCode,
+    String? option,
   }) async {
     try {
       return await _apiService.changeNotificationStatus(
         groupId,
         ChangeNotificationStatusRequest(
           enabled: enable,
-          dndDuration: unMuteTimeCode,
+          dndDuration: option,
         ),
       );
     } catch (e) {

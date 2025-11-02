@@ -13,7 +13,8 @@ extension MessageTranslatorExtension on MessageResponseModel {
     return MessageEntity(
       id: id,
       user: from.toEntity(),
-      createdAt: date.toLocalTime(isSecond: true),
+      // todo: anh.trandang recheck
+      createdAt: date.toDate(),
       content: _mapContent(),
       status: MessageStatus.sent,
       repliedMessage: replyToMessage != null
@@ -93,7 +94,7 @@ extension MessageTranslatorExtension on MessageResponseModel {
     return MessageEntity(
       id: replyMessage.id,
       user: replyMessage.from.toEntity(),
-      createdAt: replyMessage.date.toLocalTime(isSecond: true),
+      createdAt: replyMessage.date.toDate(utc: true),
       content: _mapReplyContent(replyMessage),
       status: MessageStatus.sent,
       repliedMessage: null,

@@ -37,6 +37,7 @@ class GroupTileMobileWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        color: Colors.transparent,
         padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
         child: isSearchMode ? _buildSearchMode() : _buildNormalMode(),
       ),

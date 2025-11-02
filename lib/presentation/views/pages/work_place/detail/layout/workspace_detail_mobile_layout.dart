@@ -230,7 +230,11 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
         },
         child: Row(
           children: [
-            CircleNetworkAvatar(imageUrl: widget.groupAvatar, size: 40),
+            CircleNetworkAvatar(
+              imageUrl: widget.groupAvatar,
+              size: 40,
+              isGroupAvt: true,
+            ),
             SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -265,6 +269,7 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
                     builder: (context, data) {
                       final (totalMemberCount, onlineMemberCount) =
                           data ?? (0, 0);
+                      if (totalMemberCount == 0) return SizedBox();
                       return Text(
                         '$totalMemberCount ${totalMemberCount > 1 ? 'Member' : 'Members'}, $onlineMemberCount Online',
                         style: TextStyle(

@@ -9,6 +9,7 @@ import '../entities/pinned_message_summary.dart';
 import 'package:ig_agency_app/domain/entities/member_entity.dart';
 
 import '../entities/user_entity.dart';
+import '../enums/unmute_time_enum.dart';
 
 abstract class GroupRepository {
   Future<GroupDetailEntity> getGroupDetail(String conversationId);
@@ -141,7 +142,7 @@ abstract class GroupRepository {
   Future<void> changeNotificationStatus({
     required String groupId,
     required bool enable,
-    String? unMuteTimeCode,
+    MuteDurationOption? option,
   });
 
   Future<void> leaveGroup(String groupId, String userId);

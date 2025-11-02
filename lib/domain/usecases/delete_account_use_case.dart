@@ -4,19 +4,13 @@ import 'package:injectable/injectable.dart';
 import '../repositories/auth_repository.dart';
 
 @injectable
-class DeleteAccountUseCase extends UseCase<void, DeleteAccountParam> {
+class DeleteAccountUseCase extends UseCase<void, NoParam> {
   DeleteAccountUseCase(this._authRepository);
 
   final AuthRepository _authRepository;
 
   @override
-  Future call(DeleteAccountParam param) async {
-    return await _authRepository.deleteAccount(param.userId);
+  Future call(NoParam param) async {
+    return await _authRepository.deleteAccount();
   }
-}
-
-class DeleteAccountParam {
-  DeleteAccountParam({required this.userId});
-
-  final String userId;
 }

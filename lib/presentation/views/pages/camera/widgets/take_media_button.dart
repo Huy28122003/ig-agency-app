@@ -23,7 +23,7 @@ class TakeMediaButton extends StatefulWidget {
 class _TakeMediaButtonState extends State<TakeMediaButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  bool inProgress = false;
+  bool _inProgress = false;
   final _duration = Duration(milliseconds: 350);
 
   @override
@@ -60,8 +60,8 @@ class _TakeMediaButtonState extends State<TakeMediaButton>
   void didUpdateWidget(covariant TakeMediaButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.isInProgress != widget.isInProgress) {
-      inProgress = widget.isInProgress;
-      if (inProgress) {
+      _inProgress = widget.isInProgress;
+      if (_inProgress) {
         _startRecording();
       } else {
         _stopRecording();
@@ -73,14 +73,17 @@ class _TakeMediaButtonState extends State<TakeMediaButton>
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPressStart: (_) => widget.onLongPressStart(),
-      onLongPressEnd: (_) => widget.onLongPressEnd(),
+      onLongPressEnd: (_) {
+        if (!_inProgress) return;
+        widget.onLongPressEnd.call();
+      },
       onTap: widget.onTap,
       child: Stack(
         alignment: Alignment.center,
         children: [
           AnimatedContainer(
-            width: 60 + (inProgress ? 35 : 0),
-            height: 60 + (inProgress ? 35 : 0),
+            width: 60 + (_inProgress ? 35 : 0),
+            height: 60 + (_inProgress ? 35 : 0),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerAlphaAlphaWhite17,
               shape: BoxShape.circle,
@@ -89,8 +92,8 @@ class _TakeMediaButtonState extends State<TakeMediaButton>
           ),
           AnimatedContainer(
             duration: _duration,
-            width: 56 + (inProgress ? 35 : 0),
-            height: 56 + (inProgress ? 35 : 0),
+            width: 56 + (_inProgress ? 35 : 0),
+            height: 56 + (_inProgress ? 35 : 0),
             child: AnimatedBuilder(
               animation: _controller,
               builder: (context, child) => CircularProgressIndicator(
@@ -105,8 +108,8 @@ class _TakeMediaButtonState extends State<TakeMediaButton>
           ),
           AnimatedContainer(
             duration: _duration,
-            width: 40 - (inProgress ? 10 : 0),
-            height: 40 - (inProgress ? 10 : 0),
+            width: 40 - (_inProgress ? 10 : 0),
+            height: 40 - (_inProgress ? 10 : 0),
             decoration: const BoxDecoration(
               color: AppColors.surfaceContainerGrayStrong0,
               shape: BoxShape.circle,

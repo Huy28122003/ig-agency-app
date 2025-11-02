@@ -35,6 +35,9 @@ class UnknowFailure extends Failure {
   UnknowFailure() : super(message: 'An unknown error occurred');
 }
 
+class NoFileFound extends Failure {
+  NoFileFound() : super(message: 'no_file_found');
+}
 
 extension FailureExtension on Failure? {
   Failure? operator &(bool other) {

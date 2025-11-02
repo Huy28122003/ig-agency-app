@@ -1,4 +1,8 @@
-class ApiException implements Exception {
+class AppException implements Exception {
+  AppException();
+}
+
+class ApiException implements AppException {
   ApiException(this.httpCode, this.code, this.message);
 
   final int? httpCode;
@@ -6,8 +10,10 @@ class ApiException implements Exception {
   final String? message;
 }
 
-class NoInternetException implements Exception {}
+class NoInternetException extends AppException {}
 
-class ConnectionTimeoutException implements Exception {}
+class ConnectionTimeoutException extends AppException {}
 
 class UnknownException implements Exception {}
+
+class NoFileFoundException extends AppException {}
