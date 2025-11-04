@@ -129,6 +129,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                       _workspaceBloc.add(
                         SearchKeyWorkChangeEvent(value: value),
                       );
+                      if(value.isEmpty) return;
                       _workspaceBloc.add(SearchEvent(value: value));
                     },
                     hintText: "workspace.hint_text_search".tr(),
@@ -268,7 +269,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                         final workspaces = selected.$1;
                         final status = selected.$2;
                         if (status == PageStatus.loading) {
-                          return CupertinoActivityIndicator();
+                          return Center(child: CupertinoActivityIndicator());
                         } else if (status == PageStatus.loaded) {
                           return Container(
                             width: double.infinity,
