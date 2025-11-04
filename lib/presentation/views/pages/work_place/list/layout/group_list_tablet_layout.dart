@@ -22,8 +22,7 @@ class GroupListTabletLayout extends StatefulWidget {
   const GroupListTabletLayout({super.key});
 
   @override
-  State<GroupListTabletLayout> createState() =>
-      _GroupListTabletLayoutState();
+  State<GroupListTabletLayout> createState() => _GroupListTabletLayoutState();
 }
 
 class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
@@ -236,7 +235,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              // countNewMessage: 0,
+                              countNewMessage: workspace.unReadCount,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -319,7 +318,8 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          // countNewMessage: 0,
+                                          countNewMessage:
+                                              workspace.unReadCount,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),

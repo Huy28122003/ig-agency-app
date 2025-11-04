@@ -237,8 +237,7 @@ class _GroupListDesktopLayoutState
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              //todo
-                              // countNewMessage: 10,
+                              countNewMessage: workspace.unReadCount,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -321,8 +320,7 @@ class _GroupListDesktopLayoutState
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          //todo
-                                          // countNewMessage: 10,
+                                          countNewMessage: workspace.unReadCount,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),
