@@ -7,6 +7,7 @@ class GroupSummary {
   final bool isSeen;
   final bool isMute;
   final bool isPin;
+  final int unReadCount;
 
   GroupSummary({
     required this.id,
@@ -17,6 +18,7 @@ class GroupSummary {
     this.isSeen = false,
     this.isMute = true,
     this.isPin = false,
+    this.unReadCount = 0,
   });
 
   GroupSummary copyWith({
@@ -28,6 +30,7 @@ class GroupSummary {
     bool? isSeen,
     bool? isPin,
     bool? isMute,
+    int? unReadMessageCount,
   }) {
     return GroupSummary(
       id: id ?? this.id,
@@ -38,6 +41,7 @@ class GroupSummary {
       isSeen: isSeen ?? this.isSeen,
       isMute: isMute ?? this.isMute,
       isPin: isPin ?? this.isPin,
+      unReadCount: unReadMessageCount ?? this.unReadCount,
     );
   }
 }

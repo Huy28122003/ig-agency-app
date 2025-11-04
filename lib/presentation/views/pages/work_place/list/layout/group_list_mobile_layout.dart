@@ -216,7 +216,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
         final status = selected.$2;
         final pagingStatus = selected.$3;
         if (status == PageStatus.loading) {
-          return CupertinoActivityIndicator();
+          return Center(child: CupertinoActivityIndicator());
         } else if (status == PageStatus.loaded) {
           return Container(
             width: double.infinity,
@@ -328,6 +328,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               value: state,
               onChanged: (value) {
                 _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
+                if(value.isEmpty) return;
                 _workspaceBloc.add(SearchEvent(value: value));
               },
               hintText: "workspace.hint_text_search".tr(),
