@@ -129,6 +129,7 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                       _workspaceBloc.add(
                         SearchKeyWorkChangeEvent(value: value),
                       );
+                      if(value.isEmpty) return;
                       _workspaceBloc.add(SearchEvent(value: value));
                     },
                     hintText: "workspace.hint_text_search".tr(),
@@ -192,11 +193,11 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                             },
                             onTapMute: () async {
                               if (workspace.isMute) {
-                                await MenuDialog.show<UnMuteTimeEnum>(
+                                await MenuDialog.show<MuteDurationOption>(
                                   onTap: (value) {},
                                   context: context,
                                   title: "workspace.unmute_title".tr(),
-                                  items: UnMuteTimeEnum.values
+                                  items: MuteDurationOption.values
                                       .map(
                                         (e) => MenuItem(
                                           content: 'workspace.${e.title}'.tr(),
@@ -235,8 +236,7 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              //todo
-                              // countNewMessage: 10,
+                              countNewMessage: workspace.unReadCount,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -269,7 +269,7 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                         final workspaces = selected.$1;
                         final status = selected.$2;
                         if (status == PageStatus.loading) {
-                          return CupertinoActivityIndicator();
+                          return Center(child: CupertinoActivityIndicator());
                         } else if (status == PageStatus.loaded) {
                           return Container(
                             width: double.infinity,
@@ -319,8 +319,7 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          //todo
-                                          // countNewMessage: 10,
+                                          countNewMessage: workspace.unReadCount,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),

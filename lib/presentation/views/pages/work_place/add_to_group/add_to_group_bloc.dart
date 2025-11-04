@@ -7,7 +7,7 @@ import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../../../../domain/entities/group_entity.dart';
+import '../../../../../domain/entities/group_info_entity.dart';
 import '../../../../../domain/repositories/group_repository.dart';
 import '../../../../../shared/commons/models/pagination.dart';
 
@@ -45,7 +45,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
       ),
     );
 
-    final List<GroupEntity> listGroup = await _repo.getListGroup(
+    final List<GroupInfoEntity> listGroup = await _repo.getListGroup(
       pagination: state.pagination,
       keySearch: state.searchKeyWord,
     );
@@ -79,7 +79,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
       page: state.pagination.page + 1,
     );
 
-    final List<GroupEntity> listGroup = await _repo.getListGroup(
+    final List<GroupInfoEntity> listGroup = await _repo.getListGroup(
       pagination: pagination,
       keySearch: state.searchKeyWord,
     );
@@ -106,7 +106,7 @@ class AddToGroupBloc extends BaseBloc<AddToGroupEvent, AddToGroupState> {
     SelectGroupEvent event,
     Emitter<AddToGroupState> emit,
   ) async {
-    final List<GroupEntity> listSelectedGroup = [...state.listSelectedGroup];
+    final List<GroupInfoEntity> listSelectedGroup = [...state.listSelectedGroup];
     if (event.isSelected) {
       listSelectedGroup.add(event.group);
     } else {

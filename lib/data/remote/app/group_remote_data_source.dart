@@ -6,6 +6,7 @@ import '../models/response/group_response.dart';
 import '../models/response/group_summary_response.dart';
 import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
+import '../models/response/update_group_avatar_response.dart';
 
 import '../models/requests/get_data_in_group_request.dart';
 
@@ -70,7 +71,10 @@ abstract class GroupRemoteDataSource {
     MultipartFile? image,
   });
 
-  Future<void> updateGroupAvatar(String groupId, MultipartFile image);
+  Future<UpdateGroupAvatarResponse> updateGroupAvatar(
+    String groupId,
+    String image,
+  );
 
   Future<void> markAsRead(String groupId);
 
@@ -79,7 +83,7 @@ abstract class GroupRemoteDataSource {
   Future<void> changeNotificationStatus({
     required String groupId,
     required bool enable,
-    String? unMuteTimeCode,
+    String? option,
   });
 
   Future<void> leaveGroup(String groupId, String userId);

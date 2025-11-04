@@ -158,9 +158,7 @@ class GroupChatView extends StatelessWidget {
                             );
                           },
                           onCameraTap: () {
-                            context.router.push(
-                              CameraRoute(groupId: bloc.groupId),
-                            );
+                            context.router.push(CameraRoute());
                           },
                           onMediaTap: () {
                             bloc.add(

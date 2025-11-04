@@ -20,11 +20,18 @@ class CameraView extends StatelessWidget {
             if (!status.isReady ||
                 cameraController == null ||
                 previewSize == null) {
-              return SizedBox();
+              return SizedBox(
+                height: constraints.maxHeight * 0.9,
+                width: constraints.maxWidth,
+              );
             }
-            return AspectRatio(
-              aspectRatio: 1 / cameraController.value.aspectRatio,
-              child: CameraPreview(cameraController),
+            return FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: previewSize.height,
+                height: previewSize.width,
+                child: CameraPreview(cameraController),
+              ),
             );
           },
         );

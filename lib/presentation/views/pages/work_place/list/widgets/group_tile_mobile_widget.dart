@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
@@ -18,6 +19,7 @@ class GroupTileMobileWidget extends StatelessWidget {
     // required this.countNewMessage,
     required this.onTap,
     this.isSearchMode = false,
+    this.unreadCount = 0,
   });
 
   final String workspaceAvatar;
@@ -27,6 +29,7 @@ class GroupTileMobileWidget extends StatelessWidget {
   final bool isSeen;
   final bool isMute;
   final bool isPin;
+  final int unreadCount;
 
   // final int countNewMessage;
   final bool isSearchMode;
@@ -37,6 +40,7 @@ class GroupTileMobileWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        color: Colors.transparent,
         padding: const EdgeInsets.only(left: 20, top: 8, right: 12),
         child: isSearchMode ? _buildSearchMode() : _buildNormalMode(),
       ),
@@ -113,10 +117,10 @@ class GroupTileMobileWidget extends StatelessWidget {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      // (countNewMessage > 1 && !isSeen)
-                                      //     ? "$countNewMessage ${'workspace.new_message'.tr()}"
-                                      //     : lastMessage,
-                                      lastMessage,
+                                      (unreadCount > 1 && !isSeen)
+                                          ? "$unreadCount ${'workspace.new_message'.tr()}"
+                                          : lastMessage,
+                                      // lastMessage,
                                       style: TextStyle(
                                         fontFamily: FontFamily.segoeUI,
                                         fontSize: 14,

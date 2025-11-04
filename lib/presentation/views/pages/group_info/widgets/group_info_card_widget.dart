@@ -6,7 +6,7 @@ import '../../../../../gen/assets.gen.dart';
 class GroupInfoCardWidget extends StatelessWidget {
   const GroupInfoCardWidget({super.key, required this.items});
 
-  final List<GroupInfoItem> items;
+  final List<Widget> items;
 
   @override
   Widget build(BuildContext context) {

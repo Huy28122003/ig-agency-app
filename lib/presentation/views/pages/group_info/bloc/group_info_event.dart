@@ -1,6 +1,6 @@
 part of 'group_info_bloc.dart';
 
-class GroupInfoEvent {}
+sealed class GroupInfoEvent {}
 
 class LoadDataEvent extends GroupInfoEvent {
   final String groupId;
@@ -8,20 +8,28 @@ class LoadDataEvent extends GroupInfoEvent {
   LoadDataEvent({required this.groupId});
 }
 
-class ToggleNotificationEvent extends GroupInfoEvent {}
+class ChangeNotificationStatusEvent extends GroupInfoEvent {
+  final MuteDurationOption? option;
 
-class UpdateWorkspaceEvent extends GroupInfoEvent {
-  final String? groupName;
-  final String? bio;
-  final bool? isMute;
-  final int? countMember;
-
-  UpdateWorkspaceEvent({
-    this.groupName,
-    this.bio,
-    this.isMute,
-    this.countMember,
-  });
+  ChangeNotificationStatusEvent({this.option});
 }
 
 class LeaveGroupEvent extends GroupInfoEvent {}
+
+class UpdateAvatarEvent extends GroupInfoEvent {
+  final String avatar;
+
+  UpdateAvatarEvent(this.avatar);
+}
+
+class UpdateBioEvent extends GroupInfoEvent {
+  final String bio;
+
+  UpdateBioEvent(this.bio);
+}
+
+class UpdateNameEvent extends GroupInfoEvent {
+  final String name;
+
+  UpdateNameEvent(this.name);
+}

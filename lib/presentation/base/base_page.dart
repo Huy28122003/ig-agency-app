@@ -21,17 +21,21 @@ abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
   final bool needRemoveSplash;
 
   Widget buildLoadingView(BuildContext context) {
-    return Container(color: Colors.grey);
+    return Container();
   }
 
   Widget buildErrorView(String? errorMessage, VoidCallback onRefresh) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Text(errorMessage ?? 'An error occurred'),
-            AppButton.primary(onPressed: onRefresh, child: Text('Refresh')),
-          ],
+      body: Container(
+        alignment: Alignment.center,
+        child: IntrinsicWidth(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(errorMessage ?? 'An error occurred'),
+              AppButton.primary(onPressed: onRefresh, child: Text('Refresh')),
+            ],
+          ),
         ),
       ),
     );
@@ -50,6 +54,18 @@ abstract class BasePage<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
   void onRefresh() {}
 
   Widget? desktopBuilder(BuildContext context) {
+    return null;
+  }
+
+  PreferredSizeWidget? appbarMobileBuilder(BuildContext context) {
+    return null;
+  }
+
+  PreferredSizeWidget? appbarTabletBuilder(BuildContext context) {
+    return null;
+  }
+
+  PreferredSizeWidget? appbarDesktopBuilder(BuildContext context) {
     return null;
   }
 
@@ -127,6 +143,8 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
             buildWhen: (pre, cur) => cur.pageStatus != pre.pageStatus,
             builder: (context, state) {
               return Scaffold(
+                backgroundColor: Colors.white,
+                appBar: _getAppBarBuilder(context, sizingInfo),
                 resizeToAvoidBottomInset: false,
                 body: _buildBody(
                   context,
@@ -154,7 +172,7 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
       case PageStatus.loading:
         return widget.buildLoadingView(context);
       case PageStatus.loaded:
-        final builder = _getBuilder(context, sizingInfo);
+        final builder = _getBodyBuilder(context, sizingInfo);
 
         return builder;
       case PageStatus.failure:
@@ -164,7 +182,23 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState<S>>
     }
   }
 
-  Widget _getBuilder(
+  PreferredSizeWidget? _getAppBarBuilder(
+    BuildContext context,
+    SizingInformation sizingInformation,
+  ) {
+    PreferredSizeWidget? builder;
+    switch (sizingInformation.deviceScreenType) {
+      case DeviceScreenType.mobile:
+        builder = widget.appbarMobileBuilder(context);
+      case DeviceScreenType.tablet:
+        builder = widget.appbarTabletBuilder(context);
+      default:
+        builder = widget.appbarDesktopBuilder(context);
+    }
+    return builder;
+  }
+
+  Widget _getBodyBuilder(
     BuildContext context,
     SizingInformation sizingInformation,
   ) {

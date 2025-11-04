@@ -9,6 +9,7 @@ import 'package:ig_agency_app/shared/commons/enums/permission.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../shared/commons/enums/status.dart';
+import '../../../../shared/commons/enums/media_use_case.dart';
 import '../../../base/base_state.dart';
 
 part 'camera_event.dart';
@@ -29,6 +30,9 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
   CameraController? _cameraController;
   AppLifecycleState? _oldLifecycleState;
   List<CameraDescription> _cameras = [];
+
+  late MediaUseCase mediaUseCase;
+  late String? avatar;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
@@ -92,6 +96,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     ReverseCameraEvent event,
     Emitter<CameraState> emit,
   ) async {
+    if (!state.status.isReady) return;
     emit(state.copyWith(isFontCamera: !state.isFontCamera));
     if (_cameras.isNotEmpty && state.status.isReady) {
       _cameraController?.setDescription(_description);
@@ -104,6 +109,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
   ) async {
     final currentState = state.isFlashEnabled;
     try {
+      if (!state.status.isReady) return;
       if (_cameras.isNotEmpty && state.status.isReady) {
         await _cameraController?.setFlashMode(
           !currentState ? FlashMode.auto : FlashMode.off,
@@ -135,7 +141,7 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     Emitter<CameraState> emit,
   ) async {
     try {
-      if (!state.status.isReady) return;
+      if (!state.status.isReady || mediaUseCase.isCaptureOnly) return;
       await _cameraController?.startVideoRecording();
       emit(state.copyWith(inProgress: true));
     } catch (e) {

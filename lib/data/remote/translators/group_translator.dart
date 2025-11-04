@@ -1,10 +1,10 @@
 import 'package:ig_agency_app/data/remote/models/response/group_response.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 
-import '../../../domain/entities/group_entity.dart';
+import '../../../domain/entities/group_info_entity.dart';
 
 extension GroupTranslator on GroupResponse {
-  GroupEntity toEntity() {
+  GroupInfoEntity toEntity() {
     // final lastMsg = lastMessage;
     // final messageType = MessageContentType.fromCode(lastMsg?.type ?? '');
     //
@@ -16,7 +16,7 @@ extension GroupTranslator on GroupResponse {
     //     ? ''
     //     : _mapLastMessageContent(messageType, lastMsg.text);
 
-    return GroupEntity(
+    return GroupInfoEntity(
       id: id,
       groupName: title,
       // lastMessage: lastMessageContent,

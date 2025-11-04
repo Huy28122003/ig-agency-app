@@ -1,15 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
+import 'package:ig_agency_app/presentation/views/pages/camera/widgets/camera_view.dart';
+import 'package:ig_agency_app/presentation/views/pages/camera/widgets/take_media_button.dart';
+import 'package:ig_agency_app/presentation/views/widgets/app_button.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
-
 import '../../../../../gen/assets.gen.dart';
-import '../../../../resources/colors.dart';
-import '../../../widgets/app_button.dart';
 import '../camera_bloc.dart';
-import '../widgets/camera_view.dart';
-import '../widgets/take_media_button.dart';
 
 class SettingHomeTabletLayout extends StatefulWidget {
   const SettingHomeTabletLayout({super.key});
@@ -54,19 +53,23 @@ class _SettingHomeTabletLayoutState extends State<SettingHomeTabletLayout>
                 AppLifecycleChangedEvent(AppLifecycleState.inactive),
               );
               final aspectRatio = _cameraBloc.controller?.value.aspectRatio;
-              await context.router.push(
+              final path = await context.router.push(
                 MediaPreviewRoute(
                   avatar:
                       "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
                   mediaPath: state.media,
                   isPhoto: state.isPhoto,
-                  aspectRatio: 1 / (aspectRatio ?? 0),
-                  groupId: _cameraBloc.groupId,
+                  aspectRatio: 1 / (aspectRatio ?? 1),
+                  mediaUseCase: _cameraBloc.mediaUseCase,
                 ),
               );
-              _cameraBloc.add(
-                AppLifecycleChangedEvent(AppLifecycleState.resumed),
-              );
+              if (path is String && context.mounted) {
+                context.router.pop(path);
+              } else {
+                _cameraBloc.add(
+                  AppLifecycleChangedEvent(AppLifecycleState.resumed),
+                );
+              }
             }
           },
         ),
@@ -123,7 +126,6 @@ class _SettingHomeTabletLayoutState extends State<SettingHomeTabletLayout>
                           builder: (context, data) {
                             return AnimatedSize(
                               duration: Duration(milliseconds: 350),
-
                               child: data.$2
                                   ? SizedBox()
                                   : AppButton.icon(

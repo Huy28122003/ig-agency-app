@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/get_data_in_group_request.dart';
 import 'package:ig_agency_app/data/remote/translators/group_detail_translator.dart';
@@ -12,13 +9,15 @@ import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/shared/commons/models/pagination.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
-import '../../domain/entities/group_entity.dart';
+import '../../domain/entities/group_info_entity.dart';
 import '../../domain/entities/group_summary.dart';
 import '../../domain/entities/message/message.dart';
 import '../../domain/entities/pinned_message_summary.dart';
+import '../../domain/enums/unmute_time_enum.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../remote/models/requests/get_groups_request.dart';
 import '../remote/services/mock/message_mock_service.dart';
@@ -255,13 +254,13 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Stream<GroupEntity> listenLastMessages() {
+  Stream<GroupInfoEntity> listenLastMessages() {
     // TODO: implement listenLastMessages
     throw UnimplementedError();
   }
 
   @override
-  Future<GroupEntity> getGroupInfo({required String groupId}) async {
+  Future<GroupInfoEntity> getGroupInfo({required String groupId}) async {
     try {
       final response = await _groupRemoteDataSource.getGroupInfo(groupId);
       return response.toEntity();
@@ -289,18 +288,6 @@ class GroupRepositoryImpl implements GroupRepository {
   }) async {
     try {
       await _groupRemoteDataSource.updateGroupInfo(groupId, name: name);
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<bool> updateGroupNotification({
-    required String groupId,
-    required bool isMute,
-  }) async {
-    try {
-      return true;
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -339,17 +326,17 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups) {
+  Future<bool> addUserToGroups(UserEntity user, List<GroupInfoEntity> groups) {
     return Future.value(true);
   }
 
   @override
-  Future<List<GroupEntity>> getListGroup({
+  Future<List<GroupInfoEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
   }) async {
     try {
-      //todo
+      //todo: anh.trandang
       // final allData = MockData.getWorkspaces();
       //
       // final filtered = keySearch != null && keySearch.isNotEmpty
@@ -492,13 +479,13 @@ class GroupRepositoryImpl implements GroupRepository {
   Future<void> changeNotificationStatus({
     required String groupId,
     required bool enable,
-    String? unMuteTimeCode,
+    MuteDurationOption? option,
   }) async {
     try {
       await _groupRemoteDataSource.changeNotificationStatus(
         groupId: groupId,
         enable: enable,
-        unMuteTimeCode: unMuteTimeCode,
+        option: option?.code,
       );
     } catch (e) {
       throw FailureConverter.convert(e);
@@ -506,17 +493,16 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<void> updateGroupAvatar({
+  Future<String> updateGroupAvatar({
     required String groupId,
     required String image,
   }) async {
     try {
-      final file = File(image);
-      final multipartFile = await MultipartFile.fromFile(
-        file.path,
-        filename: file.path.split('/').last,
+      final response = await _groupRemoteDataSource.updateGroupAvatar(
+        groupId,
+        image,
       );
-      await _groupRemoteDataSource.updateGroupAvatar(groupId, multipartFile);
+      return response.photo.withBaseUrl();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

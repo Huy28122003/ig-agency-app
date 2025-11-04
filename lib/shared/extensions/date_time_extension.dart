@@ -71,13 +71,10 @@ extension DateTimeExtensions on DateTime {
 }
 
 extension DateTimeNumExtensions on int {
-  DateTime toLocalTime({bool isSecond = false, bool utc = false}) {
-    if (utc) {
-      return DateTime.fromMillisecondsSinceEpoch(
-        isSecond ? this * 1000 : this,
-      ).toUtc();
-    }
-    return DateTime.fromMillisecondsSinceEpoch(isSecond ? this * 1000 : this);
+  DateTime toDate({bool utc = false}) {
+    final bool isSecond = this < 100000000000;
+    final millis = isSecond ? this * 1000 : this;
+    return DateTime.fromMillisecondsSinceEpoch(millis, isUtc: utc);
   }
 }
 

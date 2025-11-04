@@ -8,7 +8,8 @@ extension GroupSummaryTranslator on GroupSummaryResponse {
   GroupSummary toEntity() {
     final messageType = MessageContentType.fromCode(lastMessage?.type ?? '');
 
-    final lastMessageTime = lastMessageDate?.toLocalTime(isSecond: true);
+    // todo: anh.trandang recheck
+    final lastMessageTime = lastMessageDate?.toDate();
 
     final lastMessageContent = lastMessage == null
         ? ''
@@ -23,6 +24,7 @@ extension GroupSummaryTranslator on GroupSummaryResponse {
       isPin: pinned,
       isSeen: isRead,
       isMute: notificationEnabled,
+      unReadCount: unreadCount,
     );
   }
 

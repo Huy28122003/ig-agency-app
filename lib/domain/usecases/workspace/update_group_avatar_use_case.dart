@@ -3,13 +3,13 @@ import 'package:injectable/injectable.dart';
 import '../../repositories/group_repository.dart';
 
 @injectable
-class UpdateGroupAvatarUseCase extends UseCase<void, UpdateGroupAvatarParams> {
+class UpdateGroupAvatarUseCase extends UseCase<String, UpdateGroupAvatarParams> {
   UpdateGroupAvatarUseCase(this._workspaceRepository);
 
   final GroupRepository _workspaceRepository;
 
   @override
-  Future<void> call(UpdateGroupAvatarParams param) async {
+  Future<String> call(UpdateGroupAvatarParams param) async {
     return await _workspaceRepository.updateGroupAvatar(
       groupId: param.workspaceId,
       image: param.image,

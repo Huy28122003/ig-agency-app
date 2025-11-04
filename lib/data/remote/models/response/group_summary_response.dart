@@ -15,6 +15,7 @@ class GroupSummaryResponse {
     this.status = '',
     this.isRead = false,
     this.notificationEnabled = true,
+    this.unreadCount = 0,
   });
 
   final String id;
@@ -27,6 +28,7 @@ class GroupSummaryResponse {
   final LastMessageResponseModel? lastMessage;
   final bool isRead;
   final bool notificationEnabled;
+  final int unreadCount;
 
   factory GroupSummaryResponse.fromJson(Map<String, dynamic> json) =>
       _$GroupSummaryResponseFromJson(json);

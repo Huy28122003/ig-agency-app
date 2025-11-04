@@ -10,6 +10,8 @@ import 'package:ig_agency_app/data/remote/models/response/message_response_model
 import 'package:ig_agency_app/data/remote/models/response/forgot_password_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
 import 'package:ig_agency_app/data/remote/models/response/search_result_response.dart';
+import 'package:ig_agency_app/data/remote/models/response/update_group_avatar_response.dart';
+import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/requests/pin_message_request_model.dart';
@@ -57,6 +59,9 @@ abstract class ApiService {
   // Profile
   @GET('/profile')
   Future<ProfileInfoResponse> getProfileInfo();
+
+  @DELETE('/profile')
+  Future<void> deleteAccount();
 
   //Search
   @POST('/')
@@ -175,7 +180,7 @@ abstract class ApiService {
   );
 
   @PUT('/conversations/{conversationId}')
-  Future<void> updateGroupAvatar(
+  Future<UpdateGroupAvatarResponse> updateGroupAvatar(
     @Path('conversationId') String groupId,
     @Part(name: "photo") MultipartFile photo,
   );

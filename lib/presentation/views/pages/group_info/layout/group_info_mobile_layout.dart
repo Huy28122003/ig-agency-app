@@ -1,20 +1,65 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dartx/dartx.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/presentation/models/group_info_arguments.dart';
 import 'package:ig_agency_app/presentation/routers/app_router.dart';
 import 'package:ig_agency_app/presentation/views/pages/group_info/widgets/group_info_card_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../../../dependencies/media/media_manager.dart';
+import '../../../../../di/di.dart';
+import '../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
+import '../../../../../shared/commons/enums/media_use_case.dart';
 import '../../../../resources/colors.dart';
+import '../../../modal/select_image_modal.dart';
+import '../../../widgets/menu_dialog.dart';
 import '../bloc/group_info_bloc.dart';
 
-class GroupInfoMobileLayout extends StatelessWidget {
+class GroupInfoMobileLayout extends StatefulWidget {
   const GroupInfoMobileLayout({super.key});
+
+  @override
+  State<GroupInfoMobileLayout> createState() => _GroupInfoMobileLayoutState();
+}
+
+class _GroupInfoMobileLayoutState extends State<GroupInfoMobileLayout> {
+  late GroupInfoBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = context.read<GroupInfoBloc>();
+  }
+
+  void _onChangeAvatar(BuildContext context) async {
+    final imageSource = await SelectImageModal.show(context);
+    String? path;
+    if (!context.mounted) return;
+    if (imageSource == ImageSource.camera) {
+      path = await context.router.push(
+        CameraRoute(mediaUseCase: MediaUseCase.updateAvatar),
+      );
+    } else if (imageSource == ImageSource.gallery) {
+      final file = await getIt<MediaManager>().pickPhoto();
+      if ((file?.path).isNotNullOrEmpty && context.mounted) {
+        path = await context.router.push(
+          MediaPreviewRoute(
+            mediaPath: file?.path ?? '',
+            mediaUseCase: MediaUseCase.updateAvatar,
+          ),
+        );
+      }
+    }
+
+    if (path.isNotNullOrEmpty && context.mounted) {
+      _bloc.add(UpdateAvatarEvent(path ?? ''));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,56 +69,12 @@ class GroupInfoMobileLayout extends StatelessWidget {
           prev.isLeaveGroupSuccess != curr.isLeaveGroupSuccess,
       listener: (context, state) {
         if (state.isLeaveGroupSuccess == true) {
-          context.router.replace(GroupListRoute());
+          context.router.pop();
         }
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: AppColors.surfaceContainerPrimaryPrimaryDefault,
-          elevation: 0,
-          toolbarHeight: 60,
-          title: Text(
-            'group_info.title'.tr(),
-            style: TextStyle(
-              color: AppColors.textDefaultTextInverted,
-              fontSize: 22,
-              fontFamily: FontFamily.segoeUI,
-              fontWeight: FontWeight.w700,
-              height: 1.27,
-            ),
-          ),
-          centerTitle: true,
-          leadingWidth: 52,
-          leading: Container(
-            padding: const EdgeInsets.only(left: 12),
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              padding: EdgeInsets.all(8),
-              onPressed: () {
-                context.router.pop(
-                  GroupInfoArguments(
-                    groupName: bloc.state.workspace?.groupName,
-                    groupAvatar: bloc.state.workspace?.groupAvatar,
-                  ),
-                );
-              },
-              icon: Assets.icons.icArrowLeft.svg(
-                height: 24,
-                width: 24,
-                colorFilter: ColorFilter.mode(
-                  AppColors.iconDefaultDefaultInverted,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1),
-            child: Container(color: AppColors.outlineGrayStrong200, height: 1),
-          ),
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
@@ -111,14 +112,12 @@ class GroupInfoMobileLayout extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {},
-          child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
-            selector: (state) {
-              return state.workspace;
-            },
-            builder: (context, state) {
+          child: BlocSelector<GroupInfoBloc, GroupInfoState, String>(
+            selector: (state) => state.avatar,
+            builder: (context, groupAvatar) {
               return CircleNetworkAvatar(
                 size: 80,
-                imageUrl: state?.groupAvatar ?? "",
+                imageUrl: groupAvatar,
                 isGroupAvt: true,
               );
             },
@@ -129,9 +128,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
           bottom: 0,
           child: GestureDetector(
             onTap: () {
-              context.router.push(
-                CameraRoute(groupId: context.read<GroupInfoBloc>().groupId),
-              );
+              _onChangeAvatar(context);
             },
             child: Padding(
               padding: const EdgeInsets.all(4.0),
@@ -151,27 +148,25 @@ class GroupInfoMobileLayout extends StatelessWidget {
   }
 
   Widget _buildGroupName(BuildContext context) {
-    final bloc = context.read<GroupInfoBloc>();
     return GestureDetector(
       onTap: () async {
-        final name = bloc.state.workspace?.groupName ?? "";
-        final result = await context.router.push<String>(
+        final bloc = context.read<GroupInfoBloc>();
+        final name = bloc.state.name;
+        final result = await context.router.push(
           EditGroupNameRoute(name: name, workspaceId: bloc.groupId),
         );
-        if (result == null || result == name) return;
-        bloc.add(UpdateWorkspaceEvent(groupName: result));
+        if (result is! String) return;
+        bloc.add(UpdateNameEvent(result));
       },
-      child: BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
-        selector: (state) {
-          return state.workspace;
-        },
-        builder: (context, state) {
+      child: BlocSelector<GroupInfoBloc, GroupInfoState, String>(
+        selector: (state) => state.name,
+        builder: (context, groupName) {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
                 child: Text(
-                  state?.groupName ?? "",
+                  groupName,
                   style: TextStyle(
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w700,
@@ -200,11 +195,9 @@ class GroupInfoMobileLayout extends StatelessWidget {
   Widget _buildBody(BuildContext context, GroupInfoBloc bloc) {
     return Column(
       children: [
-        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
-          selector: (state) {
-            return state.workspace;
-          },
-          builder: (_, state) {
+        BlocSelector<GroupInfoBloc, GroupInfoState, String?>(
+          selector: (state) => state.bio,
+          builder: (_, bio) {
             return GroupInfoCardWidget(
               items: [
                 GroupInfoItem(
@@ -224,19 +217,16 @@ class GroupInfoMobileLayout extends StatelessWidget {
                       ),
                     ),
                   ),
-                  description: state?.bio,
+                  description: bio,
                   onTap: () async {
-                    final workspace = state;
-                    if (workspace == null) return;
                     final result = await context.router.push(
                       EditGroupBioRoute(
-                        bio: workspace.bio,
-                        workspaceId: workspace.id,
+                        bio: bio ?? '',
+                        workspaceId: _bloc.groupId,
                       ),
                     );
-
-                    if (result == null) return;
-                    bloc.add(UpdateWorkspaceEvent(bio: result as String));
+                    if (result is! String) return;
+                    bloc.add(UpdateBioEvent(result));
                   },
                 ),
               ],
@@ -245,40 +235,35 @@ class GroupInfoMobileLayout extends StatelessWidget {
         ),
 
         SizedBox(height: 12),
-        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
-          selector: (state) {
-            return state.workspace;
-          },
-          builder: (context, state) {
-            return GroupInfoCardWidget(
-              items: [
-                GroupInfoItem(
-                  icon: Assets.icons.icSearch.svg(
-                    width: 24,
-                    height: 24,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.iconPrimaryDefault,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  title: "group_info.search_in_conversation".tr(),
-                  onTap: () {
-                    final workspace = context
-                        .read<GroupInfoBloc>()
-                        .state
-                        .workspace;
-                    if (workspace == null) return;
-                    context.router.push(
-                      WSDetailRoute(
-                        groupId: workspace.id,
-                        groupName: workspace.groupName,
-                        groupAvatar: workspace.groupAvatar,
-                        isSearchMode: true,
-                      ),
-                    );
-                  },
+        GroupInfoCardWidget(
+          items: [
+            GroupInfoItem(
+              icon: Assets.icons.icSearch.svg(
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  AppColors.iconPrimaryDefault,
+                  BlendMode.srcIn,
                 ),
-                GroupInfoItem(
+              ),
+              title: "group_info.search_in_conversation".tr(),
+              onTap: () async {
+                final state = _bloc.state;
+                final name = await context.router.push(
+                  WSDetailRoute(
+                    groupId: _bloc.groupId,
+                    groupName: state.name,
+                    groupAvatar: state.avatar,
+                    isSearchMode: true,
+                  ),
+                );
+                if (name is! String) return;
+                _bloc.add(UpdateNameEvent(name));
+              },
+            ),
+            BlocSelector<GroupInfoBloc, GroupInfoState, int>(
+              builder: (context, memberCount) {
+                return GroupInfoItem(
                   icon: Assets.icons.icMembers.svg(
                     width: 24,
                     height: 24,
@@ -297,52 +282,49 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   title: "group_info.member".tr(),
-                  info: ((state?.countMember ?? 0) > 0)
-                      ? "${state?.countMember}"
-                      : null,
+                  info: (memberCount > 0) ? "$memberCount" : null,
                   onTap: () {
-                    if (state == null) return;
-                    context.router.push(MembersRoute(workspaceId: state.id));
+                    context.router.push(
+                      MembersRoute(workspaceId: _bloc.groupId),
+                    );
                   },
-                ),
-              ],
-            );
-          },
+                );
+              },
+              selector: (state) => state.memberCount,
+            ),
+          ],
         ),
         SizedBox(height: 12),
 
-        BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
-          selector: (state) {
-            return state.workspace;
-          },
-          builder: (context, state) {
-            return GroupInfoCardWidget(
-              items: [
-                GroupInfoItem(
-                  icon: Assets.icons.icAlbum.svg(
-                    colorFilter: ColorFilter.mode(
-                      AppColors.iconPrimaryDefault,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  trailing: RotatedBox(
-                    quarterTurns: 2,
-                    child: Assets.icons.icArrowLeft.svg(
-                      colorFilter: ColorFilter.mode(
-                        AppColors.iconDefaultDefaultSub2,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                  title: "group_info.media_file".tr(),
-                  onTap: () {
-                    if (state == null) return;
-                    context.router.push(
-                      WorkspaceAttachmentRoute(workspaceId: state.id),
-                    );
-                  },
+        GroupInfoCardWidget(
+          items: [
+            GroupInfoItem(
+              icon: Assets.icons.icAlbum.svg(
+                colorFilter: ColorFilter.mode(
+                  AppColors.iconPrimaryDefault,
+                  BlendMode.srcIn,
                 ),
-                GroupInfoItem(
+              ),
+              trailing: RotatedBox(
+                quarterTurns: 2,
+                child: Assets.icons.icArrowLeft.svg(
+                  colorFilter: ColorFilter.mode(
+                    AppColors.iconDefaultDefaultSub2,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              title: "group_info.media_file".tr(),
+              onTap: () {
+                context.router.push(
+                  WorkspaceAttachmentRoute(workspaceId: _bloc.groupId),
+                );
+              },
+            ),
+            BlocSelector<GroupInfoBloc, GroupInfoState, int?>(
+              selector: (state) => state.pinnedMessageCount,
+              builder: (context, countPin) {
+                return GroupInfoItem(
                   icon: Assets.icons.icPin.svg(
                     colorFilter: ColorFilter.mode(
                       AppColors.iconPrimaryDefault,
@@ -350,9 +332,7 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   title: "group_info.pin_message".tr(),
-                  info: ((state?.countPin ?? 0) > 0)
-                      ? "${state?.countPin}"
-                      : null,
+                  info: ((countPin ?? 0) > 0) ? "$countPin" : null,
                   trailing: RotatedBox(
                     quarterTurns: 2,
                     child: Assets.icons.icArrowLeft.svg(
@@ -363,46 +343,65 @@ class GroupInfoMobileLayout extends StatelessWidget {
                     ),
                   ),
                   onTap: () async {
-                    final group = bloc.state.workspace;
-                    if (group == null) return;
-                    final messageId = await context.router.push<String>(
+                    final messageId = await context.router.push(
                       PinnedMessageListRoute(groupId: bloc.groupId),
                     );
-                    if (messageId != null && context.mounted) {
+                    if (messageId != null &&
+                        context.mounted &&
+                        messageId is String) {
                       context.router.pop(
                         GroupInfoArguments(messageId: messageId),
                       );
                     }
                   },
+                );
+              },
+            ),
+            GroupInfoItem(
+              icon: Assets.icons.icBlockNotification.svg(
+                colorFilter: ColorFilter.mode(
+                  AppColors.iconPrimaryDefault,
+                  BlendMode.srcIn,
                 ),
-                GroupInfoItem(
-                  icon: Assets.icons.icBlockNotification.svg(
-                    colorFilter: ColorFilter.mode(
-                      AppColors.iconPrimaryDefault,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  title: "group_info.mute_notification".tr(),
-                  trailing:
-                      BlocSelector<GroupInfoBloc, GroupInfoState, GroupEntity?>(
-                        selector: (state) => state.workspace,
-                        builder: (context, workspace) {
-                          return SizedBox(
-                            width: 51,
-                            height: 31,
-                            child: CupertinoSwitch(
-                              value: workspace?.isMute ?? false,
-                              onChanged: (_) {
-                                bloc.add(ToggleNotificationEvent());
-                              },
-                            ),
+              ),
+              title: "group_info.mute_notification".tr(),
+              trailing: BlocSelector<GroupInfoBloc, GroupInfoState, bool>(
+                selector: (state) => state.isMute,
+                builder: (context, isMute) {
+                  return SizedBox(
+                    width: 51,
+                    height: 31,
+                    child: CupertinoSwitch(
+                      value: isMute,
+                      onChanged: (value) async {
+                        if (!value) {
+                          await MenuDialog.show<MuteDurationOption>(
+                            onTap: (value) {
+                              bloc.add(
+                                ChangeNotificationStatusEvent(option: value),
+                              );
+                            },
+                            context: context,
+                            title: "workspace.unmute_title".tr(),
+                            items: MuteDurationOption.values
+                                .map(
+                                  (e) => MenuItem(
+                                    content: 'workspace.${e.title}'.tr(),
+                                    value: e,
+                                  ),
+                                )
+                                .toList(),
                           );
-                        },
-                      ),
-                ),
-              ],
-            );
-          },
+                        } else {
+                          bloc.add(ChangeNotificationStatusEvent());
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );

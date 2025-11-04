@@ -14,11 +14,13 @@ import 'package:ig_agency_app/shared/commons/enums/status.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../domain/entities/group_summary.dart';
+import '../../../../../domain/enums/unmute_time_enum.dart';
 
 part 'group_list_event.dart';
 
 part 'group_list_state.dart';
 
+// todo: anh.trandang - recheck Lv2: Race Condition for all event
 @injectable
 class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   final GetGroupUseCase _getWorkspacesUseCase;
@@ -83,7 +85,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
         ChangeNotificationStatusParams(
           groupId: event.workspaceId,
           enable: !workspaces[indexWorkspace].isMute,
-          unMuteTimeCode: event.unMuteTimeCode,
+          option: event.type,
         ),
       );
       workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(

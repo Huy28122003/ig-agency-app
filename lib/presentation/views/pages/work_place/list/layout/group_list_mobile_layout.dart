@@ -58,23 +58,24 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
           children: [
             _buildNormalModel(),
             if (searchModeState.isNotEmpty) _buildSearchMode(),
-            Positioned(
-              bottom: 22,
-              right: 20,
-              child: SizedBox(
-                height: 56,
-                width: 56,
-                child: FloatingActionButton(
-                  elevation: 1.5,
-                  shape: const CircleBorder(),
-                  backgroundColor: AppColors.primary,
-                  onPressed: () {
-                    context.router.push(const CreateGroupRoute());
-                  },
-                  child: Icon(Icons.add, color: Colors.white, size: 32),
-                ),
-              ),
-            ),
+            // todo: anh.trandang admin mode
+            // Positioned(
+            //   bottom: 22,
+            //   right: 20,
+            //   child: SizedBox(
+            //     height: 56,
+            //     width: 56,
+            //     child: FloatingActionButton(
+            //       elevation: 1.5,
+            //       shape: const CircleBorder(),
+            //       backgroundColor: AppColors.primary,
+            //       onPressed: () {
+            //         context.router.push(const CreateGroupRoute());
+            //       },
+            //       child: Icon(Icons.add, color: Colors.white, size: 32),
+            //     ),
+            //   ),
+            // ),
           ],
         );
       },
@@ -116,18 +117,18 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               },
               onTapMute: () async {
                 if (workspace.isMute) {
-                  final result = await MenuDialog.show<UnMuteTimeEnum>(
+                  await MenuDialog.show<MuteDurationOption>(
                     onTap: (value) {
                       _workspaceBloc.add(
                         MuteWorkspaceEvent(
                           workspaceId: workspace.id,
-                          unMuteTimeCode: value.code,
+                          type: value,
                         ),
                       );
                     },
                     context: context,
                     title: "workspace.unmute_title".tr(),
-                    items: UnMuteTimeEnum.values
+                    items: MuteDurationOption.values
                         .map(
                           (e) => MenuItem(
                             content: 'workspace.${e.title}'.tr(),
@@ -215,7 +216,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
         final status = selected.$2;
         final pagingStatus = selected.$3;
         if (status == PageStatus.loading) {
-          return CupertinoActivityIndicator();
+          return Center(child: CupertinoActivityIndicator());
         } else if (status == PageStatus.loaded) {
           return Container(
             width: double.infinity,
@@ -249,18 +250,18 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   },
                   onTapMute: () async {
                     if (workspace.isMute) {
-                      final result = await MenuDialog.show<UnMuteTimeEnum>(
+                      await MenuDialog.show<MuteDurationOption>(
                         onTap: (value) {
                           _workspaceBloc.add(
                             MuteWorkspaceEvent(
                               workspaceId: workspace.id,
-                              unMuteTimeCode: value.code,
+                              type: value,
                             ),
                           );
                         },
                         context: context,
                         title: "workspace.unmute_title".tr(),
-                        items: UnMuteTimeEnum.values
+                        items: MuteDurationOption.values
                             .map(
                               (e) => MenuItem(
                                 content: 'workspace.${e.title}'.tr(),
@@ -327,6 +328,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               value: state,
               onChanged: (value) {
                 _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
+                if(value.isEmpty) return;
                 _workspaceBloc.add(SearchEvent(value: value));
               },
               hintText: "workspace.hint_text_search".tr(),

@@ -31,6 +31,7 @@ class CircleNetworkAvatar extends StatelessWidget {
         ),
         placeholder: (_, _) => _buildPlaceholder(),
         errorWidget: (_, _, _) => _buildError(),
+        fit: BoxFit.contain,
       ),
     );
   }

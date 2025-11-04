@@ -15,7 +15,7 @@ class GroupTileTabletWidget extends StatefulWidget {
     required this.isSeen,
     required this.isMute,
     required this.isPin,
-    // required this.countNewMessage,
+    required this.countNewMessage,
     required this.onTap,
     required this.isSelected,
   });
@@ -28,7 +28,7 @@ class GroupTileTabletWidget extends StatefulWidget {
   final bool isMute;
   final bool isPin;
 
-  // final int countNewMessage;
+  final int countNewMessage;
   final VoidCallback onTap;
   final bool isSelected;
 
@@ -104,11 +104,11 @@ class _GroupTileTabletWidgetState extends State<GroupTileTabletWidget> {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    // (widget.countNewMessage > 1 &&
-                                    //         !widget.isSeen)
-                                    //     ? "${widget.countNewMessage} new messages"
-                                    //     : widget.lastMessage,
-                                    widget.lastMessage,
+                                    (widget.countNewMessage > 1 &&
+                                            !widget.isSeen)
+                                        ? "${widget.countNewMessage} new messages"
+                                        : widget.lastMessage,
+                                    // widget.lastMessage,
                                     style: TextStyle(
                                       fontFamily: FontFamily.segoeUI,
                                       fontSize: 14,

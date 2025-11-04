@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:ig_agency_app/dependencies/media/media_manager.dart';
 import 'package:ig_agency_app/dependencies/permission/permission_manager.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/update_group_avatar_use_case.dart';
@@ -9,6 +10,7 @@ import 'package:ig_agency_app/shared/utils/logger.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../shared/commons/enums/status.dart';
+import '../../../../shared/commons/enums/media_use_case.dart';
 import '../../../base/base_state.dart';
 
 part 'media_preview_event.dart';
@@ -17,28 +19,23 @@ part 'media_preview_state.dart';
 
 @injectable
 class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
-  MediaPreviewBloc(
-    this._mediaManager,
-    this._permissionManager,
-    this._updateGroupAvatarUseCase,
-  ) : super(MediaPreviewState()) {
+  MediaPreviewBloc(this._mediaManager, this._permissionManager)
+    : super(MediaPreviewState()) {
     _registerHandlers();
   }
 
   final MediaManager _mediaManager;
   final PermissionManager _permissionManager;
   late String path;
-  late String avatar;
+  late String? avatar;
   late bool isPhoto;
-  late double aspectRatio;
-  late final String groupId;
-
-  final UpdateGroupAvatarUseCase _updateGroupAvatarUseCase;
+  late double? aspectRatio;
+  late MediaUseCase mediaUseCase;
 
   void _registerHandlers() {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<SaveMediaEvent>(_onSaveMedia);
-    handleSubEvent<SendMediaEvent>(_onSendMedia);
+    handleSubEvent<ConfirmEvent>(_onConfirm);
     handleSubEvent<EditMediaEvent>(_onEditMedia);
   }
 
@@ -61,18 +58,11 @@ class MediaPreviewBloc extends BaseBloc<MediaPreviewEvent, MediaPreviewState> {
     }
   }
 
-  Future<void> _onSendMedia(
-    SendMediaEvent event,
+  Future<void> _onConfirm(
+    ConfirmEvent event,
     Emitter<MediaPreviewState> emit,
   ) async {
-    try {
-      await _updateGroupAvatarUseCase.call(
-        UpdateGroupAvatarParams(workspaceId: groupId, image: path),
-      );
-      emit(state.copyWith(updateAvatarSuccess: true));
-    } catch (e) {
-      handleError(emit, e);
-    }
+    emit(state.copyWith(isCompleted: true));
   }
 
   Future<void> _onEditMedia(
