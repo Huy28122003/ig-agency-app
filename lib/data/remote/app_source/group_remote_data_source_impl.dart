@@ -3,6 +3,7 @@ import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/change_notification_status_request.dart';
 import 'package:ig_agency_app/data/remote/models/requests/update_group_info_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/update_group_avatar_response.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
 import 'package:ig_agency_app/shared/commons/exceptions.dart';
@@ -258,11 +259,11 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   }
 
   @override
-  Future<void> updateGroupAvatar(String groupId, String image) async {
+  Future<UpdateGroupAvatarResponse> updateGroupAvatar(String groupId, String image) async {
     try {
       final multipartFile = await image.toMultipartFile();
       if (multipartFile == null) throw NoFileFoundException();
-      await _apiService.updateGroupAvatar(groupId, multipartFile);
+      return await _apiService.updateGroupAvatar(groupId, multipartFile);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

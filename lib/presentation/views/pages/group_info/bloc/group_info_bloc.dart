@@ -78,10 +78,10 @@ class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
     handleLoadData<UpdateAvatarEvent>((event, emit) async {
       try {
         if (state.avatar == event.avatar) return;
-        await _updateGroupAvatarUseCase.call(
+        final result = await _updateGroupAvatarUseCase.call(
           UpdateGroupAvatarParams(workspaceId: groupId, image: event.avatar),
         );
-        emit(state.copyWith(avatar: event.avatar));
+        emit(state.copyWith(avatar: result));
       } catch (e) {
         handleError(emit, e);
       }

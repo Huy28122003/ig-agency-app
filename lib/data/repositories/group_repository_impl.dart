@@ -8,6 +8,7 @@ import 'package:ig_agency_app/domain/entities/file_entity.dart';
 import 'package:ig_agency_app/domain/entities/media_entity.dart';
 import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/shared/commons/models/pagination.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
@@ -489,12 +490,16 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<void> updateGroupAvatar({
+  Future<String> updateGroupAvatar({
     required String groupId,
     required String image,
   }) async {
     try {
-      await _groupRemoteDataSource.updateGroupAvatar(groupId, image);
+      final response = await _groupRemoteDataSource.updateGroupAvatar(
+        groupId,
+        image,
+      );
+      return response.photo.withBaseUrl();
     } catch (e) {
       throw FailureConverter.convert(e);
     }

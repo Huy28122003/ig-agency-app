@@ -80,7 +80,7 @@ abstract class GroupRepository {
 
   Future<void> updateGroupName({required String groupId, required String name});
 
-  Future<void> updateGroupAvatar({
+  Future<String> updateGroupAvatar({
     required String groupId,
     required String image,
   });

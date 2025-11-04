@@ -6,6 +6,7 @@ import '../models/response/group_response.dart';
 import '../models/response/group_summary_response.dart';
 import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
+import '../models/response/update_group_avatar_response.dart';
 
 abstract class GroupRemoteDataSource {
   Future<GroupDetailResponseModel> getGroupDetail(String conversationId);
@@ -68,7 +69,10 @@ abstract class GroupRemoteDataSource {
     MultipartFile? image,
   });
 
-  Future<void> updateGroupAvatar(String groupId, String image);
+  Future<UpdateGroupAvatarResponse> updateGroupAvatar(
+    String groupId,
+    String image,
+  );
 
   Future<void> markAsRead(String groupId);
 
