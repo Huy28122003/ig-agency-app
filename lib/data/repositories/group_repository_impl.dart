@@ -292,18 +292,6 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<bool> updateGroupNotification({
-    required String groupId,
-    required bool isMute,
-  }) async {
-    try {
-      return true;
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
   Future<bool> createGroup(String groupName, List<UserEntity> members) {
     return Future.value(true);
   }

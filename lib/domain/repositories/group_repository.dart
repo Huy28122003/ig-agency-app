@@ -91,11 +91,6 @@ abstract class GroupRepository {
     required int limit,
   });
 
-  Future<bool> updateGroupNotification({
-    required String groupId,
-    required bool isMute,
-  });
-
   Future<List<MediaEntity>> getMediasInGroup({
     required String workspaceId,
     required int offset,

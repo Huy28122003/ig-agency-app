@@ -1,7 +1,8 @@
+import 'package:ig_agency_app/domain/enums/unmute_time_enum.dart';
 import 'package:ig_agency_app/domain/usecases/get_profile_info_use_case.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/change_notification_status_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_workspace_by_id_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/leave_group_use_case.dart';
-import 'package:ig_agency_app/domain/usecases/workspace/update_workspace_notification_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/base/base_state.dart';
 import 'package:ig_agency_app/shared/commons/enums/status.dart';
@@ -16,7 +17,7 @@ part 'group_info_state.dart';
 @injectable
 class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
   final GetGroupInfoUseCase _getWorkspaceByIdUseCase;
-  final UpdateWorkspaceNotificationUseCase _updateWorkspaceNotificationUseCase;
+  final ChangeNotificationStatusUseCase _changeNotificationStatusUseCase;
   final LeaveGroupUseCase _leaveGroupUseCase;
   final GetProfileInfoUseCase _getProfileInfoUseCase;
   final UpdateGroupAvatarUseCase _updateGroupAvatarUseCase;
@@ -25,7 +26,7 @@ class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
 
   GroupInfoBloc(
     this._getWorkspaceByIdUseCase,
-    this._updateWorkspaceNotificationUseCase,
+    this._changeNotificationStatusUseCase,
     this._leaveGroupUseCase,
     this._getProfileInfoUseCase,
     this._updateGroupAvatarUseCase,
@@ -49,17 +50,16 @@ class GroupInfoBloc extends BaseBloc<GroupInfoEvent, GroupInfoState> {
         handleError(emit, e);
       }
     });
-    handleSubEvent<ToggleNotificationEvent>((event, emit) async {
+    handleSubEvent<ChangeNotificationStatusEvent>((event, emit) async {
       try {
-        final result = await _updateWorkspaceNotificationUseCase.call(
-          UpdateWorkspaceNotificationParams(
-            workspaceId: groupId,
-            isMute: !state.isMute,
+        await _changeNotificationStatusUseCase.call(
+          ChangeNotificationStatusParams(
+            groupId: groupId,
+            enable: !state.isMute,
+            option: event.option,
           ),
         );
-        if (result) {
-          emit(state.copyWith(isMute: state.isMute));
-        }
+        emit(state.copyWith(isMute: !state.isMute));
       } catch (e) {
         handleError(emit, e);
       }

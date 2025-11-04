@@ -8,7 +8,11 @@ class LoadDataEvent extends GroupInfoEvent {
   LoadDataEvent({required this.groupId});
 }
 
-class ToggleNotificationEvent extends GroupInfoEvent {}
+class ChangeNotificationStatusEvent extends GroupInfoEvent {
+  final MuteDurationOption? option;
+
+  ChangeNotificationStatusEvent({this.option});
+}
 
 class LeaveGroupEvent extends GroupInfoEvent {}
 

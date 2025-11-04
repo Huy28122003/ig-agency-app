@@ -11,11 +11,13 @@ import 'package:ig_agency_app/presentation/views/widgets/circle_network_avatar.d
 import 'package:image_picker/image_picker.dart';
 import '../../../../../dependencies/media/media_manager.dart';
 import '../../../../../di/di.dart';
+import '../../../../../domain/enums/unmute_time_enum.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../../shared/commons/enums/media_use_case.dart';
 import '../../../../resources/colors.dart';
 import '../../../modal/select_image_modal.dart';
+import '../../../widgets/menu_dialog.dart';
 import '../bloc/group_info_bloc.dart';
 
 class GroupInfoMobileLayout extends StatefulWidget {
@@ -371,8 +373,28 @@ class _GroupInfoMobileLayoutState extends State<GroupInfoMobileLayout> {
                     height: 31,
                     child: CupertinoSwitch(
                       value: isMute,
-                      onChanged: (_) {
-                        bloc.add(ToggleNotificationEvent());
+                      onChanged: (value) async {
+                        if (!value) {
+                          await MenuDialog.show<MuteDurationOption>(
+                            onTap: (value) {
+                              bloc.add(
+                                ChangeNotificationStatusEvent(option: value),
+                              );
+                            },
+                            context: context,
+                            title: "workspace.unmute_title".tr(),
+                            items: MuteDurationOption.values
+                                .map(
+                                  (e) => MenuItem(
+                                    content: 'workspace.${e.title}'.tr(),
+                                    value: e,
+                                  ),
+                                )
+                                .toList(),
+                          );
+                        } else {
+                          bloc.add(ChangeNotificationStatusEvent());
+                        }
                       },
                     ),
                   );
