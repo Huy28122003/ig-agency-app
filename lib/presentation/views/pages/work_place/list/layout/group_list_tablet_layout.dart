@@ -129,7 +129,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                       _workspaceBloc.add(
                         SearchKeyWorkChangeEvent(value: value),
                       );
-                      if(value.isEmpty) return;
+                      if (value.isEmpty) return;
                       _workspaceBloc.add(SearchEvent(value: value));
                     },
                     hintText: "workspace.hint_text_search".tr(),
@@ -194,7 +194,15 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                             onTapMute: () async {
                               if (workspace.isMute) {
                                 await MenuDialog.show<UnMuteTimeEnum>(
-                                  onTap: (value) {},
+                                  onTap: (value) {
+                                    _workspaceBloc.add(
+                                      ChangeNotificationStatusEvent(
+                                        groupId: workspace.id,
+                                        unMuteTimeCode: value.code,
+                                        isEnable: false,
+                                      ),
+                                    );
+                                  },
                                   context: context,
                                   title: "workspace.unmute_title".tr(),
                                   items: UnMuteTimeEnum.values
@@ -206,14 +214,18 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                                       )
                                       .toList(),
                                 );
+                              } else {
+                                _workspaceBloc.add(
+                                  ChangeNotificationStatusEvent(
+                                    groupId: workspace.id,
+                                    isEnable: true,
+                                  ),
+                                );
                               }
-                              _workspaceBloc.add(
-                                MuteWorkspaceEvent(workspaceId: workspace.id),
-                              );
                             },
                             onTapPin: () {
                               _workspaceBloc.add(
-                                PinWorkspaceEvent(workspaceId: workspace.id),
+                                PinGroupEvent(workspaceId: workspace.id),
                               );
                             },
                             child: GroupTileTabletWidget(

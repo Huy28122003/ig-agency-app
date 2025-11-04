@@ -115,12 +115,13 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               },
               onTapMute: () async {
                 if (workspace.isMute) {
-                  final result = await MenuDialog.show<UnMuteTimeEnum>(
+                  await MenuDialog.show<UnMuteTimeEnum>(
                     onTap: (value) {
                       _workspaceBloc.add(
-                        MuteWorkspaceEvent(
-                          workspaceId: workspace.id,
+                        ChangeNotificationStatusEvent(
+                          groupId: workspace.id,
                           unMuteTimeCode: value.code,
+                          isEnable: false,
                         ),
                       );
                     },
@@ -137,18 +138,21 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   );
                 } else {
                   _workspaceBloc.add(
-                    MuteWorkspaceEvent(workspaceId: workspace.id),
+                    ChangeNotificationStatusEvent(
+                      groupId: workspace.id,
+                      isEnable: true,
+                    ),
                   );
                 }
               },
               onTapPin: () {
                 if (workspace.isPin) {
                   _workspaceBloc.add(
-                    UnpinWorkspaceEvent(workspaceId: workspace.id),
+                    UnpinGroupEvent(workspaceId: workspace.id),
                   );
                 } else {
                   _workspaceBloc.add(
-                    PinWorkspaceEvent(workspaceId: workspace.id),
+                    PinGroupEvent(workspaceId: workspace.id),
                   );
                 }
               },
@@ -235,12 +239,13 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   },
                   onTapMute: () async {
                     if (workspace.isMute) {
-                      final result = await MenuDialog.show<UnMuteTimeEnum>(
+                      await MenuDialog.show<UnMuteTimeEnum>(
                         onTap: (value) {
                           _workspaceBloc.add(
-                            MuteWorkspaceEvent(
-                              workspaceId: workspace.id,
+                            ChangeNotificationStatusEvent(
+                              groupId: workspace.id,
                               unMuteTimeCode: value.code,
+                              isEnable: false,
                             ),
                           );
                         },
@@ -257,18 +262,21 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                       );
                     } else {
                       _workspaceBloc.add(
-                        MuteWorkspaceEvent(workspaceId: workspace.id),
+                        ChangeNotificationStatusEvent(
+                          groupId: workspace.id,
+                          isEnable: true,
+                        ),
                       );
                     }
                   },
                   onTapPin: () {
                     if (workspace.isPin) {
                       _workspaceBloc.add(
-                        UnpinWorkspaceEvent(workspaceId: workspace.id),
+                        UnpinGroupEvent(workspaceId: workspace.id),
                       );
                     } else {
                       _workspaceBloc.add(
-                        PinWorkspaceEvent(workspaceId: workspace.id),
+                        PinGroupEvent(workspaceId: workspace.id),
                       );
                     }
                   },
@@ -313,7 +321,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               value: state,
               onChanged: (value) {
                 _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
-                if(value.isEmpty) return;
+                if (value.isEmpty) return;
                 _workspaceBloc.add(SearchEvent(value: value));
               },
               hintText: "workspace.hint_text_search".tr(),

@@ -51,9 +51,9 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleLoadData<LoadDataEvent>(_onLoadData);
     handleSubEvent<RefreshDataEvent>(_onRefreshData);
     handleSubEvent<LoadMoreDataEvent>(_onLoadMoreData);
-    handleSubEvent<MuteWorkspaceEvent>(_onMuteWorkspace);
-    handleSubEvent<PinWorkspaceEvent>(_onPinWorkspace);
-    handleSubEvent<UnpinWorkspaceEvent>(_onUnpinWorkspace);
+    handleSubEvent<ChangeNotificationStatusEvent>(_onMuteWorkspace);
+    handleSubEvent<PinGroupEvent>(_onPinGroup);
+    handleSubEvent<UnpinGroupEvent>(_onUnpinWorkspace);
     handleSubEvent<MarkGroupEvent>(_onMarkGroup);
     handleSubEvent<UpdateWorkspaceLastMessageEvent>(
       _onUpdateWorkspaceLastMessage,
@@ -70,34 +70,31 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   }
 
   Future<void> _onMuteWorkspace(
-    MuteWorkspaceEvent event,
+    ChangeNotificationStatusEvent event,
     Emitter<GroupListState> emit,
   ) async {
+    // Da giam su phu thuoc vao index vi socket se sap xep lai list lien tuc
     try {
-      List<GroupSummary> workspaces = List.from(state.workspaces);
-      int indexWorkspace = workspaces.indexWhere(
-        (e) => e.id == event.workspaceId,
-      );
-      if (indexWorkspace == -1) return;
+      // Du la search mode hay normal mode thi deu cap nhat theo id
       await _changeNotificationStatusUseCase.call(
         ChangeNotificationStatusParams(
-          groupId: event.workspaceId,
-          enable: !workspaces[indexWorkspace].isMute,
+          groupId: event.groupId,
+          enable: event.isEnable,
           unMuteTimeCode: event.unMuteTimeCode,
         ),
       );
-      workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
-        isMute: !workspaces[indexWorkspace].isMute,
-      );
-      // _sort(workspaces);
-      emit(state.copyWith(workspaces: workspaces));
+      // Neu item nam trong list cua normal mode thi cap nhat lai ui
+      final updated = state.workspaces
+          .map((e) => e.id == event.groupId ? e.copyWith(isMute: !e.isMute) : e)
+          .toList();
+      emit(state.copyWith(workspaces: updated));
     } catch (e) {
       handleError(emit, e);
     }
   }
 
-  Future<void> _onPinWorkspace(
-    PinWorkspaceEvent event,
+  Future<void> _onPinGroup(
+    PinGroupEvent event,
     Emitter<GroupListState> emit,
   ) async {
     try {
@@ -118,7 +115,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   }
 
   Future<void> _onUnpinWorkspace(
-    UnpinWorkspaceEvent event,
+    UnpinGroupEvent event,
     Emitter<GroupListState> emit,
   ) async {
     try {
@@ -382,13 +379,13 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
       _offset -= 1;
       List<GroupSummary> workspaces = List.from(state.workspaces);
       workspaces.removeWhere((e) => e.id == event.workspaceId);
+      emit(state.copyWith(workspaces: workspaces));
 
       if (state.isSearchMode) {
         List<GroupSummary> workspacesSearch = List.from(state.workspacesSearch);
         workspacesSearch.removeWhere((e) => e.id == event.workspaceId);
         emit(state.copyWith(workspacesSearch: workspacesSearch));
       }
-      emit(state.copyWith(workspaces: workspaces));
     } catch (e) {
       handleError(emit, e);
     }
