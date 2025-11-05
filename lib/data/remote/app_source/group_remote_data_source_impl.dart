@@ -223,7 +223,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   @override
   Future<void> markUnread(String groupId) async {
     try {
-      return await _apiService.markAsRead(groupId);
+      return await _apiService.markUnread(groupId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }
