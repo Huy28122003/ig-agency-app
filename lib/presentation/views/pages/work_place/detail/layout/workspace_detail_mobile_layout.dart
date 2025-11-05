@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/models/group_info_arguments.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_search_text_field.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -113,6 +114,14 @@ class _WorkspaceAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
+  late final WSDetailBloc _wsDetailBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _wsDetailBloc = context.read<WSDetailBloc>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocSelector<WSDetailBloc, WSDetailState, bool>(
@@ -133,7 +142,12 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
       toolbarHeight: 60,
       scrolledUnderElevation: 0,
       leading: GestureDetector(
-        onTap: () => context.router.pop(),
+        onTap: () => context.router.pop(
+          GroupInfoArguments(
+            groupName: _wsDetailBloc.state.groupName,
+            groupAvatar: _wsDetailBloc.state.groupAvatar,
+          ),
+        ),
         child: Stack(
           children: [
             Positioned(
@@ -145,7 +159,12 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
                 width: 24,
                 alignment: Alignment.center,
                 child: GestureDetector(
-                  onTap: () => context.router.pop(),
+                  onTap: () => context.router.pop(
+                    GroupInfoArguments(
+                      groupName: _wsDetailBloc.state.groupName,
+                      groupAvatar: _wsDetailBloc.state.groupAvatar,
+                    ),
+                  ),
                   child: Assets.icons.icArrowLeft.svg(
                     height: 24,
                     width: 24,
@@ -189,12 +208,23 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
       title: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () async {
-          final messageId = await context.router.push(
-            GroupInfoRoute(groupId: context.read<WSDetailBloc>().groupId),
+          final groupInfoArg = await context.router.push<GroupInfoArguments>(
+            GroupInfoRoute(groupId: _wsDetailBloc.groupId),
           );
-          if (messageId != null && messageId is String && context.mounted) {
-            context.read<WSDetailBloc>().add(
-              JumpToMessageEvent(messageId: messageId),
+          if (groupInfoArg == null) return;
+          if (groupInfoArg.messageId != null) {
+            _wsDetailBloc.add(
+              JumpToMessageEvent(messageId: groupInfoArg.messageId!),
+            );
+          } else if (groupInfoArg.groupName != null &&
+              groupInfoArg.groupName != _wsDetailBloc.state.groupName) {
+            _wsDetailBloc.add(
+              UpdateGroupInfoEvent(groupName: groupInfoArg.groupName!),
+            );
+          } else if (groupInfoArg.groupAvatar != null &&
+              groupInfoArg.groupAvatar != _wsDetailBloc.state.groupAvatar) {
+            _wsDetailBloc.add(
+              UpdateGroupInfoEvent(groupAvatar: groupInfoArg.groupAvatar!),
             );
           }
         },
@@ -210,17 +240,24 @@ class _WorkspaceAppBarState extends State<_WorkspaceAppBar> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.groupName,
-                    style: TextStyle(
-                      color: AppColors.textDefaultTextDefault,
-                      fontSize: 16,
-                      fontFamily: FontFamily.segoeUI,
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  BlocSelector<WSDetailBloc, WSDetailState, String>(
+                    selector: (state) {
+                      return state.groupName;
+                    },
+                    builder: (context, state) {
+                      return Text(
+                        state,
+                        style: TextStyle(
+                          color: AppColors.textDefaultTextDefault,
+                          fontSize: 16,
+                          fontFamily: FontFamily.segoeUI,
+                          fontWeight: FontWeight.w700,
+                          height: 1.50,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    },
                   ),
                   BlocSelector<WSDetailBloc, WSDetailState, (int, int)?>(
                     selector: (state) {

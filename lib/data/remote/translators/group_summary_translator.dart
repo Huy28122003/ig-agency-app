@@ -24,6 +24,7 @@ extension GroupSummaryTranslator on GroupSummaryResponse {
       isPin: pinned,
       isSeen: isRead,
       isMute: notificationEnabled,
+      unReadCount: unreadCount,
     );
   }
 

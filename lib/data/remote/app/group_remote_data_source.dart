@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
 import '../../../domain/entities/message/message.dart';
 import '../models/requests/get_groups_request.dart';
+import '../models/response/group_response.dart';
 import '../models/response/group_summary_response.dart';
 import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
+import '../models/response/update_group_avatar_response.dart';
 
 abstract class GroupRemoteDataSource {
   Future<GroupDetailResponseModel> getGroupDetail(String conversationId);
@@ -57,6 +60,20 @@ abstract class GroupRemoteDataSource {
 
   Future<void> deleteGroup(String groupId);
 
+  Future<GroupResponse> getGroupInfo(String groupId);
+
+  Future<void> updateGroupInfo(
+    String groupId, {
+    String? bio,
+    String? name,
+    MultipartFile? image,
+  });
+
+  Future<UpdateGroupAvatarResponse> updateGroupAvatar(
+    String groupId,
+    String image,
+  );
+
   Future<void> markAsRead(String groupId);
 
   Future<void> markUnread(String groupId);
@@ -66,4 +83,6 @@ abstract class GroupRemoteDataSource {
     required bool enable,
     String? option,
   });
+
+  Future<void> leaveGroup(String groupId, String userId);
 }

@@ -5,10 +5,13 @@ import 'package:ig_agency_app/data/remote/models/requests/forgot_password_reques
 import 'package:ig_agency_app/data/remote/models/requests/login_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/logout_request_model.dart';
 import 'package:ig_agency_app/data/remote/models/requests/search_request_model.dart';
+import 'package:ig_agency_app/data/remote/models/requests/update_group_info_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/message_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/forgot_password_response_model.dart';
 import 'package:ig_agency_app/data/remote/models/response/paged_response.dart';
 import 'package:ig_agency_app/data/remote/models/response/search_result_response.dart';
+import 'package:ig_agency_app/data/remote/models/response/update_group_avatar_response.dart';
+import 'package:ig_agency_app/data/remote/models/response/user_profile_response_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/requests/pin_message_request_model.dart';
@@ -17,6 +20,7 @@ import '../models/requests/change_password_request_model.dart';
 import '../models/requests/send_message_request_model.dart';
 import '../models/requests/delete_message_request_model.dart';
 import '../models/requests/update_profile_request_model.dart';
+import '../models/response/group_response.dart';
 import '../models/response/group_summary_response.dart';
 import '../models/response/login_response_model.dart';
 import '../models/response/profile_info_response.dart';
@@ -159,6 +163,28 @@ abstract class ApiService {
   @DELETE('/conversations/{conversationId}')
   Future<void> deleteGroup(@Path('conversationId') String groupId);
 
+  @GET('/conversations/{conversationId}')
+  Future<GroupResponse> getGroupInfo(@Path('conversationId') String groupId);
+
+  @GET('/conversations/{conversationId}/members')
+  Future<List<UserProfileResponseModel>> getUserInGroup(
+    @Path("conversationId") String groupId,
+    @Query("limit") int limit,
+    @Query("offset") int offset,
+  );
+
+  @PUT('/conversations/{conversationId}')
+  Future<void> updateGroupInfo(
+    @Path('conversationId') String groupId,
+    @Body() UpdateGroupInfoRequest updateGroupInfoRequest,
+  );
+
+  @PUT('/conversations/{conversationId}')
+  Future<UpdateGroupAvatarResponse> updateGroupAvatar(
+    @Path('conversationId') String groupId,
+    @Part(name: "photo") MultipartFile photo,
+  );
+
   @POST('/conversations/{conversationId}/read')
   Future<void> markAsRead(@Path('conversationId') String groupId);
 
@@ -169,5 +195,11 @@ abstract class ApiService {
   Future<void> changeNotificationStatus(
     @Path('conversationId') String groupId,
     @Body() ChangeNotificationStatusRequest request,
+  );
+
+  @DELETE('/conversations/{conversationId}/members/leave/{userId}')
+  Future<void> leaveGroup(
+    @Path('conversationId') String groupId,
+    @Path('userId') String userId,
   );
 }

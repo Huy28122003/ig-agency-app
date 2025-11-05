@@ -7,32 +7,32 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
-import '../bloc/edit_workspace_bio_bloc.dart';
+import '../bloc/edit_group_name_bloc.dart';
 
-class EditWorkspaceNameTabletLayout extends StatefulWidget {
-  const EditWorkspaceNameTabletLayout({super.key});
+class EditGroupNameTabletLayout extends StatefulWidget {
+  const EditGroupNameTabletLayout({super.key});
 
   @override
-  State<EditWorkspaceNameTabletLayout> createState() =>
-      _EditWorkspaceNameTabletLayoutState();
+  State<EditGroupNameTabletLayout> createState() =>
+      _EditGroupNameTabletLayoutState();
 }
 
-class _EditWorkspaceNameTabletLayoutState
-    extends State<EditWorkspaceNameTabletLayout> {
-  late final EditWorkspaceNameBloc _editWorkspaceBioBloc;
+class _EditGroupNameTabletLayoutState
+    extends State<EditGroupNameTabletLayout> {
+  late final EditGroupNameBloc _editWorkspaceBioBloc;
 
   @override
   void initState() {
     super.initState();
-    _editWorkspaceBioBloc = context.read<EditWorkspaceNameBloc>();
+    _editWorkspaceBioBloc = context.read<EditGroupNameBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditWorkspaceNameBloc, EditWorkspaceNameState>(
+    return BlocListener<EditGroupNameBloc, EditGroupNameState>(
       listener: (_, state) {
         if (state.updateStatus ?? false) {
-          context.router.pop(state.bio);
+          context.router.pop(state.name);
         }
       },
       child: Scaffold(
@@ -77,23 +77,23 @@ class _EditWorkspaceNameTabletLayoutState
             child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
           actions: [
-            BlocSelector<EditWorkspaceNameBloc, EditWorkspaceNameState, String>(
+            BlocSelector<EditGroupNameBloc, EditGroupNameState, String>(
               selector: (state) {
-                return state.bio;
+                return state.name;
               },
               builder: (context, state) {
                 return Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: GestureDetector(
                     onTap: () {
-                      if (!_editWorkspaceBioBloc.isBioChanged) return;
-                      _editWorkspaceBioBloc.add(SubmitBioEvent());
+                      if (!_editWorkspaceBioBloc.isNameChanged) return;
+                      _editWorkspaceBioBloc.add(SubmitNameEvent());
                     },
                     child: Text(
                       'workspace_bio.done'.tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: _editWorkspaceBioBloc.isBioChanged
+                        color: _editWorkspaceBioBloc.isNameChanged
                             ? AppColors.textDefaultTextDefault
                             : AppColors.textDefaultTextDefaultDisabled,
                         fontSize: 16,
@@ -113,12 +113,12 @@ class _EditWorkspaceNameTabletLayoutState
             padding: const EdgeInsets.symmetric(vertical: 20),
             child:
                 BlocSelector<
-                  EditWorkspaceNameBloc,
-                  EditWorkspaceNameState,
+                  EditGroupNameBloc,
+                  EditGroupNameState,
                   String
                 >(
                   selector: (state) {
-                    return state.bio;
+                    return state.name;
                   },
                   builder: (context, state) {
                     return AppTextField(
@@ -135,7 +135,7 @@ class _EditWorkspaceNameTabletLayoutState
                         height: 24 / 16,
                       ),
                       onChanged: (value) {
-                        _editWorkspaceBioBloc.add(BioChangeEvent(value: value));
+                        _editWorkspaceBioBloc.add(NameChangeEvent(value: value));
                       },
                     );
                   },

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/group_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/change_notification_status_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/delete_group_use_case.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_groups_use_case.dart';
@@ -69,6 +68,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleSubEvent<SearchDebouncedEvent>(_onSearchDebounced);
     handleSubEvent<SearchKeyWorkChangeEvent>(_onSearchKeyWordChange);
     handleSubEvent<SearchLoadMoreEvent>(_onSearchLoadMore);
+    handleSubEvent<UpdateGroupEvent>(_onUpdateGroup);
   }
 
   Future<void> _onMuteWorkspace(
@@ -177,7 +177,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
       workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
         isSeen: !workspaces[indexWorkspace].isSeen,
       );
-      _sort(workspaces);
+      // _sort(workspaces);
       emit(state.copyWith(workspaces: workspaces));
     } catch (e) {
       handleError(emit, e);
@@ -426,6 +426,22 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     Emitter<GroupListState> emit,
   ) async {
     emit(state.copyWith(workspaceSelectedId: event.id));
+  }
+
+  Future<void> _onUpdateGroup(
+    UpdateGroupEvent event,
+    Emitter<GroupListState> emit,
+  ) async {
+    List<GroupSummary> workspaces = List.from(state.workspaces);
+
+    int indexWorkspace = workspaces.indexWhere((e) => e.id == event.groupId);
+    if (indexWorkspace == -1) return;
+
+    workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
+      name: event.groupName,
+      avatar: event.groupAvatar,
+    );
+    emit(state.copyWith(workspaces: workspaces));
   }
 
   @override

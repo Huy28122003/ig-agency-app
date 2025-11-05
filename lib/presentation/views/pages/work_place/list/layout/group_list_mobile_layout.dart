@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/models/group_info_arguments.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
 import '../../../../../../domain/entities/group_summary.dart';
@@ -154,19 +155,32 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                 }
               },
               child: GroupTileMobileWidget(
-                onTap: () {
+                onTap: () async {
                   if (!workspace.isSeen) {
                     _workspaceBloc.add(
                       MarkGroupEvent(workspaceId: workspace.id),
                     );
                   }
-                  context.router.push(
+                  final result = await context.router.push<GroupInfoArguments>(
                     WSDetailRoute(
                       groupId: workspace.id,
                       groupName: workspace.name,
                       groupAvatar: workspace.avatar,
                     ),
                   );
+
+                  if (result == null) return;
+
+                  if (result.groupName != workspace.name ||
+                      result.groupAvatar != workspace.avatar) {
+                    _workspaceBloc.add(
+                      UpdateGroupEvent(
+                        groupId: workspace.id,
+                        groupName: result.groupName,
+                        groupAvatar: result.groupAvatar,
+                      ),
+                    );
+                  }
                 },
                 isMute: workspace.isMute,
                 isPin: workspace.isPin,
@@ -202,7 +216,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
         final status = selected.$2;
         final pagingStatus = selected.$3;
         if (status == PageStatus.loading) {
-          return CupertinoActivityIndicator();
+          return Center(child: CupertinoActivityIndicator());
         } else if (status == PageStatus.loaded) {
           return Container(
             width: double.infinity,
@@ -314,6 +328,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               value: state,
               onChanged: (value) {
                 _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
+                if(value.isEmpty) return;
                 _workspaceBloc.add(SearchEvent(value: value));
               },
               hintText: "workspace.hint_text_search".tr(),

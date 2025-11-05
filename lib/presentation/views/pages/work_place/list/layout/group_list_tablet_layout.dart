@@ -22,8 +22,7 @@ class GroupListTabletLayout extends StatefulWidget {
   const GroupListTabletLayout({super.key});
 
   @override
-  State<GroupListTabletLayout> createState() =>
-      _GroupListTabletLayoutState();
+  State<GroupListTabletLayout> createState() => _GroupListTabletLayoutState();
 }
 
 class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
@@ -130,6 +129,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                       _workspaceBloc.add(
                         SearchKeyWorkChangeEvent(value: value),
                       );
+                      if(value.isEmpty) return;
                       _workspaceBloc.add(SearchEvent(value: value));
                     },
                     hintText: "workspace.hint_text_search".tr(),
@@ -236,7 +236,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              // countNewMessage: 0,
+                              countNewMessage: workspace.unReadCount,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -269,7 +269,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                         final workspaces = selected.$1;
                         final status = selected.$2;
                         if (status == PageStatus.loading) {
-                          return CupertinoActivityIndicator();
+                          return Center(child: CupertinoActivityIndicator());
                         } else if (status == PageStatus.loaded) {
                           return Container(
                             width: double.infinity,
@@ -319,7 +319,8 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          // countNewMessage: 0,
+                                          countNewMessage:
+                                              workspace.unReadCount,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),

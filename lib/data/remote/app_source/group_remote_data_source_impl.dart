@@ -1,8 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:ig_agency_app/data/remote/app/group_remote_data_source.dart';
 import 'package:ig_agency_app/data/remote/models/requests/change_notification_status_request.dart';
+import 'package:ig_agency_app/data/remote/models/requests/update_group_info_request.dart';
 import 'package:ig_agency_app/data/remote/models/response/group_detail_response_model.dart';
+import 'package:ig_agency_app/data/remote/models/response/update_group_avatar_response.dart';
 import 'package:ig_agency_app/data/remote/services/api_services.dart';
 import 'package:ig_agency_app/shared/commons/exception_converter.dart';
+import 'package:ig_agency_app/shared/commons/exceptions.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/models/requests/pin_message_request_model.dart';
 import '../../../domain/entities/message/message_content.dart';
@@ -10,6 +15,7 @@ import '../../../domain/enums/message_enums.dart';
 import '../models/requests/get_groups_request.dart';
 import '../models/requests/send_message_request_model.dart';
 import '../models/requests/delete_message_request_model.dart';
+import '../models/response/group_response.dart';
 import '../models/response/group_summary_response.dart';
 import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
@@ -212,6 +218,58 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   }
 
   @override
+  Future<GroupResponse> getGroupInfo(String groupId) async {
+    try {
+      return await _apiService.getGroupInfo(groupId);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  // @override
+  // Future<List<UserProfileResponseModel>> getUserInGroup(
+  //   GetDataInGroupRequest request,
+  // ) async {
+  //   try {
+  //     return await _apiService.getUserInGroup(
+  //       request.groupId,
+  //       request.limit,
+  //       request.offset,
+  //     );
+  //   } catch (e) {
+  //     throw ExceptionConverter.convert(e);
+  //   }
+  // }
+
+  @override
+  Future<void> updateGroupInfo(
+    String groupId, {
+    String? bio,
+    String? name,
+    MultipartFile? image,
+  }) async {
+    try {
+      await _apiService.updateGroupInfo(
+        groupId,
+        UpdateGroupInfoRequest(bio: bio, title: name),
+      );
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<UpdateGroupAvatarResponse> updateGroupAvatar(String groupId, String image) async {
+    try {
+      final multipartFile = await image.toMultipartFile();
+      if (multipartFile == null) throw NoFileFoundException();
+      return await _apiService.updateGroupAvatar(groupId, multipartFile);
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
   Future<void> markAsRead(String groupId) async {
     try {
       return await _apiService.markAsRead(groupId);
@@ -238,11 +296,17 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
     try {
       return await _apiService.changeNotificationStatus(
         groupId,
-        ChangeNotificationStatusRequest(
-          enabled: enable,
-          dndDuration: option,
-        ),
+        ChangeNotificationStatusRequest(enabled: enable, dndDuration: option),
       );
+    } catch (e) {
+      throw ExceptionConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> leaveGroup(String groupId, String userId) async {
+    try {
+      return await _apiService.leaveGroup(groupId, userId);
     } catch (e) {
       throw ExceptionConverter.convert(e);
     }

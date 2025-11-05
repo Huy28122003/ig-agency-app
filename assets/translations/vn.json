@@ -52,7 +52,11 @@
     "leave_group": "Rời khỏi nhóm"
   },
   "workspace_bio": {
-    "title": "Tiểu sử ",
+    "title": "Tiểu sử",
+    "done": "Hoàn th"
+  },
+  "workspace_name": {
+    "title": "Tên nhóm",
     "done": "Hoàn th"
   },
   "members": {

@@ -22,12 +22,10 @@ class GroupListDesktopLayout extends StatefulWidget {
   const GroupListDesktopLayout({super.key});
 
   @override
-  State<GroupListDesktopLayout> createState() =>
-      _GroupListDesktopLayoutState();
+  State<GroupListDesktopLayout> createState() => _GroupListDesktopLayoutState();
 }
 
-class _GroupListDesktopLayoutState
-    extends State<GroupListDesktopLayout> {
+class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
   late RefreshController _searchRefreshController;
   late RefreshController _refreshController;
   late GroupListBloc _workspaceBloc;
@@ -131,6 +129,7 @@ class _GroupListDesktopLayoutState
                       _workspaceBloc.add(
                         SearchKeyWorkChangeEvent(value: value),
                       );
+                      if(value.isEmpty) return;
                       _workspaceBloc.add(SearchEvent(value: value));
                     },
                     hintText: "workspace.hint_text_search".tr(),
@@ -237,8 +236,7 @@ class _GroupListDesktopLayoutState
                               lastMessage: workspace.lastMessage,
                               lastMessageTime: workspace.lastMessageTime,
                               isSeen: workspace.isSeen,
-                              //todo
-                              // countNewMessage: 10,
+                              countNewMessage: workspace.unReadCount,
                               isSelected:
                                   (state != null && state == workspace.id),
                             ),
@@ -271,7 +269,7 @@ class _GroupListDesktopLayoutState
                         final workspaces = selected.$1;
                         final status = selected.$2;
                         if (status == PageStatus.loading) {
-                          return CupertinoActivityIndicator();
+                          return Center(child: CupertinoActivityIndicator());
                         } else if (status == PageStatus.loaded) {
                           return Container(
                             width: double.infinity,
@@ -321,8 +319,7 @@ class _GroupListDesktopLayoutState
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          //todo
-                                          // countNewMessage: 10,
+                                          countNewMessage: workspace.unReadCount,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),
