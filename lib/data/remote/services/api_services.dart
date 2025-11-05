@@ -56,6 +56,9 @@ abstract class ApiService {
   @GET('/profile')
   Future<ProfileInfoResponse> getProfileInfo();
 
+  @DELETE('/profile')
+  Future<void> deleteAccount();
+
   //Search
   @POST('/')
   Future<PagedResponse<SearchResultResponse>> search(

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
@@ -31,7 +32,7 @@ class ProfileOption extends StatelessWidget {
             },
             builder: (context, bio) {
               return ProfileOptionItem(
-                title: 'Bio',
+                title: 'profile.bio'.tr(),
                 iconPath: Assets.icons.icBio.path,
                 onTap: () {
                   final bio = context.read<ProfileBloc>().state.user?.bio ?? '';
@@ -49,7 +50,7 @@ class ProfileOption extends StatelessWidget {
             color: AppColors.outlineGrayStrong200,
           ),
           ProfileOptionItem(
-            title: 'Reset Password',
+            title: 'profile.reset_password'.tr(),
             iconPath: Assets.icons.icPassword.path,
             onTap: () {
               context.router.push(const ChangePasswordRoute());

@@ -50,12 +50,12 @@ class UnpinGroupEvent extends GroupListEvent {
 
 class ChangeNotificationStatusEvent extends GroupListEvent {
   final String groupId;
-  final String? unMuteTimeCode;
+  final MuteDurationOption? type;
   final bool isEnable;
 
   ChangeNotificationStatusEvent({
     required this.groupId,
-    this.unMuteTimeCode,
+    this.type,
     required this.isEnable,
   });
 }

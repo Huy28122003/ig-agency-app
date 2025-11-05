@@ -13,6 +13,7 @@ import '../../domain/entities/media_entity.dart';
 import '../../domain/entities/message/message.dart';
 import '../../domain/entities/pinned_message_summary.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../domain/enums/unmute_time_enum.dart';
 import '../../shared/commons/failure_converter.dart';
 import '../../shared/commons/models/pagination.dart';
 import '../remote/models/requests/get_groups_request.dart';
@@ -485,13 +486,13 @@ class GroupRepositoryImpl implements GroupRepository {
   Future<void> changeNotificationStatus({
     required String groupId,
     required bool enable,
-    String? unMuteTimeCode,
+    MuteDurationOption? option,
   }) async {
     try {
       await _groupRemoteDataSource.changeNotificationStatus(
         groupId: groupId,
         enable: enable,
-        unMuteTimeCode: unMuteTimeCode,
+        option: option?.code,
       );
     } catch (e) {
       throw FailureConverter.convert(e);

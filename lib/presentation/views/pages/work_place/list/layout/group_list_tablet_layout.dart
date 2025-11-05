@@ -193,19 +193,19 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                             },
                             onTapMute: () async {
                               if (workspace.isMute) {
-                                await MenuDialog.show<UnMuteTimeEnum>(
+                                await MenuDialog.show<MuteDurationOption>(
                                   onTap: (value) {
                                     _workspaceBloc.add(
                                       ChangeNotificationStatusEvent(
                                         groupId: workspace.id,
-                                        unMuteTimeCode: value.code,
+                                        type: value,
                                         isEnable: false,
                                       ),
                                     );
                                   },
                                   context: context,
                                   title: "workspace.unmute_title".tr(),
-                                  items: UnMuteTimeEnum.values
+                                  items: MuteDurationOption.values
                                       .map(
                                         (e) => MenuItem(
                                           content: 'workspace.${e.title}'.tr(),
