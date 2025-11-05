@@ -139,9 +139,9 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
       // Nếu group vừa unpin chính là group có tin nhắn cuối cùng cũ nhất trong list
       // và nó có phải tin nhắn thuộc [offset,offset+limit] hiện tại hay không
       // Hiện tại vẫn chưa check được là group có nằm trong phân trang hiện tại hay không
-      if (target.lastMessageTime != null && oldest.id == target.id
-      // && _offset % 15 == 0
-      ) {
+      if (target.lastMessageTime != null &&
+          oldest.id == target.id &&
+          _offset % _limit == 0) {
         workspaces.removeAt(indexWorkspace);
         _offset -= 1;
       } else {
