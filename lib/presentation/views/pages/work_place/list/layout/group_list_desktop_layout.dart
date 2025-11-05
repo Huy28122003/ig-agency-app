@@ -188,7 +188,10 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                             onTapDelete: () async {},
                             onTapMask: () {
                               _workspaceBloc.add(
-                                MarkGroupEvent(workspaceId: workspace.id),
+                                MarkGroupEvent(
+                                  groupId: workspace.id,
+                                  mark: !workspace.isSeen,
+                                ),
                               );
                             },
                             onTapMute: () async {

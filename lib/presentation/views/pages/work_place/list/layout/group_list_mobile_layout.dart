@@ -107,12 +107,15 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               isPin: workspace.isPin,
               isSeen: workspace.isSeen,
               onTapDelete: () async {
-                _workspaceBloc.add(
-                  DeleteWorkspaceEvent(workspaceId: workspace.id),
-                );
+                _workspaceBloc.add(DeleteGroupEvent(workspaceId: workspace.id));
               },
               onTapMask: () {
-                _workspaceBloc.add(MarkGroupEvent(workspaceId: workspace.id));
+                _workspaceBloc.add(
+                  MarkGroupEvent(
+                    groupId: workspace.id,
+                    mark: !workspace.isSeen,
+                  ),
+                );
               },
               onTapMute: () async {
                 if (workspace.isMute) {
@@ -152,16 +155,15 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                     UnpinGroupEvent(workspaceId: workspace.id),
                   );
                 } else {
-                  _workspaceBloc.add(
-                    PinGroupEvent(workspaceId: workspace.id),
-                  );
+                  _workspaceBloc.add(PinGroupEvent(workspaceId: workspace.id));
                 }
               },
               child: GroupTileMobileWidget(
                 onTap: () {
+                  // Nếu người dùng chưa đoc tin nhắn của group này thì call api đánh dấu đã xem
                   if (!workspace.isSeen) {
                     _workspaceBloc.add(
-                      MarkGroupEvent(workspaceId: workspace.id),
+                      MarkGroupEvent(groupId: workspace.id, mark: true),
                     );
                   }
                   context.router.push(
@@ -230,12 +232,15 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   isSeen: workspace.isSeen,
                   onTapDelete: () {
                     _workspaceBloc.add(
-                      DeleteWorkspaceEvent(workspaceId: workspace.id),
+                      DeleteGroupEvent(workspaceId: workspace.id),
                     );
                   },
                   onTapMask: () {
                     _workspaceBloc.add(
-                      MarkGroupEvent(workspaceId: workspace.id),
+                      MarkGroupEvent(
+                        groupId: workspace.id,
+                        mark: !workspace.isSeen,
+                      ),
                     );
                   },
                   onTapMute: () async {

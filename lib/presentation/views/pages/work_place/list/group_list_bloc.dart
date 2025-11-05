@@ -60,7 +60,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     handleSubEvent<UpdateWorkspaceLastMessageEvent>(
       _onUpdateWorkspaceLastMessage,
     );
-    handleSubEvent<DeleteWorkspaceEvent>(_onDeleteWorkspace);
+    handleSubEvent<DeleteGroupEvent>(_onDeleteGroup);
     handleSubEvent<SelectWorkspaceEvent>(_onSelectWorkspace);
     handleSubEvent<ListenWorkspaceLastMessageEvent>(
       _onListenWorkspaceLastMessage,
@@ -101,16 +101,14 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   ) async {
     try {
       await _pinGroupUseCase.call(event.workspaceId);
-      List<GroupSummary> workspaces = List.from(state.workspaces);
-      int indexWorkspace = workspaces.indexWhere(
-        (e) => e.id == event.workspaceId,
-      );
-      if (indexWorkspace == -1) return;
-      workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
-        isPin: !workspaces[indexWorkspace].isPin,
-      );
-      _sort(workspaces);
-      emit(state.copyWith(workspaces: workspaces));
+
+      // Sau khi call api thành công thì lấy data mới nhất từ state ra để cập nhật
+      // tránh xung đột với luồng update data từ socket
+      List<GroupSummary> updated = state.workspaces
+          .map((e) => (e.id == event.workspaceId) ? e.copyWith(isPin: true) : e)
+          .toList();
+      _sort(updated);
+      emit(state.copyWith(workspaces: updated));
     } catch (e) {
       handleError(emit, e);
     }
@@ -131,15 +129,19 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
 
       final target = workspaces[indexWorkspace].copyWith(isPin: false);
 
+      // Tìm group có tin nhắn cuối cùng là cũ nhất trong list hiện tại
       final oldest = workspaces
           .where((e) => e.lastMessageTime != null)
           .reduce(
             (a, b) => (a.lastMessageTime!.isBefore(b.lastMessageTime!)) ? a : b,
           );
 
-      if (target.lastMessageTime != null &&
-          oldest.id == target.id &&
-          _offset % 15 == 0) {
+      // Nếu group vừa unpin chính là group có tin nhắn cuối cùng cũ nhất trong list
+      // và nó có phải tin nhắn thuộc [offset,offset+limit] hiện tại hay không
+      // Hiện tại vẫn chưa check được là group có nằm trong phân trang hiện tại hay không
+      if (target.lastMessageTime != null && oldest.id == target.id
+      // && _offset % 15 == 0
+      ) {
         workspaces.removeAt(indexWorkspace);
         _offset -= 1;
       } else {
@@ -158,24 +160,17 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     Emitter<GroupListState> emit,
   ) async {
     try {
-      List<GroupSummary> workspaces = List.from(state.workspaces);
-      int indexWorkspace = workspaces.indexWhere(
-        (e) => e.id == event.workspaceId,
-      );
-      if (indexWorkspace == -1) return;
-
-      if (workspaces[indexWorkspace].isSeen) {
-        await _markUnreadUseCase.call(event.workspaceId);
+      if (event.mark) {
+        await _markAsReadUseCase.call(event.groupId);
       } else {
-        await _markAsReadUseCase.call(event.workspaceId);
+        await _markUnreadUseCase.call(event.groupId);
       }
-
-      // Tu cap nhat lai ui o local khong can fetch lai data
-      workspaces[indexWorkspace] = workspaces[indexWorkspace].copyWith(
-        isSeen: !workspaces[indexWorkspace].isSeen,
-      );
-      _sort(workspaces);
-      emit(state.copyWith(workspaces: workspaces));
+      final updated = state.workspaces
+          .map(
+            (e) => (e.id == event.groupId) ? e.copyWith(isSeen: !e.isSeen) : e,
+          )
+          .toList();
+      emit(state.copyWith(workspaces: updated));
     } catch (e) {
       handleError(emit, e);
     }
@@ -372,8 +367,8 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
     }
   }
 
-  Future<void> _onDeleteWorkspace(
-    DeleteWorkspaceEvent event,
+  Future<void> _onDeleteGroup(
+    DeleteGroupEvent event,
     Emitter<GroupListState> emit,
   ) async {
     try {

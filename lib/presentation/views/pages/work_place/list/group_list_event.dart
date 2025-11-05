@@ -61,15 +61,16 @@ class ChangeNotificationStatusEvent extends GroupListEvent {
 }
 
 class MarkGroupEvent extends GroupListEvent {
-  final String workspaceId;
+  final String groupId;
+  final bool mark;
 
-  MarkGroupEvent({required this.workspaceId});
+  MarkGroupEvent({required this.groupId, required this.mark});
 }
 
-class DeleteWorkspaceEvent extends GroupListEvent {
+class DeleteGroupEvent extends GroupListEvent {
   final String workspaceId;
 
-  DeleteWorkspaceEvent({required this.workspaceId});
+  DeleteGroupEvent({required this.workspaceId});
 }
 
 class SelectWorkspaceEvent extends GroupListEvent {
