@@ -82,7 +82,7 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
         ChangeNotificationStatusParams(
           groupId: event.groupId,
           enable: event.isEnable,
-          unMuteTimeCode: event.unMuteTimeCode,
+          option: event.type,
         ),
       );
       // Neu item nam trong list cua normal mode thi cap nhat lai ui
