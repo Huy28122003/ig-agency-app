@@ -3,19 +3,21 @@ import 'package:ig_agency_app/data/remote/translators/group_detail_translator.da
 import 'package:ig_agency_app/data/remote/translators/group_summary_translator.dart';
 import 'package:ig_agency_app/domain/entities/group_detail_entity.dart';
 import 'package:ig_agency_app/domain/repositories/group_repository.dart';
+import 'package:ig_agency_app/data/remote/translators/group_translator.dart';
+import 'package:ig_agency_app/domain/entities/file_entity.dart';
+import 'package:ig_agency_app/domain/entities/media_entity.dart';
+import 'package:ig_agency_app/domain/entities/user_entity.dart';
+import 'package:ig_agency_app/shared/commons/models/pagination.dart';
+import 'package:ig_agency_app/shared/extensions/string.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ig_agency_app/data/remote/translators/message_translator.dart';
 import 'package:ig_agency_app/shared/utils/mock_data.dart';
-import '../../domain/entities/file_entity.dart';
-import '../../domain/entities/group_entity.dart';
+import '../../domain/entities/group_info_entity.dart';
 import '../../domain/entities/group_summary.dart';
-import '../../domain/entities/media_entity.dart';
 import '../../domain/entities/message/message.dart';
 import '../../domain/entities/pinned_message_summary.dart';
-import '../../domain/entities/user_entity.dart';
 import '../../domain/enums/unmute_time_enum.dart';
 import '../../shared/commons/failure_converter.dart';
-import '../../shared/commons/models/pagination.dart';
 import '../remote/models/requests/get_groups_request.dart';
 import '../remote/services/mock/message_mock_service.dart';
 import '../../domain/entities/member_entity.dart';
@@ -251,54 +253,40 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Stream<GroupEntity> listenLastMessages() {
+  Stream<GroupInfoEntity> listenLastMessages() {
     // TODO: implement listenLastMessages
     throw UnimplementedError();
   }
 
   @override
-  Future<GroupEntity> getGroupInfo({required String groupId}) async {
+  Future<GroupInfoEntity> getGroupInfo({required String groupId}) async {
     try {
-      final workspace = MockData.getWorkspaces().firstWhere(
-        (element) => element.id == groupId,
-      );
-      return workspace;
+      final response = await _groupRemoteDataSource.getGroupInfo(groupId);
+      return response.toEntity();
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<bool> updateGroupBio({
+  Future<void> updateGroupBio({
     required String groupId,
     required String bio,
   }) async {
     try {
-      return true;
+      await _groupRemoteDataSource.updateGroupInfo(groupId, bio: bio);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
   }
 
   @override
-  Future<bool> updateGroupName({
+  Future<void> updateGroupName({
     required String groupId,
     required String name,
   }) async {
     try {
-      return true;
-    } catch (e) {
-      throw FailureConverter.convert(e);
-    }
-  }
-
-  @override
-  Future<bool> updateGroupNotification({
-    required String groupId,
-    required bool isMute,
-  }) async {
-    try {
-      return true;
+      await _groupRemoteDataSource.updateGroupInfo(groupId, name: name);
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -337,29 +325,31 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups) {
+  Future<bool> addUserToGroups(UserEntity user, List<GroupInfoEntity> groups) {
     return Future.value(true);
   }
 
   @override
-  Future<List<GroupEntity>> getListGroup({
+  Future<List<GroupInfoEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
-  }) {
+  }) async {
     try {
-      final allData = MockData.getWorkspaces();
-
-      final filtered = keySearch != null && keySearch.isNotEmpty
-          ? allData
-                .where(
-                  (e) => e.groupName.toLowerCase().contains(
-                    keySearch.toLowerCase(),
-                  ),
-                )
-                .toList()
-          : allData;
-
-      return Future.value(filtered);
+      //todo: anh.trandang
+      // final allData = MockData.getWorkspaces();
+      //
+      // final filtered = keySearch != null && keySearch.isNotEmpty
+      //     ? allData
+      //           .where(
+      //             (e) => e.groupName.toLowerCase().contains(
+      //               keySearch.toLowerCase(),
+      //             ),
+      //           )
+      //           .toList()
+      //     : allData;
+      //
+      // return Future.value(filtered);
+      return [];
     } catch (e) {
       throw FailureConverter.convert(e);
     }
@@ -494,6 +484,31 @@ class GroupRepositoryImpl implements GroupRepository {
         enable: enable,
         option: option?.code,
       );
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<String> updateGroupAvatar({
+    required String groupId,
+    required String image,
+  }) async {
+    try {
+      final response = await _groupRemoteDataSource.updateGroupAvatar(
+        groupId,
+        image,
+      );
+      return response.photo.withBaseUrl();
+    } catch (e) {
+      throw FailureConverter.convert(e);
+    }
+  }
+
+  @override
+  Future<void> leaveGroup(String groupId, String userId) async {
+    try {
+      await _groupRemoteDataSource.leaveGroup(groupId, userId);
     } catch (e) {
       throw FailureConverter.convert(e);
     }

@@ -23,6 +23,8 @@ class CameraBloc extends BaseBloc<CameraEvent, CameraState> {
     _registerHandlers();
   }
 
+  late final String groupId;
+
   final MediaManager _mediaManager;
   final PermissionManager _permissionManager;
   CameraController? _cameraController;

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ig_agency_app/presentation/models/group_info_arguments.dart';
 import 'package:ig_agency_app/presentation/views/pages/work_place/list/group_list_bloc.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
 import '../../../../../../domain/entities/group_summary.dart';
@@ -159,20 +160,33 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                 }
               },
               child: GroupTileMobileWidget(
-                onTap: () {
+                onTap: () async {
                   // Nếu người dùng chưa đoc tin nhắn của group này thì call api đánh dấu đã xem
                   if (!workspace.isSeen) {
                     _workspaceBloc.add(
                       MarkGroupEvent(groupId: workspace.id, mark: true),
                     );
                   }
-                  context.router.push(
+                  final result = await context.router.push<GroupInfoArguments>(
                     WSDetailRoute(
                       groupId: workspace.id,
                       groupName: workspace.name,
                       groupAvatar: workspace.avatar,
                     ),
                   );
+
+                  if (result == null) return;
+
+                  if (result.groupName != workspace.name ||
+                      result.groupAvatar != workspace.avatar) {
+                    _workspaceBloc.add(
+                      UpdateGroupEvent(
+                        groupId: workspace.id,
+                        groupName: result.groupName,
+                        groupAvatar: result.groupAvatar,
+                      ),
+                    );
+                  }
                 },
                 isMute: workspace.isMute,
                 isPin: workspace.isPin,

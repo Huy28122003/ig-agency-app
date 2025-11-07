@@ -30,6 +30,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     this.messageSearchResults = const [],
     this.showGroupInfo = false,
     this.groupDetail,
+    this.groupName = '',
+    this.groupAvatar = '',
   });
 
   final List<ChatMessageUIModel> chatMessages;
@@ -59,6 +61,9 @@ class WSDetailState extends BaseState<WSDetailState> {
   final bool showGroupInfo;
 
   final GroupDetailEntity? groupDetail;
+
+  final String groupName;
+  final String groupAvatar;
 
   bool get needLoadMoreOldMessages =>
       pagingStatus != PagingStatus.empty &&
@@ -96,6 +101,8 @@ class WSDetailState extends BaseState<WSDetailState> {
     List<MessageEntity>? messageSearchResults,
     bool? showGroupInfo,
     GroupDetailEntity? groupDetail,
+    String? groupName,
+    String? groupAvatar,
   }) {
     return WSDetailState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -132,6 +139,8 @@ class WSDetailState extends BaseState<WSDetailState> {
       groupSearchStatus: groupSearchStatus ?? this.groupSearchStatus,
       showGroupInfo: showGroupInfo ?? this.showGroupInfo,
       groupDetail: groupDetail ?? this.groupDetail,
+      groupName: groupName ?? this.groupName,
+      groupAvatar: groupAvatar ?? this.groupAvatar,
     );
   }
 
@@ -162,5 +171,7 @@ class WSDetailState extends BaseState<WSDetailState> {
     messageSearchResults,
     showGroupInfo,
     groupDetail,
+    groupName,
+    groupAvatar,
   ];
 }

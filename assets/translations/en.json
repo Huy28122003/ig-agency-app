@@ -125,6 +125,10 @@
     "title": "Bio",
     "done": "Done"
   },
+  "workspace_name": {
+    "title": "Name",
+    "done": "Done"
+  },
   "members": {
     "title": "Member",
     "members": "Members",

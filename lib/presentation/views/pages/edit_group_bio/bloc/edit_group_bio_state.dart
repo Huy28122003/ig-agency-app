@@ -1,7 +1,7 @@
-part of 'edit_workspace_bio_bloc.dart';
+part of 'edit_group_bio_bloc.dart';
 
-class EditWorkspaceNameState extends BaseState<EditWorkspaceNameState> {
-  const EditWorkspaceNameState({
+class EditGroupBioState extends BaseState<EditGroupBioState> {
+  const EditGroupBioState({
     super.pageStatus = PageStatus.initial,
     super.pageErrorMessage,
     super.processing = false,
@@ -13,14 +13,14 @@ class EditWorkspaceNameState extends BaseState<EditWorkspaceNameState> {
   final bool? updateStatus;
 
   @override
-  EditWorkspaceNameState copyWith({
+  EditGroupBioState copyWith({
     PageStatus? pageStatus,
     String? pageErrorMessage,
     bool? processing,
     String? bio,
     bool? updateStatus,
   }) {
-    return EditWorkspaceNameState(
+    return EditGroupBioState(
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
       processing: processing ?? this.processing,

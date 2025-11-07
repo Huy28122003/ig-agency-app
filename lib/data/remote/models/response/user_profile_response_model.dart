@@ -5,13 +5,13 @@ part 'user_profile_response_model.g.dart';
 @JsonSerializable()
 class UserProfileResponseModel {
   const UserProfileResponseModel(
-    this.id,
-    this.name,
-    this.avatar,
-    this.bio,
-    this.role,
-    this.status,
-  );
+      this.id,
+      this.name,
+      this.avatar,
+      this.bio,
+      this.role,
+      this.status,
+      );
 
   final String? id;
   final String? name;

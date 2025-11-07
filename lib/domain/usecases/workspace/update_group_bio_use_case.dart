@@ -3,14 +3,13 @@ import 'package:injectable/injectable.dart';
 import '../../repositories/group_repository.dart';
 
 @injectable
-class UpdateWorkspaceBioUseCase
-    extends UseCase<bool, UpdateWorkspaceBioParams> {
-  UpdateWorkspaceBioUseCase(this._workspaceRepository);
+class UpdateGroupBioUseCase extends UseCase<void, UpdateGroupBioParams> {
+  UpdateGroupBioUseCase(this._workspaceRepository);
 
   final GroupRepository _workspaceRepository;
 
   @override
-  Future<bool> call(UpdateWorkspaceBioParams param) async {
+  Future<void> call(UpdateGroupBioParams param) async {
     return await _workspaceRepository.updateGroupBio(
       groupId: param.workspaceId,
       bio: param.bio,
@@ -18,9 +17,9 @@ class UpdateWorkspaceBioUseCase
   }
 }
 
-class UpdateWorkspaceBioParams {
+class UpdateGroupBioParams {
   final String workspaceId;
   final String bio;
 
-  UpdateWorkspaceBioParams({required this.workspaceId, required this.bio});
+  UpdateGroupBioParams({required this.workspaceId, required this.bio});
 }

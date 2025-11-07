@@ -2,37 +2,35 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/presentation/views/pages/edit_workspace_bio/bloc/edit_workspace_bio_bloc.dart';
-
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../gen/fonts.gen.dart';
 import '../../../../resources/colors.dart';
 import '../../../widgets/app_text_field.dart';
+import '../bloc/edit_group_name_bloc.dart';
 
-class EditWorkspaceBioMobileLayout extends StatefulWidget {
-  const EditWorkspaceBioMobileLayout({super.key});
+class EditGroupNameMobileLayout extends StatefulWidget {
+  const EditGroupNameMobileLayout({super.key});
 
   @override
-  State<EditWorkspaceBioMobileLayout> createState() =>
-      _EditWorkspaceBioMobileLayoutState();
+  State<EditGroupNameMobileLayout> createState() =>
+      _EditGroupNameMobileLayoutState();
 }
 
-class _EditWorkspaceBioMobileLayoutState
-    extends State<EditWorkspaceBioMobileLayout> {
-  late final EditWorkspaceNameBloc _editWorkspaceBioBloc;
+class _EditGroupNameMobileLayoutState extends State<EditGroupNameMobileLayout> {
+  late final EditGroupNameBloc editGroupNameBloc;
 
   @override
   void initState() {
     super.initState();
-    _editWorkspaceBioBloc = context.read<EditWorkspaceNameBloc>();
+    editGroupNameBloc = context.read<EditGroupNameBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditWorkspaceNameBloc, EditWorkspaceNameState>(
+    return BlocListener<EditGroupNameBloc, EditGroupNameState>(
       listener: (_, state) {
         if (state.updateStatus ?? false) {
-          context.router.pop(state.bio);
+          context.router.pop(state.name);
         }
       },
       child: Scaffold(
@@ -43,7 +41,7 @@ class _EditWorkspaceBioMobileLayoutState
           elevation: 0,
           toolbarHeight: 60,
           title: Text(
-            'workspace_bio.title'.tr(),
+            'workspace_name.title'.tr(),
             style: TextStyle(
               color: AppColors.textDefaultTextInverted,
               fontSize: 22,
@@ -77,23 +75,23 @@ class _EditWorkspaceBioMobileLayoutState
             child: Container(color: AppColors.outlineGrayStrong200, height: 1),
           ),
           actions: [
-            BlocSelector<EditWorkspaceNameBloc, EditWorkspaceNameState, String>(
+            BlocSelector<EditGroupNameBloc, EditGroupNameState, String>(
               selector: (state) {
-                return state.bio;
+                return state.name;
               },
               builder: (context, state) {
                 return Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: GestureDetector(
                     onTap: () {
-                      if (!_editWorkspaceBioBloc.isBioChanged) return;
-                      _editWorkspaceBioBloc.add(SubmitBioEvent());
+                      if (!editGroupNameBloc.isNameChanged) return;
+                      editGroupNameBloc.add(SubmitNameEvent());
                     },
                     child: Text(
-                      'workspace_bio.done'.tr(),
+                      'workspace_name.done'.tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: _editWorkspaceBioBloc.isBioChanged
+                        color: editGroupNameBloc.isNameChanged
                             ? AppColors.textDefaultTextDefault
                             : AppColors.textDefaultTextDefaultDisabled,
                         fontSize: 16,
@@ -111,35 +109,30 @@ class _EditWorkspaceBioMobileLayoutState
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child:
-                BlocSelector<
-                  EditWorkspaceNameBloc,
-                  EditWorkspaceNameState,
-                  String
-                >(
-                  selector: (state) {
-                    return state.bio;
+            child: BlocSelector<EditGroupNameBloc, EditGroupNameState, String>(
+              selector: (state) {
+                return state.name;
+              },
+              builder: (context, state) {
+                return AppTextField(
+                  value: state,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  maxLength: 150,
+                  showUnderlineBorder: false,
+                  style: TextStyle(
+                    color: AppColors.textDefaultTextDefault,
+                    fontSize: 16,
+                    fontFamily: FontFamily.segoeUI,
+                    fontWeight: FontWeight.w400,
+                    height: 24 / 16,
+                  ),
+                  onChanged: (value) {
+                    editGroupNameBloc.add(NameChangeEvent(value: value));
                   },
-                  builder: (context, state) {
-                    return AppTextField(
-                      value: state,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      maxLength: 150,
-                      showUnderlineBorder: false,
-                      style: TextStyle(
-                        color: AppColors.textDefaultTextDefault,
-                        fontSize: 16,
-                        fontFamily: FontFamily.segoeUI,
-                        fontWeight: FontWeight.w400,
-                        height: 24 / 16,
-                      ),
-                      onChanged: (value) {
-                        _editWorkspaceBioBloc.add(BioChangeEvent(value: value));
-                      },
-                    );
-                  },
-                ),
+                );
+              },
+            ),
           ),
         ),
       ),

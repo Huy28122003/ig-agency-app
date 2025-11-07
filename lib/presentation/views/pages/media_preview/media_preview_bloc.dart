@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ig_agency_app/dependencies/media/media_manager.dart';
 import 'package:ig_agency_app/dependencies/permission/permission_manager.dart';
+import 'package:ig_agency_app/domain/usecases/workspace/update_group_avatar_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:ig_agency_app/presentation/resources/colors.dart';
 import 'package:ig_agency_app/shared/utils/logger.dart';

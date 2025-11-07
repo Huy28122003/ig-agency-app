@@ -1,7 +1,7 @@
 import 'package:ig_agency_app/domain/entities/group_detail_entity.dart';
 import '../../shared/commons/models/pagination.dart';
 import '../entities/file_entity.dart';
-import '../entities/group_entity.dart';
+import '../entities/group_info_entity.dart';
 import '../entities/group_summary.dart';
 import '../entities/media_entity.dart';
 import '../entities/message/message.dart';
@@ -72,23 +72,23 @@ abstract class GroupRepository {
     String? keyWord,
   });
 
-  Future<GroupEntity> getGroupInfo({required String groupId});
+  Future<GroupInfoEntity> getGroupInfo({required String groupId});
 
-  Stream<GroupEntity> listenLastMessages();
+  Stream<GroupInfoEntity> listenLastMessages();
 
-  Future<bool> updateGroupBio({required String groupId, required String bio});
+  Future<void> updateGroupBio({required String groupId, required String bio});
 
-  Future<bool> updateGroupName({required String groupId, required String name});
+  Future<void> updateGroupName({required String groupId, required String name});
+
+  Future<String> updateGroupAvatar({
+    required String groupId,
+    required String image,
+  });
 
   Future<List<UserEntity>> getUserInGroup({
     required String workspaceId,
     required int offset,
     required int limit,
-  });
-
-  Future<bool> updateGroupNotification({
-    required String groupId,
-    required bool isMute,
   });
 
   Future<List<MediaEntity>> getMediasInGroup({
@@ -115,14 +115,14 @@ abstract class GroupRepository {
   });
 
   // TODO: tương tự hàm getWorkspaces => quy về dùng chung 1 hàm
-  Future<List<GroupEntity>> getListGroup({
+  Future<List<GroupInfoEntity>> getListGroup({
     required Pagination pagination,
     String? keySearch,
   });
 
   Future<bool> createGroup(String groupName, List<UserEntity> members);
 
-  Future<bool> addUserToGroups(UserEntity user, List<GroupEntity> groups);
+  Future<bool> addUserToGroups(UserEntity user, List<GroupInfoEntity> groups);
 
   Future<void> pinGroup(String workspaceId);
 
@@ -139,4 +139,6 @@ abstract class GroupRepository {
     required bool enable,
     MuteDurationOption? option,
   });
+
+  Future<void> leaveGroup(String groupId, String userId);
 }
