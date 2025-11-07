@@ -181,7 +181,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                 lastMessage: workspace.lastMessage,
                 lastMessageTime: workspace.lastMessageTime,
                 isSeen: workspace.isSeen,
-                // countNewMessage: 10,
+                unreadCount: workspace.unReadCount,
               ),
             );
           },
@@ -296,8 +296,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                     lastMessage: workspace.lastMessage,
                     lastMessageTime: workspace.lastMessageTime,
                     isSeen: workspace.isSeen,
-                    //todo
-                    // countNewMessage: 0,
+                    unreadCount: workspace.unReadCount,
                   ),
                 );
               },

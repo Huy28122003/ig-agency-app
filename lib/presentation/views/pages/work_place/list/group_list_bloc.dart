@@ -266,7 +266,6 @@ class GroupListBloc extends BaseBloc<GroupListEvent, GroupListState> {
   ) async {
     emit(state.copyWith(pagingStatusSearch: PagingStatus.loading));
 
-    await Future.delayed(Duration(seconds: 1));
     final result = await _getWorkspacesUseCase.call(
       GetWorkspacesParams(
         limit: _limit,
