@@ -108,21 +108,25 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               isPin: workspace.isPin,
               isSeen: workspace.isSeen,
               onTapDelete: () async {
-                _workspaceBloc.add(
-                  DeleteWorkspaceEvent(workspaceId: workspace.id),
-                );
+                _workspaceBloc.add(DeleteGroupEvent(workspaceId: workspace.id));
               },
               onTapMask: () {
-                _workspaceBloc.add(MarkGroupEvent(workspaceId: workspace.id));
+                _workspaceBloc.add(
+                  MarkGroupEvent(
+                    groupId: workspace.id,
+                    mark: !workspace.isSeen,
+                  ),
+                );
               },
               onTapMute: () async {
                 if (workspace.isMute) {
                   await MenuDialog.show<MuteDurationOption>(
                     onTap: (value) {
                       _workspaceBloc.add(
-                        MuteWorkspaceEvent(
-                          workspaceId: workspace.id,
+                        ChangeNotificationStatusEvent(
+                          groupId: workspace.id,
                           type: value,
+                          isEnable: false,
                         ),
                       );
                     },
@@ -139,26 +143,28 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   );
                 } else {
                   _workspaceBloc.add(
-                    MuteWorkspaceEvent(workspaceId: workspace.id),
+                    ChangeNotificationStatusEvent(
+                      groupId: workspace.id,
+                      isEnable: true,
+                    ),
                   );
                 }
               },
               onTapPin: () {
                 if (workspace.isPin) {
                   _workspaceBloc.add(
-                    UnpinWorkspaceEvent(workspaceId: workspace.id),
+                    UnpinGroupEvent(workspaceId: workspace.id),
                   );
                 } else {
-                  _workspaceBloc.add(
-                    PinWorkspaceEvent(workspaceId: workspace.id),
-                  );
+                  _workspaceBloc.add(PinGroupEvent(workspaceId: workspace.id));
                 }
               },
               child: GroupTileMobileWidget(
                 onTap: () async {
+                  // Nếu người dùng chưa đoc tin nhắn của group này thì call api đánh dấu đã xem
                   if (!workspace.isSeen) {
                     _workspaceBloc.add(
-                      MarkGroupEvent(workspaceId: workspace.id),
+                      MarkGroupEvent(groupId: workspace.id, mark: true),
                     );
                   }
                   final result = await context.router.push<GroupInfoArguments>(
@@ -189,7 +195,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                 lastMessage: workspace.lastMessage,
                 lastMessageTime: workspace.lastMessageTime,
                 isSeen: workspace.isSeen,
-                // countNewMessage: 10,
+                unreadCount: workspace.unReadCount,
               ),
             );
           },
@@ -240,12 +246,15 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                   isSeen: workspace.isSeen,
                   onTapDelete: () {
                     _workspaceBloc.add(
-                      DeleteWorkspaceEvent(workspaceId: workspace.id),
+                      DeleteGroupEvent(workspaceId: workspace.id),
                     );
                   },
                   onTapMask: () {
                     _workspaceBloc.add(
-                      MarkGroupEvent(workspaceId: workspace.id),
+                      MarkGroupEvent(
+                        groupId: workspace.id,
+                        mark: !workspace.isSeen,
+                      ),
                     );
                   },
                   onTapMute: () async {
@@ -253,9 +262,10 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                       await MenuDialog.show<MuteDurationOption>(
                         onTap: (value) {
                           _workspaceBloc.add(
-                            MuteWorkspaceEvent(
-                              workspaceId: workspace.id,
+                            ChangeNotificationStatusEvent(
+                              groupId: workspace.id,
                               type: value,
+                              isEnable: false,
                             ),
                           );
                         },
@@ -272,18 +282,21 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                       );
                     } else {
                       _workspaceBloc.add(
-                        MuteWorkspaceEvent(workspaceId: workspace.id),
+                        ChangeNotificationStatusEvent(
+                          groupId: workspace.id,
+                          isEnable: true,
+                        ),
                       );
                     }
                   },
                   onTapPin: () {
                     if (workspace.isPin) {
                       _workspaceBloc.add(
-                        UnpinWorkspaceEvent(workspaceId: workspace.id),
+                        UnpinGroupEvent(workspaceId: workspace.id),
                       );
                     } else {
                       _workspaceBloc.add(
-                        PinWorkspaceEvent(workspaceId: workspace.id),
+                        PinGroupEvent(workspaceId: workspace.id),
                       );
                     }
                   },
@@ -297,8 +310,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
                     lastMessage: workspace.lastMessage,
                     lastMessageTime: workspace.lastMessageTime,
                     isSeen: workspace.isSeen,
-                    //todo
-                    // countNewMessage: 0,
+                    unreadCount: workspace.unReadCount,
                   ),
                 );
               },
@@ -328,7 +340,7 @@ class _GroupListMobileLayoutState extends State<GroupListMobileLayout> {
               value: state,
               onChanged: (value) {
                 _workspaceBloc.add(SearchKeyWorkChangeEvent(value: value));
-                if(value.isEmpty) return;
+                if (value.isEmpty) return;
                 _workspaceBloc.add(SearchEvent(value: value));
               },
               hintText: "workspace.hint_text_search".tr(),

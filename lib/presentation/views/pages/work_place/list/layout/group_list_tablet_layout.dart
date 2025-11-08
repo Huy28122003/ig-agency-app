@@ -129,7 +129,7 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                       _workspaceBloc.add(
                         SearchKeyWorkChangeEvent(value: value),
                       );
-                      if(value.isEmpty) return;
+                      if (value.isEmpty) return;
                       _workspaceBloc.add(SearchEvent(value: value));
                     },
                     hintText: "workspace.hint_text_search".tr(),
@@ -188,13 +188,24 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                             onTapDelete: () async {},
                             onTapMask: () {
                               _workspaceBloc.add(
-                                MarkGroupEvent(workspaceId: workspace.id),
+                                MarkGroupEvent(
+                                  groupId: workspace.id,
+                                  mark: !workspace.isSeen,
+                                ),
                               );
                             },
                             onTapMute: () async {
                               if (workspace.isMute) {
                                 await MenuDialog.show<MuteDurationOption>(
-                                  onTap: (value) {},
+                                  onTap: (value) {
+                                    _workspaceBloc.add(
+                                      ChangeNotificationStatusEvent(
+                                        groupId: workspace.id,
+                                        type: value,
+                                        isEnable: false,
+                                      ),
+                                    );
+                                  },
                                   context: context,
                                   title: "workspace.unmute_title".tr(),
                                   items: MuteDurationOption.values
@@ -206,14 +217,18 @@ class _GroupListTabletLayoutState extends State<GroupListTabletLayout> {
                                       )
                                       .toList(),
                                 );
+                              } else {
+                                _workspaceBloc.add(
+                                  ChangeNotificationStatusEvent(
+                                    groupId: workspace.id,
+                                    isEnable: true,
+                                  ),
+                                );
                               }
-                              _workspaceBloc.add(
-                                MuteWorkspaceEvent(workspaceId: workspace.id),
-                              );
                             },
                             onTapPin: () {
                               _workspaceBloc.add(
-                                PinWorkspaceEvent(workspaceId: workspace.id),
+                                PinGroupEvent(workspaceId: workspace.id),
                               );
                             },
                             child: GroupTileTabletWidget(

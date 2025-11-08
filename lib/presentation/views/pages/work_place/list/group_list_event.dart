@@ -36,35 +36,41 @@ class UpdateWorkspaceLastMessageEvent extends GroupListEvent {
 
 class ListenWorkspaceLastMessageEvent extends GroupListEvent {}
 
-class PinWorkspaceEvent extends GroupListEvent {
+class PinGroupEvent extends GroupListEvent {
   final String workspaceId;
 
-  PinWorkspaceEvent({required this.workspaceId});
+  PinGroupEvent({required this.workspaceId});
 }
 
-class UnpinWorkspaceEvent extends GroupListEvent {
+class UnpinGroupEvent extends GroupListEvent {
   final String workspaceId;
 
-  UnpinWorkspaceEvent({required this.workspaceId});
+  UnpinGroupEvent({required this.workspaceId});
 }
 
-class MuteWorkspaceEvent extends GroupListEvent {
-  final String workspaceId;
+class ChangeNotificationStatusEvent extends GroupListEvent {
+  final String groupId;
   final MuteDurationOption? type;
+  final bool isEnable;
 
-  MuteWorkspaceEvent({required this.workspaceId, this.type});
+  ChangeNotificationStatusEvent({
+    required this.groupId,
+    this.type,
+    required this.isEnable,
+  });
 }
 
 class MarkGroupEvent extends GroupListEvent {
-  final String workspaceId;
+  final String groupId;
+  final bool mark;
 
-  MarkGroupEvent({required this.workspaceId});
+  MarkGroupEvent({required this.groupId, required this.mark});
 }
 
-class DeleteWorkspaceEvent extends GroupListEvent {
+class DeleteGroupEvent extends GroupListEvent {
   final String workspaceId;
 
-  DeleteWorkspaceEvent({required this.workspaceId});
+  DeleteGroupEvent({required this.workspaceId});
 }
 
 class SelectWorkspaceEvent extends GroupListEvent {
