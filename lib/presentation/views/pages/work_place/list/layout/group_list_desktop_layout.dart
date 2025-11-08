@@ -129,7 +129,7 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                       _workspaceBloc.add(
                         SearchKeyWorkChangeEvent(value: value),
                       );
-                      if(value.isEmpty) return;
+                      if (value.isEmpty) return;
                       _workspaceBloc.add(SearchEvent(value: value));
                     },
                     hintText: "workspace.hint_text_search".tr(),
@@ -188,7 +188,10 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                             onTapDelete: () async {},
                             onTapMask: () {
                               _workspaceBloc.add(
-                                MarkGroupEvent(workspaceId: workspace.id),
+                                MarkGroupEvent(
+                                  groupId: workspace.id,
+                                  mark: !workspace.isSeen,
+                                ),
                               );
                             },
                             onTapMute: () async {
@@ -208,12 +211,15 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                                 );
                               }
                               _workspaceBloc.add(
-                                MuteWorkspaceEvent(workspaceId: workspace.id),
+                                ChangeNotificationStatusEvent(
+                                  groupId: workspace.id,
+                                  isEnable: !workspace.isMute,
+                                ),
                               );
                             },
                             onTapPin: () {
                               _workspaceBloc.add(
-                                PinWorkspaceEvent(workspaceId: workspace.id),
+                                PinGroupEvent(workspaceId: workspace.id),
                               );
                             },
                             child: GroupTileTabletWidget(
@@ -319,7 +325,8 @@ class _GroupListDesktopLayoutState extends State<GroupListDesktopLayout> {
                                           lastMessageTime:
                                               workspace.lastMessageTime,
                                           isSeen: workspace.isSeen,
-                                          countNewMessage: workspace.unReadCount,
+                                          countNewMessage:
+                                              workspace.unReadCount,
                                           isSelected:
                                               (state != null &&
                                               state == workspace.id),
