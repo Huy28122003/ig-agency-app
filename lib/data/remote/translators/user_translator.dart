@@ -11,6 +11,7 @@ extension UserTranslatorExtension on UserProfileResponseModel {
       name: name ?? '',
       avatar: avatar?.withBaseUrl() ?? '',
       bio: bio ?? '',
+      //todo
       lastActiveAt: DateTime.now(),
       isAdmin: UserRole.fromString(role ?? '').isAdmin,
       isOnline:

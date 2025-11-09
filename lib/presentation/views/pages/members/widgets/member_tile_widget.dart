@@ -61,7 +61,7 @@ class MemberTileWidget extends StatelessWidget {
                                 ),
                                 Text(
                                   (isOnline)
-                                      ? 'members.last_active'.tr()
+                                      ? 'members.active'.tr()
                                       : 'members.last_active'.tr(
                                           args: [lastActiveAt.toRelativeString],
                                         ),

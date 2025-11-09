@@ -3,7 +3,7 @@ enum UserRole {
   user;
 
   static UserRole fromString(String role) {
-    if (role.toLowerCase() == role.toLowerCase()) {
+    if (role.toLowerCase() == 'admin'.toLowerCase()) {
       return admin;
     } else {
       return user;
