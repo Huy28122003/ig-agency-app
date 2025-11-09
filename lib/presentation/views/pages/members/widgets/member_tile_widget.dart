@@ -58,7 +58,9 @@ class MemberTileWidget extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  '${'members.active'.tr()} ${lastActiveAt.toRelativeString} ${'members.ago'.tr()}',
+                                  'members.last_active'.tr(
+                                    args: [lastActiveAt.toRelativeString],
+                                  ),
                                   style: TextStyle(
                                     fontFamily: FontFamily.segoeUI,
                                     fontWeight: FontWeight.w400,

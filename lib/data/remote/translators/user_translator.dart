@@ -8,7 +8,7 @@ extension UserTranslatorExtension on UserProfileResponseModel {
     return UserEntity(
       id: id ?? "",
       name: name ?? '',
-      avatar: avatar == null ? '' : avatar?.withBaseUrl() ?? '',
+      avatar: avatar?.withBaseUrl() ?? '',
       bio: bio ?? '',
       lastActiveAt: DateTime.now(),
       isAdmin: RoleSystem.fromString(role ?? '').isAdmin,
