@@ -111,6 +111,7 @@ class _MembersTabletLayoutState extends State<MembersTabletLayout> {
                 name: member.user.name,
                 isAdmin: member.user.isAdmin,
                 lastActiveAt: member.user.lastActiveAt ?? DateTime.now(),
+                isOnline: member.user.isOnline,
               );
             },
           );
