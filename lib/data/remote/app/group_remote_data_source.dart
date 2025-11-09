@@ -8,6 +8,8 @@ import '../models/response/message_response_model.dart';
 import '../models/response/member_response_model.dart';
 import '../models/response/update_group_avatar_response.dart';
 
+import '../models/requests/get_data_in_group_request.dart';
+
 abstract class GroupRemoteDataSource {
   Future<GroupDetailResponseModel> getGroupDetail(String conversationId);
 
@@ -85,4 +87,8 @@ abstract class GroupRemoteDataSource {
   });
 
   Future<void> leaveGroup(String groupId, String userId);
+
+  Future<List<MemberResponseModel>> getUserInGroup(
+    GetDataInGroupRequest request,
+  );
 }

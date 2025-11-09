@@ -167,7 +167,7 @@ abstract class ApiService {
   Future<GroupResponse> getGroupInfo(@Path('conversationId') String groupId);
 
   @GET('/conversations/{conversationId}/members')
-  Future<List<UserProfileResponseModel>> getUserInGroup(
+  Future<List<MemberResponseModel>> getUserInGroup(
     @Path("conversationId") String groupId,
     @Query("limit") int limit,
     @Query("offset") int offset,

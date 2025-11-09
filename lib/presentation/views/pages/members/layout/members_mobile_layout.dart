@@ -3,11 +3,10 @@ import 'package:card_loading/card_loading.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/views/pages/members/widgets/member_tile_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
-
+import '../../../../../domain/entities/member_entity.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../resources/colors.dart';
 import '../bloc/members_bloc.dart';
@@ -89,7 +88,7 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
               pre.members != cur.members;
         },
         builder: (context, state) {
-          return AppListView<UserEntity>(
+          return AppListView<MemberEntity>(
             padding: EdgeInsets.only(bottom: 10),
             separatorBuilder: (context, index) {
               return SizedBox();
@@ -107,10 +106,11 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
             builder: (context, index) {
               final member = state.members[index];
               return MemberTileWidget(
-                avatar: member.avatar,
-                name: member.name,
-                isAdmin: member.isAdmin,
-                lastActiveAt: member.lastActiveAt ?? DateTime.now(),
+                onTap: (){},
+                avatar: member.user.avatar,
+                name: member.user.name,
+                isAdmin: member.user.isAdmin,
+                lastActiveAt: member.user.lastActiveAt ?? DateTime.now(),
               );
             },
           );

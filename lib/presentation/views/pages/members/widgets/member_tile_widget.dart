@@ -12,91 +12,98 @@ class MemberTileWidget extends StatelessWidget {
     required this.name,
     required this.isAdmin,
     required this.lastActiveAt,
+    required this.onTap,
   });
 
   final String avatar;
   final String name;
   final bool isAdmin;
   final DateTime lastActiveAt;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleNetworkAvatar(imageUrl: avatar),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  height: 26 / 18,
-                                  color: AppColors.textDefaultTextDefault,
-                                  fontFamily: FontFamily.segoeUI,
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleNetworkAvatar(imageUrl: avatar),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                    height: 26 / 18,
+                                    color: AppColors.textDefaultTextDefault,
+                                    fontFamily: FontFamily.segoeUI,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                '${'members.active'.tr()} ${lastActiveAt.toRelativeString} ${'members.ago'.tr()}',
-                                style: TextStyle(
-                                  fontFamily: FontFamily.segoeUI,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  height: 20 / 14,
-                                  color: AppColors.textDefaultTextSub2,
+                                Text(
+                                  'members.last_active'.tr(
+                                    args: [lastActiveAt.toRelativeString],
+                                  ),
+                                  style: TextStyle(
+                                    fontFamily: FontFamily.segoeUI,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    height: 20 / 14,
+                                    color: AppColors.textDefaultTextSub2,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          isAdmin
-                              ? "members.role_admin".tr()
-                              : "members.role_member".tr(),
-                          style: TextStyle(
-                            fontFamily: FontFamily.segoeUI,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            height: 20 / 14,
-                            color: AppColors.textSecondaryTextSub,
+                          const SizedBox(width: 12),
+                          Text(
+                            isAdmin
+                                ? "members.role_admin".tr()
+                                : "members.role_member".tr(),
+                            style: TextStyle(
+                              fontFamily: FontFamily.segoeUI,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              height: 20 / 14,
+                              color: AppColors.textSecondaryTextSub,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      height: 1,
-                      color: AppColors.outlineGrayStrong200,
-                    ),
-                  ],
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: AppColors.outlineGrayStrong200,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,8 +1,8 @@
-import 'package:ig_agency_app/domain/entities/user_entity.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_data_in_group_params.dart';
 import 'package:ig_agency_app/domain/usecases/workspace/get_users_in_group_use_case.dart';
 import 'package:ig_agency_app/presentation/base/base_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../../domain/entities/member_entity.dart';
 import '../../../../../shared/commons/enums/status.dart';
 import '../../../../base/base_state.dart';
 
@@ -15,14 +15,13 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
   final int _limit = 15;
   int _offset = 0;
   late final String _workspaceId;
-  final GetUsersInGroupUseCase getUsersByWorkspaceIdUseCase;
+  final GetUsersInGroupUseCase getUsersInGroupUseCase;
 
-  MembersBloc({required this.getUsersByWorkspaceIdUseCase})
-    : super(MembersState()) {
+  MembersBloc({required this.getUsersInGroupUseCase}) : super(MembersState()) {
     handleLoadData<LoadDataEvent>((event, emit) async {
       emit(state.copyWith(pageStatus: PageStatus.loading));
       _workspaceId = event.workspaceId;
-      final result = await getUsersByWorkspaceIdUseCase.call(
+      final result = await getUsersInGroupUseCase.call(
         GetDataInGroupParams(
           limit: _limit,
           offset: _offset,
@@ -31,7 +30,7 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
       );
       _offset += result.length;
 
-      List<UserEntity> currentList = List.from(state.members);
+      List<MemberEntity> currentList = List.from(state.members);
       currentList.addAll(result);
 
       final pagingStatus = _limit > result.length
@@ -50,7 +49,7 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
     handleLoadData<RefreshDataEvent>((event, emit) async {
       emit(state.copyWith(pagingStatus: PagingStatus.refreshing));
       _offset = 0;
-      final result = await getUsersByWorkspaceIdUseCase.call(
+      final result = await getUsersInGroupUseCase.call(
         GetDataInGroupParams(
           limit: _limit,
           offset: _offset,
@@ -68,7 +67,7 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
 
     handleSubEvent<GetDataEvent>((event, emit) async {
       emit(state.copyWith(pagingStatus: PagingStatus.loading));
-      final result = await getUsersByWorkspaceIdUseCase.call(
+      final result = await getUsersInGroupUseCase.call(
         GetDataInGroupParams(
           limit: _limit,
           offset: _offset,
@@ -77,7 +76,7 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
       );
       _offset += result.length;
 
-      List<UserEntity> currentList = List.from(state.members);
+      List<MemberEntity> currentList = List.from(state.members);
       currentList.addAll(result);
 
       final pagingStatus = _limit > result.length
