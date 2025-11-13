@@ -13,7 +13,7 @@ extension UserTranslatorExtension on UserProfileResponseModel {
       bio: bio ?? '',
       //todo
       lastActiveAt: DateTime.now(),
-      isAdmin: UserRole.fromString(role ?? '').isAdmin,
+      isAdmin: UserRole.fromString(role).isAdmin,
       isOnline:
           ActivityStatus.fromString(status ?? 'offline') ==
           ActivityStatus.offline,
