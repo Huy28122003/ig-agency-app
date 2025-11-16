@@ -59,16 +59,13 @@ class _MembersTabletLayoutState extends State<MembersTabletLayout> {
                 color: AppColors.textDefaultTextDefault,
               ),
             ),
-            BlocSelector<MembersBloc, MembersState, (int, int)>(
+            BlocSelector<MembersBloc, MembersState, List<MemberEntity>>(
               selector: (state) {
-                return (state.countMember, state.countActiveMember);
+                return state.members;
               },
               builder: (context, state) {
-                final countMember = state.$1;
-                final countActiveMember = state.$2;
                 return Text(
-                  //todo: chua biet api tra ve nhu nao
-                  "$countMember ${'members.members'.tr()}, $countActiveMember ${'members.online'.tr()}",
+                  "${state.length} ${'members.members'.tr()}, ${state.map((e) => e.user.isOnline).length} ${'members.online'.tr()}",
                   style: TextStyle(
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w400,
