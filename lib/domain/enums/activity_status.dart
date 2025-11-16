@@ -1,12 +1,19 @@
 enum ActivityStatus {
-  online,
-  offline;
+  online('active'),
+  //todo: chua biet code con lai la gi
+  offline('offline');
 
-  static ActivityStatus fromString(String value) {
-    if (value.toLowerCase() == 'online') {
+  final String code;
+
+  const ActivityStatus(this.code);
+
+  static ActivityStatus fromCode(String code) {
+    if (code == 'active') {
       return online;
     } else {
       return offline;
     }
   }
+
+  bool get isOnline => this == online;
 }

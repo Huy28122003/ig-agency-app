@@ -2,6 +2,7 @@ import 'package:ig_agency_app/data/remote/models/response/user_profile_response_
 import 'package:ig_agency_app/domain/enums/role.dart';
 import 'package:ig_agency_app/shared/extensions/string.dart';
 import '../../../../domain/entities/user_entity.dart';
+import '../../../domain/enums/activity_status.dart';
 
 extension UserTranslatorExtension on UserProfileResponseModel {
   UserEntity toEntity() {
@@ -10,8 +11,10 @@ extension UserTranslatorExtension on UserProfileResponseModel {
       name: name ?? '',
       avatar: avatar?.withBaseUrl() ?? '',
       bio: bio ?? '',
+      //todo
       lastActiveAt: DateTime.now(),
       isAdmin: RoleSystem.fromString(role ?? '').isAdmin,
+      isOnline: ActivityStatus.fromCode(status ?? '').isOnline,
     );
   }
 }
