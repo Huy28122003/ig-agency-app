@@ -3,7 +3,6 @@ import 'package:card_loading/card_loading.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ig_agency_app/domain/enums/user_group_role.dart';
 import 'package:ig_agency_app/gen/fonts.gen.dart';
 import 'package:ig_agency_app/presentation/views/pages/members/widgets/member_tile_widget.dart';
 import 'package:ig_agency_app/presentation/views/widgets/app_list_view.dart';
@@ -60,13 +59,16 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
                 color: AppColors.textDefaultTextDefault,
               ),
             ),
-            BlocSelector<MembersBloc, MembersState, List<MemberEntity>>(
+            BlocSelector<MembersBloc, MembersState, (int, int)>(
               selector: (state) {
-                return state.members;
+                return (state.countMember, state.countActiveMember);
               },
               builder: (context, state) {
+                final countMember = state.$1;
+                final countActiveMember = state.$2;
                 return Text(
-                  "${state.length} ${'members.members'.tr()}, ${state.map((e) => e.user.isOnline).length} ${'members.online'.tr()}",
+                  //todo: chua biet api tra ve nhu nao
+                  "$countMember ${'members.members'.tr()}, $countActiveMember ${'members.online'.tr()}",
                   style: TextStyle(
                     fontFamily: FontFamily.segoeUI,
                     fontWeight: FontWeight.w400,
@@ -107,7 +109,7 @@ class _MembersMobileLayoutState extends State<MembersMobileLayout> {
                 onTap: () {},
                 avatar: member.user.avatar,
                 name: member.user.name,
-                isAdmin: member.status == UserGroupRole.admin,
+                isAdmin: member.status.isAdmin,
                 lastActiveAt: member.user.lastActiveAt ?? DateTime.now(),
                 isOnline: member.user.isOnline,
               );

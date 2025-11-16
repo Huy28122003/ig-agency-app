@@ -37,11 +37,16 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
+      final memberCount = currentList.length;
+      final onlineMemberCount = currentList.map((e) => e.user.isOnline).length;
+
       emit(
         state.copyWith(
           members: currentList,
           pagingStatus: pagingStatus,
           pageStatus: PageStatus.loaded,
+          countActiveMember: onlineMemberCount,
+          countMember: memberCount,
         ),
       );
     });
@@ -57,10 +62,14 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
         ),
       );
       _offset = result.length;
+      final memberCount = result.length;
+      final onlineMemberCount = result.map((e) => e.user.isOnline).length;
       emit(
         state.copyWith(
           members: result,
           pagingStatus: PagingStatus.refreshCompleted,
+          countActiveMember: onlineMemberCount,
+          countMember: memberCount,
         ),
       );
     });
@@ -78,12 +87,21 @@ class MembersBloc extends BaseBloc<MembersEvent, MembersState> {
 
       List<MemberEntity> currentList = List.from(state.members);
       currentList.addAll(result);
+      final memberCount = currentList.length;
+      final onlineMemberCount = currentList.map((e) => e.user.isOnline).length;
 
       final pagingStatus = _limit > result.length
           ? PagingStatus.noMoreData
           : PagingStatus.loadCompleted;
 
-      emit(state.copyWith(members: currentList, pagingStatus: pagingStatus));
+      emit(
+        state.copyWith(
+          members: currentList,
+          pagingStatus: pagingStatus,
+          countActiveMember: onlineMemberCount,
+          countMember: memberCount,
+        ),
+      );
     });
   }
 }

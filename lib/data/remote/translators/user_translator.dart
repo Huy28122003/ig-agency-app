@@ -13,8 +13,8 @@ extension UserTranslatorExtension on UserProfileResponseModel {
       bio: bio ?? '',
       //todo
       lastActiveAt: DateTime.now(),
-      isAdmin: RoleSystem.fromString(role ?? '') == RoleSystem.admin,
-      isOnline: ActivityStatus.fromCode(status ?? '') == ActivityStatus.online,
+      isAdmin: RoleSystem.fromString(role ?? '').isAdmin,
+      isOnline: ActivityStatus.fromCode(status ?? '').isOnline,
     );
   }
 }

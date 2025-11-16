@@ -14,4 +14,6 @@ enum ActivityStatus {
       return offline;
     }
   }
+
+  bool get isOnline => this == online;
 }
